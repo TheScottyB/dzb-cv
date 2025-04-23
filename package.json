@@ -1,20 +1,19 @@
 {
   "name": "dzb-cv",
   "version": "1.0.0",
-  "description": "CV Generator for Dawn Zurick Beilfuss",
-  "main": "dist/generator.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node src/cli.ts",
-    "lint": "eslint . --ext .ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "generate:federal": "ts-node src/cli.ts --sector=federal",
-    "generate:state": "ts-node src/cli.ts --sector=state",
-    "generate:private": "ts-node src/cli.ts --sector=private",
-    "generate:all": "yarn generate:federal && yarn generate:state && yarn generate:private"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "node dist/cli.js"
   },
-  "keywords": ["cv", "resume", "generator"],
-  "author": "Scott Beilfuss",
-  "license": "UNLICENSED",
-  "private": true
+  "dependencies": {
+    "handlebars": "^4.7.8"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.11",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.3.3"
+  }
 }

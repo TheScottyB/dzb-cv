@@ -3,24 +3,24 @@
 ## Setup
 1. Install dependencies:
 ```bash
-yarn install
+pnpm install
 ```
 
 2. Build the project:
 ```bash
-yarn build
+pnpm build
 ```
 
 ## Generating CVs
 
 ### Generate a specific sector CV:
-- Federal CV: `yarn generate:federal`
-- State CV: `yarn generate:state`
-- Private Sector CV: `yarn generate:private`
+- Federal CV: `pnpm generate:federal`
+- State CV: `pnpm generate:state`
+- Private Sector CV: `pnpm generate:private`
 
 ### Generate all CV formats:
 ```bash
-yarn generate:all
+pnpm generate:all
 ```
 
 ## Project Structure
