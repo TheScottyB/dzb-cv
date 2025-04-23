@@ -1,9 +1,14 @@
+// @ts-check
 import { readFile } from "fs/promises";
 import { join } from "path";
+import { fileURLToPath } from "url";
 import Handlebars from "handlebars";
-import { CVData } from "../types/cv-types";
+import type { CVData } from "../types/cv-types.js";
 
-export async function loadTemplate(templatePath: string): Promise<HandlebarsTemplateDelegate> {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
+
+export async function loadTemplate(templatePath: string): Promise<Handlebars.TemplateDelegate> {
   const template = await readFile(templatePath, "utf-8");
   return Handlebars.compile(template);
 }

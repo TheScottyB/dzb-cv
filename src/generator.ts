@@ -1,5 +1,9 @@
 import { join } from "path";
-import { loadTemplate, loadCVData } from "./utils/helpers";
+import { fileURLToPath } from "url";
+import { loadTemplate, loadCVData } from "./utils/helpers.js";
+import type { CVData } from "./types/cv-types.js";
+
+const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
 async function generateCV(sector: "federal" | "state" | "private", outputPath: string) {
   try {
