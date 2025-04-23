@@ -22,18 +22,28 @@ export class MarkdownProfileParser {
     this.lines = markdownContent.split('\n');
     this.sectionMap = this.mapSections();
   }
-
   /**
    * Main parse method - converts markdown to structured ProfileData
    */
   public parse(): ProfileData {
+    console.log("Starting to parse CV markdown...");
+    
+    // Extract data from each section
     const basicInfo = this.parseBasicInfo();
     const skills = this.parseSkills();
     const experience = this.parseWorkExperience();
     const education = this.parseEducation();
     const certifications = this.parseCertifications();
     const projects = this.parseVolunteerExperience();
+    
+    // Log found items for debugging
+    console.log(`Found ${experience.length} work experiences`);
+    console.log(`Found ${skills.length} skills`);
+    console.log(`Found ${education.length} education entries`);
+    console.log(`Found ${certifications.length} certifications`);
+    console.log(`Found ${projects.length} project/volunteer entries`);
 
+    // Return the complete ProfileData
     return {
       basicInfo,
       skills,
@@ -43,7 +53,7 @@ export class MarkdownProfileParser {
       projects
     };
   }
-
+  
   /**
    * Map all sections in the document to their line ranges
    */
@@ -62,12 +72,36 @@ export class MarkdownProfileParser {
     // Find the start index of each section
     const sectionStartIndices: { heading: string, index: number }[] = [];
     
+    // First try exact matches
     for (let i = 0; i < this.lines.length; i++) {
       const line = this.lines[i].trim();
       if (sectionHeadings.includes(line)) {
         sectionStartIndices.push({ heading: line, index: i });
+        console.log(`Found section: ${line} at line ${i}`);
       }
     }
+
+    // If we didn't find any sections with exact matches, try more flexible matching
+    if (sectionStartIndices.length === 0) {
+      console.log("No exact section matches found, trying flexible matching...");
+      
+      // Try matching section headings without ** marks
+      for (let i = 0; i < this.lines.length; i++) {
+        const line = this.lines[i].trim();
+        
+        for (const heading of sectionHeadings) {
+          const plainHeading = heading.replace(/\*\*/g, '');
+          
+          if (line.includes(plainHeading)) {
+            sectionStartIndices.push({ heading, index: i });
+            console.log(`Found section (flexible match): ${heading} at line ${i}`);
+            break;
+          }
+        }
+      }
+    }
+
+    console.log(`Found ${sectionStartIndices.length} sections in CV`);
 
     // Calculate the end index for each section (start of next section - 1)
     for (let i = 0; i < sectionStartIndices.length; i++) {
@@ -84,17 +118,102 @@ export class MarkdownProfileParser {
 
     return sectionMap;
   }
-
+  
   /**
    * Get lines within a specific section
    */
   private getSectionLines(sectionHeading: string): string[] {
     const section = this.sectionMap.get(sectionHeading);
+    
     if (!section) {
+      console.log(`Section "${sectionHeading}" not found`);
       return [];
     }
-
+    
     return this.lines.slice(section.startIndex + 1, section.endIndex + 1);
+  }
+
+  /**
+   * Parse skills from the SUMMARY OF SKILLS section
+   */
+  private parseSkills(): SkillEntry[] {
+    const skills: SkillEntry[] = [];
+    const skillsSection = this.getSectionLines('**SUMMARY OF SKILLS**');
+
+    if (skillsSection.length === 0) {
+      console.log("No SUMMARY OF SKILLS section found.");
+      return skills;
+    }
+
+    console.log(`Found skills section with ${skillsSection.length} lines`);
+
+    // Track the current category
+    let currentCategory = '';
+
+    for (const line of skillsSection) {
+      const trimmedLine = line.trim();
+      
+      // Skip empty lines
+      if (!trimmedLine) continue;
+      
+      // Debug output
+      console.log(`Processing skills line: ${trimmedLine.substring(0, 50)}...`);
+      
+      // Category pattern: * **Category:** Skills, Skills, Skills
+      if (trimmedLine.includes('**') && trimmedLine.includes(':')) {
+        // Extract category - handle various formats
+        let categoryMatch = trimmedLine.match(/\* \*\*(.*?):\*\*/);
+        if (!categoryMatch) {
+          categoryMatch = trimmedLine.match(/\*\*(.*?):\*\*/);
+        }
+        
+        if (categoryMatch) {
+          currentCategory = categoryMatch[1].trim();
+          console.log(`Found skill category: ${currentCategory}`);
+          
+          // Extract skills list after the category
+          let skillsText = '';
+          
+          if (trimmedLine.includes(':')) {
+            skillsText = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+          }
+          
+          // Process skills - handle comma or bullet point separation
+          const skillsList = skillsText.split(/,|•/).map(s => s.trim().replace(/\*/g, ''));
+          console.log(`Found ${skillsList.length} skills in category`);
+          
+          // Add each skill
+          for (const skillText of skillsList) {
+            if (skillText) {
+              skills.push({
+                id: uuidv4(),
+                name: skillText,
+                level: 'advanced', // Default level since not specified
+                category: currentCategory,
+                yearsOfExperience: 0 // Not specified in CV
+              });
+              console.log(`Added skill: ${skillText} (${currentCategory})`);
+            }
+          }
+        }
+      }
+      // Also check for standalone skill lines that might be bullet points
+      else if (trimmedLine.startsWith('*') && currentCategory) {
+        const skillText = trimmedLine.replace(/^\* /, '').trim().replace(/\*/g, '');
+        if (skillText) {
+          skills.push({
+            id: uuidv4(),
+            name: skillText,
+            level: 'advanced',
+            category: currentCategory,
+            yearsOfExperience: 0
+          });
+          console.log(`Added skill (from bullet): ${skillText} (${currentCategory})`);
+        }
+      }
+    }
+    
+    return skills;
   }
 
   /**
@@ -168,54 +287,8 @@ export class MarkdownProfileParser {
   }
 
   /**
-   * Parse skills from the SUMMARY OF SKILLS section
+   * Parse work experience entries
    */
-  private parseSkills(): SkillEntry[] {
-    const skills: SkillEntry[] = [];
-    const skillsSection = this.getSectionLines('**SUMMARY OF SKILLS**');
-
-    if (skillsSection.length === 0) {
-      return skills;
-    }
-
-    // Track the current category
-    let currentCategory = '';
-
-    for (const line of skillsSection) {
-      const trimmedLine = line.trim();
-      
-      // Skip empty lines
-      if (!trimmedLine) continue;
-      
-      // Category pattern: * **Category:** Skills, Skills, Skills
-      if (trimmedLine.startsWith('* **') && trimmedLine.includes(':**')) {
-        // Extract category
-        const categoryMatch = trimmedLine.match(/\* \*\*(.*?):\*\*/);
-        if (categoryMatch) {
-          currentCategory = categoryMatch[1].trim();
-        }
-        
-        // Extract skills list after the category
-        const skillsText = trimmedLine.replace(/\* \*\*.*?:\*\*/, '').trim();
-        const skillsList = skillsText.split(',').map(s => s.trim().replace(/\*/g, ''));
-        
-        // Add each skill
-        for (const skillText of skillsList) {
-          if (skillText) {
-            skills.push({
-              id: uuidv4(),
-              name: skillText,
-              level: 'advanced', // Default level since not specified
-              category: currentCategory,
-              yearsOfExperience: 0 // Not specified in CV
-            });
-          }
-        }
-      }
-    }
-
-    return skills;
-  }
 
   /**
    * Parse work experience entries
