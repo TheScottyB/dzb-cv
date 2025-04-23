@@ -84,3 +84,43 @@ export interface CVData {
     };
   };
 }
+
+/**
+ * Information about a salary range from a job posting
+ */
+export interface SalaryRange {
+  min?: number;
+  max?: number;
+  currency?: string;
+  period?: string; // yearly, monthly, hourly
+}
+
+/**
+ * Source information for a job posting
+ */
+export interface JobSource {
+  url: string;
+  site: string; // LinkedIn, Indeed, etc.
+  fetchDate: Date;
+}
+
+/**
+ * Complete analysis of a job posting
+ * Contains structured information extracted from job listings
+ * that can be used to tailor CVs for specific applications
+ */
+export interface JobPostingAnalysis {
+  title: string;
+  company: string;
+  location?: string;
+  jobType?: string; // Full-time, part-time, contract, etc.
+  experienceLevel?: string;
+  requiredSkills: string[];
+  desiredSkills?: string[];
+  responsibilities: string[];
+  qualifications: string[];
+  educationRequirements?: string[];
+  keyTerms: string[]; // Important terms/keywords from the job posting
+  source: JobSource;
+  salaryRange?: SalaryRange;
+}
