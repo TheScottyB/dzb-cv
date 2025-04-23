@@ -1,0 +1,29 @@
+{
+  "personalInfo": {
+    "name": {
+      "full": "Dawn Zurick Beilfuss",
+      "preferred": "Dawn Zurick"
+    },
+    "contact": {
+      "email": "placeholder@email.com",
+      "phone": "placeholder-phone"
+    }
+  },
+  "profiles": {
+    "linkedIn": "placeholder-linkedin-url"
+  },
+  "cvTypes": {
+    "federal": {
+      "requirements": ["detailed work history", "specific dates", "hours worked", "salary", "supervisor contacts"],
+      "format": "USAJOBS format"
+    },
+    "state": {
+      "requirements": ["state-specific format", "detailed experience", "education details"],
+      "format": "Illinois State format"
+    },
+    "private": {
+      "requirements": ["concise", "achievement-focused", "skills-oriented"],
+      "format": "Modern professional format"
+    }
+  }
+}
