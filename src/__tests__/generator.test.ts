@@ -1,7 +1,7 @@
 // Test file for CV generator
 import { join } from "path";
-import type { CVData } from "../types/cv-types";
-import { loadCVData, loadTemplate } from "../utils/helpers";
+import type { CVData } from "../types/cv-types.js";
+import { loadCVData, loadTemplate } from "../utils/helpers.js";
 import type Handlebars from "handlebars";
 import { jest, describe, test, expect } from '@jest/globals';
 

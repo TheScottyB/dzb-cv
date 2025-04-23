@@ -1,5 +1,6 @@
 import { JSDOM } from 'jsdom';
 import fetch from 'node-fetch';
+import type { Response } from 'node-fetch';
 import type { JobPostingAnalysis } from '../types/cv-types.js';
 
 // Supported job sites with their parsing strategies
@@ -109,12 +110,15 @@ async function applyRateLimit(): Promise<void> {
 /**
  * Fetches the HTML content from a job posting URL
  * 
- * @param url The URL of the job posting to fetch
  * @returns The HTML content as a string
  * @throws Error if the fetching fails or returns a non-200 status
  */
 async function fetchJobPostingHtml(url: string): Promise<string> {
   try {
+    // Set up timeout using AbortController
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    
     // Use a modern User-Agent to avoid being blocked
     const response = await fetch(url, {
       headers: {
@@ -130,9 +134,11 @@ async function fetchJobPostingHtml(url: string): Promise<string> {
         'Upgrade-Insecure-Requests': '1'
       },
       redirect: 'follow',
-      // Setting reasonable timeout
-      timeout: 10000
+      signal: controller.signal
     });
+    
+    // Clear the timeout if the request completes
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
