@@ -5,25 +5,497 @@
       "preferred": "Dawn Zurick"
     },
     "contact": {
-      "email": "placeholder@email.com",
-      "phone": "placeholder-phone"
-    }
+      "email": "DZ4100@gmail.com",
+      "phone": "847.287.1148",
+      "address": "15810 IL Rt. 173 #2F, Harvard, IL 60033"
+    },
+    "citizenship": "United States"
   },
   "profiles": {
     "linkedIn": "placeholder-linkedin-url"
   },
+  "professionalSummary": "With over 40 years of experience in customer service and healthcare, and 20 years in real estate, I have developed a deep understanding of the needs of individuals in various environments. My expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, and maintaining patient records. Additionally, I have strong negotiation and problem-solving skills, recognized through awards in consumer and residential loans. I am committed to continuous improvement and strive for perfection in every role I undertake, making me a valuable asset to any organization.",
+  "education": [
+    {
+      "certification": "Certified Pharmacy Technician",
+      "institution": "Osco Pharmacy",
+      "year": "1996"
+    },
+    {
+      "certification": "Real Estate License",
+      "status": "Current since 2006"
+    },
+    {
+      "certification": "Mortgage Loans License"
+    },
+    {
+      "certification": "Notary Certificate",
+      "notes": "Held twice"
+    }
+  ],
+  "skills": {
+    "managementAndLeadership": [
+      "Team Leadership & Supervision (up to 9 agents)",
+      "Project Management & Collaboration",
+      "Process Improvement",
+      "Training & Onboarding",
+      "Realtor Board Service & Committee Leadership",
+      "Supervision (Healthcare Front Desk/Call Center)"
+    ],
+    "realEstateOperations": [
+      "Licensed Managing Broker (IL & WI)",
+      "REO/HUD Specialist",
+      "BPO (~5,000 previously)",
+      "Property Management (Incl. Eviction/CFK)",
+      "Rental Acquisition",
+      "Residential Sales",
+      "Short Sales",
+      "Negotiation",
+      "Marketing",
+      "Property Rehabbing & Investment"
+    ],
+    "healthcareAdministration": [
+      "Patient Intake & Triage (Human/Animal)",
+      "Scheduling",
+      "Scribing",
+      "Charting & Records Management",
+      "HIPAA Compliance",
+      "Insurance Verification/Reconciliation",
+      "Medical Equipment Prep/Sterilization",
+      "Pharmacy Support"
+    ],
+    "technical": [
+      "Microsoft Office Suite",
+      "Google Documents",
+      "Microsoft Teams",
+      "Multi-line Phones",
+      "Customer service",
+      "Filing Systems",
+      "REO Platforms (Equator, Pyramid, Res.Net)",
+      "CRM/Marketing (Follow Up Boss, YLOPO)",
+      "Industry Tools (Broker Kit, Monday.com, Phone.com)",
+      "Healthcare Scheduling Software"
+    ],
+    "certifications": [
+      "Certified Pharmacy Technician (CPhT, Illinois State License, 1996)",
+      "Licensed Managing Broker, Illinois (IDFPR, Issued: 10/2017 - Current)",
+      "Licensed Managing Broker, Wisconsin (DSPS, Issued: 2018 - Current)",
+      "Licensed Real Estate Agent, Illinois (IDFPR, Held: 2006 - 2017)",
+      "Certificate in Sexual Harassment Prevention Training (completed April 2025)",
+      "Mortgage Residential and Consumer Loans License (Illinois State License)",
+      "Notary Certificate (held twice)"
+    ],
+    "realEstateCertifications": [
+      "GRI (Graduate, REALTOR® Institute)",
+      "SFR (Short Sales and Foreclosure Resource)",
+      "e-PRO (Digital Marketing Certification)",
+      "CDPE (Certified Distressed Property Expert)",
+      "SRS (Seller Representative Specialist)",
+      "C2EX (Commitment to Excellence)",
+      "BPO (Broker Price Opinion)"
+    ],
+    "leadership": [
+      "Supervisor",
+      "Admin Assistant",
+      "Team Leader in Medical sector",
+      "Team Leader in Real Estate sector"
+    ]
+  },
+  "professionalAffiliations": [
+    {
+      "organization": "Lakes Area Realtors",
+      "roles": [
+        "Board of Directors (2022-2023)",
+        "Chairperson, Grievance Committee",
+        "Member, Government Affairs Committee"
+      ]
+    },
+    {
+      "organization": "Heartland Realtor Organization",
+      "roles": [
+        "Board of Directors (2015-2017)",
+        "Member, Contracts & Forms Committee",
+        "Member, Public Relations Committee",
+        "Member, Government Affairs Committee"
+      ]
+    },
+    {
+      "organization": "Women's Council of Realtors (WCR) - McHenry/Elgin Chapter",
+      "roles": [
+        "President (2015)",
+        "Officer (2013)"
+      ]
+    },
+    {
+      "organization": "RPAC (REALTORS® Political Action Committee)",
+      "roles": [
+        "Major Investor (2018-2023)",
+        "Actively supported homeowner rights advocacy (State/Federal level)"
+      ]
+    },
+    {
+      "organization": "National Association of Realtors (NAR)",
+      "activities": [
+        "Attended 5 National Conventions"
+      ]
+    }
+  ],
+  "workExperience": {
+    "healthcare": [
+      {
+        "employer": "Fox Lake Animal Hospital",
+        "address": "110 S US Hwy 12, Fox Lake, IL 60020",
+        "position": "Front Desk / Veterinary Assistant",
+        "period": "January 2023 - February 2024",
+        "hours": "40 hrs/wk",
+        "duties": [
+          "Managed patient flow (60-80/day)",
+          "Triage patients",
+          "Process new patient paperwork",
+          "Charting",
+          "Filing",
+          "Answering phones",
+          "Assisting in medical emergencies",
+          "Handling payments and check-outs",
+          "Supported sole pharmacist (orders, chart/med prep, approvals)"
+        ],
+        "supervisor": "Joanne Malanowski",
+        "mayContact": true
+      },
+      {
+        "employer": "The Center for Corrective Eye Surgery",
+        "position": "Technician",
+        "period": "2002",
+        "duties": [
+          "Scribe for Dr. Epstein",
+          "Prepping patients for in-office procedures and surgeries",
+          "Travel between two locations: McHenry and Des Plaines"
+        ]
+      },
+      {
+        "employer": "Midwest Sports Medicine",
+        "position": "Supervisor of Front Desk, Call Center, and MRI Scheduling",
+        "period": "1999-2002",
+        "duties": [
+          "Managed high-volume office operations",
+          "Verified insurance",
+          "Scheduled appointments",
+          "Upsold in-house MRI services",
+          "Flexible support at Orthopedic office"
+        ],
+        "employment_type": "Hourly position changed to salary",
+        "supervisor": "Steve Mayworm, Office Administrator"
+      },
+      {
+        "employer": "Family Medicine",
+        "position": "Secretary for Family Physicians",
+        "period": "1998-1999",
+        "duties": [
+          "Scheduling patient appointments",
+          "Reconciling insurance issues",
+          "Filing",
+          "Confirming insurance plans",
+          "Taking co-payments",
+          "Processing referrals",
+          "Calling in prescriptions",
+          "Assisting with insurance correspondence",
+          "Chart analysis and submissions"
+        ],
+        "supervisor": "Kim Case"
+      },
+      {
+        "employer": "Northwest Oncology and Hematology",
+        "position": "File Clerk and Secretary",
+        "period": "1995-1998",
+        "duties": [
+          "Scheduling patient appointments",
+          "Verifying insurance",
+          "Processing referrals",
+          "Customer service for chemotherapy patients",
+          "Medical Records management",
+          "Secretary for Dr. Grad and Dr. Bank",
+          "Multi-location support"
+        ],
+        "supervisor": "Jan Schneider"
+      },
+      {
+        "employer": "Osco Pharmacy",
+        "position": "Certified Pharmacy Technician",
+        "period": "1996",
+        "duties": [
+          "Intake and check-out",
+          "Stock medications",
+          "Inventory management",
+          "Verify and call doctors' offices",
+          "Answer phones",
+          "Customer service",
+          "Flexible support during high-volume periods"
+        ]
+      }
+    ],
+    "realEstate": [
+      {
+        "employer": "Vylla",
+        "address": "Corporate Address Required",
+        "position": "Admin for Central & Eastern Coast AVPs",
+        "period": "February 2024 - Present",
+        "hours": "40 hrs/wk",
+        "duties": [
+          "Provide administrative support for 3 AVPs covering 14 states",
+          "Selected for pilot program supporting 30 new agents during initial 2-3 months via email, text, Teams",
+          "Implement and manage agent support systems (Broker Kit, Monday.com) for onboarding, license transfers, system access, and training coordination",
+          "Collaborated and implemented streamlined phone system (Phone.com) for 160 NY agents, reducing AVP call volume 70%",
+          "Developed and managed agent retention initiative (birthday emails/social media)"
+        ],
+        "supervisor": "William Thompson, Regional Vice President",
+        "mayContact": true
+      },
+      {
+        "employer": "Vylla",
+        "address": "Corporate Address Required",
+        "position": "Licensed Managing Broker (IL & WI) / Team Leader, The R.I.G.H.T. Team",
+        "period": "November 2022 - Present",
+        "hours": "40 hrs/wk",
+        "employmentType": "Wage/1099 & Commission potential",
+        "duties": [
+          "Lead and manage a team of 4 real estate agents serving IL & WI",
+          "Oversee full lifecycle of REO/HUD properties",
+          "Specializing in rural, estate, farmettes, and resort properties",
+          "Marketing expertise",
+          "Short sales",
+          "Managing various property types"
+        ],
+        "achievements": [
+          "Achieved $25M sales volume"
+        ],
+        "supervisor": "William Thompson, Regional Vice President",
+        "mayContact": true
+      },
+      {
+        "employer": "GenStone Realty",
+        "address": "Corporate Address Required",
+        "position": "Supervising Broker for Illinois & Wisconsin",
+        "period": "October 2021 - December 2022",
+        "hours": "40 hrs/wk",
+        "employmentType": "Wage/1099 & Commission potential",
+        "duties": [
+          "Oversaw bi-state brokerage operations",
+          "Managed residential sales, REO transactions (incl. evictions/CFK)",
+          "Supported rental property acquisition (Milwaukee)",
+          "Board of Directors for Lakes Area Realtors"
+        ],
+        "achievements": [
+          "Locally supervised hundreds of purchase offers and transactions"
+        ],
+        "supervisor": "William Thompson, Regional Vice President",
+        "mayContact": true
+      },
+      {
+        "employer": "Better Homes and Gardens Real Estate Star Homes",
+        "address": "4817 W. Elm St., McHenry, IL 60050",
+        "position": "Designated Managing Broker (IL & WI)",
+        "period": "October 2017 - October 2021",
+        "hours": "40 hrs/wk",
+        "employmentType": "Wage/1099 & Commission potential",
+        "duties": [
+          "Managed brokerage operations",
+          "Supervised a team of 9 real estate agents in the McHenry office",
+          "Board of Directors for Heartland Realtor Organization"
+        ]
+      },
+      {
+        "employer": "O.K. & Assoc., Realty Plus",
+        "address": "McHenry County, IL Area",
+        "position": "Owner / Partner / Real Estate Agent (IL)",
+        "period": "October 2008 - October 2017",
+        "hours": "40 hrs/wk",
+        "employmentType": "Commission-based",
+        "duties": [
+          "Co-owned and operated brokerage",
+          "Managed properties",
+          "Served clients",
+          "Rehabbed properties"
+        ],
+        "achievements": [
+          "Provided high-volume BPO services (~5,000 completed)"
+        ],
+        "supervisor": "Self-Employed/Partner",
+        "mayContact": true
+      },
+      {
+        "employer": "Washington Mutual",
+        "address": "McHenry, IL",
+        "position": "Personal Financial Representative",
+        "period": "April 2003 - October 2005",
+        "hours": "40 hrs/wk",
+        "duties": [
+          "Processed consumer/residential loans (IL State License held)",
+          "Set up new personal and business accounts",
+          "Utilized banker/teller skills",
+          "Top-tier customer service"
+        ],
+        "achievements": [
+          "Achieved President's Club (3 years)",
+          "Achieved Million Dollar Club (1 year)",
+          "Received Top 10 IL Sales recognition",
+          "Trained new hires"
+        ]
+      }
+    ],
+    "foodIndustry": [
+      {
+        "position": "Trainer/Manager",
+        "period": "Approximately 8 years",
+        "career_progression": [
+          "Started in fast food as crew member",
+          "Advanced to team leader",
+          "Promoted to shift manager",
+          "Transitioned to sit-down restaurant as prep cook",
+          "Learned front line cooking",
+          "Became a trainer",
+          "Conducted quality control",
+          "Trained wait staff, greeters",
+          "Learned bartending",
+          "Became Office Admin"
+        ],
+        "duties": [
+          "Checked out waitstaff",
+          "Reconciled cash, credit cards",
+          "Managed tip disbursements",
+          "End-of-night closing balance",
+          "Kitchen preparation and cleaning",
+          "Inventory assistance",
+          "Flexible support across positions"
+        ]
+      }
+    ]
+  },
+  "volunteerWork": [
+    {
+      "organization": "Home of the Sparrow",
+      "activities": [
+        "Provided childcare support (nights/days) for residents"
+      ]
+    },
+    {
+      "organization": "Habitat for Humanity",
+      "location": "Crystal Lake & Woodstock",
+      "activities": [
+        "Assisted with building homes"
+      ]
+    },
+    {
+      "organization": "Willow Creek",
+      "year": "2018",
+      "position": "Free Eye and Dental care clinic",
+      "duties": [
+        "Scheduling patients",
+        "Collecting co-payments for procedures",
+        "Inventorying new prescription glasses"
+      ]
+    },
+    {
+      "while": "Working as a Real Estate Agent",
+      "activities": [
+        "Coat Drives",
+        "Bell Ringing",
+        "Toys for Tots",
+        "Driving people to stores for prescriptions and food",
+        "Helping with real estate tax reassessments"
+      ]
+    }
+  ],
+  "awards": [
+    {
+      "title": "President's Club",
+      "organization": "Washington Mutual",
+      "period": "3 years",
+      "notes": "Recognition for exceptional sales performance"
+    },
+    {
+      "title": "Million Dollar Club",
+      "organization": "Washington Mutual",
+      "period": "1 year",
+      "notes": "Achieved million-dollar sales threshold"
+    },
+    {
+      "title": "Top 10 Illinois Sales",
+      "organization": "Washington Mutual",
+      "notes": "Recognized among top performers in the state"
+    },
+    {
+      "title": "Sales Volume Achievement",
+      "organization": "Vylla - The R.I.G.H.T. Team",
+      "achievement": "$25M sales volume",
+      "period": "November 2022 - Present"
+    },
+    {
+      "title": "Call Volume Reduction",
+      "organization": "Vylla",
+      "achievement": "70% reduction in AVP call volume",
+      "description": "Implemented streamlined phone system (Phone.com) for 160 NY agents"
+    },
+    {
+      "title": "BPO Service Achievement",
+      "organization": "O.K. & Assoc., Realty Plus",
+      "achievement": "Completed approximately 5,000 Broker Price Opinions",
+      "period": "2008-2017"
+    },
+    {
+      "title": "Transaction Supervision",
+      "organization": "GenStone Realty",
+      "achievement": "Supervised hundreds of purchase offers and transactions",
+      "period": "October 2021 - December 2022"
+    }
+  ],
   "cvTypes": {
     "federal": {
       "requirements": ["detailed work history", "specific dates", "hours worked", "salary", "supervisor contacts"],
-      "format": "USAJOBS format"
+      "format": "USAJOBS format",
+      "emphasizedExperience": [
+        "healthcare.0",
+        "healthcare.1", 
+        "healthcare.2",
+        "healthcare.3",
+        "healthcare.4",
+        "healthcare.5"
+      ],
+      "additionalDetails": {
+        "citizenship": true,
+        "veteranStatus": false,
+        "securityClearance": false
+      }
     },
     "state": {
       "requirements": ["state-specific format", "detailed experience", "education details"],
-      "format": "Illinois State format"
+      "format": "Illinois State format",
+      "emphasizedExperience": [
+        "healthcare.0",
+        "healthcare.2",
+        "realEstate.0", 
+        "realEstate.1",
+        "realEstate.2"
+      ],
+      "additionalDetails": {
+        "stateSpecificLicenses": ["Real Estate License - Illinois", "Real Estate License - Wisconsin"],
+        "boardMemberships": ["Lakes Area Realtors", "Heartland Realtor Organization"]
+      }
     },
     "private": {
       "requirements": ["concise", "achievement-focused", "skills-oriented"],
-      "format": "Modern professional format"
+      "format": "Modern professional format",
+      "emphasizedExperience": [
+        "realEstate.0",
+        "realEstate.2",
+        "healthcare.2"
+      ],
+      "highlights": [
+        "Over 40 years in customer service",
+        "20 years in real estate",
+        "Multiple leadership positions",
+        "Experience managing teams across states",
+        "Strong administrative and organizational skills"
+      ]
     }
   }
 }
