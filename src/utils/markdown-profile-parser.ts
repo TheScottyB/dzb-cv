@@ -37,12 +37,12 @@ export class MarkdownProfileParser {
     const projects = this.parseVolunteerExperience();
     
     // Log found items for debugging
-    console.log(`Found ${experience.length} work experiences`);
-    console.log(`Found ${skills.length} skills`);
-    console.log(`Found ${education.length} education entries`);
-    console.log(`Found ${certifications.length} certifications`);
-    console.log(`Found ${projects.length} project/volunteer entries`);
-
+    // Log found items for debugging
+    console.log("Found " + experience.length + " work experiences");
+    console.log("Found " + skills.length + " skills");
+    console.log("Found " + education.length + " education entries");
+    console.log("Found " + certifications.length + " certifications");
+    console.log("Found " + projects.length + " project/volunteer entries");
     // Return the complete ProfileData
     return {
       basicInfo,
@@ -77,7 +77,7 @@ export class MarkdownProfileParser {
       const line = this.lines[i].trim();
       if (sectionHeadings.includes(line)) {
         sectionStartIndices.push({ heading: line, index: i });
-        console.log(`Found section: ${line} at line ${i}`);
+        console.log("Found section: " + line + " at line " + i);
       }
     }
 
@@ -94,14 +94,14 @@ export class MarkdownProfileParser {
           
           if (line.includes(plainHeading)) {
             sectionStartIndices.push({ heading, index: i });
-            console.log(`Found section (flexible match): ${heading} at line ${i}`);
+            console.log("Found section (flexible match): " + heading + " at line " + i);
             break;
           }
         }
       }
     }
 
-    console.log(`Found ${sectionStartIndices.length} sections in CV`);
+    console.log("Found " + sectionStartIndices.length + " sections in CV");
 
     // Calculate the end index for each section (start of next section - 1)
     for (let i = 0; i < sectionStartIndices.length; i++) {
@@ -130,9 +130,12 @@ export class MarkdownProfileParser {
       return [];
     }
     
-    return this.lines.slice(section.startIndex + 1, section.endIndex + 1);
+    const sectionLines = this.lines.slice(section.startIndex + 1, section.endIndex + 1);
+    console.log("Section \"" + sectionHeading + "\" contains " + sectionLines.length + " lines");
+    console.log("First few lines: " + sectionLines.slice(0, 3).map(l => "\"" + l + "\"").join(", "));
+    
+    return sectionLines;
   }
-
   /**
    * Parse skills from the SUMMARY OF SKILLS section
    */
@@ -145,75 +148,100 @@ export class MarkdownProfileParser {
       return skills;
     }
 
-    console.log(`Found skills section with ${skillsSection.length} lines`);
+    console.log("Found skills section with " + skillsSection.length + " lines");
+    console.log("RAW SKILLS SECTION:");
+    skillsSection.forEach((line, i) => console.log("[" + i + "]: " + line));
 
     // Track the current category
-    let currentCategory = '';
+    let currentCategory = 'Uncategorized';
 
-    for (const line of skillsSection) {
-      const trimmedLine = line.trim();
-      
-      // Skip empty lines
-      if (!trimmedLine) continue;
-      
-      // Debug output
-      console.log(`Processing skills line: ${trimmedLine.substring(0, 50)}...`);
-      
-      // Category pattern: * **Category:** Skills, Skills, Skills
-      if (trimmedLine.includes('**') && trimmedLine.includes(':')) {
-        // Extract category - handle various formats
-        let categoryMatch = trimmedLine.match(/\* \*\*(.*?):\*\*/);
-        if (!categoryMatch) {
-          categoryMatch = trimmedLine.match(/\*\*(.*?):\*\*/);
-        }
+    try {
+      // Extract skills directly for Dawn's specific categories
+      for (const line of skillsSection) {
+        if (!line) continue;
         
-        if (categoryMatch) {
-          currentCategory = categoryMatch[1].trim();
-          console.log(`Found skill category: ${currentCategory}`);
+        const trimmedLine = line.trim();
+        if (!trimmedLine) continue;
+        
+        // Management & Leadership skills
+        if (trimmedLine.includes('Management & Leadership:')) {
+          currentCategory = 'Management & Leadership';
+          console.log("Found Management & Leadership skills");
           
-          // Extract skills list after the category
-          let skillsText = '';
-          
-          if (trimmedLine.includes(':')) {
-            skillsText = trimmedLine.substring(trimmedLine.indexOf(':') + 1).trim();
+          // Get text after colon
+          const colonIndex = trimmedLine.indexOf(':');
+          if (colonIndex >= 0) {
+            const skillsText = trimmedLine.substring(colonIndex + 1).trim();
+            this.extractSkillsFromText(skillsText, currentCategory, skills);
           }
+        } 
+        // Real Estate Operations skills
+        else if (trimmedLine.includes('Real Estate Operations:')) {
+          currentCategory = 'Real Estate Operations';
+          console.log("Found Real Estate Operations skills");
           
-          // Process skills - handle comma or bullet point separation
-          const skillsList = skillsText.split(/,|•/).map(s => s.trim().replace(/\*/g, ''));
-          console.log(`Found ${skillsList.length} skills in category`);
+          const colonIndex = trimmedLine.indexOf(':');
+          if (colonIndex >= 0) {
+            const skillsText = trimmedLine.substring(colonIndex + 1).trim();
+            this.extractSkillsFromText(skillsText, currentCategory, skills);
+          }
+        }
+        // Healthcare Administration skills
+        else if (trimmedLine.includes('Healthcare Administration:')) {
+          currentCategory = 'Healthcare Administration';
+          console.log("Found Healthcare Administration skills");
           
-          // Add each skill
-          for (const skillText of skillsList) {
-            if (skillText) {
-              skills.push({
-                id: uuidv4(),
-                name: skillText,
-                level: 'advanced', // Default level since not specified
-                category: currentCategory,
-                yearsOfExperience: 0 // Not specified in CV
-              });
-              console.log(`Added skill: ${skillText} (${currentCategory})`);
-            }
+          const colonIndex = trimmedLine.indexOf(':');
+          if (colonIndex >= 0) {
+            const skillsText = trimmedLine.substring(colonIndex + 1).trim();
+            this.extractSkillsFromText(skillsText, currentCategory, skills);
+          }
+        }
+        // Administration & Technical skills
+        else if (trimmedLine.includes('Administration & Technical:')) {
+          currentCategory = 'Administration & Technical';
+          console.log("Found Administration & Technical skills");
+          
+          const colonIndex = trimmedLine.indexOf(':');
+          if (colonIndex >= 0) {
+            const skillsText = trimmedLine.substring(colonIndex + 1).trim();
+            this.extractSkillsFromText(skillsText, currentCategory, skills);
           }
         }
       }
-      // Also check for standalone skill lines that might be bullet points
-      else if (trimmedLine.startsWith('*') && currentCategory) {
-        const skillText = trimmedLine.replace(/^\* /, '').trim().replace(/\*/g, '');
-        if (skillText) {
-          skills.push({
-            id: uuidv4(),
-            name: skillText,
-            level: 'advanced',
-            category: currentCategory,
-            yearsOfExperience: 0
-          });
-          console.log(`Added skill (from bullet): ${skillText} (${currentCategory})`);
-        }
-      }
+    } catch (error) {
+      console.error("Error parsing skills section:", error);
     }
     
+    console.log("Extracted " + skills.length + " skills in total");
     return skills;
+  }
+  
+  /**
+   * Helper to extract skills from text
+   */
+  private extractSkillsFromText(text: string, category: string, skills: SkillEntry[]): void {
+    if (!text) return;
+    
+    // First remove markdown
+    const cleanText = text.replace(/\*\*/g, '').replace(/\*/g, '');
+    
+    // Split by commas
+    const skillItems = cleanText.split(/,/).map(s => s.trim()).filter(Boolean);
+    console.log("Found " + skillItems.length + " skills in category: " + category);
+    
+    for (const skillName of skillItems) {
+      if (skillName && skillName.length > 2) {
+        console.log("Adding skill: " + skillName);
+        skills.push({
+          id: uuidv4(),
+          name: skillName,
+          level: 'advanced',
+          category,
+          yearsOfExperience: 0
+        });
+      }
+    }
   }
 
   /**
@@ -285,11 +313,6 @@ export class MarkdownProfileParser {
 
     return basicInfo;
   }
-
-  /**
-   * Parse work experience entries
-   */
-
   /**
    * Parse work experience entries
    */
@@ -298,8 +321,11 @@ export class MarkdownProfileParser {
     const workSection = this.getSectionLines('**WORK EXPERIENCE**');
     
     if (workSection.length === 0) {
+      console.log("No WORK EXPERIENCE section found.");
       return experience;
     }
+    
+    workSection.slice(0, 10).forEach((line, i) => console.log("[" + i + "]: " + line));
 
     let currentCompany: string | null = null;
     let currentLocation: string | null = null;
@@ -309,19 +335,44 @@ export class MarkdownProfileParser {
     let currentEndDate: string | null = null;
     let currentAchievements: string[] = [];
 
-    // Process lines to build complete experience entries
-    for (let i = 0; i < workSection.length; i++) {
-      const line = workSection[i].trim();
+    // Process each line in the work section
+    for (const line of workSection) {
+      const trimmedLine = line.trim();
       
       // Skip empty lines
-      if (!line) continue;
+      if (!trimmedLine) continue;
       
-      // Company name (bold format)
-      if (line.startsWith('**') && line.endsWith('**') && !line.includes('SUMMARY') && !line.includes('WORK EXPERIENCE')) {
-        // If we were processing a company, save it first
-        if (currentCompany && currentPosition) {
-          this.addExperienceEntry(experience, currentCompany, currentPosition, currentLocation, 
-            currentSupervisor, currentStartDate, currentEndDate, currentAchievements);
+      // Try to find a company name (bold format)
+      // Dawn's CV has company names in bold: "**Company**"
+      if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**') && 
+          !trimmedLine.includes('SUMMARY') && !trimmedLine.includes('WORK EXPERIENCE')) {
+        
+        // If we were processing a company with enough details to make a valid entry, save it
+        if (currentCompany && currentPosition && currentStartDate) {
+          console.log("Saving work experience: " + currentPosition + " at " + currentCompany + 
+                       " (" + currentStartDate + " to " + (currentEndDate || 'Present') + ")");
+          
+          // Parse dates
+          const startDate = currentStartDate ? this.parseDate(currentStartDate) : new Date();
+          let endDate = null;
+          if (currentEndDate && currentEndDate !== 'Present') {
+            endDate = this.parseDate(currentEndDate);
+          }
+          
+          // Add the experience entry
+          experience.push({
+            id: uuidv4(),
+            company: currentCompany,
+            title: currentPosition,
+            startDate,
+            endDate,
+            location: currentLocation || '',
+            description: currentSupervisor || '',
+            achievements: currentAchievements,
+            technologies: [] // No specific technologies mentioned in CV
+          });
+          
+          console.log("Added work experience: " + currentPosition + " at " + currentCompany);
           
           // Reset for new company
           currentLocation = null;
@@ -332,89 +383,89 @@ export class MarkdownProfileParser {
           currentAchievements = [];
         }
         
-        currentCompany = line.replace(/\*\*/g, '').trim();
+        // Set the new company
+        currentCompany = trimmedLine.replace(/\*\*/g, '').trim();
+        console.log("Processing company: " + currentCompany);
         continue;
       }
       
       // Company location (line after company name)
-      if (currentCompany && !currentLocation && !line.startsWith('*') && !line.startsWith('Supervisor:')) {
-        currentLocation = line;
+      if (currentCompany && !currentLocation && !trimmedLine.startsWith('*') && !trimmedLine.startsWith('Supervisor:')) {
+        currentLocation = trimmedLine;
+        console.log("Found location: " + currentLocation);
         continue;
       }
       
       // Supervisor info
-      if (line.startsWith('Supervisor:')) {
-        currentSupervisor = line;
+      if (trimmedLine.startsWith('Supervisor:')) {
+        currentSupervisor = trimmedLine;
+        console.log("Found supervisor: " + currentSupervisor);
         continue;
       }
       
-      // Position title (in italics)
-      if (line.startsWith('*') && line.endsWith('*') && !line.includes('**') && 
-          !line.includes('*Salary*') && !line.includes('*Grade*')) {
-        currentPosition = line.replace(/\*/g, '').trim();
+      // Position title in Dawn's CV is in italics: "*Position*"
+      if (trimmedLine.startsWith('*') && trimmedLine.endsWith('*') && 
+          !trimmedLine.includes('**') && 
+          !trimmedLine.includes('Salary') && !trimmedLine.includes('Grade')) {
+        currentPosition = trimmedLine.replace(/\*/g, '').trim();
+        console.log("Found position: " + currentPosition);
         continue;
       }
       
-      // Date range
-      const dateMatch = line.match(/(January|February|March|April|May|June|July|August|September|October|November|December) (\d{4}) - (Present|January|February|March|April|May|June|July|August|September|October|November|December) ?(\d{4})?/);
+      // Date range - Dawn's format: "Month YYYY - Present" or "Month YYYY - Month YYYY"
+      // The hyphen is escaped with \ in markdown
+      const datePattern = /(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})\s*\\?-\s*(Present|January|February|March|April|May|June|July|August|September|October|November|December)?\s*(\d{4})?\s*/i;
+      const dateMatch = trimmedLine.match(datePattern);
       if (dateMatch) {
-        currentStartDate = `${dateMatch[1]} ${dateMatch[2]}`;
-        currentEndDate = dateMatch[3] === 'Present' ? 'Present' : `${dateMatch[3]} ${dateMatch[4] || ''}`.trim();
+        currentStartDate = dateMatch[1] + " " + dateMatch[2];
+        currentEndDate = dateMatch[3] === 'Present' ? 'Present' : (dateMatch[3] + " " + (dateMatch[4] || '')).trim();
+        console.log("Found date range: " + currentStartDate + " to " + currentEndDate);
         continue;
       }
       
       // Skip hours and salary/grade lines
-      if (line.includes('hours per week') || line.includes('*Salary:') || line.includes('*Grade')) {
+      if (trimmedLine.includes('hours per week') || trimmedLine.includes('Salary:') || trimmedLine.includes('Grade')) {
         continue;
       }
       
-      // Achievement bullet points
-      if (line.startsWith('*') && !line.startsWith('**')) {
-        currentAchievements.push(line.replace(/^\* /, '').trim());
-        continue;
+      // Achievement bullet points in Dawn's CV
+      if (trimmedLine.startsWith('*') && !trimmedLine.startsWith('**') && 
+          !trimmedLine.includes('Salary') && !trimmedLine.includes('Grade')) {
+        const achievement = trimmedLine.replace(/^\* /, '').trim();
+        console.log("Found achievement: " + achievement.substring(0, 30) + "...");
+        currentAchievements.push(achievement);
       }
     }
     
-    // Add the last company if it exists
-    if (currentCompany && currentPosition) {
-      this.addExperienceEntry(experience, currentCompany, currentPosition, currentLocation, 
-        currentSupervisor, currentStartDate, currentEndDate, currentAchievements);
+    // Add the last company if it exists with enough details
+    if (currentCompany && currentPosition && currentStartDate) {
+      console.log("Saving final work experience: " + currentPosition + " at " + currentCompany);
+      
+      // Parse dates
+      const startDate = currentStartDate ? this.parseDate(currentStartDate) : new Date();
+      let endDate = null;
+      if (currentEndDate && currentEndDate !== 'Present') {
+        endDate = this.parseDate(currentEndDate);
+      }
+      
+      // Add the experience entry
+      experience.push({
+        id: uuidv4(),
+        company: currentCompany,
+        title: currentPosition,
+        startDate,
+        endDate,
+        location: currentLocation || '',
+        description: currentSupervisor || '',
+        achievements: currentAchievements,
+        technologies: [] // No specific technologies mentioned in CV
+      });
+      
+      console.log("Added final work experience: " + currentPosition + " at " + currentCompany);
     }
-
+    
+    console.log("Extracted " + experience.length + " work experiences in total");
     return experience;
-  }
-
-  /**
-   * Helper to add an experience entry from parsed data
-   */
-  private addExperienceEntry(
-    experience: ExperienceEntry[], 
-    company: string, 
-    position: string, 
-    location: string | null, 
-    supervisor: string | null,
-    startDateStr: string | null, 
-    endDateStr: string | null, 
-    achievements: string[]
-  ) {
-    // Parse dates
-    const startDate = startDateStr ? this.parseDate(startDateStr) : new Date();
-    let endDate = null;
-    if (endDateStr && endDateStr !== 'Present') {
-      endDate = this.parseDate(endDateStr);
-    }
-
-    experience.push({
-      id: uuidv4(),
-      company,
-      title: position,
-      startDate,
-      endDate,
-      location: location || '',
-      description: supervisor || '',
-      achievements,
-      technologies: [] // No specific technologies mentioned in CV
-    });
   }
 
   /**
@@ -425,9 +476,13 @@ export class MarkdownProfileParser {
     const educationSection = this.getSectionLines('**EDUCATION**');
     
     if (educationSection.length === 0) {
+      console.log("No EDUCATION section found.");
       return education;
     }
-
+    
+    console.log("RAW EDUCATION SECTION:");
+    educationSection.forEach((line, i) => console.log("[" + i + "]: " + line));
+    
     let currentFieldOfStudy = '';
     let currentInstitution = '';
     let currentCompletionYear = '';
@@ -435,33 +490,51 @@ export class MarkdownProfileParser {
     for (let i = 0; i < educationSection.length; i++) {
       const line = educationSection[i].trim();
       
-      // Field of study pattern: * **Coursework:** Field
+      // Field of study pattern in Dawn's CV: * **Coursework:** Subject
       if (line.startsWith('* **') && line.includes(':**')) {
+        // If we were processing an education entry, save it first
         if (currentFieldOfStudy && currentInstitution) {
-          // Add previous entry if we're starting a new one
-          this.addEducationEntry(education, currentFieldOfStudy, currentInstitution, currentCompletionYear);
+          console.log("Saving education entry: " + currentFieldOfStudy + " at " + currentInstitution);
+          education.push({
+            id: uuidv4(),
+            institution: currentInstitution,
+            degree: 'Certificate', // Default since specific degree not provided
+            fieldOfStudy: currentFieldOfStudy,
+            startDate: new Date(parseInt(currentCompletionYear || '2000') - 1, 0, 1), // Year before completion
+            endDate: currentCompletionYear ? new Date(parseInt(currentCompletionYear), 11, 31) : null,
+            gpa: null, // Not specified in CV
+            activities: [],
+            achievements: []
+          });
+          console.log("Added education entry: " + currentFieldOfStudy + " at " + currentInstitution);
+          
+          // Reset for next entry
           currentInstitution = '';
           currentCompletionYear = '';
         }
         
+        // Extract field of study from the current line
         const fieldMatch = line.match(/\* \*\*(.*?):\*\*/);
         if (fieldMatch) {
           currentFieldOfStudy = fieldMatch[1].trim();
+          console.log("Found field of study: " + currentFieldOfStudy);
         }
         continue;
       }
       
-      // Institution line (follows field of study)
-      if (line.startsWith('    * ')) {
+      // Institution line (indented bullet after field of study)
+      if (line.startsWith('    *')) {
         currentInstitution = line.replace(/^\s*\* /, '').trim();
+        console.log("Found institution: " + currentInstitution);
         continue;
       }
       
-      // Completion year
+      // Completion year - Dawn's format: "Completed: YYYY"
       if (line.includes('Completed:')) {
         const yearMatch = line.match(/Completed: (\d{4})/);
         if (yearMatch) {
           currentCompletionYear = yearMatch[1];
+          console.log("Found completion year: " + currentCompletionYear);
         }
         continue;
       }
@@ -469,12 +542,24 @@ export class MarkdownProfileParser {
     
     // Add the last entry if it exists
     if (currentFieldOfStudy && currentInstitution) {
-      this.addEducationEntry(education, currentFieldOfStudy, currentInstitution, currentCompletionYear);
+      console.log("Saving final education entry: " + currentFieldOfStudy + " at " + currentInstitution);
+      education.push({
+        id: uuidv4(),
+        institution: currentInstitution,
+        degree: 'Certificate', // Default since specific degree not provided
+        fieldOfStudy: currentFieldOfStudy,
+        startDate: new Date(parseInt(currentCompletionYear || '2000') - 1, 0, 1), // Year before completion
+        endDate: currentCompletionYear ? new Date(parseInt(currentCompletionYear), 11, 31) : null,
+        gpa: null, // Not specified in CV
+        activities: [],
+        achievements: []
+      });
+      console.log("Added final education entry: " + currentFieldOfStudy + " at " + currentInstitution);
     }
-
+    
+    console.log("Extracted " + education.length + " education entries in total");
     return education;
   }
-
   /**
    * Helper to add an education entry from parsed data
    */
@@ -504,7 +589,7 @@ export class MarkdownProfileParser {
       achievements: []
     });
   }
-
+  
   /**
    * Parse certifications and licenses
    */
@@ -513,9 +598,12 @@ export class MarkdownProfileParser {
     const certSection = this.getSectionLines('**CERTIFICATIONS & LICENSES**');
     
     if (certSection.length === 0) {
+      console.log("No CERTIFICATIONS & LICENSES section found.");
       return certifications;
     }
-
+    
+    console.log("RAW CERTIFICATIONS SECTION - First few lines:");
+    certSection.slice(0, 5).forEach((line, i) => console.log("[" + i + "]: " + line));
     for (let i = 0; i < certSection.length; i++) {
       const line = certSection[i].trim();
       
@@ -526,15 +614,20 @@ export class MarkdownProfileParser {
       if (line.startsWith('* **')) {
         // Extract certification name
         const nameMatch = line.match(/\* \*\*(.*?)[,\*]/);
-        if (!nameMatch) continue;
+        if (!nameMatch) {
+          console.log("Couldn't extract certification name from: " + line);
+          continue;
+        }
         
         const name = nameMatch[1].trim();
+        console.log("Found certification: " + name);
         
         // Extract issuer if available on the same line
         let issuer = '';
         const issuerMatch = line.match(/\((.*?)\)/);
         if (issuerMatch) {
           issuer = issuerMatch[1].trim();
+          console.log("Found issuer: " + issuer);
         }
         
         // Look for date information in subsequent lines
@@ -552,6 +645,7 @@ export class MarkdownProfileParser {
           
           // Look for issue dates
           if (dateLine.includes('Issued:') || dateLine.includes('Held:')) {
+            console.log("Found date line: " + dateLine);
             const dateRangeMatch = dateLine.match(/(Issued|Held): (.*?) ?[-–] ?(Current|\d{4})/);
             if (dateRangeMatch) {
               // Parse start date
@@ -559,12 +653,14 @@ export class MarkdownProfileParser {
               const startYearMatch = startDateStr.match(/\d{4}/);
               if (startYearMatch) {
                 dateObtained = new Date(parseInt(startYearMatch[0]), 0, 1); // January 1st of year
+                console.log("Set date obtained to: " + dateObtained.toISOString());
               }
               
               // If there's an end date that's not "Current"
               if (dateRangeMatch[3] && dateRangeMatch[3] !== 'Current') {
                 const endYear = parseInt(dateRangeMatch[3]);
                 expirationDate = new Date(endYear, 11, 31); // December 31st of year
+                console.log("Set expiration date to: " + expirationDate.toISOString());
               }
             }
           }
@@ -580,9 +676,11 @@ export class MarkdownProfileParser {
           credentialId,
           credentialURL
         });
+        console.log("Added certification: " + name + " (" + (issuer || 'Unknown') + ")");
       }
     }
     
+    console.log("Extracted " + certifications.length + " certifications in total");
     return certifications;
   }
 
@@ -677,8 +775,8 @@ export class MarkdownProfileParser {
   ) {
     // Create description from role and location
     const description = [
-      role ? `Role: ${role}` : '',
-      location ? `Location: ${location}` : ''
+      role ? ("Role: " + role) : '',
+      location ? ("Location: " + location) : ''
     ].filter(Boolean).join(', ');
     
     // Parse dates if available
