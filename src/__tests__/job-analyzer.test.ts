@@ -86,8 +86,8 @@ describe('Job Analyzer', () => {
     expect(result.keyTerms).toContain('react');
     
     // Verify source information
-    expect(result.source.url).toBe('https://example.com/job/12345');
-    expect(result.source.site).toBe('example.com');
-    expect(result.source.fetchDate).toBeInstanceOf(Date);
+    expect(result.sourceUrl).toBe('https://example.com/job/12345');
+    expect(result.sourceSite).toBe('example.com');
+    expect(result.analyzedAt).toBeTruthy();
   });
 });

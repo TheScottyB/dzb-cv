@@ -1,36 +1,6 @@
-export interface WorkExperience {
-  company: string;
-  position: string;
-  startDate: string;
-  endDate: string | 'Present';
-  description: string;
-  achievements: string[];
-  location?: string;
-  hoursPerWeek?: number; // For federal applications
-  salary?: string; // For federal applications
-  supervisor?: {
-    name: string;
-    contact?: string;
-  };
-}
-
-export interface Education {
-  institution: string;
-  degree: string;
-  field: string;
-  startDate: string;
-  endDate: string | 'Present';
-  location?: string;
-  achievements?: string[];
-  gpa?: number;
-}
-
-export interface Skill {
-  name: string;
-  level?: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
-  years?: number;
-}
-
+/**
+ * Core CV data structure
+ */
 export interface CVData {
   personalInfo: {
     name: {
@@ -42,85 +12,216 @@ export interface CVData {
       phone: string;
       address?: string;
     };
+    citizenship?: string;
   };
-  profiles: {
+  profiles?: {
     linkedIn?: string;
     github?: string;
+    twitter?: string;
     website?: string;
-    other?: Record<string, string>;
+    [key: string]: string | undefined;
   };
-  summary?: string;
-  workExperience?: WorkExperience[];
-  education?: Education[];
-  skills?: Skill[];
-  certifications?: {
-    name: string;
-    issuer: string;
-    date: string;
-    expiryDate?: string;
-  }[];
-  languages?: {
-    language: string;
-    proficiency: string;
-  }[];
-  awards?: {
-    name: string;
-    issuer: string;
-    date: string;
+  professionalSummary?: string;
+  education?: Array<{
+    certification?: string;
+    institution?: string;
+    year?: string;
+    field?: string;
+    degree_type?: string;
+    completion_date?: string;
+    status?: string;
+    notes?: string;
+  }>;
+  skills?: {
+    technical?: string[];
+    managementAndLeadership?: string[];
+    realEstateOperations?: string[];
+    healthcareAdministration?: string[];
+    certifications?: string[];
+    realEstateCertifications?: string[];
+    leadership?: string[];
+    [key: string]: string[] | undefined;
+  };
+  professionalAffiliations?: Array<{
+    organization: string;
+    roles?: string[];
+    activities?: string[];
+  }>;
+  workExperience?: {
+    healthcare?: Experience[];
+    realEstate?: Experience[];
+    foodIndustry?: Experience[];
+    [key: string]: Experience[] | undefined;
+  };
+  volunteerWork?: Array<{
+    organization?: string;
+    year?: string;
+    position?: string;
+    duties?: string[];
+    activities?: string[];
+    location?: string;
+    while?: string;
+  }>;
+  awards?: Array<{
+    title: string;
+    organization?: string;
+    period?: string;
+    notes?: string;
+    achievement?: string;
     description?: string;
-  }[];
-  cvTypes: {
-    federal: {
-      requirements: string[];
-      format: string;
-    };
-    state: {
-      requirements: string[];
-      format: string;
-    };
-    private: {
-      requirements: string[];
-      format: string;
-    };
+  }>;
+  cvTypes?: {
+    federal?: CVTypeConfiguration;
+    state?: CVTypeConfiguration;
+    private?: CVTypeConfiguration;
+    [key: string]: CVTypeConfiguration | undefined;
   };
 }
 
 /**
- * Information about a salary range from a job posting
+ * Experience entry structure for work history
  */
-export interface SalaryRange {
-  min?: number;
-  max?: number;
-  currency?: string;
-  period?: string; // yearly, monthly, hourly
+export interface Experience {
+  employer: string;
+  position: string;
+  period: string;
+  address?: string;
+  location?: string;
+  duties?: string[];
+  hours?: string;
+  employment_type?: string;
+  employmentType?: string;
+  supervisor?: string;
+  mayContact?: boolean;
+  achievements?: string[];
+  grade_level?: string;
+  salary?: string;
+  career_progression?: string[];
 }
 
 /**
- * Source information for a job posting
+ * CV type-specific configuration
  */
-export interface JobSource {
+export interface CVTypeConfiguration {
+  requirements?: string[];
+  format?: string;
+  emphasizedExperience?: string[];
+  additionalDetails?: Record<string, unknown>;
+  highlights?: string[];
+}
+
+/**
+ * PDF generation options
+ */
+export interface PDFOptions {
+  paperSize: 'Letter' | 'A4' | 'Legal';
+  margins: {
+    top: number;
+    right: number;
+    bottom: number;
+    left: number;
+  };
+  fontFamily?: string;
+  fontSize?: number;
+  includeHeaderFooter?: boolean;
+  headerText?: string;
+  footerText?: string;
+  pdfTitle?: string;
+  pdfAuthor?: string;
+  pdfCreator?: string;
+  orientation?: 'portrait' | 'landscape';
+  cssStylesheet?: string;
+}
+
+/**
+ * Job posting analysis interfaces
+ */
+export interface JobPosting {
   url: string;
-  site: string; // LinkedIn, Indeed, etc.
-  fetchDate: Date;
+  title: string;
+  company: string;
+  location?: string;
+  description: string;
+  requirements?: string;
+  qualifications?: string;
+  responsibilities?: string;
+  datePosted?: string;
+  jobType?: string;
+  salary?: string;
+  source: string;
 }
 
-/**
- * Complete analysis of a job posting
- * Contains structured information extracted from job listings
- * that can be used to tailor CVs for specific applications
- */
 export interface JobPostingAnalysis {
   title: string;
   company: string;
   location?: string;
-  jobType?: string; // Full-time, part-time, contract, etc.
+  jobType?: string;
   experienceLevel?: string;
-  requiredSkills: string[];
-  desiredSkills?: string[];
   responsibilities: string[];
   qualifications: string[];
   educationRequirements?: string[];
-  keyTerms: string[]; // Important terms/keywords from the job posting
-  source: JobSource;
-  salaryRange?: SalaryRange;
+  keyTerms: string[];
+  salaryRange?: {
+    min?: number;
+    max?: number;
+    period?: string;
+  };
+  sourceSite: string;
+  sourceUrl: string;
+  analyzedAt: string;
+}
+
+export interface JobAnalysisOptions {
+  skipRateLimiting?: boolean;
+  forceGenericParser?: boolean;
+  maxKeyTerms?: number;
+  includeEducation?: boolean;
+  detailedAnalysis?: boolean;
+}
+
+/**
+ * CV-Job matching types
+ */
+export interface CVMatchResult {
+  score: number;
+  matchedKeywords: string[];
+  missingKeywords: string[];
+  suggestedImprovements: string[];
+  matchedQualifications: string[];
+  matchedResponsibilities: string[];
+  overallMatch: 'high' | 'medium' | 'low';
+  jobAnalysis: JobPostingAnalysis;
+}
+
+/**
+ * Template rendering options
+ */
+export interface TemplateOptions {
+  includePersonalInfo?: boolean;
+  includeProfessionalSummary?: boolean;
+  includeEducation?: boolean;
+  includeSkills?: boolean;
+  includeExperience?: boolean;
+  includeVolunteerWork?: boolean;
+  includeAwards?: boolean;
+  includeAffiliations?: boolean;
+  customSections?: Array<{
+    title: string;
+    content: string;
+  }>;
+  experienceOrder?: string[];
+  experienceFilter?: (exp: Experience) => boolean;
+  customFooter?: string;
+  customHeader?: string;
+}
+
+/**
+ * CV Generation options for both markdown and PDF
+ */
+export interface CVGenerationOptions {
+  format: 'markdown' | 'pdf';
+  pdfOptions?: Partial<PDFOptions>;
+  filename?: string;
+  templateOptions?: TemplateOptions;
+  jobAnalysis?: JobPostingAnalysis;
 }
