@@ -1,6 +1,6 @@
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
-import { join, resolve, dirname } from 'path';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import * as os from 'os';
 
@@ -12,7 +12,6 @@ jest.mock('child_process', () => ({
 // Import the module after mocking
 import {
   validateAssetStructure,
-  ensureAssetStructure,
   getAssetTypeFromExtension,
   getAssetFormatFromExtension,
   createAssetMetadata,
@@ -184,21 +183,13 @@ jest.mock('fs/promises', () => {
 const mockExec = exec as jest.MockedFunction<typeof exec>;
 mockExec.mockImplementation((command, callback) => {
   console.log(`Mock exec: ${command}`);
-  
   if (typeof callback === 'function') {
-    // Call the callback with null error and mock stdout/stderr
-    callback(null, { stdout: '800 600', stderr: '' }, '');
+    callback(null, '800 600', ''); // Mock stdout and stderr
   }
-  
-  // Return a mock child process
   return {
     on: jest.fn(),
-    stdout: {
-      on: jest.fn()
-    },
-    stderr: {
-      on: jest.fn()
-    }
+    stdout: { on: jest.fn() },
+    stderr: { on: jest.fn() },
   } as any;
 });
 
@@ -212,6 +203,7 @@ describe('Asset Manager', () => {
   // Cleanup after each test
   afterEach(() => {
     jest.clearAllMocks();
+    jest.resetModules(); // Reset module registry to avoid shared state
   });
   
   //
@@ -253,10 +245,33 @@ describe('Asset Manager', () => {
       expect(result.path).toBe(outputPath);
       expect(result.reductionPercentage).toBeCloseTo(25, 0); // 25% reduction
     });
-lled();
+    
+    test('validateFile should return valid for existing file with correct extension', async () => {
+      const filePath = join(testDocumentsDir, 'sample-doc.pdf');
+      
+      // Mock stat to return success for this file
+      (fs.stat as jest.Mock).mockImplementation(async (path) => {
+        return {
+          isFile: () => true,
+          size: 12345,
+          mtime: new Date(),
+          birthtime: new Date(),
+        };
+      });
+      
+      const result = await validateFile(filePath, ['pdf', 'docx']);
+      
+      expect(result.valid).toBe(true);
+      expect(fs.stat).toHaveBeenCalled();
     });
     
     test('validateFile should return valid for existing file with correct extension', async () => {
+      const filePath = join(testDocumentsDir, 'sample-doc.pdf');
+      
+      // Mock stat to return success for this file
+      (fs.stat as jest.Mock).mockImplementation(async (path) => {
+        return {
+          isFile: () => true,
           size: 12345,
           mtime: new Date(),
           birthtime: new Date()
@@ -320,6 +335,7 @@ lled();
       
       expect(result.valid).toBe(false);
       expect(result.missingDirs.length).toBeGreaterThan(0);
+    });
     
     test('validateFile should return valid for existing file with correct extension', async () => {
       // Mock stat to return success for this file
@@ -491,42 +507,4 @@ lled();
     });
   });
 });
-  
-  describe('Image Processing', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
-    });
-    
-    test('resizeImage should execute correct ImageMagick command', async () => {
-      const inputPath = join(testImagesDir, 'sample-image.jpg');
-      const outputPath = join(testImagesDir, 'sample-image-resized.jpg');
-      
-      await resizeImage(inputPath, outputPath, 400, 300);
-      
-      // Check that exec was called with the correct magick command
-      expect(mockExec).toHaveBeenCalled();
-      const execCall = (mockExec as jest.Mock).mock.calls[0][0];
-      expect(execCall).toContain('magick');
-      expect(execCall).toContain('-resize 400x300');
-    });
-    
-    test('convertImageFormat should execute correct ImageMagick command', async () => {
-      const inputPath = join(testImagesDir, 'sample-image.jpg');
-      const outputPath = join(testImagesDir, 'sample-image.png');
-      
-      await convertImageFormat(inputPath, outputPath, 90);
-      
-      // Check that exec was called with the correct magick command
-      expect(mockExec).toHaveBeenCalled();
-      const execCall = (mockExec as jest.Mock).mock.calls[0][0];
-      expect(execCall).toContain('magick');
-      expect(execCall).toContain('-quality 90');
-    });
-    
-    test('optimizeImage should execute correct ImageMagick command', async () => {
-      const inputPath = join(testImagesDir, 'sample-image.jpg');
-      const outputPath = join(testImagesDir, 'sample-image-optimized.jpg');
-      
-      // Mock stat to return different sizes for before/after optimization
-      (fs.stat as jest
 
