@@ -151,6 +151,16 @@ async function fetchJobPostingHtml(url: string): Promise<string> {
 }
 
 /**
+ * Escapes special characters in a string for use in a regular expression
+ * 
+ * @param str The string to escape
+ * @returns A string with special regex characters escaped
+ */
+function escapeRegExp(str: string): string {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+/**
  * Extracts key terms from text content
  * 
  * @param text The text content to analyze for key terms
@@ -159,27 +169,44 @@ async function fetchJobPostingHtml(url: string): Promise<string> {
  */
 function extractKeyTerms(text: string, additionalTerms: string[] = []): string[] {
   const commonSkills = [
-    'javascript', 'typescript', 'python', 'java', 'c#', 'c++', 'ruby', 'go', 'rust',
+    'javascript', 'typescript', 'python', 'java', 'c#', 'c\\+\\+', 'ruby', 'go', 'rust',
     'react', 'angular', 'vue', 'node', 'express', 'django', 'flask', 'spring',
     'aws', 'azure', 'gcp', 'docker', 'kubernetes', 'ci/cd', 'jenkins', 'git',
     'sql', 'nosql', 'mongodb', 'postgresql', 'mysql', 'oracle', 'redis',
     'rest', 'graphql', 'api', 'microservices', 'serverless',
     'agile', 'scrum', 'kanban', 'jira', 'confluence',
     'leadership', 'management', 'teamwork', 'communication',
+    // Government terms
     'federal', 'government', 'clearance', 'security', 'public sector',
-    'state', 'local', 'municipality', 'policy', 'regulation'
+    'state', 'local', 'municipality', 'policy', 'regulation',
+    // State government specific terms
+    'civil service', 'public administration', 'public policy', 'state agency',
+    'rutan', 'public employment', 'state employment', 'hiring process',
+    'central management services', 'cms', 'recruitment', 'human resources',
+    'applicant tracking', 'selection process', 'interview panel', 'administrative',
+    'program management', 'grant', 'grants management', 'procurement',
+    'budget', 'fiscal', 'legislative', 'statutory', 'compliance'
   ];
   
   // Combine common skills with any additional terms
   const allTerms = [...commonSkills, ...additionalTerms];
   
   const terms: string[] = [];
-  
   // Extract skills
   for (const skill of allTerms) {
-    const regex = new RegExp(`\\b${skill}\\b`, 'i');
-    if (regex.test(text)) {
-      terms.push(skill.toLowerCase());
+    try {
+      // Properly escape the skill for regex use
+      const escapedSkill = skill.includes('\\') ? skill : escapeRegExp(skill);
+      const regex = new RegExp(`\\b${escapedSkill}\\b`, 'i');
+      
+      if (regex.test(text)) {
+        // Store the original skill term without escaping
+        const originalTerm = skill.replace(/\\\+/g, '+').replace(/\\/g, '');
+        terms.push(originalTerm.toLowerCase());
+      }
+    } catch (error) {
+      // Skip problematic patterns but log for debugging
+      console.warn(`Skipping problematic term "${skill}": ${error instanceof Error ? error.message : String(error)}`);
     }
   }
   
@@ -488,7 +515,8 @@ function parseUSAJobsJob(document: Document, url: string): JobPostingAnalysis {
   const fullText = document.body.textContent || '';
   const keyTerms = extractKeyTerms(fullText, [
     'federal', 'government', 'public service', 'clearance', 'GS', 'general schedule',
-    'exempt', 'non-exempt', 'veteran', 'military', 'security clearance', 'public trust'
+    'exempt', 'non-exempt', 'veteran', 'military', 'security clearance', 'public trust',
+    'recruitment', 'training', 'development', 'personnel', 'workforce', 'staffing'
   ]);
 
   return {
