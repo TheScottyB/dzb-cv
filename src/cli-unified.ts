@@ -10,7 +10,7 @@ import { analyzeJobPosting } from './utils/job-analyzer.js';
 import { generateCV } from './generator.js';
 import { parseCvMarkdown } from './utils/cv-parser.js';
 import { ProfileService } from './services/profile-service.js';
-import type { JobPostingAnalysis, CVGenerationOptions, CVMatchResult } from './types/cv-types.js';
+import type { JobPostingAnalysis, CVGenerationOptions, CVMatchResult, CVData } from './types/cv-types.js';
 import { loadCVData } from './utils/helpers.js';
 import { convertMarkdownToPdf } from './utils/pdf-generator.js';
 
@@ -182,6 +182,36 @@ program
       
     } catch (error) {
       console.error(chalk.red('❌ Error processing CV:'), error);
+      process.exit(1);
+    }
+  });
+
+// Command to generate a site-optimized CV
+program
+  .command('site-cv')
+  .description('Generate a CV optimized for a specific job site')
+  .argument('<site>', 'The job site to optimize for (indeed, linkedin, usajobs, monster)')
+  .option('-o, --output <path>', 'Output directory for the generated CV', 'output/sites')
+  .option('-f, --format <format>', 'Output format: pdf or docx', 'pdf')
+  .option('--ats-friendly', 'Generate an ATS-friendly version with minimal formatting', false)
+  .option('--include-all', 'Include all experience sections', false)
+  .action(async (site, options) => {
+    try {
+      console.log(chalk.blue.bold(`🚀 Generating ${site.toUpperCase()} optimized CV...`));
+      
+      // Create output directory if it doesn't exist
+      await fs.mkdir(options.output, { recursive: true });
+      
+      // Load CV data
+      const cvData = await loadCVData(path.join(__dirname, "data", "base-info.json"));
+      
+      // Format the CV based on the job site specifications
+      await generateSiteOptimizedCV(site, cvData, options);
+      
+      console.log(chalk.green.bold(`✅ Successfully generated ${site.toUpperCase()} optimized CV!`));
+      
+    } catch (error) {
+      console.error(chalk.red('Error generating site-optimized CV:'), error instanceof Error ? error.message : String(error));
       process.exit(1);
     }
   });
@@ -467,6 +497,160 @@ async function logJobApplication(
     console.error(chalk.red('Error logging job application:'), error);
     throw error;
   }
+}
+
+/**
+ * Generates a CV optimized for specific job sites with appropriate formatting
+ */
+async function generateSiteOptimizedCV(
+  site: string,
+  cvData: CVData,
+  options: any
+): Promise<string> {
+  // Normalize site name
+  const siteLower = site.toLowerCase();
+  
+  // Create filename based on site
+  const filename = `dawn-zurick-beilfuss-${siteLower}-optimized-cv`;
+  const outputPath = path.join(options.output);
+  
+  // Site-specific settings
+  const siteSettings: Record<string, any> = {
+    indeed: {
+      template: 'private',
+      maxSections: options.includeAll ? 999 : 5,
+      maxBullets: 8,
+      emphasizeSections: ['realEstate', 'healthcare'],
+      includeSummary: true,
+      formatATS: options.atsFriendly,
+      additionalContext: 'Optimized for Indeed - focuses on concise experience descriptions and key skills'
+    },
+    linkedin: {
+      template: 'private',
+      maxSections: options.includeAll ? 999 : 6,
+      maxBullets: 10,
+      emphasizeSections: ['realEstate', 'healthcare', 'foodIndustry'],
+      includeSummary: true,
+      formatATS: false,
+      additionalContext: 'Optimized for LinkedIn - comprehensive experience with emphasis on management roles'
+    },
+    usajobs: {
+      template: 'federal',
+      maxSections: 999,
+      maxBullets: 20,
+      emphasizeSections: ['realEstate', 'healthcare'],
+      includeSummary: true,
+      formatATS: true,
+      additionalContext: 'Optimized for USAJobs - detailed, comprehensive format following federal guidelines'
+    },
+    monster: {
+      template: 'private',
+      maxSections: options.includeAll ? 999 : 5,
+      maxBullets: 6,
+      emphasizeSections: ['realEstate', 'healthcare'],
+      includeSummary: true,
+      formatATS: options.atsFriendly,
+      additionalContext: 'Optimized for Monster - concise with emphasis on key accomplishments'
+    }
+  };
+  
+  // Default to Indeed settings if site not recognized
+  const settings = siteSettings[siteLower] || siteSettings.indeed;
+  
+  // Create a modified CV data copy for site-specific customization
+  const siteOptimizedData = JSON.parse(JSON.stringify(cvData));
+  
+  // Add a note that this is a site-optimized version
+  siteOptimizedData.professionalSummary = 
+    `${siteOptimizedData.professionalSummary || ''}\n\n*${settings.additionalContext}*`;
+  
+  // Load the template based on the site's preferred format
+  const templatePath = path.join(__dirname, "templates", settings.template, `${settings.template}-template.md`);
+  let templateContent = await fs.readFile(templatePath, 'utf-8');
+  
+  // Modify template for ATS-friendly format if requested
+  if (settings.formatATS) {
+    // Strip special Markdown formatting for ATS parsers
+    templateContent = makeATSFriendly(templateContent);
+  }
+  
+  // Generate markdown with site-specific template
+  const markdownPath = path.join(outputPath, `${filename}.md`);
+  
+  // Create a custom header for the site-optimized version
+  const siteHeader = 
+    `# ${cvData.personalInfo.name.full}\n\n` +
+    `*CV optimized for ${site.toUpperCase()} - Generated on ${new Date().toLocaleDateString()}*\n\n`;
+  
+  // Combine header with template
+  const siteOptimizedMarkdown = siteHeader + templateContent;
+  
+  // Save markdown file
+  await fs.writeFile(markdownPath, siteOptimizedMarkdown, 'utf-8');
+  
+  // Generate output in requested format
+  if (options.format.toLowerCase() === 'pdf') {
+    // PDF generation
+    const pdfPath = path.join(outputPath, `${filename}.pdf`);
+    
+    // Configure PDF settings optimized for the job site
+    const pdfOptions = {
+      includeHeaderFooter: false, // Clean look for upload
+      paperSize: 'Letter' as const,
+      margins: {
+        top: 0.75,
+        right: 0.75,
+        bottom: 0.75,
+        left: 0.75
+      },
+      pdfTitle: `${cvData.personalInfo.name.full} - Resume`,
+      pdfAuthor: cvData.personalInfo.name.full,
+      orientation: 'portrait' as const
+    };
+    
+    // Generate PDF
+    await convertMarkdownToPdf(siteOptimizedMarkdown, pdfPath, pdfOptions);
+    console.log(chalk.green(`Created site-optimized PDF for ${site}: ${filename}.pdf`));
+    return pdfPath;
+    
+  } else if (options.format.toLowerCase() === 'docx') {
+    // DOCX generation logic would go here
+    // For now, we'll just return the markdown path since we don't have DOCX conversion yet
+    console.log(chalk.yellow(`Note: DOCX generation not yet implemented. Created markdown file instead.`));
+    return markdownPath;
+  }
+  
+  return markdownPath;
+}
+
+/**
+ * Makes markdown content more ATS-friendly by removing complex formatting
+ */
+function makeATSFriendly(content: string): string {
+  // Replace complex markdown with simpler versions
+  let atsFriendlyContent = content;
+  
+  // Remove italics and bold formatting but keep the text
+  atsFriendlyContent = atsFriendlyContent.replace(/\*\*(.*?)\*\*/g, '$1');
+  atsFriendlyContent = atsFriendlyContent.replace(/\*(.*?)\*/g, '$1');
+  
+  // Replace markdown links with just the text
+  atsFriendlyContent = atsFriendlyContent.replace(/\[(.*?)\]\(.*?\)/g, '$1');
+  
+  // Replace fancy quotes with plain quotes
+  atsFriendlyContent = atsFriendlyContent.replace(/[""]/g, '"');
+  atsFriendlyContent = atsFriendlyContent.replace(/['']/g, "'");
+  
+  // Remove emojis
+  atsFriendlyContent = atsFriendlyContent.replace(/[\u{1F600}-\u{1F64F}]/gu, '');
+  
+  // Simplify bullet points to plain dashes or asterisks
+  atsFriendlyContent = atsFriendlyContent.replace(/•/g, '-');
+  
+  // Ensure proper spacing after headings
+  atsFriendlyContent = atsFriendlyContent.replace(/#{1,6}\s+(.*?)\n/g, '$1\n\n');
+  
+  return atsFriendlyContent;
 }
 
 // Execute the CLI

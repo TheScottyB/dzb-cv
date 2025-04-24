@@ -14,10 +14,13 @@
   - `analyze <url>` - Analyze a job posting for key requirements
   - `generate <sector>` - Generate a CV for a specific sector
   - `import <file>` - Import a markdown CV into the profile system
+  - `site-cv <site>` - Generate a CV optimized for a specific job site
   - `apply <url>` - Run the complete job application workflow
 - Examples:
   - `pnpm cv -- analyze https://example.com/job/12345`
   - `pnpm cv -- generate state --format pdf`
+  - `pnpm cv -- site-cv indeed --ats-friendly`
+  - `pnpm cv -- site-cv linkedin --include-all`
   - `pnpm cv -- apply https://example.com/job/12345 --sector federal`
 
 ## Code Style

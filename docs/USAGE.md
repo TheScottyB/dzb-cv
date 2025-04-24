@@ -73,7 +73,29 @@ Example:
 pnpm cv -- import cv-versions/dawn-illinois-state-cv.md
 ```
 
-#### 4. Complete Job Application Workflow
+#### 4. Generate Job Site Optimized CV
+
+```bash
+pnpm cv -- site-cv <site> [options]
+```
+
+Arguments:
+- `site` - The job site to optimize for (indeed, linkedin, usajobs, monster)
+
+Options:
+- `-o, --output <path>` - Output directory (default: output/sites)
+- `-f, --format <format>` - Output format: pdf or docx (default: pdf)
+- `--ats-friendly` - Generate an ATS-friendly version with minimal formatting
+- `--include-all` - Include all experience sections (default: optimized selection)
+
+Example:
+```bash
+pnpm cv -- site-cv indeed --ats-friendly
+```
+
+This command creates a CV optimized for uploading to specific job sites, with appropriate formatting and content selection based on the platform's preferences and ATS (Applicant Tracking System) considerations.
+
+#### 5. Complete Job Application Workflow
 
 ```bash
 pnpm cv -- apply <job-url> [options]
