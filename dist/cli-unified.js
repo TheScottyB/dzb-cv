@@ -43,6 +43,7 @@ function makeATSFriendly(content) {
     return atsFriendlyContent;
 }
 /**
+/**
  * Creates a tailored CV based on job analysis
  */
 async function createTailoredCV(jobAnalysis, sector) {
@@ -137,13 +138,14 @@ async function createTailoredCV(jobAnalysis, sector) {
     }
 }
 /**
+/**
  * Creates a cover letter for the job application
  */
-async function createCoverLetter(jobAnalysis, sector = 'state') {
+async function createCoverLetter(jobAnalysis, sector) {
     try {
         // Validate sector
         let validSector;
-        if (!['federal', 'state', 'private'].includes(sector)) {
+        if (!sector || !['federal', 'state', 'private'].includes(sector)) {
             console.warn(chalk.yellow(`Warning: Invalid sector "${sector}", defaulting to "state"`));
             validSector = 'state';
         }
@@ -161,23 +163,80 @@ async function createCoverLetter(jobAnalysis, sector = 'state') {
         // Create output directory
         const outputPath = path.join('output', validSector);
         await fs.mkdir(outputPath, { recursive: true });
-        // Generate a simple cover letter template
-        // In a real implementation, this would be more sophisticated and tailored
-        const coverLetterContent = `# ${cvData.personalInfo.name.full}\n\n` +
-            `${cvData.personalInfo.contact.email} | ${cvData.personalInfo.contact.phone}\n\n` +
-            `${new Date().toLocaleDateString()}\n\n` +
-            `${jobAnalysis.company}\n\n` +
-            `RE: Application for ${jobAnalysis.title} Position\n\n` +
-            `Dear Hiring Manager,\n\n` +
-            `I am writing to express my interest in the ${jobAnalysis.title} position at ${jobAnalysis.company}. With my background in healthcare administration, real estate operations, and professional development, I believe I would be a valuable addition to your team.\n\n` +
-            `My experience aligns well with the qualifications you are seeking. Some highlights include:\n\n` +
-            `- [Insert tailored experience point 1 based on job requirements]\n` +
-            `- [Insert tailored experience point 2 based on job requirements]\n` +
-            `- [Insert tailored experience point 3 based on job requirements]\n\n` +
-            `I am particularly drawn to this position because [Insert reason for interest in the role/company]. I am confident that my skills in [Insert 2-3 key skills matching job requirements] would enable me to make meaningful contributions to your organization.\n\n` +
-            `Thank you for considering my application. I look forward to the opportunity to discuss how my experience and skills would benefit ${jobAnalysis.company}.\n\n` +
-            `Sincerely,\n\n` +
-            `${cvData.personalInfo.name.full}`;
+        // Extract job details for better tailoring
+        const companyName = determineCompanyName(jobAnalysis);
+        const keyQualifications = extractKeyQualifications(jobAnalysis, validSector);
+        const experiencePoints = mapExperienceToRequirements(jobAnalysis, validSector);
+        const interestReason = generateInterestReason(jobAnalysis, validSector);
+        const keySkillsMatch = identifyKeySkillsMatch(jobAnalysis);
+        const addressingLine = generateAddressingLine(jobAnalysis, validSector);
+        const closingLine = generateClosingLine(jobAnalysis, companyName, validSector);
+        // Generate customized cover letter based on sector
+        let coverLetterContent = `# ${cvData.personalInfo.name.full}\n\n`;
+        // Add appropriate contact information
+        if (validSector === 'federal' || validSector === 'state') {
+            coverLetterContent +=
+                `${cvData.personalInfo.contact.address || '123 Main Street, Chicago, IL 60601'}\n` +
+                    `${cvData.personalInfo.contact.email} | ${cvData.personalInfo.contact.phone}\n\n`;
+        }
+        else {
+            coverLetterContent +=
+                `${cvData.personalInfo.contact.email} | ${cvData.personalInfo.contact.phone}\n\n`;
+        }
+        // Add date in appropriate format
+        const today = new Date();
+        const formattedDate = `${today.toLocaleString('en-US', { month: 'long' })} ${today.getDate()}, ${today.getFullYear()}`;
+        coverLetterContent += `${formattedDate}\n\n`;
+        // Add addressee information
+        if (validSector === 'state') {
+            coverLetterContent +=
+                `Human Resources Department\n` +
+                    `${companyName}\n` +
+                    `${jobAnalysis.location || 'Illinois'}\n\n`;
+        }
+        else {
+            coverLetterContent += `${companyName}\n\n`;
+        }
+        // Add reference line
+        coverLetterContent += `RE: Application for ${jobAnalysis.title}`;
+        // Add position ID for government jobs
+        if (validSector === 'federal' || validSector === 'state') {
+            const jobId = extractJobId(jobAnalysis);
+            if (jobId) {
+                coverLetterContent += ` (Job ID: ${jobId})`;
+            }
+        }
+        coverLetterContent += `\n\n`;
+        // Add salutation
+        coverLetterContent += `${addressingLine},\n\n`;
+        // Introduction paragraph
+        coverLetterContent +=
+            `I am writing to express my interest in the ${jobAnalysis.title} position with ${companyName}. ` +
+                `With over ${calculateYearsExperience(cvData)} years of professional experience in administrative leadership, ` +
+                `real estate operations, and healthcare management, I offer a versatile skill set that aligns well with the requirements of this position.\n\n`;
+        // Qualifications paragraph - tailored to the specific sector and job
+        if (validSector === 'state') {
+            coverLetterContent +=
+                `My professional background includes extensive experience in ${keyQualifications.join(', ')}, which directly relates to the qualifications specified in the job posting. ` +
+                    `Having worked in both regulated industries and administrative roles, I understand the importance of compliance, attention to detail, and maintaining confidentiality—qualities essential for success in government service.\n\n`;
+        }
+        else {
+            coverLetterContent +=
+                `My professional background includes extensive experience in ${keyQualifications.join(', ')}, which directly relates to the qualifications you are seeking. ` +
+                    `I have consistently demonstrated my ability to adapt to new environments and deliver exceptional results across different industries.\n\n`;
+        }
+        // Experience highlights - bullet points tailored to the job requirements
+        coverLetterContent += `My experience aligns well with your requirements in the following ways:\n\n`;
+        for (const point of experiencePoints) {
+            coverLetterContent += `- ${point}\n`;
+        }
+        coverLetterContent += `\n`;
+        // Interest paragraph - why this specific position/company
+        coverLetterContent += `${interestReason} I am confident that my skills in ${keySkillsMatch.join(', ')} would enable me to make meaningful contributions to your organization.\n\n`;
+        // Closing paragraph
+        coverLetterContent += `${closingLine}\n\n`;
+        // Signature
+        coverLetterContent += `Sincerely,\n\n${cvData.personalInfo.name.full}`;
         // Save the cover letter
         const coverLetterPath = path.join(outputPath, `${filename}.md`);
         await fs.writeFile(coverLetterPath, coverLetterContent, 'utf-8');
@@ -197,6 +256,341 @@ async function createCoverLetter(jobAnalysis, sector = 'state') {
         throw error;
     }
 }
+/**
+/**
+ * Extracts a reasonable company/agency name from job analysis
+ */
+function determineCompanyName(jobAnalysis) {
+    // First, check if we have a valid company name that's not "Unknown Company"
+    if (jobAnalysis.company && jobAnalysis.company !== "Unknown Company") {
+        return jobAnalysis.company;
+    }
+    // For state jobs, try to extract agency name from job description or qualifications
+    const fullText = [jobAnalysis.title, jobAnalysis.description || ''].join(' ') + ' ' +
+        jobAnalysis.responsibilities.join(' ') + ' ' +
+        jobAnalysis.qualifications.join(' ');
+    // Look for common Illinois agency patterns in the text
+    const agencyPatterns = [
+        /Illinois Department of Transportation/i,
+        /Illinois Department of (\w+)/i,
+        /IDOT/i,
+        /Department of (\w+)/i,
+        /(\w+) Department/i,
+        /Agency: ([^,\n]+)/i
+    ];
+    for (const pattern of agencyPatterns) {
+        const match = fullText.match(pattern);
+        if (match && match[0]) {
+            return match[0];
+        }
+    }
+    // Check if the job is clearly from a state agency
+    if (fullText.includes("Illinois") && fullText.includes("Department")) {
+        return "Illinois State Agency";
+    }
+    // Default if no agency detected
+    return "Illinois State Government";
+}
+/**
+/**
+ * Extract key qualifications based on job analysis and sector
+ */
+function extractKeyQualifications(jobAnalysis, sector) {
+    const qualifications = [...jobAnalysis.keyTerms];
+    // Extract additional qualifications from responsibilities and requirements
+    const allText = jobAnalysis.responsibilities.join(' ') + ' ' + jobAnalysis.qualifications.join(' ');
+    // Common qualification categories to look for
+    const qualificationCategories = [
+        { pattern: /Microsoft Office|MS Office|Excel|Word|PowerPoint|Outlook/i, text: "Microsoft Office suite proficiency" },
+        { pattern: /communication skills|communicat/i, text: "communication skills" },
+        { pattern: /customer service|client/i, text: "customer service excellence" },
+        { pattern: /leadership|supervising|managing|management/i, text: "team leadership" },
+        { pattern: /detail-oriented|attention to detail|detailed/i, text: "attention to detail" },
+        { pattern: /data entry|database|record keeping/i, text: "data management" },
+        { pattern: /confidential|sensitive|privacy/i, text: "handling confidential information" },
+        { pattern: /scheduling|calendar|appointment/i, text: "schedule management" },
+        { pattern: /filing|file system|document/i, text: "document management" },
+        { pattern: /multi-task|prioritiz|multiple/i, text: "multi-tasking and prioritization" }
+    ];
+    // Add relevant qualifications based on text analysis
+    for (const category of qualificationCategories) {
+        if (category.pattern.test(allText) && !qualifications.includes(category.text)) {
+            qualifications.push(category.text);
+        }
+    }
+    // For state jobs, add some relevant government experience points if appropriate
+    if (sector === 'state' && (allText.includes("regulation") || allText.includes("compliance"))) {
+        qualifications.push("regulatory compliance");
+    }
+    // Limit to 3-4 most relevant qualifications
+    return qualifications.slice(0, 4);
+}
+/**
+/**
+ * Map candidate experience to job requirements for tailored bullets
+ */
+function mapExperienceToRequirements(jobAnalysis, sector) {
+    const experiencePoints = [];
+    // Default experience points covering core competencies for different job categories
+    const managementExperience = "Led operations for multiple locations, developing expertise in scheduling, personnel management, and ensuring efficient daily operations";
+    const administrativeExperience = "Managed administrative functions including correspondence, document preparation, and maintaining filing systems while ensuring accuracy and confidentiality";
+    const customerExperience = "Provided exceptional customer service in high-volume environments, demonstrating strong communication and problem-solving skills";
+    const complianceExperience = "Ensured compliance with regulations and organizational policies, maintaining detailed records and documentation";
+    // Analyze job requirements to determine which experience points to include
+    const allRequirements = jobAnalysis.responsibilities.concat(jobAnalysis.qualifications).join(' ').toLowerCase();
+    // Job involves administrative work
+    if (allRequirements.includes("administrative") ||
+        allRequirements.includes("clerical") ||
+        allRequirements.includes("document") ||
+        allRequirements.includes("filing") ||
+        jobAnalysis.title.toLowerCase().includes("secretary") ||
+        jobAnalysis.title.toLowerCase().includes("administrative") ||
+        jobAnalysis.title.toLowerCase().includes("clerical")) {
+        experiencePoints.push(administrativeExperience);
+        // Add experience with confidential information if relevant
+        if (allRequirements.includes("confidential") || allRequirements.includes("sensitive")) {
+            experiencePoints.push("Handled confidential and sensitive information with discretion, ensuring privacy and security in all communications and document management");
+        }
+        // Add scheduling experience if relevant
+        if (allRequirements.includes("schedule") || allRequirements.includes("calendar") || allRequirements.includes("appointment")) {
+            experiencePoints.push("Coordinated complex schedules, meetings, and appointments for multiple executives, ensuring efficient time management and minimizing conflicts");
+        }
+    }
+    // Job involves management or supervision
+    if (allRequirements.includes("manage") ||
+        allRequirements.includes("supervis") ||
+        allRequirements.includes("direct") ||
+        allRequirements.includes("lead") ||
+        jobAnalysis.title.toLowerCase().includes("manager") ||
+        jobAnalysis.title.toLowerCase().includes("director") ||
+        jobAnalysis.title.toLowerCase().includes("supervisor")) {
+        experiencePoints.push(managementExperience);
+        // Add team development experience if relevant
+        if (allRequirements.includes("team") || allRequirements.includes("staff") || allRequirements.includes("employee")) {
+            experiencePoints.push("Recruited, trained, and developed high-performing teams, implementing effective performance management strategies and fostering a collaborative work environment");
+        }
+    }
+    // Job involves customer service
+    if (allRequirements.includes("customer") ||
+        allRequirements.includes("client") ||
+        allRequirements.includes("public") ||
+        allRequirements.includes("service")) {
+        experiencePoints.push(customerExperience);
+    }
+    // Job involves compliance or regulations
+    if (allRequirements.includes("compliance") ||
+        allRequirements.includes("regulation") ||
+        allRequirements.includes("policy") ||
+        allRequirements.includes("standard") ||
+        allRequirements.includes("procedure")) {
+        experiencePoints.push(complianceExperience);
+    }
+    // Add sector-specific experience points
+    if (sector === 'state') {
+        if (experiencePoints.length < 3) {
+            experiencePoints.push("Collaborated effectively with diverse stakeholders, demonstrating strong communication skills and attention to detail in a highly regulated environment");
+        }
+        // For state jobs, emphasize experience with policy/procedure compliance
+        if (allRequirements.includes("policy") || allRequirements.includes("procedure")) {
+            experiencePoints.push("Maintained thorough knowledge of organizational policies and procedures, ensuring consistent application and identifying opportunities for improvement");
+        }
+    }
+    else if (sector === 'federal') {
+        if (experiencePoints.length < 3) {
+            experiencePoints.push("Demonstrated ability to work effectively in structured environments with established processes, maintaining detailed documentation and meeting strict deadlines");
+        }
+    }
+    else if (sector === 'private') {
+        if (experiencePoints.length < 3) {
+            experiencePoints.push("Contributed to business growth through process improvements, customer satisfaction initiatives, and effective team management");
+        }
+    }
+    // Ensure we have at least 3 experience points
+    if (experiencePoints.length < 3) {
+        experiencePoints.push("Utilized strong organizational skills to manage multiple priorities effectively while maintaining exceptional attention to detail");
+    }
+    return experiencePoints;
+}
+/**
+ * Extract job ID from job analysis
+ */
+function extractJobId(jobAnalysis) {
+    // Check if we already have a job ID in the data
+    if (jobAnalysis.id) {
+        return jobAnalysis.id;
+    }
+    // Look for job ID in the description and qualifications
+    const allText = [
+        jobAnalysis.title,
+        jobAnalysis.description || '',
+        ...jobAnalysis.responsibilities,
+        ...jobAnalysis.qualifications
+    ].join(' ');
+    // Common job ID patterns
+    const jobIdPatterns = [
+        /job id:?\s*([A-Za-z0-9-]+)/i,
+        /position(?: number| no\.?| id):?\s*([A-Za-z0-9-]+)/i,
+        /requisition(?: number| no\.?| id):?\s*([A-Za-z0-9-]+)/i,
+        /vacancy(?: number| no\.?| id):?\s*([A-Za-z0-9-]+)/i,
+        /job(?: number| no\.?):?\s*([A-Za-z0-9-]+)/i,
+        /#([A-Za-z0-9-]+)/
+    ];
+    // Try each pattern
+    for (const pattern of jobIdPatterns) {
+        const match = allText.match(pattern);
+        if (match && match[1]) {
+            return match[1].trim();
+        }
+    }
+    // Extract from URL as last resort
+    if (jobAnalysis.source && jobAnalysis.source.url) {
+        const urlIdMatch = jobAnalysis.source.url.match(/\/(\d+)(?:\/|$)/);
+        if (urlIdMatch && urlIdMatch[1]) {
+            return urlIdMatch[1];
+        }
+    }
+    return null;
+}
+/**
+ * Calculate approximate years of professional experience
+ */
+function calculateYearsExperience(cvData) {
+    // Default value if we can't calculate
+    const defaultYears = 15;
+    try {
+        // If we have experience data with dates, calculate years
+        if (cvData.experience && Array.isArray(cvData.experience) && cvData.experience.length > 0) {
+            // Find earliest start date
+            let earliestYear = new Date().getFullYear();
+            for (const exp of cvData.experience) {
+                if (exp.startDate) {
+                    // Handle different date formats - extract year
+                    let startYear;
+                    if (typeof exp.startDate === 'string') {
+                        // Extract year from string like "2010" or "January 2010"
+                        const yearMatch = exp.startDate.match(/\b(19|20)\d{2}\b/);
+                        if (yearMatch) {
+                            startYear = parseInt(yearMatch[0], 10);
+                        }
+                    }
+                    else if (exp.startDate instanceof Date) {
+                        startYear = exp.startDate.getFullYear();
+                    }
+                    if (startYear && startYear < earliestYear) {
+                        earliestYear = startYear;
+                    }
+                }
+            }
+            if (earliestYear < new Date().getFullYear()) {
+                return new Date().getFullYear() - earliestYear;
+            }
+        }
+        return defaultYears;
+    }
+    catch (error) {
+        // If any error occurs, return the default
+        return defaultYears;
+    }
+}
+/**
+/**
+ * Generate a paragraph explaining interest in the position
+ */
+function generateInterestReason(jobAnalysis, sector) {
+    // Default interest reasons by sector
+    const sectorReasons = {
+        state: `I am particularly drawn to this position with ${jobAnalysis.company || 'the State of Illinois'} because of the opportunity to apply my skills in service to the public. I value the stability, professionalism, and positive impact that comes with a career in state government.`,
+        federal: `I am particularly drawn to this federal position because of the opportunity to serve the public and contribute to important national priorities. The mission-driven nature of federal service aligns perfectly with my professional values.`,
+        private: `I am particularly drawn to this position at ${jobAnalysis.company} because of your organization's reputation for excellence and the opportunity to contribute to your continued success.`
+    };
+    // Start with the sector-specific reason
+    let reason = sectorReasons[sector];
+    // Add job-specific interest if we have enough information
+    const allJobText = [
+        jobAnalysis.title,
+        jobAnalysis.description || '',
+        ...jobAnalysis.responsibilities,
+        ...jobAnalysis.qualifications
+    ].join(' ').toLowerCase();
+    // Check for specific interesting aspects of the job
+    if (allJobText.includes('leadership') || allJobText.includes('manage') || allJobText.includes('direct')) {
+        reason += ` The leadership aspects of this role particularly appeal to me, as I have consistently demonstrated the ability to guide teams effectively while ensuring operational excellence.`;
+    }
+    else if (allJobText.includes('detail') || allJobText.includes('accuracy') || allJobText.includes('precision')) {
+        reason += ` The detail-oriented nature of this position aligns perfectly with my meticulous approach to work and commitment to accuracy in all tasks.`;
+    }
+    else if (allJobText.includes('customer') || allJobText.includes('client') || allJobText.includes('public')) {
+        reason += ` I particularly value the opportunity to utilize my strong customer service skills in this role, as I believe that responsive, professional service is essential.`;
+    }
+    return reason;
+}
+/**
+ * Identify key skills that match job requirements
+ */
+function identifyKeySkillsMatch(jobAnalysis) {
+    // Default skills to mention
+    const defaultSkills = ['organization', 'communication', 'problem-solving'];
+    // Extract terms from the job description
+    const allJobText = [
+        jobAnalysis.description || '',
+        ...jobAnalysis.responsibilities,
+        ...jobAnalysis.qualifications
+    ].join(' ').toLowerCase();
+    // Define skill categories to look for
+    const skillCategories = [
+        { terms: ['detail', 'accuracy', 'precise', 'meticulous'], skill: 'attention to detail' },
+        { terms: ['communicate', 'verbal', 'written', 'presentation'], skill: 'communication' },
+        { terms: ['organize', 'prioritize', 'manage time', 'structure'], skill: 'organization' },
+        { terms: ['lead', 'manage', 'supervise', 'direct'], skill: 'leadership' },
+        { terms: ['analyze', 'problem', 'solve', 'solution'], skill: 'problem-solving' },
+        { terms: ['team', 'collaborate', 'cooperation'], skill: 'teamwork' },
+        { terms: ['adapt', 'flexible', 'adjust', 'versatile'], skill: 'adaptability' },
+        { terms: ['customer', 'client', 'service', 'support'], skill: 'customer service' },
+        { terms: ['computer', 'software', 'microsoft', 'excel', 'technology'], skill: 'technical proficiency' }
+    ];
+    // Identify matching skills
+    const matchingSkills = [];
+    // Check each skill category for matches in the job text
+    for (const category of skillCategories) {
+        for (const term of category.terms) {
+            if (allJobText.includes(term)) {
+                matchingSkills.push(category.skill);
+                break; // Only add each skill once
+            }
+        }
+    }
+    // If we didn't find any matching skills, use the defaults
+    if (matchingSkills.length === 0) {
+        return defaultSkills;
+    }
+    // Limit to 3 skills
+    return matchingSkills.slice(0, 3);
+}
+/**
+ * Generate addressing line for cover letter
+ */
+function generateAddressingLine(jobAnalysis, sector) {
+    if (sector === 'federal' || sector === 'state') {
+        return 'Human Resources Director';
+    }
+    else {
+        return 'Hiring Manager';
+    }
+}
+/**
+/**
+ * Generate closing line for cover letter
+ */
+function generateClosingLine(jobAnalysis, companyName, sector) {
+    if (sector === 'federal' || sector === 'state') {
+        return `Thank you for your consideration. I am excited about the opportunity to bring my skills and experience to ${companyName} in service to the residents of Illinois. I look forward to discussing how I can contribute to your team.`;
+    }
+    else {
+        return `Thank you for considering my application. I look forward to the opportunity to discuss how my experience and skills would benefit ${companyName}.`;
+    }
+}
+/**
+/**
 /**
  * Logs the job application to the agent-comments.md file
  */
@@ -584,40 +978,50 @@ program
             // Use the local file analysis logic similar to the analyze command
             const fileContent = await fs.readFile(source, 'utf-8');
             console.log(chalk.green(`Successfully read job description from file: ${source}`));
-            // Extract job details from file
-            const lines = fileContent.split('\n').filter(line => line.trim());
-            const titleMatch = lines[0].match(/job title:?\s*(.*)/i);
-            const title = titleMatch ? titleMatch[1].trim() : 'Unknown Position';
-            const companyMatch = fileContent.match(/company:?\s*(.*)/i);
-            const company = companyMatch ? companyMatch[1].trim() : 'Unknown Company';
-            const locationMatch = fileContent.match(/location:?\s*(.*)/i);
-            const location = locationMatch ? locationMatch[1].trim() : undefined;
-            // Extract responsibilities section
-            const responsibilitiesMatch = fileContent.match(/Key Responsibilities:[\s\S]*?(?=Qualifications:|Benefits:|$)/i);
-            const responsibilitiesText = responsibilitiesMatch ? responsibilitiesMatch[0] : '';
-            const responsibilities = responsibilitiesText
-                .split('\n')
-                .filter(line => line.trim().startsWith('-'))
-                .map(line => line.replace(/^-\s*/, '').trim());
-            // Extract qualifications section
-            const qualificationsMatch = fileContent.match(/Qualifications:[\s\S]*?(?=Salary:|Benefits:|$)/i);
-            const qualificationsText = qualificationsMatch ? qualificationsMatch[0] : '';
-            const qualifications = qualificationsText
-                .split('\n')
-                .filter(line => line.trim().startsWith('-'))
-                .map(line => line.replace(/^-\s*/, '').trim());
+            // Parse job details more accurately
+            const lines = fileContent.split('\n');
+            // Find the job title line
+            const titleLine = lines.find(line => line.toLowerCase().includes('job title:'));
+            const title = titleLine
+                ? titleLine.split(':')[1].trim()
+                : 'Unknown Position';
+            // Find the agency/company line
+            const agencyLine = lines.find(line => line.toLowerCase().includes('agency:') ||
+                line.toLowerCase().includes('company:'));
+            const company = agencyLine
+                ? agencyLine.split(':')[1].trim()
+                : 'Unknown Company';
+            // Find the location line
+            const locationLine = lines.find(line => line.toLowerCase().includes('location:'));
+            const location = locationLine
+                ? locationLine.split(':')[1].trim()
+                : undefined;
+            // Extract sections using a helper function
+            const getSection = (startMarker, endMarker) => {
+                const startIndex = fileContent.indexOf(startMarker);
+                if (startIndex === -1)
+                    return [];
+                const endIndex = fileContent.indexOf(endMarker, startIndex);
+                const sectionContent = endIndex === -1
+                    ? fileContent.substring(startIndex + startMarker.length)
+                    : fileContent.substring(startIndex + startMarker.length, endIndex);
+                return sectionContent
+                    .split('\n')
+                    .filter(line => line.trim().startsWith('-'))
+                    .map(line => line.replace(/^-\s*/, '').trim());
+            };
+            // Extract responsibilities and qualifications
+            const responsibilities = getSection('Key Responsibilities:', 'Qualifications:');
+            const qualifications = getSection('Qualifications:', 'Benefits:');
             // Extract key terms
             const jobAnalyzer = await import('./utils/job-analyzer.js');
             const keyTerms = jobAnalyzer.extractKeyTerms ?
                 jobAnalyzer.extractKeyTerms(fileContent) :
-                fileContent.toLowerCase()
-                    .split(/\W+/)
-                    .filter(word => word.length > 4)
-                    .filter((v, i, a) => a.indexOf(v) === i)
-                    .slice(0, 20);
-            // Create job analysis object
+                [...new Set([...responsibilities, ...qualifications])];
+            // Create properly structured job analysis object
             jobAnalysis = {
                 title,
+                description: fileContent,
                 company,
                 location,
                 responsibilities,
@@ -645,6 +1049,7 @@ program
         // Step 3: Generate cover letter
         console.log('\n' + chalk.blue('Step 3: Creating cover letter...'));
         const coverLetterPath = await createCoverLetter(jobAnalysis, options.sector);
+        // Step 4: Log application to agent-comments.md
         // Step 4: Log application to agent-comments.md
         console.log('\n' + chalk.blue('Step 4: Logging application in tracking file...'));
         await logJobApplication(jobAnalysis, tailoredCvFileName, coverLetterPath);
