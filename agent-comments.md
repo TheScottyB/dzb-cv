@@ -124,4 +124,42 @@ I created a complete tailored application package for the Customer Service Speci
 - Her customer service background across multiple industries demonstrates adaptability and people skills
 - The trainee nature of this position makes it a good match for someone looking to develop specialized knowledge in a new area
 - Her demonstrated ability to learn new systems quickly is a key selling point for a trainee role
-- The position provides an opportunity to leverage her detail-oriented approach and regulatory experience in a new context
+- The position provides an opportunity to leverage her detail-oriented approach and regulatory experience in a new context## Property Manager at Cagan Management Group, Inc.
+
+**Date Applied:** 2025-04-23
+
+**Job Source:** [Local File](file://src/tests/fixtures/test-indeed-job.txt)
+
+**Job Details:**
+- Title: Property Manager
+- Company: Cagan Management Group, Inc.
+- Location: Lake County, IL
+
+**Key Requirements:**
+- Previous property management experience (2+ years preferred)
+- Leasing experience required
+- Strong communication and customer service skills
+- Proficiency in property management software
+- Knowledge of Fair Housing laws and landlord-tenant regulations
+- Real estate license preferred but not required
+- Ability to work independently and with minimal supervision
+- Excellent organizational and time management skills
+- Proficiency in Microsoft Office suite
+- Experience with marketing and social media a plus
+
+**Materials Created:**
+- CV: dawn-property-manager-cagan-management-group-inc-cv.pdf
+- Cover Letter: dawn-property-manager-cover-letter.pdf
+
+**Strategy Notes:**
+- [Note your strategy for this application]
+- [Highlight which aspects of experience were emphasized]
+- [Include any special considerations]
+
+**Follow-up Actions:**
+- [ ] Send thank you email after interview
+- [ ] Follow up if no response within 2 weeks
+- [ ] Connect with hiring manager on LinkedIn
+
+---
+

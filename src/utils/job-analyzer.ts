@@ -167,7 +167,7 @@ function escapeRegExp(str: string): string {
  * @param additionalTerms Optional additional terms to look for beyond common skills
  * @returns An array of unique key terms found in the text
  */
-function extractKeyTerms(text: string, additionalTerms: string[] = []): string[] {
+export function extractKeyTerms(text: string, additionalTerms: string[] = []): string[] {
   const commonSkills = [
     'javascript', 'typescript', 'python', 'java', 'c#', 'c\\+\\+', 'ruby', 'go', 'rust',
     'react', 'angular', 'vue', 'node', 'express', 'django', 'flask', 'spring',

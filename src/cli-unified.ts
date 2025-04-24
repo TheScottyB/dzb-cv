@@ -29,18 +29,107 @@ program
 program
   .command('analyze')
   .description('Analyze a job posting to extract key requirements and qualifications')
-  .argument('<url>', 'The URL of the job posting to analyze')
+  .argument('<source>', 'The URL of the job posting to analyze or path to a local file')
   .option('--output <path>', 'Save analysis to a JSON file')
   .option('--force-generic', 'Force using the generic parser for any site')
   .option('--no-rate-limit', 'Disable rate limiting (use with caution)')
-  .action(async (url, options) => {
+  .option('--file', 'Treat the source as a local file path instead of URL')
+  .action(async (source, options) => {
     try {
       console.log(chalk.blue.bold('🔍 Analyzing job posting...'));
       
-      const result = await analyzeJobPosting(url, {
-        skipRateLimiting: !options.rateLimit,
-        forceGenericParser: options.forceGeneric
-      });
+      let result;
+      
+      if (options.file) {
+        // Handle local file analysis
+        try {
+          const fileContent = await fs.readFile(source, 'utf-8');
+          console.log(chalk.green(`Successfully read job description from file: ${source}`));
+          
+          // Create a mock HTML document with the file content
+          const mockHtml = `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <title>Job Description</title>
+              </head>
+              <body>
+                <div class="job-description">
+                  <pre>${fileContent}</pre>
+                </div>
+              </body>
+            </html>
+          `;
+          
+          // Use the generic parser with this HTML
+          const { JSDOM } = await import('jsdom');
+          const dom = new JSDOM(mockHtml);
+          
+          // Extract job title from the first line of the file
+          const lines = fileContent.split('\n').filter(line => line.trim());
+          const titleMatch = lines[0].match(/job title:?\s*(.*)/i);
+          const title = titleMatch ? titleMatch[1].trim() : 'Unknown Position';
+          
+          // Extract company from the file (assuming it's in a format like "Company: XYZ")
+          const companyMatch = fileContent.match(/company:?\s*(.*)/i);
+          const company = companyMatch ? companyMatch[1].trim() : 'Unknown Company';
+          
+          // Extract location if present
+          const locationMatch = fileContent.match(/location:?\s*(.*)/i);
+          const location = locationMatch ? locationMatch[1].trim() : undefined;
+          
+          // Extract responsibilities section
+          const responsibilitiesMatch = fileContent.match(/Key Responsibilities:[\s\S]*?(?=Qualifications:|Benefits:|$)/i);
+          const responsibilitiesText = responsibilitiesMatch ? responsibilitiesMatch[0] : '';
+          const responsibilities = responsibilitiesText
+            .split('\n')
+            .filter(line => line.trim().startsWith('-'))
+            .map(line => line.replace(/^-\s*/, '').trim());
+          
+          // Extract qualifications section
+          const qualificationsMatch = fileContent.match(/Qualifications:[\s\S]*?(?=Salary:|Benefits:|$)/i);
+          const qualificationsText = qualificationsMatch ? qualificationsMatch[0] : '';
+          const qualifications = qualificationsText
+            .split('\n')
+            .filter(line => line.trim().startsWith('-'))
+            .map(line => line.replace(/^-\s*/, '').trim());
+          
+          // Extract key terms
+          const jobAnalyzer = await import('./utils/job-analyzer.js');
+          const keyTerms = jobAnalyzer.extractKeyTerms ? 
+            jobAnalyzer.extractKeyTerms(fileContent) : 
+            fileContent.toLowerCase()
+              .split(/\W+/)
+              .filter(word => word.length > 4)
+              .filter((v, i, a) => a.indexOf(v) === i)
+              .slice(0, 20);
+          
+          // Create job analysis object
+          result = {
+            title,
+            company,
+            location,
+            responsibilities,
+            qualifications,
+            keyTerms,
+            source: {
+              url: `file://${source}`,
+              site: 'Local File',
+              fetchDate: new Date()
+            }
+          };
+          
+        } catch (error) {
+          console.error(chalk.red(`Error reading or analyzing file: ${error instanceof Error ? error.message : String(error)}`));
+          process.exit(1);
+        }
+      } else {
+        // Regular URL analysis
+        result = await analyzeJobPosting(source, {
+          skipRateLimiting: !options.rateLimit,
+          forceGenericParser: options.forceGeneric
+        });
+      }
       
       // Print summary to console
       console.log('\n' + chalk.green.bold('Job Analysis Summary:'));
@@ -219,17 +308,80 @@ program
 program
   .command('apply')
   .description('Run the complete job application workflow')
-  .argument('<url>', 'The URL of the job posting to apply for')
+  .argument('<source>', 'The URL of the job posting to apply for or path to a local file')
   .option('-s, --sector <sector>', 'The sector for the CV (federal, state, private)', 'state')
   .option('-o, --output <path>', 'Base output directory', 'output')
-  .action(async (url, options) => {
+  .option('--file', 'Treat the source as a local file path instead of URL')
+  .action(async (source, options) => {
     try {
       console.log(chalk.blue.bold('🚀 Starting complete job application workflow'));
       console.log(chalk.gray('----------------------------------------'));
       
       // Step 1: Analyze the job posting
       console.log(chalk.blue('Step 1: Analyzing job posting...'));
-      const jobAnalysis = await analyzeJobPosting(url, {});
+      
+      let jobAnalysis;
+      
+      if (options.file) {
+        // Use the local file analysis logic similar to the analyze command
+        const fileContent = await fs.readFile(source, 'utf-8');
+        console.log(chalk.green(`Successfully read job description from file: ${source}`));
+        
+        // Extract job details from file
+        const lines = fileContent.split('\n').filter(line => line.trim());
+        const titleMatch = lines[0].match(/job title:?\s*(.*)/i);
+        const title = titleMatch ? titleMatch[1].trim() : 'Unknown Position';
+        
+        const companyMatch = fileContent.match(/company:?\s*(.*)/i);
+        const company = companyMatch ? companyMatch[1].trim() : 'Unknown Company';
+        
+        const locationMatch = fileContent.match(/location:?\s*(.*)/i);
+        const location = locationMatch ? locationMatch[1].trim() : undefined;
+        
+        // Extract responsibilities section
+        const responsibilitiesMatch = fileContent.match(/Key Responsibilities:[\s\S]*?(?=Qualifications:|Benefits:|$)/i);
+        const responsibilitiesText = responsibilitiesMatch ? responsibilitiesMatch[0] : '';
+        const responsibilities = responsibilitiesText
+          .split('\n')
+          .filter(line => line.trim().startsWith('-'))
+          .map(line => line.replace(/^-\s*/, '').trim());
+        
+        // Extract qualifications section
+        const qualificationsMatch = fileContent.match(/Qualifications:[\s\S]*?(?=Salary:|Benefits:|$)/i);
+        const qualificationsText = qualificationsMatch ? qualificationsMatch[0] : '';
+        const qualifications = qualificationsText
+          .split('\n')
+          .filter(line => line.trim().startsWith('-'))
+          .map(line => line.replace(/^-\s*/, '').trim());
+        
+        // Extract key terms
+        const jobAnalyzer = await import('./utils/job-analyzer.js');
+        const keyTerms = jobAnalyzer.extractKeyTerms ? 
+          jobAnalyzer.extractKeyTerms(fileContent) : 
+          fileContent.toLowerCase()
+            .split(/\W+/)
+            .filter(word => word.length > 4)
+            .filter((v, i, a) => a.indexOf(v) === i)
+            .slice(0, 20);
+        
+        // Create job analysis object
+        jobAnalysis = {
+          title,
+          company,
+          location,
+          responsibilities,
+          qualifications,
+          keyTerms,
+          source: {
+            url: `file://${source}`,
+            site: 'Local File',
+            fetchDate: new Date()
+          }
+        };
+      } else {
+        // Regular URL analysis
+        jobAnalysis = await analyzeJobPosting(source, {});
+      }
       
       // Print job summary
       console.log('\n' + chalk.green.bold('Job Summary:'));
