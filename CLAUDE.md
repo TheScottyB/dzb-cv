@@ -8,6 +8,12 @@
 - Analyze job: `pnpm analyze-job`
 - Import profile: `pnpm import-cv`
 
+## PDF Generation
+- Direct approach: `node utils/generate-tailored-pdf.js` (uses any existing utility script in utils/)
+- Custom utility: Create a new script in utils/ based on the pattern in `generate-conservation-worker-pdf.js`
+- IMPORTANT: PDF generation scripts MUST import from `../dist/utils/pdf-generator.js` 
+- Example: `import { convertMarkdownToPdf } from '../dist/utils/pdf-generator.js';`
+
 ## Unified CLI Tool
 - Primary command: `pnpm cv -- [command] [options]`
 - Commands:
