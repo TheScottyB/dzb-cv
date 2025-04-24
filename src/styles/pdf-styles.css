@@ -1,339 +1,102 @@
 /* PDF Styles for CV Generation */
 
-/* Base Styles */
-body {
-  font-family: 'Arial', 'Helvetica', sans-serif;
-  font-size: 11pt;
-  line-height: 1.5;
-  color: #333;
-  margin: 0;
-  padding: 0;
+/* Base Typography */
+:root {
+  /* Colors */
+  --text-primary: #333333;
+  --text-secondary: #2c3e50;
+  --text-accent: #2980b9;
+  --text-muted: #7f8c8d;
+  
+  /* Backgrounds */
+  --bg-state: #e8f4fc;
+  --bg-federal: #e8fcf1;
+  --bg-private: #fcf8e8;
+  
+  /* Spacing */
+  --spacing-xs: 0.2em;
+  --spacing-sm: 0.5em;
+  --spacing-md: 1em;
+  --spacing-lg: 1.5em;
 }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Georgia', serif;
-  color: #2c3e50;
-  margin-top: 1.2em;
-  margin-bottom: 0.5em;
-  line-height: 1.2;
-}
-
-h1 {
-  font-size: 24pt;
-  text-align: center;
-  margin-top: 0.5em;
-  color: #1a5276;
-}
-
-h2 {
-  font-size: 16pt;
-  border-bottom: 1px solid #eaecee;
-  padding-bottom: 0.3em;
-  color: #2e86c1;
-}
-
-h3 {
-  font-size: 14pt;
-  color: #3498db;
-}
-
-h4 {
-  font-size: 12pt;
-  font-weight: bold;
-}
-
-/* Basic Elements */
-p {
-  margin: 0.7em 0;
-}
-
-a {
-  color: #2980b9;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-strong {
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-em {
-  font-style: italic;
-}
-
-/* Lists */
-ul, ol {
-  margin: 0.7em 0;
-  padding-left: 2em;
-}
-
-li {
-  margin: 0.3em 0;
-}
-
-/* Personal Information Section */
-.personal-info {
-  text-align: center;
-  margin-bottom: 1.5em;
-}
-
-.personal-info p {
-  margin: 0.2em 0;
-}
-
-/* Professional Summary */
-.professional-summary {
-  margin: 1em 0 1.5em 0;
-  text-align: justify;
-}
-
-/* Experience & Work History */
-.experience-item {
-  margin-bottom: 1.2em;
-}
-
-.job-title {
-  font-weight: bold;
-  margin-bottom: 0.2em;
-}
-
-.company-name {
-  font-style: italic;
-}
-
-.job-period {
-  color: #7f8c8d;
-  font-size: 0.9em;
-}
-
-.job-location {
-  color: #7f8c8d;
-  font-size: 0.9em;
-}
-
-/* Education Section */
-.education-item {
-  margin-bottom: 1em;
-}
-
-.degree {
-  font-weight: bold;
-}
-
-.institution {
-  font-style: italic;
-}
-
-/* Skills Section */
-.skills-section {
-  margin-top: 1em;
-}
-
-.skill-category {
-  font-weight: bold;
-  margin-top: 0.5em;
-  margin-bottom: 0.2em;
-}
-
-/* Contact Info */
-.contact-info {
-  margin-bottom: 1em;
-}
-
-.contact-item {
-  display: block;
-  margin: 0.2em 0;
-}
-
-/* Table Styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1em 0;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #f8f9f9;
-  font-weight: bold;
-}
-
-tr:nth-child(even) {
-  background-color: #f8f9f9;
-}
-
-/* Page Break Control */
-.page-break {
-  page-break-after: always;
-}
-
-/* Bold Text Styling */
-strong {
-  color: #2c3e50;
-}
-
-/* Section Dividers */
-hr {
-  border: none;
-  height: 1px;
-  background-color: #eaecee;
-  margin: 1.5em 0;
-}
-
-/* CV Type Specific Styling */
-
-/* State-specific styling */
-.state-header {
-  background-color: #e8f4fc;
-  padding: 0.5em;
-  border-radius: 5px;
-}
-
-/* Federal-specific styling */
-.federal-header {
-  background-color: #e8fcf1;
-  padding: 0.5em;
-  border-radius: 5px;
-}
-
-/* Private-specific styling */
-.private-header {
-  background-color: #fcf8e8;
-  padding: 0.5em;
-  border-radius: 5px;
-}
-
-/* PDF Styles for CV Generation */
-
-/* Base Styles */
+/* Core Styles - ATS Friendly */
 body {
   font-family: Arial, Helvetica, sans-serif;
   font-size: 11pt;
   line-height: 1.5;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
   padding: 0;
 }
 
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Georgia', serif;
-  color: #2c3e50;
-  margin-top: 1.2em;
-  margin-bottom: 0.5em;
-  line-height: 1.2;
-}
-
+/* Headings - Clear Hierarchy */
 h1 {
   font-size: 24pt;
   text-align: center;
-  margin-top: 0.5em;
-  color: #1a5276;
+  margin: var(--spacing-sm) 0;
+  color: var(--text-secondary);
 }
 
 h2 {
   font-size: 16pt;
+  margin: var(--spacing-md) 0 var(--spacing-sm);
+  color: var(--text-secondary);
   border-bottom: 1px solid #eaecee;
-  padding-bottom: 0.3em;
-  color: #2e86c1;
+  padding-bottom: var(--spacing-xs);
 }
 
 h3 {
   font-size: 14pt;
-  color: #3498db;
+  margin: var(--spacing-sm) 0;
+  color: var(--text-secondary);
 }
 
-h4 {
-  font-size: 12pt;
-  font-weight: bold;
-}
-
-/* Basic Elements */
+/* Content Elements */
 p {
-  margin: 0.7em 0;
+  margin: var(--spacing-sm) 0;
 }
 
-a {
-  color: #2980b9;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-strong {
-  font-weight: 600;
-  color: #2c3e50;
-}
-
-em {
-  font-style: italic;
-}
-
-/* Lists */
 ul, ol {
-  margin: 0.7em 0;
-  padding-left: 2em;
+  margin: var(--spacing-sm) 0;
+  padding-left: var(--spacing-lg);
 }
 
 li {
-  margin: 0.3em 0;
+  margin: var(--spacing-xs) 0;
 }
 
-/* Personal Information Section */
+/* Personal Information */
 .personal-info {
   text-align: center;
-  margin-bottom: 1.5em;
+  margin-bottom: var(--spacing-lg);
 }
 
-.personal-info p {
-  margin: 0.2em 0;
+.contact-info {
+  margin-bottom: var(--spacing-md);
+  text-align: center;
 }
 
-/* Professional Summary */
-.professional-summary {
-  margin: 1em 0 1.5em 0;
-  text-align: justify;
-}
-
-/* Experience & Work History */
+/* Professional Experience */
 .experience-item {
-  margin-bottom: 1.2em;
+  margin-bottom: var(--spacing-md);
 }
 
 .job-title {
   font-weight: bold;
-  margin-bottom: 0.2em;
 }
 
 .company-name {
-  font-style: italic;
+  font-weight: normal;
 }
 
-.job-period {
-  color: #7f8c8d;
-  font-size: 0.9em;
+.job-period, .job-location {
+  color: var(--text-muted);
 }
 
-.job-location {
-  color: #7f8c8d;
-  font-size: 0.9em;
-}
-
-/* Education Section */
+/* Education */
 .education-item {
-  margin-bottom: 1em;
+  margin-bottom: var(--spacing-md);
 }
 
 .degree {
@@ -341,50 +104,33 @@ li {
 }
 
 .institution {
-  font-style: italic;
+  font-weight: normal;
 }
 
-/* Skills Section */
+/* Skills */
 .skills-section {
-  margin-top: 1em;
+  margin-top: var(--spacing-md);
 }
 
 .skill-category {
   font-weight: bold;
-  margin-top: 0.5em;
-  margin-bottom: 0.2em;
+  margin: var(--spacing-sm) 0 var(--spacing-xs);
 }
 
-/* Contact Info */
-.contact-info {
-  margin-bottom: 1em;
+/* Sector-Specific Headers */
+.state-header {
+  background-color: var(--bg-state);
+  padding: var(--spacing-sm);
 }
 
-.contact-item {
-  display: block;
-  margin: 0.2em 0;
+.federal-header {
+  background-color: var(--bg-federal);
+  padding: var(--spacing-sm);
 }
 
-/* Table Styling */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1em 0;
-}
-
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-th {
-  background-color: #f8f9f9;
-  font-weight: bold;
-}
-
-tr:nth-child(even) {
-  background-color: #f8f9f9;
+.private-header {
+  background-color: var(--bg-private);
+  padding: var(--spacing-sm);
 }
 
 /* Page Break Control */
@@ -392,37 +138,23 @@ tr:nth-child(even) {
   page-break-after: always;
 }
 
-/* Bold Text Styling */
-strong {
-  color: #2c3e50;
+/* Print-Specific Styles */
+@media print {
+  body {
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+  
+  a {
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+  
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+  
+  .experience-item, .education-item {
+    page-break-inside: avoid;
+  }
 }
-
-/* Section Dividers */
-hr {
-  border: none;
-  height: 1px;
-  background-color: #eaecee;
-  margin: 1.5em 0;
-}
-
-/* State-specific styling */
-.state-header {
-  background-color: #e8f4fc;
-  padding: 0.5em;
-  border-radius: 5px;
-}
-
-/* Federal-specific styling */
-.federal-header {
-  background-color: #e8fcf1;
-  padding: 0.5em;
-  border-radius: 5px;
-}
-
-/* Private-specific styling */
-.private-header {
-  background-color: #fcf8e8;
-  padding: 0.5em;
-  border-radius: 5px;
-}
-
