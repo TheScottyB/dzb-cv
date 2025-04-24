@@ -5,7 +5,6 @@ node_modules/
 # Build outputs
 dist/
 build/
-output/
 
 # IDE and editor files
 .vscode/
