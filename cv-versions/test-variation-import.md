@@ -1,0 +1,26 @@
+---
+imported: true
+source: word
+date: 2025-04-24
+---
+
+Dawn Zurick Beilfuss
+15810 IL Rt. 173 #2F, Harvard, IL 60033
+847.287.1148
+DZ4100@gmail.com
+
+PROFESSIONAL EXPERIENCE
+
+Vylla Home Inc
+Admin for Central & Eastern Coast AVPs
+February 2024 - Present
+- Provide administrative support for 3 AVPs covering 14 states
+- Selected for pilot program supporting 30 new agents
+- Implemented and managed agent support systems
+- Collaborated and implemented streamlined phone system
+- Developed and managed agent retention initiative
+
+Licensed Managing Broker
+Licensed by Illinois Department of Financial and Professional Regulation
+Better Homes and Gardens Real Estate Star Homes
+2017-2021
