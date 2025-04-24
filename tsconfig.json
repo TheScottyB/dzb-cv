@@ -16,11 +16,15 @@
     "sourceMap": true,
     "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "paths": {
-      "*": ["src/*"]
-    },
     "types": ["node", "jest", "uuid"]
   },
-  "include": ["src/**/*", "src/__tests__/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/**/*.ts", "src/**/*.js"],
+  "exclude": [
+    "node_modules", 
+    "dist",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.js",
+    "src/tests/**"
+  ]
 }
