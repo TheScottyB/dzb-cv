@@ -21,19 +21,13 @@
   "include": [
     "src/**/*.ts", 
     "src/**/*.js",
+    "src/types/**/*.ts",
     "src/data/**/*.json",
     "src/templates/**/*.md",
     "src/components/**/*.md"
-  ],
+],
   "exclude": [
-    "node_modules", 
-    "dist",
-    "src/__tests__",
-    "src/**/__tests__",
-    "src/tests",
-    "**/*.test.ts",
-    "**/*.test.js",
-    "**/*.spec.ts",
-    "**/*.spec.js"
+    "node_modules",
+    "**/*.spec.ts"
   ]
 }

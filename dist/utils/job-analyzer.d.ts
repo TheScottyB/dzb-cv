@@ -1,7 +1,8 @@
 import type { JobPostingAnalysis } from '../types/cv-types.js';
 /**
- * Analyzes a job posting URL and extracts relevant information
+ * Extracts key terms from text content
  */
+export declare function extractKeyTerms(text: string, additionalTerms?: string[]): string[];
 export declare function analyzeJobPosting(url: string, options?: {
     skipRateLimiting?: boolean;
     forceGenericParser?: boolean;

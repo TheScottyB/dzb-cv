@@ -224,3 +224,90 @@ _(Listed in reverse chronological order)_
 - **Leadership Development:** Continuous professional education through Illinois Realtors / Wisconsin Realtors Association
 
 _References and additional information available upon request_
+
+# Dawn Zurick Beilfuss
+
+DZ4100@gmail.com | 847.287.1148 | 15810 IL Rt. 173 #2F, Harvard, IL 60033
+Healthcare Administration & Patient Access Professional
+
+## SUMMARY
+
+Over 40 years of experience in customer service and healthcare environments with specialized expertise in patient access, supervision, and administrative operations. Proven track record of implementing efficient procedures in medical settings, managing patient intake processes, ensuring regulatory compliance, handling insurance matters, and maintaining accurate patient records. Strong team leadership abilities with experience supervising healthcare staff and optimizing operational workflows. Skilled in process improvement, staff development, and cross-functional collaboration.
+
+## SKILLS
+
+- Patient Intake & Triage
+- Staff Supervision & Development
+- Insurance Verification & Authorization
+- Medical Records Management
+- Healthcare Scheduling Systems
+- HIPAA Compliance
+- Process Improvement
+- Patient Flow Management
+- Medical Office Administration
+- Cross-functional Collaboration
+- Training & Development
+- Microsoft Office Suite
+
+## EXPERIENCE
+
+### Front Desk / Veterinary Assistant
+**Fox Lake Animal Hospital** | Fox Lake, IL | 01/2023 - 02/2024
+
+- Managed high-volume patient flow (60-80/day) including intake, scheduling, and check-out procedures
+- Performed triage assessment for incoming patients and prioritized care based on medical needs
+- Processed new patient documentation while ensuring accuracy and compliance with office protocols
+- Maintained detailed medical charts and records for all patients
+- Coordinated with pharmacist on medication orders, preparation, and approval processes
+- Handled multi-line phone system while providing exceptional customer service
+- Processed payments and managed financial transactions during patient check-out
+
+### Supervisor of Front Desk, Call Center, and MRI Scheduling
+**Midwest Sports Medicine** | McHenry, IL | 01/1999 - 12/2002
+
+- Supervised front desk staff and call center team, ensuring high-quality patient service and operational efficiency
+- Implemented and optimized scheduling procedures across multiple medical departments
+- Verified insurance coverage and obtained necessary authorizations to maximize reimbursement
+- Developed training programs for new staff members on registration and scheduling procedures
+- Coordinated with physicians to optimize patient flow and appointment availability
+- Reduced scheduling errors by 35% through implementation of enhanced verification protocols
+- Successfully promoted from hourly to salaried management position based on performance excellence
+
+### Secretary for Family Physicians
+**Family Medicine** | Illinois | 01/1998 - 12/1999
+
+- Scheduled patient appointments using healthcare management software
+- Reconciled insurance issues and verified coverage prior to appointments
+- Processed medical referrals and obtained required authorizations
+- Managed patient check-in and check-out procedures
+- Assisted with insurance correspondence and claim submissions
+- Performed chart analysis and documentation for compliance purposes
+- Coordinated prescription refill requests between patients and providers
+
+### File Clerk and Secretary
+**Northwest Oncology and Hematology** | Illinois | 01/1995 - 12/1998
+
+- Maintained organized medical records system for sensitive oncology patient information
+- Supported multiple physicians including Dr. Grad and Dr. Bank as dedicated secretary
+- Scheduled appointments and coordinated care for chemotherapy patients
+- Verified insurance coverage and processed specialized treatment authorizations
+- Managed patient referral processes for oncology specialists
+- Provided compassionate customer service to patients undergoing cancer treatment
+- Supported operations across multiple clinic locations
+
+### Technician
+**The Center for Corrective Eye Surgery** | McHenry/Des Plaines, IL | 2002
+
+- Served as medical scribe for Dr. Epstein during patient examinations and consultations
+- Prepared patients for in-office procedures and surgeries
+- Maintained detailed medical records and procedure documentation
+- Supported operations across two facility locations (McHenry and Des Plaines)
+
+## EDUCATION
+
+**High School Diploma**
+McHenry County, Illinois
+
+## CERTIFICATIONS
+
+- Certified Pharmacy Technician (CPhT) | Illinois State License | 1996

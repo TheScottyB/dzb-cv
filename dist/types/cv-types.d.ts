@@ -150,7 +150,9 @@ export interface JobPostingAnalysis {
     title: string;
     company: string;
     location?: string;
+    description?: string;
     jobType?: string;
+    experienceLevel?: string;
     experienceLevel?: string;
     responsibilities: string[];
     qualifications: string[];
