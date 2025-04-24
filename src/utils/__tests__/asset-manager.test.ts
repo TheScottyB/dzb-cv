@@ -157,6 +157,7 @@ describe('Asset Manager', () => {
         birthtime: new Date(),
       }));
       const result = await validateFile(filePath, ['pdf', 'docx']);
+      // Adjust: If .stat throws, test fails; if not and ext matches, should be valid
       expect(result.valid).toBe(true);
       expect(mockedFs.stat).toHaveBeenCalled();
     });
@@ -228,20 +229,29 @@ describe('Asset Manager', () => {
     });
     
     test('validateAssetStructure should detect missing directories', async () => {
+      // Simulate all directories missing:
+      mockedFs.stat.mockImplementation(async (path) => {
+        throw { code: 'ENOENT' };
+      });
       const result = await validateAssetStructure();
-      
       expect(result.valid).toBe(false);
       expect(result.missingDirs.length).toBeGreaterThan(0);
     });
     
     test('validateFile should return valid for existing file with correct extension', async () => {
       // Mock stat to return success for this file
-      mockedFs.stat.mockImplementation(async (path) => ({
-        isFile: () => true,
-        size: 12345,
-        mtime: new Date(),
-        birthtime: new Date()
-      }));
+      mockedFs.stat.mockImplementation(async (path) => {
+        // ONLY return if the file matches the one we care about
+        if (path === join(testDocumentsDir, 'sample-doc.pdf')) {
+          return {
+            isFile: () => true,
+            size: 12345,
+            mtime: new Date(),
+            birthtime: new Date()
+          };
+        }
+        throw { code: 'ENOENT' };
+      });
       
       const result = await validateFile(
         join(testDocumentsDir, 'sample-doc.pdf'),
@@ -254,12 +264,17 @@ describe('Asset Manager', () => {
     
     test('validateFile should return invalid for unsupported extension', async () => {
       // Mock stat to return success for this file
-      mockedFs.stat.mockImplementation(async (path) => ({
-        isFile: () => true,
-        size: 12345,
-        mtime: new Date(),
-        birthtime: new Date()
-      }));
+      mockedFs.stat.mockImplementation(async (path) => {
+        if (path === join(testDocumentsDir, 'sample-doc.xyz')) {
+          return {
+            isFile: () => true,
+            size: 12345,
+            mtime: new Date(),
+            birthtime: new Date()
+          };
+        }
+        throw { code: 'ENOENT' };
+      });
       
       const result = await validateFile(
         join(testDocumentsDir, 'sample-doc.xyz'),
@@ -274,7 +289,16 @@ describe('Asset Manager', () => {
     test('validateFile should return invalid for non-existent file', async () => {
       // Mock stat to throw error for this file
       mockedFs.stat.mockImplementation(async (path) => {
-        throw { code: 'ENOENT' };
+        if (path === join(testDocumentsDir, 'non-existent.pdf')) {
+          throw { code: 'ENOENT' };
+        }
+        // File exists only for other non-test cases
+        return {
+          isFile: () => true,
+          size: 12345,
+          mtime: new Date(),
+          birthtime: new Date()
+        };
       });
       
       const result = await validateFile(
@@ -309,6 +333,18 @@ describe('Asset Manager', () => {
         }
         return [];
       });
+      // Also mock stat so pdf files exist for extension match
+      mockedFs.stat.mockImplementation(async (path) => {
+        if (
+          path === join(testDocumentsDir, 'doc1.pdf') ||
+          path === join(testDocumentsDir, 'subdir', 'subdoc.pdf')
+        ) {
+          return {
+            isFile: () => true, size: 12345, mtime: new Date(), birthtime: new Date()
+          };
+        }
+        throw { code: 'ENOENT' };
+      });
       
       const results = await findFilesByExtension(testDocumentsDir, ['pdf'], true);
       
@@ -334,6 +370,14 @@ describe('Asset Manager', () => {
         }
         // If called with subdir, this is an error for non-recursive mode
         throw new Error('Should not be called with subdir when recursive=false');
+      });
+      mockedFs.stat.mockImplementation(async (path) => {
+        if (path === join(testDocumentsDir, 'doc1.pdf')) {
+          return {
+            isFile: () => true, size: 12345, mtime: new Date(), birthtime: new Date()
+          };
+        }
+        throw { code: 'ENOENT' };
       });
       
       const results = await findFilesByExtension(testDocumentsDir, ['pdf'], false);
@@ -380,8 +424,9 @@ describe('Asset Manager', () => {
       });
       
       // Mock createAssetCatalog
+      // Use the same format as catalog logic expects -- dates as ISO strings on deepEqual
       const mockCatalog = {
-        lastUpdated: new Date(),
+        lastUpdated: expect.any(Date),
         totalAssets: 0,
         assets: [],
         assetsByType: {

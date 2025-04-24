@@ -282,43 +282,11 @@ function extractListItemsFromElements(elements) {
             items.push(...listItems);
         }
         // Otherwise, if it's a paragraph or standalone with text
-        else if (element.tagName === 'P' || (element.textContent && element.textContent.trim().length > 0)) {
+        else if (element.textContent && element.textContent.trim().length > 0) {
             items.push(element.textContent.trim());
         }
     }
     return items;
-}
-// MINIMAL ROBUST VERSION - replaces all previous block and closes properly
-function parseLinkedInJob(document, url) {
-    const title = document.querySelector('.top-card-layout__title')?.textContent?.trim()
-        || document.querySelector('h1')?.textContent?.trim()
-        || 'Unknown Position';
-    const company = document.querySelector('.topcard__org-name-link')?.textContent?.trim()
-        || document.querySelector('.topcard__flavor--metadata')?.textContent?.trim()
-        || 'Unknown Company';
-    const location = document.querySelector('.topcard__flavor--bullet')?.textContent?.trim()
-        || document.querySelector('.topcard__flavor-row')?.textContent?.trim();
-    const description = document.querySelector('.description__text')?.textContent?.trim() || '';
-    // For now, leave responsibilities and qualifications empty.
-    const responsibilities = [];
-    const qualifications = [];
-    // Extract skills/key terms from the description.
-    const keyTerms = extractKeyTerms(description);
-    return {
-        title,
-        company,
-        location,
-        responsibilities,
-        qualifications,
-        keyTerms,
-        requiredSkills: keyTerms,
-        desiredSkills: [],
-        source: {
-            url,
-            site: 'LinkedIn',
-            fetchDate: new Date()
-        }
-    };
 }
 /**
  * Parses Indeed job postings
