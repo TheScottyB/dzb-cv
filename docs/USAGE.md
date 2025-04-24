@@ -11,6 +11,40 @@ pnpm install
 pnpm build
 ```
 
+## Project Structure Overview
+
+```
+dzb-cv/
+├── src/               # Core CV generation code
+│   ├── templates/     # CV templates for each sector
+│   ├── components/    # Reusable CV components
+│   ├── data/          # CV data files
+│   ├── utils/         # Helper functions
+│   │   ├── job-analyzer.ts      # Job posting analysis
+│   │   ├── pdf-generator.ts     # Markdown to PDF conversion
+│   │   ├── cv-parser.ts         # CV parsing utilities
+│   │   └── web-scraper.ts       # Job posting scraper
+│   ├── types/         # TypeScript type definitions
+│   ├── styles/        # CSS styles for PDF generation
+│   ├── cli.ts         # Original CLI entry point
+│   ├── cli-unified.ts # Unified CLI tool entry point
+│   └── generator.ts   # Core template rendering
+├── utils/             # Standalone utility scripts
+│   ├── cv-validator.js         # Validates CV content
+│   ├── import-cv-text.js       # Imports CV text from various formats
+│   ├── generate-pdf.js         # Standalone PDF generation
+│   ├── import-to-pdf.js        # Converts imports directly to PDF
+│   ├── generate-tailored-pdf.js # Creates tailored job application PDFs
+│   └── generate-cover-letter-pdf.js # Cover letter generation
+├── cv-versions/       # Version-controlled CV markdown files
+├── output/            # Generated CVs in various formats
+│   ├── federal/       # Federal job applications
+│   ├── state/         # State job applications
+│   ├── private/       # Private sector applications
+│   └── sites/         # Job site optimized versions
+└── assets/            # Supporting documents and images
+```
+
 ## Unified CV Toolkit
 
 The new unified CLI tool provides a comprehensive approach to managing CVs and job applications.

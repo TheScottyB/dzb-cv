@@ -4,6 +4,8 @@
 
 DZB-CV is a CV generator for Dawn Zurick Beilfuss that creates tailored resumes for different sectors (federal, state, private) from a single source of data. It features job posting analysis to optimize CVs for specific positions.
 
+> **Important**: See [Technical Design: Formatting Specifications](docs/technical-design-formatting.md) for detailed information about text alignment, formatting guidelines, and styling specifications used across all templates.
+
 ## Architecture
 
 ### Core Components
@@ -19,15 +21,25 @@ DZB-CV is a CV generator for Dawn Zurick Beilfuss that creates tailored resumes 
 
 3. **Job Analysis**
    - `src/utils/job-analyzer.ts`: Extracts data from job postings
+   - `src/utils/web-scraper.ts`: Scrapes job postings with Puppeteer
    - `src/cli-job-analyzer.ts`: CLI for job analysis
 
 4. **Templates**
    - `src/templates/{sector}/{sector}-template.md`: Sector-specific templates
+   - `src/components/*.md`: Reusable CV components
    - `src/styles/pdf-styles.css`: Styling for PDF output
 
 5. **CLI & Tools**
-   - `src/cli.ts`: Main CV generation interface
-   - `generate-pdf.js`: Helper script for PDF generation
+   - `src/cli.ts`: Original CV generation interface
+   - `src/cli-unified.ts`: Unified CLI tool (recommended)
+   - `src/cli-profile-importer.ts`: Profile import functionality
+   
+6. **Utility Scripts**
+   - `utils/cv-validator.js`: Validates CV content
+   - `utils/import-cv-text.js`: Imports from various formats
+   - `utils/generate-pdf.js`: Standalone PDF generation
+   - `utils/generate-tailored-pdf.js`: Job-specific PDFs
+   - `utils/generate-cover-letter-pdf.js`: Cover letter generation
 
 ## Data Flow
 

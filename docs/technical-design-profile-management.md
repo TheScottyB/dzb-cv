@@ -4,6 +4,8 @@
 
 This document outlines the technical design for a profile management system that allows importing, versioning, and tracking changes to CV/resume data for Dawn. The system ensures data integrity, avoids duplication, and maintains a complete history of profile changes with explanations.
 
+> **Note**: For a complete understanding of the tools organization and format specifications used in this project, please also refer to the new [Technical Design: Formatting Specifications](technical-design-formatting.md) document.
+
 ## Core Requirements
 
 1. **Version-controlled profile storage**: Track all changes to profiles over time
