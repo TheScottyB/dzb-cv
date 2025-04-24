@@ -35,10 +35,11 @@ const DEFAULT_SCRAPER_OPTIONS: ScraperOptions = {
   saveScreenshot: true,
   savePdf: false,
   viewport: {
-    width: 1280,
-    height: 800
+    width: 1920,
+    height: 1080
   },
-  customUserAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+  // Latest Chrome user agent string with current version
+  customUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
 };
 
 /**
@@ -153,22 +154,119 @@ export async function scrapeJobPosting(
       await page.pdf({ path: pdfPath, format: 'A4' });
     }
     
-    // Extract job data based on the site
-    let jobData: ScrapedJobPosting;
+    // Check for CAPTCHA or verification page
+    const hasCaptcha = await detectCaptcha(page);
     
-    if (url.includes('indeed.com')) {
-      jobData = await scrapeIndeedJob(page, url, htmlPath, screenshotPath);
-    } else if (url.includes('linkedin.com')) {
-      jobData = await scrapeLinkedInJob(page, url, htmlPath, screenshotPath);
+    // If CAPTCHA is detected and we're in headless mode, we need to handle it
+    if (hasCaptcha && mergedOptions.headless) {
+      console.log('\nCAPTCHA or verification page detected!');
+      
+      // Create a screenshot of the CAPTCHA page
+      if (mergedOptions.outputDir) {
+        const captchaScreenshotPath = path.join(mergedOptions.outputDir, `captcha-${filename}.png`);
+        await page.screenshot({ path: captchaScreenshotPath, fullPage: true });
+        console.log(`CAPTCHA screenshot saved to: ${captchaScreenshotPath}`);
+      }
+      
+      // Close the headless browser
+      await browser.close();
+      
+      // Notify about switching to visible mode for manual CAPTCHA solving
+      console.log('Switching to visible browser mode for manual CAPTCHA solving...');
+      
+      // Relaunch with visible browser
+      const visibleBrowser = await puppeteer.launch({
+        headless: false, // Show the browser
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-web-security',
+          '--disable-features=IsolateOrigins,site-per-process',
+          '--window-size=1280,960'
+        ]
+      });
+      
+      // Create a new page
+      const visiblePage = await visibleBrowser.newPage();
+      
+      // Set the same user agent and viewport
+      if (mergedOptions.customUserAgent) {
+        await visiblePage.setUserAgent(mergedOptions.customUserAgent);
+      }
+      
+      if (mergedOptions.viewport) {
+        await visiblePage.setViewport(mergedOptions.viewport);
+      }
+      
+      // Navigate to the URL
+      await visiblePage.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+      
+      // Prompt the user to solve the CAPTCHA
+      console.log('\nPlease solve the CAPTCHA in the browser window.');
+      console.log('Once you have solved the CAPTCHA and can see the job details, press Enter to continue...');
+      
+      // Wait for user to press Enter (this requires user interaction)
+      // Using process.stdin here as a quick solution
+      // For a real CLI tool, we would use inquirer or similar
+      await new Promise<void>(resolve => {
+        process.stdin.once('data', () => {
+          resolve();
+        });
+      });
+      
+      console.log('Continuing with scraping after CAPTCHA resolution...');
+      
+      // Wait for content to fully load
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Save updated HTML if requested
+      if (mergedOptions.saveHtml && mergedOptions.outputDir) {
+        const html = await visiblePage.content();
+        htmlPath = path.join(mergedOptions.outputDir, `${filename}.html`);
+        await fs.writeFile(htmlPath, html, 'utf-8');
+      }
+      
+      // Save updated screenshot if requested
+      if (mergedOptions.saveScreenshot && mergedOptions.outputDir) {
+        screenshotPath = path.join(mergedOptions.outputDir, `${filename}.png`);
+        await visiblePage.screenshot({ path: screenshotPath, fullPage: true });
+      }
+      
+      // Extract job data based on the site
+      let jobData: ScrapedJobPosting;
+      
+      if (url.includes('indeed.com')) {
+        jobData = await scrapeIndeedJob(visiblePage, url, htmlPath, screenshotPath);
+      } else if (url.includes('linkedin.com')) {
+        jobData = await scrapeLinkedInJob(visiblePage, url, htmlPath, screenshotPath);
+      } else {
+        // Generic job scraping
+        jobData = await scrapeGenericJob(visiblePage, url, htmlPath, screenshotPath);
+      }
+      
+      // Close browser
+      await visibleBrowser.close();
+      
+      return jobData;
     } else {
-      // Generic job scraping
-      jobData = await scrapeGenericJob(page, url, htmlPath, screenshotPath);
+      // No CAPTCHA or already in visible mode, proceed normally
+      // Extract job data based on the site
+      let jobData: ScrapedJobPosting;
+      
+      if (url.includes('indeed.com')) {
+        jobData = await scrapeIndeedJob(page, url, htmlPath, screenshotPath);
+      } else if (url.includes('linkedin.com')) {
+        jobData = await scrapeLinkedInJob(page, url, htmlPath, screenshotPath);
+      } else {
+        // Generic job scraping
+        jobData = await scrapeGenericJob(page, url, htmlPath, screenshotPath);
+      }
+      
+      // Close browser
+      await browser.close();
+      
+      return jobData;
     }
-    
-    // Close browser
-    await browser.close();
-    
-    return jobData;
     
   } catch (error) {
     // Close browser on error
@@ -617,6 +715,79 @@ async function scrapeGenericJob(
     htmlPath,
     screenshotPath
   };
+}
+
+/**
+ * Detect if a page contains a CAPTCHA or verification challenge
+ * 
+ * @param page The Puppeteer page to check
+ * @returns True if a CAPTCHA or verification page is detected
+ */
+async function detectCaptcha(page: puppeteer.Page): Promise<boolean> {
+  // Get the page title
+  const title = await page.title();
+  
+  // Check if the title contains verification keywords
+  if (title.includes('Verification') || 
+      title.includes('Security Check') || 
+      title.includes('CAPTCHA') || 
+      title.includes('Robot') ||
+      title.includes('Additional Verification Required')) {
+    return true;
+  }
+  
+  // Check for common CAPTCHA providers and verification elements
+  const hasCaptchaElements = await page.evaluate(() => {
+    const captchaSelectors = [
+      // reCAPTCHA
+      '.g-recaptcha',
+      'iframe[src*="recaptcha"]',
+      // hCaptcha 
+      '.h-captcha',
+      'iframe[src*="hcaptcha"]',
+      // Cloudflare
+      '#challenge-form',
+      // Common verification text and forms
+      '#captcha',
+      '.captcha',
+      '[id*="captcha"]',
+      '[class*="captcha"]',
+      '.verification',
+      '#verification',
+      // Indeed specific
+      '.turnstile_challenge',
+      '#indeed-challenge'
+    ];
+    
+    for (const selector of captchaSelectors) {
+      if (document.querySelector(selector)) {
+        return true;
+      }
+    }
+    
+    // Check for common verification text
+    const bodyText = document.body.innerText.toLowerCase();
+    const verificationPhrases = [
+      'verify you are human',
+      'prove you\'re human',
+      'security check',
+      'complete the captcha',
+      'complete security check',
+      'verification required',
+      'additional verification',
+      'robot check'
+    ];
+    
+    for (const phrase of verificationPhrases) {
+      if (bodyText.includes(phrase)) {
+        return true;
+      }
+    }
+    
+    return false;
+  });
+  
+  return hasCaptchaElements;
 }
 
 /**

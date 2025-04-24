@@ -28,7 +28,7 @@ program
 // Command to scrape a job posting with Puppeteer
 program
   .command('scrape')
-  .description('Scrape a job posting from a website using headless browser')
+  .description('Scrape a job posting from a website using browser automation')
   .argument('<url>', 'The URL of the job posting to scrape')
   .option('--output <path>', 'Output directory for scraped files', 'output/scraped')
   .option('--no-headless', 'Run in non-headless mode (shows browser UI)')
@@ -36,6 +36,11 @@ program
   .option('--no-screenshot', 'Do not save screenshot')
   .option('--pdf', 'Save PDF of the page')
   .option('--analyze', 'Analyze the scraped job posting after scraping')
+  .option('--user-agent <string>', 'Custom user agent string to use')
+  .addHelpText('after', `
+Note: This command will automatically detect CAPTCHAs and verification challenges.
+      If detected in headless mode, it will switch to visible browser mode and
+      prompt you to solve the CAPTCHA manually before continuing.`)
   .action(async (url, options) => {
     try {
       console.log(chalk.blue.bold('🔍 Scraping job posting from browser...'));
@@ -50,7 +55,8 @@ program
         outputDir: options.output,
         saveHtml: true,
         saveScreenshot: options.screenshot,
-        savePdf: options.pdf
+        savePdf: options.pdf,
+        customUserAgent: options.userAgent
       };
       
       console.log(chalk.yellow('Launching browser and navigating to URL...'));
