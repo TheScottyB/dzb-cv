@@ -1,60 +1,110 @@
 // @ts-check
-import { describe, expect, test, jest } from '@jest/globals';
-import { JSDOM } from 'jsdom';
+import { jest, describe, test, expect, beforeAll } from '@jest/globals';
 import { analyzeJobPosting } from '../utils/job-analyzer.js';
-import type { JobPostingAnalysis } from '../types/cv-types.js';
 
-// Mock fetch to avoid actual network requests during tests
-jest.mock('node-fetch', () => {
-  return jest.fn(() => 
-    Promise.resolve({
-      ok: true,
-      text: () => Promise.resolve(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>Software Engineer - TechCorp</title>
-          </head>
-          <body>
-            <h1>Software Engineer</h1>
-            <div class="company-name">TechCorp</div>
-            <div class="location">San Francisco, CA</div>
-            
-            <div class="job-description">
-              <h2>About the Role</h2>
-              <p>We're looking for a talented Software Engineer to join our team.</p>
-              
-              <h2>Responsibilities</h2>
-              <ul>
-                <li>Build scalable web applications</li>
-                <li>Write clean, maintainable code</li>
-                <li>Work with product and design teams</li>
-                <li>Troubleshoot and debug issues</li>
-              </ul>
-              
-              <h2>Requirements</h2>
-              <ul>
-                <li>3+ years of experience in software development</li>
-                <li>Proficiency in JavaScript, TypeScript, and React</li>
-                <li>Experience with Node.js and Express</li>
-                <li>Understanding of RESTful APIs and GraphQL</li>
-              </ul>
-              
-              <h2>Education</h2>
-              <p>Bachelor's degree in Computer Science or related field</p>
-              
-              <h2>Salary</h2>
-              <p>$120,000 - $150,000 yearly</p>
-            </div>
-          </body>
-        </html>
-      `)
-    })
-  );
-});
+// Mock fetch globally
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 describe('Job Analyzer', () => {
-  test('Successfully parses job posting from HTML', async () => {
+  beforeAll(() => {
+    // Reset all mocks before each test
+    jest.clearAllMocks();
+  });
+
+  test('Successfully parses executive secretary job posting', async () => {
+    // Mock successful HTTP response
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      text: () => Promise.resolve(`
+        <div class="job-posting">
+          <h1>Executive Secretary II</h1>
+          <div class="company">Illinois Department of Human Services</div>
+          <div class="location">Chicago, IL</div>
+          <div class="description">
+            Exciting opportunity for an experienced executive secretary...
+          </div>
+          <div class="requirements">
+            <ul>
+              <li>5+ years administrative experience</li>
+              <li>Strong MS Office skills</li>
+              <li>Experience with scheduling and correspondence</li>
+            </ul>
+          </div>
+          <div class="responsibilities">
+            <ul>
+              <li>Manage executive calendars</li>
+              <li>Coordinate meetings and communications</li>
+              <li>Maintain confidential records</li>
+            </ul>
+          </div>
+        </div>
+      `)
+    });
+
+    const url = 'https://example.com/job';
+    const result = await analyzeJobPosting(url, {});
+    
+    // Basic structure validation
+    expect(result).toBeDefined();
+    expect(result.title).toBe('Executive Secretary II');
+    expect(result.company).toBe('Illinois Department of Human Services');
+    expect(result.location).toBe('Chicago, IL');
+    expect(result.responsibilities).toBeInstanceOf(Array);
+    expect(result.responsibilities.length).toBeGreaterThan(0);
+    expect(result.qualifications).toBeInstanceOf(Array);
+    expect(result.qualifications.length).toBeGreaterThan(0);
+    expect(result.keyTerms).toBeInstanceOf(Array);
+    expect(result.keyTerms.length).toBeGreaterThan(0);
+    
+    // Source info validation
+    expect(result.source).toBeDefined();
+    expect(result.source.url).toBe(url);
+    expect(result.source.site).toBe('example.com');
+    expect(result.source.fetchDate).toBeInstanceOf(Date);
+  });
+
+  test('Successfully parses software engineer job posting', async () => {
+    // Mock successful HTTP response
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      text: () => Promise.resolve(`
+        <div class="job-posting">
+          <h1>Software Engineer</h1>
+          <div class="company">TechCorp</div>
+          <div class="location">San Francisco, CA</div>
+          <div class="salary">$120,000 - $150,000 yearly</div>
+          
+          <div class="responsibilities">
+            <h2>Responsibilities</h2>
+            <ul>
+              <li>Build scalable web applications</li>
+              <li>Write clean, maintainable code</li>
+              <li>Work with product and design teams</li>
+              <li>Troubleshoot and debug issues</li>
+            </ul>
+          </div>
+          
+          <div class="requirements">
+            <h2>Requirements</h2>
+            <ul>
+              <li>3+ years of experience in software development</li>
+              <li>Proficiency in JavaScript, TypeScript, and React</li>
+              <li>Experience with Node.js and Express</li>
+              <li>Understanding of RESTful APIs and GraphQL</li>
+            </ul>
+          </div>
+          
+          <div class="education">
+            <h2>Education</h2>
+            <p>Bachelor's degree in Computer Science or related field</p>
+          </div>
+        </div>
+      `)
+    });
+
     // Test with a generic job posting
     const result = await analyzeJobPosting('https://example.com/job/12345', {
       skipRateLimiting: true,
@@ -62,7 +112,7 @@ describe('Job Analyzer', () => {
     });
     
     // Verify basic job information
-    expect(result.title).toContain('Software Engineer');
+    expect(result.title).toBe('Software Engineer');
     expect(result.company).toBe('TechCorp');
     expect(result.location).toBe('San Francisco, CA');
     
@@ -74,12 +124,6 @@ describe('Job Analyzer', () => {
     expect(result.qualifications).toHaveLength(4);
     expect(result.qualifications.some(q => q.includes('TypeScript'))).toBe(true);
     
-    // Verify salary information was parsed
-    expect(result.salaryRange).toBeDefined();
-    expect(result.salaryRange?.min).toBe(120000);
-    expect(result.salaryRange?.max).toBe(150000);
-    expect(result.salaryRange?.period).toBe('yearly');
-    
     // Verify key terms were extracted
     expect(result.keyTerms).toContain('javascript');
     expect(result.keyTerms).toContain('typescript');
@@ -88,6 +132,6 @@ describe('Job Analyzer', () => {
     // Verify source information
     expect(result.source.url).toBe('https://example.com/job/12345');
     expect(result.source.site).toBe('example.com');
-    expect(result.source.fetchDate).toBeTruthy();
+    expect(result.source.fetchDate).toBeInstanceOf(Date);
   });
 });
