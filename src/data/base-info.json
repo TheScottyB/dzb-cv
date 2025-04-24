@@ -292,7 +292,7 @@
       },
       {
         "employer": "Better Homes and Gardens Real Estate Star Homes",
-        "address": "4817 W. Elm St., McHenry, IL 60050",
+        "address": "4817 W. Elm St., McHenry, IL 60050 & 783 N Barron Blvd, Grayslake, IL 60030",
         "position": "Designated Managing Broker (IL & WI)",
         "period": "October 2017 - October 2021",
         "hours": "40 hrs/wk",
@@ -300,8 +300,13 @@
         "duties": [
           "Managed brokerage operations",
           "Supervised a team of 9 real estate agents in the McHenry office",
+          "Ensured compliance with Illinois Department of Financial and Professional Regulation (IDFPR) requirements",
+          "Directed operations according to Illinois real estate law and regulations",
+          "Facilitated numerous property transactions",
           "Board of Directors for Heartland Realtor Organization"
-        ]
+        ],
+        "supervisor": "Jim Starwalt, Owner",
+        "mayContact": true
       },
       {
         "employer": "O.K. & Assoc., Realty Plus",
