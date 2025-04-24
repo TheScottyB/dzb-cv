@@ -1,0 +1,23 @@
+import { generateCV } from "./generator.js";
+async function main() {
+    const args = process.argv.slice(2);
+    const sectorArg = args.find(arg => arg.startsWith("--sector="));
+    if (!sectorArg) {
+        console.error("Please specify a sector: --sector=federal|state|private");
+        process.exit(1);
+    }
+    const sector = sectorArg.split("=")[1];
+    const outputPath = `output/${sector}`;
+    try {
+        // Create the sector directory if it doesn't exist
+        await import('fs/promises').then(fs => fs.mkdir(outputPath, { recursive: true }));
+        const content = await generateCV(sector, outputPath);
+        console.log(`Successfully generated ${sector} CV`);
+    }
+    catch (error) {
+        console.error("Error:", error);
+        process.exit(1);
+    }
+}
+main();
+//# sourceMappingURL=cli.js.map
