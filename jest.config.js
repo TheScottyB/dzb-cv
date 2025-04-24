@@ -11,8 +11,13 @@ export default {
   testMatch: ["**/__tests__/**/*.test.ts"],
   extensionsToTreatAsEsm: [".ts"],
   moduleNameMapper: {
-    "^(.+)\\.js$": "$1"
+    // More specific module mappings
+    "^@/(.*)$": "<rootDir>/src/$1",
+    // Handle .js extensions in import paths for ESM
+    "^(\\.{1,2}/.*)\\.js$": "$1"
   },
   rootDir: ".",
-  modulePaths: ["<rootDir>"]
+  modulePaths: ["<rootDir>"],
+  // Add setup files for jest globals
+  setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"]
 };

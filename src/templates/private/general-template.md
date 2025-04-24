@@ -28,8 +28,9 @@ A proven executive leader with a passion for driving organizational transformati
 As a leader, I believe in creating environments where innovation thrives, teams excel, and organizations achieve sustainable growth. My approach combines strategic vision with practical execution, always focused on delivering measurable value while developing future leaders.
 
 ## Professional Narrative
-{{#sortByDate workExperience.realEstate}}
-### The Leadership Chapter ({{formatUSDate startDate}} - {{formatUSDate endDate}})
+{{#sortByDate this}}
+{{#each allExperience}}
+### The {{#if industry}}{{industry}}{{else}}Leadership{{/if}} Chapter ({{formatUSDate startDate}} - {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}})
 **Role:** _{{position}}_
 
 **Context & Challenge:**
@@ -40,11 +41,12 @@ As a leader, I believe in creating environments where innovation thrives, teams 
 - {{this}}
 {{/each}}
 
-**Impact & Results:**
+**Notable Achievements & Impact:**
 {{#each achievements}}
 - {{this}}
 {{/each}}
 
+{{/each}}
 {{/sortByDate}}
 
 ## Strategic Competencies

@@ -35,10 +35,11 @@
 ## Professional Experience
 _(Listed in reverse chronological order)_
 
-{{#sortByDate allExperience}}
-### {{position}} | {{employer}}
-**Service Period:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}  
-{{#if hours}}**Weekly Hours:** {{hours}}{{/if}}  
+{{#sortByDate this}}
+{{#each allExperience}}
+### {{position}}
+**{{employer}}** - {{#if address}}{{address}}{{/if}}
+*{{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}*
 {{#if address}}**Location:** {{address}}{{/if}}  
 
 {{#if industry}}
@@ -55,6 +56,7 @@ _(Listed in reverse chronological order)_
 {{#each achievements}}
 - {{this}}
 {{/each}}
+{{/sortByDate}}
 {{/if}}
 
 {{#if training}}

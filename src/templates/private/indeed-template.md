@@ -35,7 +35,7 @@
 {{/if}}
 
 ## Professional Experience
-{{#sortByDate allExperience}}
+{{#sortByDate this}}
 ### {{position}}
 **{{employer}}** - {{#if address}}{{address}}{{/if}} - {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}
 

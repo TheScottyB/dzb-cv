@@ -1,6 +1,23 @@
-import { analyzeATSCompatibility } from './analyzer';
-import type { ATSAnalysis, ATSImprovement } from '../../types/ats-types';
-import type { PDFOptions } from '../../types/cv-types';
+/**
+ * Example Usage:
+ * 
+ * import { createATSOptimizedPDF } from './src/utils/ats/optimizer';
+ * import { DEFAULT_PDF_OPTIONS } from './src/utils/pdf-generator';
+ * 
+ * const markdownContent = "# ATS Test CV\nDawn Zurick Beilfuss\nemail@example.com | 123-456-7890\nChicago, IL\n## Professional Experience\nCompany | 2023 - Present\nRole\n- Did things.\n";
+ * const outputPath = 'output/ats-test.pdf';
+ * createATSOptimizedPDF(markdownContent, outputPath, DEFAULT_PDF_OPTIONS)
+ *   .then(result => {
+ *     console.log('ATS PDF Path:', result.pdfPath);
+ *     console.log('ATS Analysis Score:', result.analysis.score);
+ *     console.log('Optimizations:', result.optimizations);
+ *   });
+ */
+
+import { analyzeATSCompatibility } from './analyzer.js';
+import { convertMarkdownToPdf } from '../pdf-generator.js';
+import type { ATSAnalysis, ATSImprovement } from '../../types/ats-types.js';
+import type { PDFOptions } from '../../types/cv-types.js';
 
 interface OptimizationResult {
   content: string;
@@ -172,21 +189,19 @@ Optimizations Applied:
 ${appliedOptimizations.map(opt => `- ${opt}`).join('\n')}
 -->`;
 
-  // Generate PDF with optimized content
-  const pdfPath = await generatePDF(contentWithMeta, outputPath, {
-    ...options,
-    atsOptimized: true
-  });
+  // Generate PDF with optimized content using the generator
+  const pdfPath = await convertMarkdownToPdf(
+    contentWithMeta,
+    outputPath,
+    {
+      ...options,
+      atsOptimized: true
+    }
+  );
 
   return {
     pdfPath,
     analysis,
     optimizations: appliedOptimizations
   };
-}
-
-// This would be imported from your PDF generator
-async function generatePDF(content: string, path: string, options: PDFOptions): Promise<string> {
-  // Implementation would come from your existing PDF generator
-  return path;
 }

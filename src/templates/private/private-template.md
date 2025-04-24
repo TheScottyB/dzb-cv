@@ -33,7 +33,7 @@
 ## Professional Experience
 _(Listed in reverse chronological order)_
 
-{{#sortByDate allExperience}}
+{{#sortByDate workExperience}}
 ### {{position}} | {{employer}}
 *{{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}*
 {{#if address}}**Location:** {{address}}{{/if}}
@@ -45,7 +45,7 @@ _(Listed in reverse chronological order)_
 {{/each}}
 
 {{#if achievements}}
-**Key Accomplishments:**
+**Key Achievements:**
 {{#each achievements}}
 - {{this}}
 {{/each}}
@@ -108,12 +108,12 @@ _(Listed in reverse chronological order)_
 - **{{title}} - {{organization}}:** {{#if achievement}}{{achievement}}{{/if}}{{#if startDate}} ({{formatUSDate startDate}}{{#if endDate}} to {{formatUSDate endDate}}{{/if}}){{/if}}
 {{/each}}
 
-## Professional Development & Training
-{{#each trainingAndCoaching}}
-### {{role}} - {{organization}}
-*{{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}*
-**Hours Completed:** {{#if hours}}{{hours}}{{else}}40{{/if}}
+## Professional Development
+_(Listed in reverse chronological order)_
 
+{{#each trainingAndCoaching}}
+### {{role}} | {{organization}}
+*{{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}*
 {{#if responsibilities}}
 **Program Focus:**
 {{#each responsibilities}}
@@ -128,5 +128,4 @@ _(Listed in reverse chronological order)_
 {{/each}}
 {{/if}}
 {{/each}}
-
 _References and additional information available upon request_

@@ -1,10 +1,13 @@
+import { jest, describe, test, expect, beforeAll, afterEach } from '@jest/globals';
+import type { Mock } from 'jest-mock';
+
 import * as fs from 'fs/promises';
 import { exec } from 'child_process';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import * as os from 'os';
 
-// Mock child_process.exec
+// Setup Jest mocks
 jest.mock('child_process', () => ({
   exec: jest.fn(),
 }));
@@ -178,14 +181,14 @@ jest.mock('fs/promises', () => {
     })
   };
 });
-
 // Mock exec implementation for image processing
-/* TypeScript error workaround - commented out for now
-const mockExec = exec as jest.MockedFunction<typeof exec>;
-mockExec.mockImplementation((command, callback) => {
+const mockedExec = exec as unknown as Mock<typeof exec>;
+// Uncomment when needed:
+/*
+mockedExec.mockImplementation((command, callback) => {
   console.log(`Mock exec: ${command}`);
   if (typeof callback === 'function') {
-    callback(null, '800 600', ''); // Mock stdout and stderr
+    callback(null, { stdout: '800 600', stderr: '' });
   }
   return {
     on: jest.fn(),
@@ -194,6 +197,13 @@ mockExec.mockImplementation((command, callback) => {
   } as any;
 });
 */
+
+// Set up typed fs mock functions
+const mockedStat = fs.stat as unknown as Mock;
+const mockedReaddir = fs.readdir as unknown as Mock;
+const mockedReadFile = fs.readFile as unknown as Mock;
+const mockedWriteFile = fs.writeFile as unknown as Mock;
+const mockedMkdir = fs.mkdir as unknown as Mock;
 
 describe('Asset Manager', () => {
   // Setup before all tests
@@ -215,7 +225,7 @@ describe('Asset Manager', () => {
       const outputPath = join(testImagesDir, 'sample-image-optimized.jpg');
       
       // Mock stat to return different sizes for before/after optimization
-      (fs.stat as jest.Mock).mockImplementation(async (path) => {
+      mockedStat.mockImplementation(async (path) => {
         if (path === inputPath) {
           return {
             isFile: () => true,
@@ -239,8 +249,8 @@ describe('Asset Manager', () => {
       const result = await optimizeImage(inputPath, outputPath, 85);
       
       // Check that exec was called with the correct magick command
-      expect(mockExec).toHaveBeenCalled();
-      const execCall = (mockExec as jest.Mock).mock.calls[0][0];
+      expect(mockedExec).toHaveBeenCalled();
+      const execCall = mockedExec.mock.calls[0][0];
       expect(execCall).toContain('magick');
       expect(execCall).toContain('-strip');
       expect(execCall).toContain('-quality 85');
@@ -253,9 +263,8 @@ describe('Asset Manager', () => {
     
     test('validateFile should return valid for existing file with correct extension', async () => {
       const filePath = join(testDocumentsDir, 'sample-doc.pdf');
-      
       // Mock stat to return success for this file
-      (fs.stat as jest.Mock).mockImplementation(async (path) => {
+      mockedStat.mockImplementation(async (path) => {
         return {
           isFile: () => true,
           size: 12345,
@@ -265,16 +274,15 @@ describe('Asset Manager', () => {
       });
       
       const result = await validateFile(filePath, ['pdf', 'docx']);
-      
       expect(result.valid).toBe(true);
-      expect(fs.stat).toHaveBeenCalled();
+      expect(mockedStat).toHaveBeenCalled();
     });
     
-    test('validateFile should return valid for existing file with correct extension', async () => {
+    test('getDocumentInfo should return document information', async () => {
       const filePath = join(testDocumentsDir, 'sample-doc.pdf');
       
       // Mock stat to return success for this file
-      (fs.stat as jest.Mock).mockImplementation(async (path) => {
+      mockedStat.mockImplementation(async (path) => {
         return {
           isFile: () => true,
           size: 12345,
@@ -306,7 +314,8 @@ describe('Asset Manager', () => {
     
     test('createAssetCatalog should create a catalog with assets', async () => {
       // Setup mock readdir to return test files
-      (fs.readdir as jest.Mock).mockImplementation(async (path, options) => {
+      // Setup mock readdir to return test files
+      mockedReaddir.mockImplementation(async (path, options) => {
         if (path === testDocumentsDir) {
           return [
             { name: 'sample-doc.pdf', isDirectory: () => false, isFile: () => true }
@@ -314,7 +323,6 @@ describe('Asset Manager', () => {
         }
         return [];
       });
-      
       const catalog = await createAssetCatalog();
       
       expect(catalog).toBeDefined();
@@ -327,7 +335,7 @@ describe('Asset Manager', () => {
       jest.clearAllMocks();
       
       // Mock stat to simulate missing directories
-      (fs.stat as jest.Mock).mockImplementation(async (path) => {
+      mockedStat.mockImplementation(async (path) => {
         if (path === testAssetsDir) {
           return { isDirectory: () => true };
         }
@@ -344,14 +352,12 @@ describe('Asset Manager', () => {
     
     test('validateFile should return valid for existing file with correct extension', async () => {
       // Mock stat to return success for this file
-      (fs.stat as jest.Mock).mockImplementation(async (path) => {
-        return {
-          isFile: () => true,
-          size: 12345,
-          mtime: new Date(),
-          birthtime: new Date()
-        };
-      });
+      mockedStat.mockImplementation(async (path) => ({
+        isFile: () => true,
+        size: 12345,
+        mtime: new Date(),
+        birthtime: new Date()
+      }));
       
       const result = await validateFile(
         join(testDocumentsDir, 'sample-doc.pdf'),
@@ -359,19 +365,17 @@ describe('Asset Manager', () => {
       );
       
       expect(result.valid).toBe(true);
-      expect(fs.stat).toHaveBeenCalled();
+      expect(mockedStat).toHaveBeenCalled();
     });
     
     test('validateFile should return invalid for unsupported extension', async () => {
       // Mock stat to return success for this file
-      (fs.stat as jest.Mock).mockImplementation(async (path) => {
-        return {
-          isFile: () => true,
-          size: 12345,
-          mtime: new Date(),
-          birthtime: new Date()
-        };
-      });
+      mockedStat.mockImplementation(async (path) => ({
+        isFile: () => true,
+        size: 12345,
+        mtime: new Date(),
+        birthtime: new Date()
+      }));
       
       const result = await validateFile(
         join(testDocumentsDir, 'sample-doc.xyz'),
@@ -380,12 +384,12 @@ describe('Asset Manager', () => {
       
       expect(result.valid).toBe(false);
       expect(result.message).toContain('Invalid file extension');
-      expect(fs.stat).toHaveBeenCalled();
+      expect(mockedStat).toHaveBeenCalled();
     });
     
     test('validateFile should return invalid for non-existent file', async () => {
       // Mock stat to throw error for this file
-      (fs.stat as jest.Mock).mockImplementation(async (path) => {
+      mockedStat.mockImplementation(async (path) => {
         throw { code: 'ENOENT' };
       });
       
@@ -395,7 +399,7 @@ describe('Asset Manager', () => {
       );
       
       expect(result.valid).toBe(false);
-      expect(fs.stat).toHaveBeenCalled();
+      expect(mockedStat).toHaveBeenCalled();
     });
   });
   
@@ -406,7 +410,7 @@ describe('Asset Manager', () => {
     
     test('findFilesByExtension should find files with matching extensions', async () => {
       // Mock readdir to return test files
-      (fs.readdir as jest.Mock).mockImplementation(async (path, options) => {
+      mockedReaddir.mockImplementation(async (path, options) => {
         if (path === testDocumentsDir) {
           return [
             { name: 'doc1.pdf', isDirectory: () => false, isFile: () => true },
@@ -429,15 +433,15 @@ describe('Asset Manager', () => {
       expect(results).toContain(join(testDocumentsDir, 'subdir', 'subdoc.pdf'));
       expect(results).not.toContain(join(testDocumentsDir, 'doc2.docx'));
       expect(results).not.toContain(join(testDocumentsDir, 'other.txt'));
-      expect(fs.readdir).toHaveBeenCalledTimes(2); // Called for main dir and subdir
+      expect(mockedReaddir).toHaveBeenCalledTimes(2); // Called for main dir and subdir
     });
     
     test('findFilesByExtension should not recurse when recursive is false', async () => {
       // Reset mock implementation
-      (fs.readdir as jest.Mock).mockReset();
+      mockedReaddir.mockReset();
       
       // Mock readdir to return test files
-      (fs.readdir as jest.Mock).mockImplementation(async (path, options) => {
+      mockedReaddir.mockImplementation(async (path, options) => {
         if (path === testDocumentsDir) {
           return [
             { name: 'doc1.pdf', isDirectory: () => false, isFile: () => true },
@@ -452,7 +456,7 @@ describe('Asset Manager', () => {
       
       expect(results.length).toBe(1);
       expect(results).toContain(join(testDocumentsDir, 'doc1.pdf'));
-      expect(fs.readdir).toHaveBeenCalledTimes(1); // Only called for main dir
+      expect(mockedReaddir).toHaveBeenCalledTimes(1); // Only called for main dir
     });
   });
   
@@ -463,7 +467,7 @@ describe('Asset Manager', () => {
     
     test('createAssetMetadata should handle errors properly', async () => {
       // Mock stat to throw an error
-      (fs.stat as jest.Mock).mockImplementation(async () => {
+      mockedStat.mockImplementation(async () => {
         throw new Error('Test error');
       });
       
@@ -474,7 +478,7 @@ describe('Asset Manager', () => {
       // Skip test - TypeScript error
       /*
       // Mock exec to throw an error
-      mockExec.mockImplementation((command, callback) => {
+      mockedExec.mockImplementation((command, callback) => {
         if (typeof callback === 'function') {
           callback(new Error('ImageMagick error'), { stdout: '', stderr: 'Error' }, '');
         }
@@ -487,7 +491,7 @@ describe('Asset Manager', () => {
     
     test('loadAssetCatalog should create new catalog if none exists', async () => {
       // Mock readFile to throw ENOENT
-      (fs.readFile as jest.Mock).mockImplementation(async () => {
+      mockedReadFile.mockImplementation(async () => {
         throw { code: 'ENOENT' };
       });
       
@@ -510,9 +514,8 @@ describe('Asset Manager', () => {
       
       const catalog = await loadAssetCatalog();
       
+      
       expect(catalog).toEqual(mockCatalog);
-      expect(fs.writeFile).toHaveBeenCalled();
+      expect(mockedWriteFile).toHaveBeenCalled();
     });
   });
-});
-
