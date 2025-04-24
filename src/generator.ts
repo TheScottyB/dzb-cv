@@ -53,7 +53,6 @@ async function generateCV(
 ): Promise<string> {
   try {
     // Merge defaults with provided options
-    // Merge defaults with provided options
     const mergedOptions = { ...DEFAULT_CV_OPTIONS, ...options };
     
     // Register Handlebars helpers directly
