@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc && npm run copy-templates",
+    "copy-templates": "mkdir -p dist/templates && cp -r src/templates/* dist/templates/ && mkdir -p dist/components && cp -r src/components/* dist/components/",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node dist/cli.js",
     "analyze-job": "node dist/cli-job-analyzer.js",

@@ -18,13 +18,22 @@
     "allowSyntheticDefaultImports": true,
     "types": ["node", "jest", "uuid"]
   },
-  "include": ["src/**/*.ts", "src/**/*.js"],
+  "include": [
+    "src/**/*.ts", 
+    "src/**/*.js",
+    "src/data/**/*.json",
+    "src/templates/**/*.md",
+    "src/components/**/*.md"
+  ],
   "exclude": [
     "node_modules", 
     "dist",
-    "**/__tests__/**",
+    "src/__tests__",
+    "src/**/__tests__",
+    "src/tests",
     "**/*.test.ts",
     "**/*.test.js",
-    "src/tests/**"
+    "**/*.spec.ts",
+    "**/*.spec.js"
   ]
 }
