@@ -199,8 +199,7 @@ program
     try {
       console.log(chalk.blue.bold(`🚀 Generating ${site.toUpperCase()} optimized CV...`));
       
-      // Create output directory if it doesn't exist
-      await fs.mkdir(options.output, { recursive: true });
+      // Output directory will be handled inside the generateSiteOptimizedCV function
       
       // Load CV data
       const cvData = await loadCVData(path.join(__dirname, "data", "base-info.json"));
@@ -512,7 +511,6 @@ async function generateSiteOptimizedCV(
   
   // Create filename based on site
   const filename = `dawn-zurick-beilfuss-${siteLower}-optimized-cv`;
-  const outputPath = path.join(options.output);
   
   // Site-specific settings
   const siteSettings: Record<string, any> = {
@@ -556,6 +554,12 @@ async function generateSiteOptimizedCV(
   
   // Default to Indeed settings if site not recognized
   const settings = siteSettings[siteLower] || siteSettings.indeed;
+  
+  // Ensure we're using the appropriate output path, not in dist
+  const outputPath = path.resolve(process.cwd(), options.output);
+  
+  // Ensure the directory exists
+  await fs.mkdir(outputPath, { recursive: true });
   
   // Create a modified CV data copy for site-specific customization
   const siteOptimizedData = JSON.parse(JSON.stringify(cvData));
