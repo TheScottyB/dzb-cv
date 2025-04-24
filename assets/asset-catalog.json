@@ -1,0 +1,435 @@
+{
+  "lastUpdated": "2025-04-24T19:55:16.250Z",
+  "totalAssets": 19,
+  "assets": [
+    {
+      "id": "video-1745524516250-915",
+      "name": "CMS-Interviewing-with-SOI-2023.mp4",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/CMS-Interviewing-with-SOI-2023.mp4",
+      "type": "video",
+      "format": "mp4",
+      "sizeInBytes": 36973506,
+      "lastModified": "2025-04-23T17:56:06.907Z",
+      "createdAt": "2025-04-23T17:56:03.733Z"
+    },
+    {
+      "id": "document-1745524516250-667",
+      "name": "Career Opportunities_ My Profile.pdf",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Career Opportunities_ My Profile.pdf",
+      "type": "document",
+      "format": "pdf",
+      "sizeInBytes": 90201,
+      "lastModified": "2025-04-23T17:53:29.635Z",
+      "createdAt": "2025-04-23T17:53:29.634Z"
+    },
+    {
+      "id": "document-1745524516250-552",
+      "name": "Complete Resume.docx",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Complete Resume.docx",
+      "type": "document",
+      "format": "docx",
+      "sizeInBytes": 10456,
+      "lastModified": "2025-04-23T20:09:57.691Z",
+      "createdAt": "2025-04-23T20:09:57.690Z"
+    },
+    {
+      "id": "document-1745524516250-884",
+      "name": "Dawn Zurick Beilfuss - Concise CV.docx",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn Zurick Beilfuss - Concise CV.docx",
+      "type": "document",
+      "format": "docx",
+      "sizeInBytes": 6198377,
+      "lastModified": "2025-04-23T20:10:03.651Z",
+      "createdAt": "2025-04-23T20:10:03.279Z"
+    },
+    {
+      "id": "document-1745524516250-727",
+      "name": "Dawn Zurick Beilfuss - Federal Resume Draft (Final - Ready to Send).docx",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn Zurick Beilfuss - Federal Resume Draft (Final - Ready to Send).docx",
+      "type": "document",
+      "format": "docx",
+      "sizeInBytes": 6200019,
+      "lastModified": "2025-04-23T20:09:54.654Z",
+      "createdAt": "2025-04-23T20:09:54.199Z"
+    },
+    {
+      "id": "document-1745524516250-15",
+      "name": "Dawn Zurick Beilfuss - Federal Resume Draft (Final).docx",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn Zurick Beilfuss - Federal Resume Draft (Final).docx",
+      "type": "document",
+      "format": "docx",
+      "sizeInBytes": 6198275,
+      "lastModified": "2025-04-23T20:10:07.757Z",
+      "createdAt": "2025-04-23T20:10:07.230Z"
+    },
+    {
+      "id": "document-1745524516250-863",
+      "name": "Dawn Zurick Beilfuss-profile.pdf",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn Zurick Beilfuss-profile.pdf",
+      "type": "document",
+      "format": "pdf",
+      "sizeInBytes": 98783,
+      "lastModified": "2025-04-23T18:02:24.729Z",
+      "createdAt": "2025-04-23T16:57:06.310Z"
+    },
+    {
+      "id": "document-1745524516250-252",
+      "name": "Dawn_Zurick_Beilfuss_BHGRE_Resume.docx",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn_Zurick_Beilfuss_BHGRE_Resume.docx",
+      "type": "document",
+      "format": "docx",
+      "sizeInBytes": 9354,
+      "lastModified": "2025-04-23T20:10:11.572Z",
+      "createdAt": "2025-04-23T20:10:11.567Z"
+    },
+    {
+      "id": "document-1745524516250-105",
+      "name": "New State of Illinois External Applicant Job Guide 0824 (1) (002).pdf",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/New State of Illinois External Applicant Job Guide 0824 (1) (002).pdf",
+      "type": "document",
+      "format": "pdf",
+      "sizeInBytes": 525740,
+      "lastModified": "2025-04-23T17:40:06.437Z",
+      "createdAt": "2025-04-23T17:40:06.435Z"
+    },
+    {
+      "id": "document-1745524516250-101",
+      "name": "__Dawn Zurick Beilfuss__.md",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/__Dawn Zurick Beilfuss__.md",
+      "type": "document",
+      "format": "md",
+      "sizeInBytes": 11120,
+      "lastModified": "2025-04-23T17:23:39.729Z",
+      "createdAt": "2025-04-23T17:23:39.729Z"
+    },
+    {
+      "id": "document-1745524516250-532",
+      "name": "federal resume.pdf",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/federal resume.pdf",
+      "type": "document",
+      "format": "pdf",
+      "sizeInBytes": 390594,
+      "lastModified": "2025-04-23T17:40:29.532Z",
+      "createdAt": "2025-04-23T17:40:29.530Z"
+    },
+    {
+      "id": "other-1745524516250-571",
+      "name": ".DS_Store",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/.DS_Store",
+      "type": "other",
+      "format": "other",
+      "sizeInBytes": 6148,
+      "lastModified": "2025-04-23T20:04:48.698Z",
+      "createdAt": "2025-04-12T08:29:56.165Z"
+    },
+    {
+      "id": "video-1745524516250-486",
+      "name": "30 second resume.avi",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/30 second resume.avi",
+      "type": "video",
+      "format": "avi",
+      "sizeInBytes": 188534600,
+      "lastModified": "2015-06-09T05:21:16.000Z",
+      "createdAt": "2015-06-09T05:21:16.000Z"
+    },
+    {
+      "id": "other-1745524516250-754",
+      "name": ".DS_Store",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Adobe Premiere Pro Preview Files/.DS_Store",
+      "type": "other",
+      "format": "other",
+      "sizeInBytes": 6148,
+      "lastModified": "2025-04-23T20:04:35.918Z",
+      "createdAt": "2025-04-23T20:04:35.917Z"
+    },
+    {
+      "id": "video-1745524516250-799",
+      "name": "DSC09142.avi",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/DSC09142.avi",
+      "type": "video",
+      "format": "avi",
+      "sizeInBytes": 217360924,
+      "lastModified": "2015-06-09T06:25:59.000Z",
+      "createdAt": "2015-06-09T06:25:59.000Z"
+    },
+    {
+      "id": "other-1745524516250-881",
+      "name": ".DS_Store",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/.DS_Store",
+      "type": "other",
+      "format": "other",
+      "sizeInBytes": 6148,
+      "lastModified": "2025-04-23T20:04:41.654Z",
+      "createdAt": "2024-10-26T19:13:09.531Z"
+    },
+    {
+      "id": "video-1745524516250-686",
+      "name": "30 second resume.avi",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/30 second resume.avi",
+      "type": "video",
+      "format": "avi",
+      "sizeInBytes": 188534600,
+      "lastModified": "2015-06-09T05:21:16.000Z",
+      "createdAt": "2015-06-09T05:21:16.000Z"
+    },
+    {
+      "id": "other-1745524516250-205",
+      "name": ".DS_Store",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/Adobe Premiere Pro Preview Files/.DS_Store",
+      "type": "other",
+      "format": "other",
+      "sizeInBytes": 6148,
+      "lastModified": "2025-04-23T20:04:41.652Z",
+      "createdAt": "2025-04-23T20:04:41.651Z"
+    },
+    {
+      "id": "video-1745524516250-559",
+      "name": "DSC09142.avi",
+      "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/DSC09142.avi",
+      "type": "video",
+      "format": "avi",
+      "sizeInBytes": 217360924,
+      "lastModified": "2015-06-09T06:25:59.000Z",
+      "createdAt": "2015-06-09T06:25:59.000Z"
+    }
+  ],
+  "assetsByType": {
+    "document": [
+      {
+        "id": "video-1745524516250-915",
+        "name": "CMS-Interviewing-with-SOI-2023.mp4",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/CMS-Interviewing-with-SOI-2023.mp4",
+        "type": "video",
+        "format": "mp4",
+        "sizeInBytes": 36973506,
+        "lastModified": "2025-04-23T17:56:06.907Z",
+        "createdAt": "2025-04-23T17:56:03.733Z"
+      },
+      {
+        "id": "document-1745524516250-667",
+        "name": "Career Opportunities_ My Profile.pdf",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Career Opportunities_ My Profile.pdf",
+        "type": "document",
+        "format": "pdf",
+        "sizeInBytes": 90201,
+        "lastModified": "2025-04-23T17:53:29.635Z",
+        "createdAt": "2025-04-23T17:53:29.634Z"
+      },
+      {
+        "id": "document-1745524516250-552",
+        "name": "Complete Resume.docx",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Complete Resume.docx",
+        "type": "document",
+        "format": "docx",
+        "sizeInBytes": 10456,
+        "lastModified": "2025-04-23T20:09:57.691Z",
+        "createdAt": "2025-04-23T20:09:57.690Z"
+      },
+      {
+        "id": "document-1745524516250-884",
+        "name": "Dawn Zurick Beilfuss - Concise CV.docx",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn Zurick Beilfuss - Concise CV.docx",
+        "type": "document",
+        "format": "docx",
+        "sizeInBytes": 6198377,
+        "lastModified": "2025-04-23T20:10:03.651Z",
+        "createdAt": "2025-04-23T20:10:03.279Z"
+      },
+      {
+        "id": "document-1745524516250-727",
+        "name": "Dawn Zurick Beilfuss - Federal Resume Draft (Final - Ready to Send).docx",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn Zurick Beilfuss - Federal Resume Draft (Final - Ready to Send).docx",
+        "type": "document",
+        "format": "docx",
+        "sizeInBytes": 6200019,
+        "lastModified": "2025-04-23T20:09:54.654Z",
+        "createdAt": "2025-04-23T20:09:54.199Z"
+      },
+      {
+        "id": "document-1745524516250-15",
+        "name": "Dawn Zurick Beilfuss - Federal Resume Draft (Final).docx",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn Zurick Beilfuss - Federal Resume Draft (Final).docx",
+        "type": "document",
+        "format": "docx",
+        "sizeInBytes": 6198275,
+        "lastModified": "2025-04-23T20:10:07.757Z",
+        "createdAt": "2025-04-23T20:10:07.230Z"
+      },
+      {
+        "id": "document-1745524516250-863",
+        "name": "Dawn Zurick Beilfuss-profile.pdf",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn Zurick Beilfuss-profile.pdf",
+        "type": "document",
+        "format": "pdf",
+        "sizeInBytes": 98783,
+        "lastModified": "2025-04-23T18:02:24.729Z",
+        "createdAt": "2025-04-23T16:57:06.310Z"
+      },
+      {
+        "id": "document-1745524516250-252",
+        "name": "Dawn_Zurick_Beilfuss_BHGRE_Resume.docx",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/Dawn_Zurick_Beilfuss_BHGRE_Resume.docx",
+        "type": "document",
+        "format": "docx",
+        "sizeInBytes": 9354,
+        "lastModified": "2025-04-23T20:10:11.572Z",
+        "createdAt": "2025-04-23T20:10:11.567Z"
+      },
+      {
+        "id": "document-1745524516250-105",
+        "name": "New State of Illinois External Applicant Job Guide 0824 (1) (002).pdf",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/New State of Illinois External Applicant Job Guide 0824 (1) (002).pdf",
+        "type": "document",
+        "format": "pdf",
+        "sizeInBytes": 525740,
+        "lastModified": "2025-04-23T17:40:06.437Z",
+        "createdAt": "2025-04-23T17:40:06.435Z"
+      },
+      {
+        "id": "document-1745524516250-101",
+        "name": "__Dawn Zurick Beilfuss__.md",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/__Dawn Zurick Beilfuss__.md",
+        "type": "document",
+        "format": "md",
+        "sizeInBytes": 11120,
+        "lastModified": "2025-04-23T17:23:39.729Z",
+        "createdAt": "2025-04-23T17:23:39.729Z"
+      },
+      {
+        "id": "document-1745524516250-532",
+        "name": "federal resume.pdf",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/documents/federal resume.pdf",
+        "type": "document",
+        "format": "pdf",
+        "sizeInBytes": 390594,
+        "lastModified": "2025-04-23T17:40:29.532Z",
+        "createdAt": "2025-04-23T17:40:29.530Z"
+      }
+    ],
+    "image": [],
+    "video": [
+      {
+        "id": "other-1745524516250-571",
+        "name": ".DS_Store",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/.DS_Store",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 6148,
+        "lastModified": "2025-04-23T20:04:48.698Z",
+        "createdAt": "2025-04-12T08:29:56.165Z"
+      },
+      {
+        "id": "video-1745524516250-486",
+        "name": "30 second resume.avi",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/30 second resume.avi",
+        "type": "video",
+        "format": "avi",
+        "sizeInBytes": 188534600,
+        "lastModified": "2015-06-09T05:21:16.000Z",
+        "createdAt": "2015-06-09T05:21:16.000Z"
+      },
+      {
+        "id": "other-1745524516250-754",
+        "name": ".DS_Store",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Adobe Premiere Pro Preview Files/.DS_Store",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 6148,
+        "lastModified": "2025-04-23T20:04:35.918Z",
+        "createdAt": "2025-04-23T20:04:35.917Z"
+      },
+      {
+        "id": "video-1745524516250-799",
+        "name": "DSC09142.avi",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/DSC09142.avi",
+        "type": "video",
+        "format": "avi",
+        "sizeInBytes": 217360924,
+        "lastModified": "2015-06-09T06:25:59.000Z",
+        "createdAt": "2015-06-09T06:25:59.000Z"
+      },
+      {
+        "id": "other-1745524516250-881",
+        "name": ".DS_Store",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/.DS_Store",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 6148,
+        "lastModified": "2025-04-23T20:04:41.654Z",
+        "createdAt": "2024-10-26T19:13:09.531Z"
+      },
+      {
+        "id": "video-1745524516250-686",
+        "name": "30 second resume.avi",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/30 second resume.avi",
+        "type": "video",
+        "format": "avi",
+        "sizeInBytes": 188534600,
+        "lastModified": "2015-06-09T05:21:16.000Z",
+        "createdAt": "2015-06-09T05:21:16.000Z"
+      },
+      {
+        "id": "other-1745524516250-205",
+        "name": ".DS_Store",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/Adobe Premiere Pro Preview Files/.DS_Store",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 6148,
+        "lastModified": "2025-04-23T20:04:41.652Z",
+        "createdAt": "2025-04-23T20:04:41.651Z"
+      },
+      {
+        "id": "video-1745524516250-559",
+        "name": "DSC09142.avi",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/DSC09142.avi",
+        "type": "video",
+        "format": "avi",
+        "sizeInBytes": 217360924,
+        "lastModified": "2015-06-09T06:25:59.000Z",
+        "createdAt": "2015-06-09T06:25:59.000Z"
+      }
+    ],
+    "other": [
+      {
+        "id": "other-1745524516250-571",
+        "name": ".DS_Store",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/.DS_Store",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 6148,
+        "lastModified": "2025-04-23T20:04:48.698Z",
+        "createdAt": "2025-04-12T08:29:56.165Z"
+      },
+      {
+        "id": "other-1745524516250-754",
+        "name": ".DS_Store",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Adobe Premiere Pro Preview Files/.DS_Store",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 6148,
+        "lastModified": "2025-04-23T20:04:35.918Z",
+        "createdAt": "2025-04-23T20:04:35.917Z"
+      },
+      {
+        "id": "other-1745524516250-881",
+        "name": ".DS_Store",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/.DS_Store",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 6148,
+        "lastModified": "2025-04-23T20:04:41.654Z",
+        "createdAt": "2024-10-26T19:13:09.531Z"
+      },
+      {
+        "id": "other-1745524516250-205",
+        "name": ".DS_Store",
+        "path": "/Users/scottybe/Workspace/dzb-cv/assets/Dawn_Video_Resume/Dawn REsume pp/Adobe Premiere Pro Preview Files/.DS_Store",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 6148,
+        "lastModified": "2025-04-23T20:04:41.652Z",
+        "createdAt": "2025-04-23T20:04:41.651Z"
+      }
+    ]
+  }
+}

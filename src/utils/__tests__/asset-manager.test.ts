@@ -4,8 +4,8 @@ import { dirname, join } from 'path';
 import * as os from 'os';
 import { exec } from 'child_process';
 import * as fs from 'fs/promises';
-// Add after all imports:
-const mockedFs = jest.mocked(fs, true);
+
+const mockedFs = jest.requireMock('fs/promises');
 
 import {
   createAssetMetadata,
@@ -158,7 +158,7 @@ describe('Asset Manager', () => {
       }));
       const result = await validateFile(filePath, ['pdf', 'docx']);
       expect(result.valid).toBe(true);
-      expect(mockedStat).toHaveBeenCalled();
+      expect(mockedFs.stat).toHaveBeenCalled();
     });
     
     test('getDocumentInfo should return document information', async () => {
@@ -249,7 +249,7 @@ describe('Asset Manager', () => {
       );
       
       expect(result.valid).toBe(true);
-      expect(mockedStat).toHaveBeenCalled();
+      expect(mockedFs.stat).toHaveBeenCalled();
     });
     
     test('validateFile should return invalid for unsupported extension', async () => {
@@ -268,7 +268,7 @@ describe('Asset Manager', () => {
       
       expect(result.valid).toBe(false);
       expect(result.message).toContain('Invalid file extension');
-      expect(mockedStat).toHaveBeenCalled();
+      expect(mockedFs.stat).toHaveBeenCalled();
     });
     
     test('validateFile should return invalid for non-existent file', async () => {
@@ -283,7 +283,7 @@ describe('Asset Manager', () => {
       );
       
       expect(result.valid).toBe(false);
-      expect(mockedStat).toHaveBeenCalled();
+      expect(mockedFs.stat).toHaveBeenCalled();
     });
   });
   
@@ -317,7 +317,7 @@ describe('Asset Manager', () => {
       expect(results).toContain(join(testDocumentsDir, 'subdir', 'subdoc.pdf'));
       expect(results).not.toContain(join(testDocumentsDir, 'doc2.docx'));
       expect(results).not.toContain(join(testDocumentsDir, 'other.txt'));
-      expect(mockedReaddir).toHaveBeenCalledTimes(2); // Called for main dir and subdir
+      expect(mockedFs.readdir).toHaveBeenCalledTimes(2); // Called for main dir and subdir
     });
     
     test('findFilesByExtension should not recurse when recursive is false', async () => {
@@ -340,7 +340,7 @@ describe('Asset Manager', () => {
       
       expect(results.length).toBe(1);
       expect(results).toContain(join(testDocumentsDir, 'doc1.pdf'));
-      expect(mockedReaddir).toHaveBeenCalledTimes(1); // Only called for main dir
+      expect(mockedFs.readdir).toHaveBeenCalledTimes(1); // Only called for main dir
     });
   });
   
@@ -399,7 +399,21 @@ describe('Asset Manager', () => {
       const catalog = await loadAssetCatalog();
       
       expect(catalog).toEqual(mockCatalog);
-      expect(mockedWriteFile).toHaveBeenCalled();
+      expect(mockedFs.writeFile).toHaveBeenCalled();
     });
   });
 });
+
+// TypeScript: Augment fs/promises mocks for full type safety in Jest
+declare module 'fs/promises' {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const stat: jest.Mock<any, any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const mkdir: jest.Mock<any, any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const readdir: jest.Mock<any, any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const readFile: jest.Mock<any, any>
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export const writeFile: jest.Mock<any, any>
+}

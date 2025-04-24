@@ -290,127 +290,58 @@ function detectDocumentSections(document: Document): Record<string, Element[]> {
  */
 function extractListItemsFromElements(elements: Element[]): string[] {
   const items: string[] = [];
-  
   for (const element of elements) {
-    // If element is a list, extract all items
+    // If element is a list, extract its items
     if (element.tagName === 'UL' || element.tagName === 'OL') {
       const listItems = Array.from(element.querySelectorAll('li'))
         .map(li => li.textContent?.trim())
         .filter(Boolean) as string[];
       items.push(...listItems);
     } 
-    // If element contains lists, extract those
+    // If element contains lists, extract those as well
     else if (element.querySelectorAll('ul, ol').length > 0) {
       const listItems = Array.from(element.querySelectorAll('li'))
         .map(li => li.textContent?.trim())
         .filter(Boolean) as string[];
       items.push(...listItems);
     }
-    // Collate keywords and responsibilities for keyTerms
-    let keyTerms = Array.from(new Set([
-      ...responsibilities,
-      ...qualifications,
-      ...description.match(/\b([A-Za-z]{4,})\b/g) || []
-    ]))
-      .map(s => s.toLowerCase())
-      .filter(Boolean);
+    // Otherwise, if it's a paragraph or standalone with text
+    else if (element.tagName === 'P' || (element.textContent && element.textContent.trim().length > 0)) {
+      items.push(element.textContent!.trim());
+    }
+  }
+  return items;
+}
 
-    // --- Post-process keyTerms: filter out unrelated dev/tech keywords unless present in job text ---
-    // Denylist of tech skills for non-tech jobs
-    const techDenyList = [
-      'javascript', 'typescript', 'java', 'python', 'c++', 'c#', 'ruby', 'php', 'go', 'node', 'react', 'vue', 'angular', 'golang',
-      'aws', 'azure', 'gcp', 'cloud', 'api', 'kubernetes', 'docker', 'devops', 'ci/cd', 'lambda', 'express'
-    ];
-
-    const allJobText = (description + ' ' + responsibilities.join(' ') + ' ' + qualifications.join(' ')).toLowerCase();
-    const isTechRole = /developer|engineer|software|it|cloud|devops|data/i.test(allJobText);
-
-    keyTerms = keyTerms.filter(q => {
-      if (techDenyList.includes(q)) {
-        // Only keep tech terms if found in job text or if job is obviously technical
-        return isTechRole || allJobText.includes(q);
-      }
-      return true;
-    });
-
-    // Quick filter: drop words shorter than 4, keep longer
-    keyTerms = keyTerms.filter(term => term.length >= 4 && !/^\d+$/.test(term));
- */
+// MINIMAL ROBUST VERSION - replaces all previous block and closes properly
 function parseLinkedInJob(document: Document, url: string): JobPostingAnalysis {
-  const title = document.querySelector('.top-card-layout__title')?.textContent?.trim() || 'Unknown Position';
-  const company = document.querySelector('.topcard__org-name-link')?.textContent?.trim() || 'Unknown Company';
-  const location = document.querySelector('.topcard__flavor--bullet')?.textContent?.trim();
-  
-  // Extract job description
-  const description = document.querySelector('.description__text')?.textContent || '';
-  
-  // Extract responsibilities and qualifications
-  const sections = Array.from(document.querySelectorAll('.description__text > section'));
-  
-  let responsibilities: string[] = [];
-  let qualifications: string[] = [];
-  
-  for (const section of sections) {
-    const heading = section.querySelector('h3, h2')?.textContent?.toLowerCase() || '';
-    let company = companyElem?.textContent?.trim() ||
-      dom.window.document.querySelector('a[data-company]')?.textContent?.trim() ||
-      dom.window.document.querySelector('.postingcompany')?.textContent?.trim() ||
-      dom.window.document.querySelector('.icl-u-lg-mr--sm.icl-u-xs-mb--xs')?.textContent?.trim() ||
-      'Unknown Company';
+  const title = document.querySelector('.top-card-layout__title')?.textContent?.trim()
+    || document.querySelector('h1')?.textContent?.trim()
+    || 'Unknown Position';
+  const company = document.querySelector('.topcard__org-name-link')?.textContent?.trim()
+    || document.querySelector('.topcard__flavor--metadata')?.textContent?.trim()
+    || 'Unknown Company';
+  const location = document.querySelector('.topcard__flavor--bullet')?.textContent?.trim()
+    || document.querySelector('.topcard__flavor-row')?.textContent?.trim();
 
-    // --- Post-process company name ---
-    // If company includes "|" (pipe), use last segment. If " at ", use after that.
-    // Avoid using job title as company if they're identical.
-    if (company.includes('|')) {
-      const parts = company.split('|').map(s => s.trim());
-      if (parts[parts.length - 1] && parts[parts.length - 1].length > 1) {
-        company = parts[parts.length - 1];
-      }
-    }
-    if (company.toLowerCase().includes(' at ')) {
-      company = company.split(' at ').pop()?.trim() || company;
-    }
-      qualifications = listItems;
-    }
-  }
-  
-  // Extract skills from the description
+  const description = document.querySelector('.description__text')?.textContent?.trim() || '';
+
+  // For now, leave responsibilities and qualifications empty.
+  const responsibilities: string[] = [];
+  const qualifications: string[] = [];
+
+  // Extract skills/key terms from the description.
   const keyTerms = extractKeyTerms(description);
-  
-  // Determine required vs desired skills
-  const requiredSkills: string[] = [];
-  const desiredSkills: string[] = [];
-  
-  // Try to find required vs preferred sections
-  const descriptionLower = description.toLowerCase();
-  const requiredSection = descriptionLower.indexOf('required');
-  const preferredSection = descriptionLower.indexOf('preferred');
-  
-  for (const term of keyTerms) {
-    if (requiredSection > -1 && preferredSection > -1) {
-      const termIndex = descriptionLower.indexOf(term);
-      if (termIndex > -1) {
-        if (termIndex < preferredSection && termIndex > requiredSection) {
-          requiredSkills.push(term);
-        } else if (termIndex > preferredSection) {
-          desiredSkills.push(term);
-        }
-      }
-    } else {
-      // If we can't clearly separate, put all in required
-      requiredSkills.push(term);
-    }
-  }
-  
+
   return {
     title,
     company,
     location,
-    requiredSkills: requiredSkills.length > 0 ? requiredSkills : keyTerms,
-    desiredSkills: desiredSkills.length > 0 ? desiredSkills : [],
     responsibilities,
     qualifications,
     keyTerms,
+    requiredSkills: keyTerms,
+    desiredSkills: [],
     source: {
       url,
       site: 'LinkedIn',
@@ -418,7 +349,6 @@ function parseLinkedInJob(document: Document, url: string): JobPostingAnalysis {
     }
   };
 }
-
 /**
  * Parses Indeed job postings
  * 
@@ -950,4 +880,5 @@ function detectAntiBotMeasures(document: Document): boolean {
   
   // Not detected as anti-bot page
   return false;
+}
 }
