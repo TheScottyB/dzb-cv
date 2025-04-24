@@ -2,8 +2,8 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import { 
   loadTemplate, 
-  loadCVData, 
-  initializeTemplateSystem 
+  loadCVData,
+  registerHelpers
 } from "./utils/helpers.js";
 import { 
   resolveOutputPath, 
@@ -36,6 +36,24 @@ const DEFAULT_CV_OPTIONS: CVGenerationOptions = {
  * @param options Options for CV generation
  * @returns Path to the generated CV file
  */
+async function generateCV(
+  sector: 'federal' | 'state' | 'private',
+  cvData: CVData,
+  outputPath: string,
+  options?: Partial<CVGenerationOptions>
+): Promise<string> {
+  try {
+    // Merge defaults with provided options
+    const mergedOptions = { ...DEFAULT_CV_OPTIONS, ...options };
+    
+    // Register Handlebars helpers before template compilation
+    registerHelpers();
+    console.log('Registered Handlebars helpers for CV generation');
+    
+    // Get the template path
+    const templatePath = resolveDataPath(`templates/${sector}/${sector}-template.md`);
+    
+    // Load the template
     const template = await loadTemplate(templatePath);
     
     // Generate CV content from template

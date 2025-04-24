@@ -1,4 +1,4 @@
-import type { PDFOptions } from "./types/cv-types.js";
+import type { CVData, PDFOptions } from "./types/cv-types.js";
 export interface CVGenerationOptions {
     format: 'markdown' | 'pdf';
     pdfOptions?: Partial<PDFOptions>;
@@ -12,5 +12,5 @@ export interface CVGenerationOptions {
  * @param options Options for CV generation
  * @returns Path to the generated CV file
  */
-declare function generateCV(sector: "federal" | "state" | "private", outputPath: string, options?: Partial<CVGenerationOptions>): Promise<string>;
+declare function generateCV(sector: 'federal' | 'state' | 'private', cvData: CVData, outputPath: string, options?: Partial<CVGenerationOptions>): Promise<string>;
 export { generateCV };

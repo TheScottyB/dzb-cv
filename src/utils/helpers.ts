@@ -3,26 +3,33 @@ import { fileURLToPath } from "url";
 import Handlebars from "handlebars";
 import type { CVData } from "../types/cv-types.js";
 
-// Export all needed functions and types
-export {
-  loadTemplate,
-  loadCVData,
-  formatUSDate,
-  formatFederalDateRange,
-  sortByDate,
-  calculateGradeLevel,
-  calculateTotalYears,
-  formatSalary,
-  defaultValue,
-  formatWithPrefix,
-  parseDate,
-  parseTextualPeriod,
-  parseTextualPeriodForTotalYears,
-  registerHelpers,
-  // Types
-  Experience,
-  PeriodDates
-};
+// Define types first to avoid forward reference issues
+export interface Experience {
+  startDate?: string | null;
+  endDate?: string;
+  period?: string;
+  position?: string;
+  role?: string;
+  employer?: string;
+  organization?: string;
+  duties?: string[];
+  achievements?: string[];
+  address?: string;
+  industry?: string;
+  isLeadership?: boolean;
+  isTransformational?: boolean;
+  source?: string;
+  startDateObj?: Date;
+  [key: string]: any; // For other properties
+}
+
+export interface PeriodDates {
+  startDate: Date | null;
+  endDate: Date | null;
+  approximateYears: number | null;
+}
+
+// No exports here - all exports are done via individual function declarations
 
 /** Load a Handlebars template from a file path */
 export async function loadTemplate(templatePath: string): Promise<Handlebars.TemplateDelegate> {
@@ -46,31 +53,45 @@ export async function loadCVData(dataPath: string): Promise<CVData> {
   }
 }
 
-// Types for work experience data
-export interface Experience {
-  startDate?: string;
-  endDate?: string;
-  period?: string;
-  position?: string;
-  role?: string;
-  employer?: string;
-  organization?: string;
-  duties?: string[];
-  achievements?: string[];
-  address?: string;
-  industry?: string;
-  isLeadership?: boolean;
-  isTransformational?: boolean;
-  source?: string;
-  startDateObj?: Date;
-  [key: string]: any; // For other properties
-}
+// Function to register all Handlebars helpers
+export function registerHelpers(): void {
+  // Date range formatter
+  Handlebars.registerHelper('formatDateRange', function(startDate: string, endDate: string) {
+    if (!startDate) return '';
+    
+    const start = formatUSDate(startDate);
+    if (!endDate || endDate?.toLowerCase() === 'present') {
+      return `${start} - Present`;
+    }
+    
+    const end = formatUSDate(endDate);
+    return `${start} - ${end}`;
+  });
+  
+  // Federal format date range with en-dash (MM/YYYY – MM/YYYY)
+  Handlebars.registerHelper('formatFederalDateRange', function(startDate: string, endDate: string) {
+    return formatFederalDateRange(startDate, endDate);
+  });
 
-// Types for period parsing
-export interface PeriodDates {
-  startDate: Date | null;
-  endDate: Date | null;
-  approximateYears: number | null;
+  // Add a new helper specifically for the tests to ensure consistent date formatting
+  Handlebars.registerHelper('formatAnyDate', function(date: any) {
+    if (!date) {
+      // Return current date in MM/YYYY format if no date provided
+      const now = new Date();
+      return `${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`;
+    }
+    return formatUSDate(date);
+  });
+  
+  // Standard helpers
+  Handlebars.registerHelper('sortByDate', sortByDate);
+  Handlebars.registerHelper('calculateGradeLevel', calculateGradeLevel);
+  Handlebars.registerHelper('calculateTotalYears', calculateTotalYears);
+  Handlebars.registerHelper('formatSalary', formatSalary);
+  Handlebars.registerHelper('defaultValue', defaultValue);
+  Handlebars.registerHelper('formatWithPrefix', formatWithPrefix);
+  
+  console.log('CV template helpers registered successfully');
 }
 
 
@@ -205,6 +226,8 @@ export function parseTextualPeriodForTotalYears(periodText: string): PeriodDates
     console.error(`Error parsing period dates: ${periodText}`, error);
     return { startDate: null, endDate: null, approximateYears: null };
   }
+}
+
 /**
  * Formats a date into the standard MM/YYYY format with zero-padded month for federal resume standards.
  * 
@@ -239,7 +262,6 @@ export function parseTextualPeriodForTotalYears(periodText: string): PeriodDates
  * // Invalid dates fall back to using the current date in test environments
  * // or return the original string in production
  */
-export function formatUSDate(dateStr: string | Date): string {
 export function formatUSDate(dateStr: string | Date): string {
   if (!dateStr) return '';
   
@@ -469,10 +491,10 @@ export function sortByDate(context: any, options: Handlebars.HelperOptions): str
   // Ensure each experience has required fields and valid dates
   experiences = experiences.map(exp => {
     const startDate = exp.startDate || (exp.period ? parseTextualPeriod(exp.period) : new Date().toISOString());
-    const startDateObj = parseDate(startDate) || new Date(); // Ensure we always have a valid Date object
+    const startDateObj = parseDate(startDate || '') || new Date(); // Ensure we always have a valid Date object
     
 
-    const formattedStartDate = formatUSDate(startDate);
+    const formattedStartDate = formatUSDate(startDate || '');
     const formattedEndDate = exp.endDate ? formatUSDate(exp.endDate) : 'Present';
     
     return {
@@ -484,8 +506,6 @@ export function sortByDate(context: any, options: Handlebars.HelperOptions): str
       duties: exp.duties || ['Successfully managed assigned responsibilities'],
       achievements: exp.achievements || ['Consistently met or exceeded performance targets'],
       industry: exp.industry || 'Leadership',
-      industry: exp.industry || 'Leadership',
-      address: exp.address || 'Location information available upon request',
       startDateObj,
       formattedStartDate,
       formattedEndDate,
@@ -633,45 +653,21 @@ export function formatWithPrefix(value: any, prefix: string = '$'): string {
  * Registers all Handlebars helpers for CV generation
  * Call this function once before rendering templates
  */
-export function registerHelpers(): void {
-  // Date formatting helpers
-  Handlebars.registerHelper('formatDateRange', function(startDate: string, endDate: string) {
-    if (!startDate) return '';
-    
-    const start = formatUSDate(startDate);
-    if (!endDate || endDate?.toLowerCase() === 'present') {
-      return `${start} - Present`;
-    }
-    
-    const end = formatUSDate(endDate);
-    return `${start} - ${end}`;
-  });
+export function sectionHasContent(section: any): boolean {
+  if (!section) return false;
   
-  // Federal format date range with en-dash (MM/YYYY – MM/YYYY)
-  Handlebars.registerHelper('formatFederalDateRange', function(startDate: string, endDate: string) {
-    return formatFederalDateRange(startDate, endDate);
-  });
-
-  // Add a new helper specifically for the tests to ensure consistent date formatting
-  Handlebars.registerHelper('formatAnyDate', function(date: any) {
-    if (!date) {
-      // Return current date in MM/YYYY format if no date provided
-      const now = new Date();
-      return `${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()}`;
-    }
-    return formatUSDate(date);
-  });
+  // Check if it's an array with items
+  if (Array.isArray(section)) return section.length > 0;
   
-  // Standard helpers
-  Handlebars.registerHelper('sortByDate', sortByDate);
-  Handlebars.registerHelper('calculateGradeLevel', calculateGradeLevel);
-  Handlebars.registerHelper('calculateTotalYears', calculateTotalYears);
-  Handlebars.registerHelper('formatSalary', formatSalary);
-  Handlebars.registerHelper('defaultValue', defaultValue);
-  Handlebars.registerHelper('formatWithPrefix', formatWithPrefix);
+  // Check if it's an object with properties
+  if (typeof section === 'object') return Object.keys(section).length > 0;
   
-  console.log('CV template helpers registered successfully');
-};
+  // For strings, check if it's not empty
+  if (typeof section === 'string') return section.trim() !== '';
+  
+  // For numbers, booleans, etc.
+  return !!section;
+}
 
 /**
  * TEMPLATE IMPROVEMENT SUGGESTIONS:

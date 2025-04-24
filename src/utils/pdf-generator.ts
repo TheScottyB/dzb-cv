@@ -55,7 +55,7 @@ export function convertMarkdownToHtml(markdownContent: string): string {
  * Loads and processes CSS based on CV type and options
  */
 async function loadStylesheet(options: StyleOptions): Promise<string> {
-  const cssPath = join(__dirname, '..', '..', 'src', 'styles', 'pdf-styles.css');
+  const cssPath = join(__dirname, '..', 'styles', 'pdf-styles.css');
   let css: string;
   
   try {

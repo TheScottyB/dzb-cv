@@ -1,53 +1,133 @@
-# Professional CV Template
+# {{personalInfo.name.full}}
 
-## Dawn Zurick Beilfuss
-{{contact_info}}
+## Contact Information
+{{personalInfo.contact.email}} | {{personalInfo.contact.phone}}  
+{{personalInfo.contact.address}}  
+{{#if profiles.linkedIn}}[LinkedIn Profile]({{profiles.linkedIn}}){{/if}}
 
 ## Professional Summary
-{{professional_summary}}
+{{professionalSummary}}
 
-## Core Competencies
-{{#each core_competencies}}
+## Core Qualifications
+{{#each cvTypes.private.highlights}}
+- {{this}}
+{{/each}}
+
+## Professional Certifications & Licenses
+
+### Industry Certifications
+{{#each certifications}}
+**{{name}}**  
+{{#if issuer}}Issuing Organization: {{issuer}}{{/if}}  
+{{#if dateObtained}}Date Obtained: {{formatUSDate dateObtained}}{{/if}}  
+{{#if expirationDate}}Expiration Date: {{#if expirationDate}}{{formatUSDate expirationDate}}{{else}}No Expiration{{/if}}{{/if}}  
+{{#if licenseNumber}}License/Certification Number: {{licenseNumber}}{{/if}}
+
+{{/each}}
+
+### Specialized Credentials
+{{#each skills.realEstateCertifications}}
 - {{this}}
 {{/each}}
 
 ## Professional Experience
-{{#each positions}}
-### {{title}} | {{company}}
-*{{start_date}} - {{end_date}}*
+_(Listed in reverse chronological order)_
 
+{{#sortByDate workExperience}}
+{{#each this}}
+### {{position}} | {{employer}}
+*{{formatFederalDateRange startDate endDate}}*
+{{#if address}}**Location:** {{address}}{{/if}}
+
+{{#if isLeadership}}
+**Strategic Responsibilities:**
+{{#each duties}}
+- {{this}}
+{{/each}}
+
+{{#if achievements}}
+**Key Achievements:**
 {{#each achievements}}
 - {{this}}
 {{/each}}
-
-**Key Projects & Initiatives:**
-{{#each key_projects}}
+{{/if}}
+{{else}}
+**Core Responsibilities:**
+{{#each duties}}
 - {{this}}
 {{/each}}
 
+{{#if achievements}}
+**Notable Achievements:**
+{{#each achievements}}
+- {{this}}
 {{/each}}
-
-## Education & Professional Development
-{{#each education}}
-### {{degree}}
-**{{institution}}** - {{completion_date}}
-{{additional_info}}
+{{/if}}
+{{/if}}
 
 {{/each}}
+{{/sortByDate}}
 
-## Technical Skills & Tools
-{{#each skill_categories}}
-**{{category}}:** {{skills}}
-{{/each}}
+## Areas of Expertise
 
-## Professional Certifications
-{{#each certifications}}
-- {{certification}} ({{issuing_body}}) - {{date}}
-{{/each}}
-
-## Professional Affiliations
-{{#each affiliations}}
+### Real Estate Operations & Management
+{{#each skills.realEstateOperations}}
 - {{this}}
 {{/each}}
 
-_References available upon request_
+### Leadership & Strategy
+{{#each skills.managementAndLeadership}}
+- {{this}}
+{{/each}}
+
+### Technical Proficiencies
+{{#each skills.technical}}
+- {{this}}
+{{/each}}
+
+## Industry Leadership & Board Service
+{{#each professionalAffiliations}}
+### {{organization}}
+{{#if startDate}}**Period of Service:** {{formatFederalDateRange startDate endDate}}{{/if}}
+
+{{#if roles}}
+**Leadership Positions:**
+{{#each roles}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+{{#if activities}}
+**Activities and Contributions:**
+{{#each activities}}
+- {{this}}
+{{/each}}
+{{/if}}
+{{/each}}
+
+## Recognition & Awards
+{{#each awards}}
+- **{{title}} - {{organization}}:** {{#if achievement}}{{achievement}}{{/if}}{{#if startDate}} ({{formatFederalDateRange startDate endDate}}){{/if}}
+{{/each}}
+
+## Professional Development
+_(Listed in reverse chronological order)_
+
+{{#each trainingAndCoaching}}
+### {{role}} | {{organization}}
+*{{formatFederalDateRange startDate endDate}}*
+{{#if responsibilities}}
+**Program Focus:**
+{{#each responsibilities}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+{{#if coursesCompleted}}
+**Advanced Training:**
+{{#each coursesCompleted}}
+- {{this}}
+{{/each}}
+{{/if}}
+{{/each}}
+_References and additional information available upon request_

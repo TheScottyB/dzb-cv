@@ -5,9 +5,6 @@ import puppeteer from 'puppeteer';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-/**
- * Default PDF options for CV generation
- */
 export const DEFAULT_PDF_OPTIONS = {
     paperSize: 'Letter',
     margins: {
@@ -23,9 +20,7 @@ export const DEFAULT_PDF_OPTIONS = {
     pdfCreator: 'DZB CV Generator'
 };
 /**
- * Converts markdown content to HTML
- * @param markdownContent The markdown content to convert
- * @returns HTML content
+ * Converts markdown content to HTML with enhanced features
  */
 export function convertMarkdownToHtml(markdownContent) {
     const md = new MarkdownIt({
@@ -34,61 +29,68 @@ export function convertMarkdownToHtml(markdownContent) {
         linkify: true,
         typographer: true
     });
+    // Add custom renderer rules for ATS compatibility
+    md.renderer.rules.heading_open = (tokens, idx) => {
+        const token = tokens[idx];
+        const level = parseInt(token.tag.slice(1), 10);
+        // Use semantic classes for different heading levels
+        return `<${token.tag} class="cv-heading-${level}">`;
+    };
     return md.render(markdownContent);
 }
 /**
- * Applies styling to HTML content
- * @param htmlContent The HTML content to style
- * @param options PDF styling options
- * @returns Styled HTML content
+ * Loads and processes CSS based on CV type and options
  */
-export async function applyHtmlStyling(htmlContent, options) {
-    // Try to load default CSS
-    let defaultCss = '';
-    const cssPath = join(__dirname, '..', '..', 'src', 'styles', 'pdf-styles.css');
+async function loadStylesheet(options) {
+    const cssPath = join(__dirname, '..', 'styles', 'pdf-styles.css');
+    let css;
     try {
-        defaultCss = await fs.readFile(cssPath, 'utf-8');
+        css = await fs.readFile(cssPath, 'utf-8');
     }
     catch (error) {
-        console.warn(`Could not load CSS from ${cssPath}. Using default inline styles.`);
-        defaultCss = `
-      body {
-        font-family: ${options.fontFamily};
-        font-size: ${options.fontSize}pt;
-        line-height: 1.5;
-        margin: 0;
-        padding: 0;
-      }
-      h1 { font-size: 24pt; text-align: center; color: #1a5276; }
-      h2 { font-size: 16pt; border-bottom: 1px solid #eaecee; color: #2e86c1; }
-      h3 { font-size: 14pt; color: #3498db; }
-      p { margin: 0.7em 0; }
-      ul, ol { margin: 0.7em 0; padding-left: 2em; }
-      li { margin: 0.3em 0; }
-      a { color: #2980b9; text-decoration: none; }
-      strong { font-weight: 600; color: #2c3e50; }
-      .page-break { page-break-after: always; }
-    `;
+        console.warn(`Could not load CSS from ${cssPath}. Using embedded styles.`);
+        css = getEmbeddedStyles();
     }
-    // Use custom CSS if provided
-    const customCss = options.cssStylesheet || '';
-    // Create full HTML document with styling
+    // Add CV type-specific classes
+    if (options.cvType) {
+        css += getCVTypeStyles(options.cvType);
+    }
+    // Add ATS-optimized styles if requested
+    if (options.atsOptimized) {
+        css += getATSStyles();
+    }
+    // Add custom classes if provided
+    if (options.customClasses?.length) {
+        css += getCustomClassStyles(options.customClasses);
+    }
+    return css;
+}
+/**
+ * Applies styling to HTML content with enhanced options
+ */
+export async function applyHtmlStyling(htmlContent, options) {
+    const css = await loadStylesheet(options);
     const styledHtml = `
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>${options.pdfTitle || 'CV Document'}</title>
       <style>
-        ${defaultCss}
-        ${customCss}
+        ${css}
         @page {
           size: ${options.paperSize} ${options.orientation};
           margin: ${options.margins.top}in ${options.margins.right}in ${options.margins.bottom}in ${options.margins.left}in;
         }
+        @media print {
+          .page-break { page-break-after: always; }
+          h1, h2, h3 { page-break-after: avoid; }
+          li { page-break-inside: avoid; }
+        }
       </style>
     </head>
-    <body>
+    <body class="${options.cvType || ''} ${options.atsOptimized ? 'ats-optimized' : ''}">
       ${htmlContent}
     </body>
     </html>
@@ -96,14 +98,9 @@ export async function applyHtmlStyling(htmlContent, options) {
     return styledHtml;
 }
 /**
- * Converts markdown content to PDF
- * @param markdownContent The markdown content to convert
- * @param outputPath The path to save the PDF to
- * @param options PDF options
- * @returns Path to the generated PDF
+ * Enhanced PDF generation with sector-specific options
  */
 export async function convertMarkdownToPdf(markdownContent, outputPath, options = {}) {
-    // Merge provided options with defaults
     const pdfOptions = {
         ...DEFAULT_PDF_OPTIONS,
         ...options,
@@ -113,32 +110,18 @@ export async function convertMarkdownToPdf(markdownContent, outputPath, options 
         }
     };
     try {
-        // Convert markdown to HTML
         const htmlContent = convertMarkdownToHtml(markdownContent);
-        // Apply styling
         const styledHtml = await applyHtmlStyling(htmlContent, pdfOptions);
-        // Ensure output directory exists
         await fs.mkdir(dirname(outputPath), { recursive: true });
-        // Launch browser
         const browser = await puppeteer.launch({
-            headless: true, // Use true instead of 'new' for compatibility
+            headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
-        // Create new page
         const page = await browser.newPage();
-        // Set content
         await page.setContent(styledHtml, { waitUntil: 'networkidle0' });
-        // Configure header template if enabled
-        const headerTemplate = pdfOptions.includeHeaderFooter && pdfOptions.headerText
-            ? `<div style="width: 100%; text-align: center; font-size: 8pt; font-family: ${pdfOptions.fontFamily}; padding: 5px 0;">${pdfOptions.headerText}</div>`
-            : '';
-        // Configure footer template if enabled
-        const footerTemplate = pdfOptions.includeHeaderFooter && pdfOptions.footerText
-            ? `<div style="width: 100%; text-align: center; font-size: 8pt; font-family: ${pdfOptions.fontFamily}; padding: 5px 0;">
-          ${pdfOptions.footerText} - <span class="pageNumber"></span> of <span class="totalPages"></span>
-        </div>`
-            : '';
-        // Generate PDF with configured options
+        // Configure header/footer if enabled
+        const { headerTemplate, footerTemplate } = getHeaderFooterTemplates(pdfOptions);
+        // Generate PDF with enhanced options
         await page.pdf({
             path: outputPath,
             format: pdfOptions.paperSize,
@@ -155,24 +138,35 @@ export async function convertMarkdownToPdf(markdownContent, outputPath, options 
             footerTemplate,
             preferCSSPageSize: true
         });
-        // Close browser
         await browser.close();
         return outputPath;
     }
     catch (error) {
-        throw new Error(`Failed to generate PDF: ${error instanceof Error ? error.message : String(error)}`);
+        throw new Error(`PDF generation failed: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
-/**
- * Creates a directory for PDF files if it doesn't exist
- * @param dirPath Directory path
- */
-export async function createPdfDirectory(dirPath) {
-    try {
-        await fs.mkdir(dirPath, { recursive: true });
-    }
-    catch (error) {
-        throw new Error(`Failed to create PDF directory: ${error instanceof Error ? error.message : String(error)}`);
-    }
+// Helper functions
+function getHeaderFooterTemplates(options) {
+    const headerTemplate = options.includeHeaderFooter && options.headerText
+        ? `<div style="width: 100%; text-align: center; font-size: 8pt; font-family: ${options.fontFamily}; padding: 5px 0;">${options.headerText}</div>`
+        : '';
+    const footerTemplate = options.includeHeaderFooter && options.footerText
+        ? `<div style="width: 100%; text-align: center; font-size: 8pt; font-family: ${options.fontFamily}; padding: 5px 0;">
+        ${options.footerText} - <span class="pageNumber"></span> of <span class="totalPages"></span>
+      </div>`
+        : '';
+    return { headerTemplate, footerTemplate };
+}
+function getEmbeddedStyles() {
+    return `/* Embedded fallback styles */`;
+}
+function getCVTypeStyles(type) {
+    return `/* ${type}-specific styles */`;
+}
+function getATSStyles() {
+    return `/* ATS-optimized styles */`;
+}
+function getCustomClassStyles(classes) {
+    return classes.map(cls => `.${cls} { /* Custom styles */ }`).join('\n');
 }
 //# sourceMappingURL=pdf-generator.js.map

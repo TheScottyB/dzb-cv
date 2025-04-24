@@ -880,8 +880,16 @@ program
             format: options.format === 'pdf' ? 'pdf' : 'markdown',
             filename: options.filename
         };
-        const generatedPath = await generateCV(validSector, outputPath, cvOptions);
-        console.log(chalk.green.bold('CV generated successfully!'));
+        // Load CV data
+        // Load CV data
+        const baseDataPath = path.join(process.cwd(), 'src', 'data', 'base-info.json');
+        const cvData = await fs.readFile(baseDataPath, 'utf-8')
+            .then(data => JSON.parse(data))
+            .catch(err => {
+            console.error(chalk.red('Error loading CV data:'), err);
+            throw new Error('Failed to load CV data. Please ensure base-info.json exists.');
+        });
+        const generatedPath = await generateCV(validSector, cvData, outputPath, cvOptions);
         console.log(`Output: ${chalk.blue(generatedPath)}`);
     }
     catch (error) {

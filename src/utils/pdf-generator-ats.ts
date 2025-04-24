@@ -1,7 +1,7 @@
-import { convertMarkdownToPdf, DEFAULT_PDF_OPTIONS } from './pdf-generator';
-import { optimizeForATS } from './ats/optimizer';
-import type { PDFOptions } from '../types/cv-types';
-import type { ATSAnalysis } from '../types/ats-types';
+import { convertMarkdownToPdf, DEFAULT_PDF_OPTIONS } from './pdf-generator.js';
+import { optimizeForATS } from './ats/optimizer.js';
+import type { PDFOptions } from '../types/cv-types.js';
+import type { ATSAnalysis } from '../types/ats-types.js';
 
 export interface ATSGenerationResult {
   pdfPath: string;

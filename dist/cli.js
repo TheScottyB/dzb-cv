@@ -11,7 +11,19 @@ async function main() {
     try {
         // Create the sector directory if it doesn't exist
         await import('fs/promises').then(fs => fs.mkdir(outputPath, { recursive: true }));
-        const content = await generateCV(sector, outputPath);
+        // Load default CV data
+        const cvDataPath = `data/base-info.json`;
+        const cvData = await import('fs/promises')
+            .then(fs => fs.readFile(cvDataPath, 'utf-8'))
+            .then(data => JSON.parse(data));
+        // Define default options for CV generation
+        const cvOptions = {
+            format: 'pdf', // Use const assertion to ensure correct type
+            pdfOptions: {
+                includeHeaderFooter: false
+            }
+        };
+        const content = await generateCV(sector, cvData, outputPath, cvOptions);
         console.log(`Successfully generated ${sector} CV`);
     }
     catch (error) {

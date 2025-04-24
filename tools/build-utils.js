@@ -16,7 +16,8 @@ const PROJECT_ROOT = join(__dirname, '..');
 const ASSET_MAPPING = [
   { src: 'src/templates', dest: 'dist/templates' },
   { src: 'src/components', dest: 'dist/components' },
-  { src: 'src/data', dest: 'dist/data' }
+  { src: 'src/data', dest: 'dist/data' },
+  { src: 'src/styles', dest: 'dist/styles' }
 ];
 
 /**
@@ -38,4 +39,39 @@ async function copyDir(src, dest) {
       // Recursively copy subdirectories
       await copyDir(srcPath, destPath);
     } else {
+      // Copy file
+      await fs.copyFile(srcPath, destPath);
+    }
+  }
+}
 
+/**
+ * Main function to copy all assets
+ */
+async function copyAssets() {
+  for (const { src, dest } of ASSET_MAPPING) {
+    const srcPath = join(PROJECT_ROOT, src);
+    const destPath = join(PROJECT_ROOT, dest);
+    
+    try {
+      // Check if source directory exists
+      await fs.access(srcPath);
+      
+      // Copy directory
+      await copyDir(srcPath, destPath);
+      console.log(`✓ Copied ${src} to ${dest}`);
+    } catch (error) {
+      if (error.code === 'ENOENT') {
+        console.log(`⚠ Source directory ${src} does not exist, skipping.`);
+      } else {
+        console.error(`❌ Error copying ${src} to ${dest}:`, error);
+      }
+    }
+  }
+}
+
+// Run the copy operation
+copyAssets().catch(error => {
+  console.error('Asset copy failed:', error);
+  process.exit(1);
+});
