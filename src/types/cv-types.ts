@@ -161,14 +161,19 @@ export interface JobPostingAnalysis {
   qualifications: string[];
   educationRequirements?: string[];
   keyTerms: string[];
+  requiredSkills?: string[];
+  desiredSkills?: string[];
   salaryRange?: {
     min?: number;
     max?: number;
     period?: string;
+    currency?: string;
   };
-  sourceSite: string;
-  sourceUrl: string;
-  analyzedAt: string;
+  source: {
+    url: string;
+    site: string;
+    fetchDate: Date;
+  };
 }
 
 export interface JobAnalysisOptions {
