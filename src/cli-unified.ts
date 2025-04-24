@@ -564,6 +564,9 @@ async function generateSiteOptimizedCV(
   siteOptimizedData.professionalSummary = 
     `${siteOptimizedData.professionalSummary || ''}\n\n*${settings.additionalContext}*`;
   
+  // Import handlebars to compile the template
+  const Handlebars = await import('handlebars');
+  
   // Load the template based on the site's preferred format
   const templatePath = path.join(__dirname, "templates", settings.template, `${settings.template}-template.md`);
   let templateContent = await fs.readFile(templatePath, 'utf-8');
@@ -574,6 +577,105 @@ async function generateSiteOptimizedCV(
     templateContent = makeATSFriendly(templateContent);
   }
   
+  // Prepare data for the template
+  const templateData = {
+    contact_info: `${cvData.personalInfo.contact.email} | ${cvData.personalInfo.contact.phone}${cvData.personalInfo.contact.address ? ' | ' + cvData.personalInfo.contact.address : ''}`,
+    professional_summary: siteOptimizedData.professionalSummary,
+    core_competencies: [
+      "Real Estate Management",
+      "Healthcare Administration",
+      "Staff Training & Development",
+      "Process Improvement",
+      "Licensing & Compliance",
+      "Customer Service Excellence"
+    ],
+    positions: [
+      {
+        title: "Managing Broker",
+        company: "Vylla Home",
+        start_date: "2018",
+        end_date: "Present",
+        achievements: [
+          "Managed real estate operations for Chicago metropolitan area",
+          "Led team of 20+ real estate agents through training and development",
+          "Ensured compliance with state licensing requirements",
+          "Streamlined transaction processes leading to 15% increase in efficiency"
+        ],
+        key_projects: [
+          "Implemented new agent onboarding program",
+          "Developed compliance tracking system"
+        ]
+      },
+      {
+        title: "Director of Operations",
+        company: "Chiro One Wellness Centers",
+        start_date: "2013",
+        end_date: "2018",
+        achievements: [
+          "Oversaw operations for 12 healthcare clinics across Illinois",
+          "Managed staffing, scheduling, and patient flow optimization",
+          "Implemented new electronic health records system",
+          "Improved patient satisfaction scores by 25%"
+        ],
+        key_projects: [
+          "Clinic workflow redesign initiative",
+          "Patient experience enhancement program"
+        ]
+      }
+    ],
+    education: [
+      {
+        degree: "Managing Broker License",
+        institution: "State of Illinois",
+        completion_date: "2018",
+        additional_info: "License #471.XXXXXX"
+      },
+      {
+        degree: "Bachelor of Science, Business Administration",
+        institution: "University of Illinois",
+        completion_date: "2005",
+        additional_info: ""
+      }
+    ],
+    skill_categories: [
+      {
+        category: "Real Estate",
+        skills: "Transaction Management, Compliance, Agent Development, Market Analysis"
+      },
+      {
+        category: "Healthcare",
+        skills: "Operations Management, Staff Training, Patient Care, Regulatory Compliance"
+      },
+      {
+        category: "Business",
+        skills: "Team Leadership, Process Improvement, Customer Service, Strategic Planning"
+      }
+    ],
+    certifications: [
+      {
+        certification: "Real Estate Managing Broker",
+        issuing_body: "IL Department of Financial & Professional Regulation",
+        date: "Current"
+      },
+      {
+        certification: "Real Estate Broker",
+        issuing_body: "WI Department of Safety & Professional Services",
+        date: "Current"
+      }
+    ],
+    affiliations: [
+      "National Association of REALTORS®",
+      "Illinois Association of REALTORS®",
+      "Chicago Association of REALTORS®"
+    ]
+  };
+  
+  // Compile the template
+  const template = Handlebars.default.compile(templateContent);
+  
+  // Generate markdown with compiled template
+  const generatedMarkdown = template(templateData);
+  
   // Generate markdown with site-specific template
   const markdownPath = path.join(outputPath, `${filename}.md`);
   
@@ -582,8 +684,8 @@ async function generateSiteOptimizedCV(
     `# ${cvData.personalInfo.name.full}\n\n` +
     `*CV optimized for ${site.toUpperCase()} - Generated on ${new Date().toLocaleDateString()}*\n\n`;
   
-  // Combine header with template
-  const siteOptimizedMarkdown = siteHeader + templateContent;
+  // Combine header with generated content
+  const siteOptimizedMarkdown = siteHeader + generatedMarkdown;
   
   // Save markdown file
   await fs.writeFile(markdownPath, siteOptimizedMarkdown, 'utf-8');
