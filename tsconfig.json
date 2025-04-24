@@ -1,33 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2020",
+    "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "baseUrl": ".",
     "outDir": "dist",
-    "esModuleInterop": true,
+    "rootDir": "src",
     "strict": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "checkJs": true,
-    "declaration": true,
-    "sourceMap": true,
-    "isolatedModules": true,
-    "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest", "uuid"]
+    "resolveJsonModule": true
   },
-  "include": [
-    "src/**/*.ts", 
-    "src/**/*.js",
-    "src/types/**/*.ts",
-    "src/data/**/*.json",
-    "src/templates/**/*.md",
-    "src/components/**/*.md"
-],
-  "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

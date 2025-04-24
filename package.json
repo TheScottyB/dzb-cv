@@ -4,36 +4,70 @@
   "description": "Profile management system for Dawn",
   "main": "dist/index.js",
   "type": "module",
-  "scripts": {
-    "cv": "node dist/cli-unified.js"
+  "volta": {
+    "node": "20.10.0",
+    "pnpm": "8.12.1"
   },
-  "keywords": [
-    "cv",
-    "profile",
-    "resume"
-  ],
-  "author": "",
-  "license": "ISC",
+  "packageManager": "pnpm@10.9.0",
+  "engines": {
+    "node": ">=20.10.0",
+    "pnpm": ">=8.12.1"
+  },
+  "scripts": {
+    "build": "tsc -p typescript/tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsx watch typescript/src/index.ts",
+    "test": "vitest run",
+    "test:ts": "vitest run typescript/src",
+    "test:utils": "vitest run scripts",
+    "test:coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui",
+    "test:watch": "vitest watch",
+    "typecheck": "tsc --noEmit -p typescript/tsconfig.json",
+    "lint": "eslint typescript/src/**/*.ts scripts/**/*.js",
+    "prepare": "husky install",
+    "setup": "chmod +x setup.sh && ./setup.sh"
+  },
   "dependencies": {
-    "chalk": "^5.4.1",
-    "commander": "^13.1.0",
+    "@types/handlebars": "^4.1.0",
+    "@types/inquirer": "^9.0.7",
+    "@types/markdown-it": "^14.1.2",
+    "@types/uuid": "^10.0.0",
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
     "handlebars": "^4.7.8",
     "inquirer": "^9.3.7",
-    "jsdom": "^22.1.0",
     "markdown-it": "^14.1.0",
-    "node-fetch": "^3.3.2",
-    "pdf-lib": "^1.17.1",
+    "puppeteer": "^21.0.0",
     "uuid": "^11.1.0"
   },
   "devDependencies": {
-    "@types/inquirer": "^9.0.7",
-    "@types/jsdom": "^21.1.6",
-    "@types/markdown-it": "^14.1.2",
-    "@types/node": "^20.10.4",
-    "@types/node-fetch": "^2.6.9",
-    "@types/uuid": "^10.0.0",
-    "puppeteer": "^22.15.0",
-    "tsx": "^4.19.3",
-    "typescript": "^5.3.3"
+    "@jest/globals": "^29.7.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "@vitest/ui": "^1.0.0",
+    "eslint": "^8.0.0",
+    "husky": "^8.0.0",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.0.0",
+    "pnpm": "8.12.1",
+    "prettier": "^3.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vite-tsconfig-paths": "^4.2.0",
+    "vitest": "^1.0.0"
+  },
+  "lint-staged": {
+    "typescript/src/**/*.ts": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "scripts/**/*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   }
 }

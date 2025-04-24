@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { Command } from 'commander';
-import { parseCvMarkdown } from './utils/cv-parser.js';
+import { parseCvMarkdown } from './tools/cv-parser.js';
 import { ProfileService } from './services/profile-service.js';
 
 // Set up the command line interface
@@ -19,7 +19,7 @@ program
   .description('Import a markdown CV document')
   .argument('<file>', 'Path to the markdown file')
   .option('-o, --owner <name>', 'Name of the profile owner', 'Dawn Zurick Beilfuss')
-  .action(async (file, options) => {
+  .action(async (file: string, options: { owner: string }) => {
     try {
       // Check if file exists
       if (!fs.existsSync(file)) {
@@ -32,7 +32,7 @@ program
       
       console.log(`📄 Parsing CV markdown for ${options.owner}...`);
       
-// Parse the markdown into structured data using the specialized parser
+      // Parse the markdown into structured data using the specialized parser
       const profileData = parseCvMarkdown(markdownContent);
       
       console.log('✅ Parsing complete.');
@@ -45,7 +45,7 @@ program
       // Create a profile service instance
       const profileService = new ProfileService();
       
-      console.log(`💾 Creating profile for ${profileData.basicInfo.name || options.owner}...`);
+      console.log(`💾 Creating profile for ${profileData.personalInfo.name.full || options.owner}...`);
       
       // Create a profile using the parsed data
       const profile = await profileService.createProfile(options.owner, profileData);

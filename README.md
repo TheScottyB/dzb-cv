@@ -1,119 +1,232 @@
-# Dawn Zurick Beilfuss CV Repository
+# Multi-Language Job Scraper
 
-A professional CV and job application management system designed for ease of use while maintaining strict data accuracy.
+A versatile job posting scraper implemented in TypeScript, Python, and JavaScript. This tool can be used by agents to extract job information from various job posting websites.
 
-## For Users 👤
+## Features
+
+- **Multi-language Support**: Choose between TypeScript, Python, or JavaScript implementations
+- **Comprehensive Data Extraction**: Extracts title, company, location, description, responsibilities, qualifications, skills, education, and experience
+- **Multiple Output Formats**: Saves data as JSON, HTML, screenshots, and PDFs
+- **Browser Automation**: Handles dynamic content and JavaScript-rendered pages
+- **Configurable Options**: Customize scraping behavior through options
+- **Error Handling**: Robust error handling and logging
+- **Type Safety**: TypeScript implementation with full type definitions
+
+## Development Setup
+
+### Prerequisites
+
+- [Volta](https://volta.sh/) for JavaScript/TypeScript tooling
+- Python 3.11+ for Python components
+- Git for version control
 
 ### Quick Start
-```bash
-# Apply for a job
-pnpm cv apply "job-posting-url"
 
-# Generate an ATS-friendly CV
-pnpm cv site-cv indeed --ats-friendly
-```
-
-### Key Features
-- Automatically formats your CV for different job sites
-- Ensures all information is accurate and verified
-- Creates professional cover letters
-- Keeps track of your applications
-
-### Application Process
-1. Find a job posting you want to apply for
-2. Run the apply command with the URL
-3. Review the generated materials in the `output` folder
-4. Submit your application!
-
----
-
-## For AI Agents & Developers 🤖
-
-### System Architecture
-
-- `src/data/base-info.json`: SINGLE SOURCE OF TRUTH
-  - All experience claims must be verified against this
-  - No generated content may include unverified information
-  - Structured format for experience validation
-
-### Core Components
-
-```
-src/
-├── data/           # Source of truth + templates
-├── utils/          # Core tooling
-│   └── pdf-generator.ts    # Primary PDF generation
-└── types/          # Type definitions for verification
-
-runs/               # Application run configurations
-├── [job]-[date].json      # Complete context
-└── [job]-[date].md        # Strategy documentation
-
-output/            # Generated materials
-└── [job]/         # Job-specific outputs
-```
-
-### PDF Generation Hierarchy
-
-1. **ATS Standard** (`site-cv` command)
-   - Used for: Job board submissions
-   - Features: Optimized parsing, standard formatting
-   - Validation: Strict source data verification
-
-2. **Custom Format** (`pdf-generator.ts`)
-   - Used for: Special requirements
-   - Features: Full formatting control
-   - Validation: Requires explicit verification
-
-### Data Verification Requirements
-
-1. Experience Claims
-   ```typescript
-   // Must match structure in base-info.json
-   interface ExperienceClaim {
-     employer: string;
-     position: string;
-     period: string;
-     duties: string[];
-   }
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/job-scraper.git
+   cd job-scraper
    ```
 
-2. Content Generation
-   - All generated content must link to source data
-   - No unverified skills or experiences
-   - Date ranges must match records
+2. Run the setup script:
+   ```bash
+   chmod +x setup.sh
+   ./setup.sh
+   ```
 
-### Agent Tooling
+The setup script will:
+- Install Volta if not present
+- Install pnpm via Volta
+- Set up TypeScript dependencies
+- Set up Python dependencies
+- Configure Git hooks
+
+### Development Workflow
+
+#### TypeScript/JavaScript Development
+
+```bash
+# Start development server
+cd typescript
+pnpm dev
+
+# Run tests
+pnpm test
+
+# Build for production
+pnpm build
+```
+
+#### Python Development
+
+```bash
+# Install dependencies
+cd python
+pip install -r requirements.txt
+
+# Run tests
+pytest
+```
+
+### Tooling
+
+- **Node.js**: Managed by Volta (version 20.10.0)
+- **Package Manager**: pnpm (version 8.12.1)
+- **TypeScript**: Version 5.0.0
+- **Python**: Version 3.11+
+
+### Git Hooks
+
+The project uses Husky and lint-staged to ensure code quality:
+- Pre-commit: Runs ESLint and Prettier on staged files
+- Pre-push: Runs tests
+
+## Project Structure
+
+```
+.
+├── typescript/          # TypeScript implementation
+│   ├── src/            # Source code
+│   ├── tests/          # Tests
+│   └── package.json    # Dependencies and scripts
+├── python/             # Python implementation
+│   ├── src/            # Source code
+│   ├── tests/          # Tests
+│   └── requirements.txt # Dependencies
+└── scripts/            # Utility scripts
+```
+
+## Installation
+
+### TypeScript
+
+```bash
+cd typescript
+npm install
+```
+
+### Python
+
+```bash
+cd python
+pip install -r requirements.txt
+```
+
+### JavaScript
+
+```bash
+cd javascript
+npm install
+```
+
+## Usage
+
+### TypeScript
 
 ```typescript
-// Example verification check
-async function verifyContent(claim: string): Promise<boolean> {
-  const sourceData = await loadSourceData();
-  return validateAgainstSource(claim, sourceData);
+import { JobScraper } from './src/scraper';
+
+const scraper = new JobScraper({
+  headless: true,
+  waitTime: 5000,
+  outputDir: 'job-postings'
+});
+
+const result = await scraper.scrape('https://example.com/jobs/12345');
+console.log(result);
+```
+
+### Python
+
+```python
+from scraper import JobScraper, ScraperOptions
+
+options = ScraperOptions(
+  headless=True,
+  wait_time=5000,
+  output_dir='job-postings'
+)
+
+scraper = JobScraper(options)
+result = scraper.scrape('https://example.com/jobs/12345')
+print(result.to_dict())
+```
+
+### JavaScript (Browser)
+
+```javascript
+// Copy the contents of browser.js into your browser's console
+const scraper = new BrowserJobScraper();
+const data = scraper.scrape();
+BrowserJobScraper.saveData(data);
+```
+
+## Output Format
+
+All implementations produce the same output format:
+
+```json
+{
+  "url": "https://example.com/jobs/12345",
+  "title": "Job Title",
+  "company": "Company Name",
+  "location": "Location",
+  "description": "Job description...",
+  "responsibilities": ["Responsibility 1", "Responsibility 2"],
+  "qualifications": ["Qualification 1", "Qualification 2"],
+  "skills": ["Skill 1", "Skill 2"],
+  "education": ["Education 1", "Education 2"],
+  "experience": ["Experience 1", "Experience 2"],
+  "htmlPath": "path/to/html/file",
+  "screenshotPath": "path/to/screenshot",
+  "pdfPath": "path/to/pdf",
+  "metadata": {
+    "postedDate": "2023-01-01",
+    "closingDate": "2023-02-01",
+    "salary": "$50,000 - $70,000",
+    "employmentType": "Full-time"
+  }
 }
 ```
 
-### Best Practices
+## Configuration Options
 
-1. **Content Generation**
-   - Always verify against base-info.json
-   - No interpolation without verification
-   - Document all verification steps
+All implementations support the following options:
 
-2. **PDF Generation**
-   - Use ATS-friendly by default
-   - Document any custom formatting
-   - Verify output accessibility
+- `headless`: Run browser in headless mode (default: true)
+- `waitTime`: Time to wait for page load in milliseconds (default: 5000)
+- `outputDir`: Directory to save output files (default: 'job-postings')
+- `saveHtml`: Save HTML content (default: true)
+- `saveScreenshot`: Save page screenshot (default: true)
+- `savePdf`: Save page as PDF (default: true)
+- `customUserAgent`: Custom user agent string
 
-3. **Run Documentation**
-   - Store complete context
-   - Include verification steps
-   - Document format decisions
+## Error Handling
 
-### Improvement Process
+All implementations include comprehensive error handling:
 
-1. Create runs/ entry for each application
-2. Document technical challenges
-3. Update tooling based on needs
-4. Maintain user simplicity
+```typescript
+{
+  "success": false,
+  "error": "Error message",
+  "metadata": {
+    "timestamp": "2023-01-01T12:00:00Z",
+    "duration": 1234,
+    "url": "https://example.com/jobs/12345"
+  }
+}
+```
+
+## Contributing
+
+1. Create a feature branch
+2. Make your changes
+3. Run tests: `pnpm test` and `pytest`
+4. Commit with a descriptive message
+5. Push to your branch
+6. Create a pull request
+
+## License
+
+MIT
 

@@ -1,4 +1,4 @@
-import { generateCV, CVGenerationOptions } from "./generator.js";
+import { generateCV, CVGenerationOptions } from "./tools/generator.js";
 
 async function main() {
   const args = process.argv.slice(2);

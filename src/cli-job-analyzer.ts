@@ -1,8 +1,8 @@
-import { analyzeJobPosting } from './utils/job-analyzer.js';
+import { analyzeJobPosting } from './tools/job-analyzer.js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import type { JobPostingAnalysis } from './types/cv-types.js';
+import type { JobPostingAnalysis } from './shared/types/cv-types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

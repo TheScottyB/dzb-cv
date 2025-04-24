@@ -12,12 +12,12 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 
 // Local imports
-import { generateCV } from './generator.js';
-import { analyzeJobPosting } from './utils/job-analyzer.js';
-import { parseCvMarkdown } from './utils/cv-parser.js';
-import { ProfileService } from './services/profile-service.js';
-import { loadCVData } from './utils/helpers.js';
-import { convertMarkdownToPdf } from './utils/pdf-generator.js';
+import { generateCV } from './shared/tools/generator.js';
+import { parseCvMarkdown } from './shared/tools/cv-parser.js';
+import { ProfileService } from './shared/services/profile-service.js';
+import { loadCVData } from './shared/utils/helpers.js';
+import { convertMarkdownToPdf } from './shared/utils/pdf-generator.js';
+import { analyzeJobPosting } from './shared/tools/job-analyzer.js';
 
 // Type imports
 import type { 
@@ -25,7 +25,7 @@ import type {
   CVGenerationOptions, 
   CVMatchResult, 
   CVData 
-} from './types/cv-types.js';
+} from './shared/types/cv-types.js';
 
 // Get the directory name
 const __filename = fileURLToPath(import.meta.url);
@@ -1348,7 +1348,7 @@ program
         const qualifications = getSection('Qualifications:', 'Benefits:');
         
         // Extract key terms
-        const jobAnalyzer = await import('./utils/job-analyzer.js');
+        const jobAnalyzer = await import('./shared/tools/job-analyzer.js');
         const keyTerms = jobAnalyzer.extractKeyTerms ? 
           jobAnalyzer.extractKeyTerms(fileContent) : 
           [...new Set([...responsibilities, ...qualifications])];
@@ -1437,7 +1437,6 @@ program
 
       // --- Continue as before ---
       console.log('\n' + chalk.blue('Step 2: Creating tailored CV...'));
-      console.log('\n' + chalk.blue('Step 2: Creating tailored CV...'));
       const tailoredCvFileName = await createTailoredCV(
         jobAnalysis,
         currentSector
@@ -1452,7 +1451,6 @@ program
         jobAnalysis.keyTerms       // pass patched keyQualifications
       );
       
-      // Step 4: Log application to agent-comments.md
       // Step 4: Log application to agent-comments.md
       console.log('\n' + chalk.blue('Step 4: Logging application in tracking file...'));
       await logJobApplication(jobAnalysis, tailoredCvFileName, coverLetterPath);
