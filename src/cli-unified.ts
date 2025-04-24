@@ -25,6 +25,121 @@ program
   .description('Dawn\'s CV Toolkit - A unified workflow for job applications')
   .version('1.0.0');
 
+// Command to scrape a job posting with Puppeteer
+program
+  .command('scrape')
+  .description('Scrape a job posting from a website using headless browser')
+  .argument('<url>', 'The URL of the job posting to scrape')
+  .option('--output <path>', 'Output directory for scraped files', 'output/scraped')
+  .option('--no-headless', 'Run in non-headless mode (shows browser UI)')
+  .option('--wait <ms>', 'Wait time in milliseconds after page load', '5000')
+  .option('--no-screenshot', 'Do not save screenshot')
+  .option('--pdf', 'Save PDF of the page')
+  .option('--analyze', 'Analyze the scraped job posting after scraping')
+  .action(async (url, options) => {
+    try {
+      console.log(chalk.blue.bold('🔍 Scraping job posting from browser...'));
+      
+      // Import the web scraper
+      const { scrapeJobPosting } = await import('./utils/web-scraper.js');
+      
+      // Prepare scraper options
+      const scraperOptions = {
+        headless: options.headless,
+        waitTime: parseInt(options.wait),
+        outputDir: options.output,
+        saveHtml: true,
+        saveScreenshot: options.screenshot,
+        savePdf: options.pdf
+      };
+      
+      console.log(chalk.yellow('Launching browser and navigating to URL...'));
+      console.log(chalk.gray(`This may take a moment. ${options.headless ? 'Browser is running in headless mode.' : 'Browser window will open.'}`));
+      
+      // Scrape the job posting
+      const scrapedJob = await scrapeJobPosting(url, scraperOptions);
+      
+      console.log('\n' + chalk.green.bold('Job Successfully Scraped:'));
+      console.log(chalk.gray('------------------------'));
+      console.log(`Title: ${chalk.yellow(scrapedJob.title)}`);
+      console.log(`Company: ${chalk.yellow(scrapedJob.company)}`);
+      if (scrapedJob.location) console.log(`Location: ${chalk.yellow(scrapedJob.location)}`);
+      
+      console.log('\n' + chalk.green.bold('Saved Files:'));
+      if (scrapedJob.htmlPath) console.log(`HTML: ${chalk.blue(scrapedJob.htmlPath)}`);
+      if (scrapedJob.screenshotPath) console.log(`Screenshot: ${chalk.blue(scrapedJob.screenshotPath)}`);
+      
+      // Create a local job description file
+      const jobDescriptionFile = path.join(options.output, `${scrapedJob.title.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()}.txt`);
+      
+      // Format the job description text
+      const jobDescriptionContent = [
+        `Job Title: ${scrapedJob.title}`,
+        '',
+        `Company: ${scrapedJob.company}`,
+        '',
+        scrapedJob.location ? `Location: ${scrapedJob.location}` : '',
+        '',
+        'Job Description:',
+        '',
+        scrapedJob.description,
+        '',
+        scrapedJob.responsibilities && scrapedJob.responsibilities.length > 0 ? 'Key Responsibilities:' : '',
+        ...(scrapedJob.responsibilities || []).map(r => `- ${r}`),
+        '',
+        scrapedJob.qualifications && scrapedJob.qualifications.length > 0 ? 'Qualifications:' : '',
+        ...(scrapedJob.qualifications || []).map(q => `- ${q}`)
+      ].filter(Boolean).join('\n');
+      
+      await fs.writeFile(jobDescriptionFile, jobDescriptionContent, 'utf-8');
+      console.log(`Job Description: ${chalk.blue(jobDescriptionFile)}`);
+      
+      // Analyze the job if requested
+      if (options.analyze) {
+        console.log('\n' + chalk.blue.bold('Analyzing scraped job...'));
+        
+        // Extract key terms using job analyzer
+        const { extractKeyTerms } = await import('./utils/job-analyzer.js');
+        const keyTerms = extractKeyTerms(scrapedJob.description);
+        
+        console.log('\n' + chalk.green.bold('Key Terms for CV Tailoring:'));
+        console.log(chalk.yellow(keyTerms.join(', ')));
+        
+        // Prompt to generate CV
+        const { proceedToTailoring } = await inquirer.prompt([{
+          type: 'confirm',
+          name: 'proceedToTailoring',
+          message: 'Would you like to generate a tailored CV based on this job posting?',
+          default: true
+        }]);
+        
+        if (proceedToTailoring) {
+          // Create a job analysis object from scraped data
+          const jobAnalysis = {
+            title: scrapedJob.title,
+            company: scrapedJob.company,
+            location: scrapedJob.location,
+            responsibilities: scrapedJob.responsibilities || [],
+            qualifications: scrapedJob.qualifications || [],
+            keyTerms,
+            source: {
+              url,
+              site: url.includes('indeed.com') ? 'Indeed' : 
+                   url.includes('linkedin.com') ? 'LinkedIn' : 'Web',
+              fetchDate: new Date()
+            }
+          };
+          
+          await createTailoredCV(jobAnalysis);
+        }
+      }
+      
+    } catch (error) {
+      console.error(chalk.red('Error scraping job posting:'), error instanceof Error ? error.message : String(error));
+      process.exit(1);
+    }
+  });
+
 // Command to analyze a job posting
 program
   .command('analyze')

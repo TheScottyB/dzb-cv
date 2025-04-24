@@ -73,7 +73,45 @@ Example:
 pnpm cv -- import cv-versions/dawn-illinois-state-cv.md
 ```
 
-#### 4. Generate Job Site Optimized CV
+#### 4. Scrape Job Postings from Websites
+
+```bash
+pnpm cv -- scrape <url> [options]
+```
+
+Arguments:
+- `url` - The URL of the job posting to scrape
+
+Options:
+- `--output <path>` - Output directory (default: output/scraped)
+- `--no-headless` - Run in non-headless mode (shows browser UI)
+- `--wait <ms>` - Wait time in milliseconds after page load (default: 5000)
+- `--no-screenshot` - Do not save screenshot
+- `--pdf` - Save PDF of the page
+- `--analyze` - Analyze the scraped job posting after scraping
+
+Example:
+```bash
+# Scrape in headless mode (no visible browser)
+pnpm cv -- scrape https://indeed.com/viewjob?jk=12345
+
+# Scrape with visible browser window
+pnpm cv -- scrape https://linkedin.com/jobs/view/12345 --no-headless
+
+# Scrape, analyze, and optionally generate CV
+pnpm cv -- scrape https://monster.com/job/12345 --analyze
+```
+
+This command uses Puppeteer to open a headless (or visible) browser, navigate to the job posting URL, and scrape the content. It works around anti-scraping measures by acting like a real browser. The command saves:
+
+1. HTML file of the job posting
+2. Screenshot of the job posting page
+3. Text file containing the structured job details
+4. Optional PDF of the entire page
+
+It works well with Indeed, LinkedIn, and other job sites that might block regular web requests.
+
+#### 5. Generate Job Site Optimized CV
 
 ```bash
 pnpm cv -- site-cv <site> [options]
