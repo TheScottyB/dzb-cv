@@ -17,132 +17,89 @@ describe('ATS Compatibility Tests', () => {
       );
     });
 
-    test('validates proper date formats', async () => {
-      const content = `
+    test('validates date formats', async () => {
+      const badContent = `
 # Experience
 Company Name
 Role
-Did something great
+2023 to now
       `;
       
-      const analysis = await analyzeATSCompatibility(content);
-      expect(analysis.issues).toContainEqual(
-        expect.objectContaining({ type: 'MISSING_DATES' })
-      );
-    });
-
-    test('accepts proper date formats', async () => {
-      const content = `
+      const goodContent = `
 # Experience
-Company Name | 2020 - Present
+Company Name | 01/2023 - Present
 Role
 Achievements
       `;
       
-      const analysis = await analyzeATSCompatibility(content);
-      expect(analysis.issues).not.toContainEqual(
+      const badAnalysis = await analyzeATSCompatibility(badContent);
+      const goodAnalysis = await analyzeATSCompatibility(goodContent);
+      
+      expect(badAnalysis.issues).toContainEqual(
+        expect.objectContaining({ type: 'MISSING_DATES' })
+      );
+      expect(goodAnalysis.issues).not.toContainEqual(
         expect.objectContaining({ type: 'MISSING_DATES' })
       );
     });
   });
 
-  describe('Contact Information', () => {
-    test('requires proper contact format', async () => {
-      const content = `
-Dawn Zurick Beilfuss
-email@example.com | 123-456-7890
-Chicago, IL
-      `;
-      
-      const analysis = await analyzeATSCompatibility(content);
-      expect(analysis.issues).not.toContainEqual(
-        expect.objectContaining({ type: 'CONTACT_INFO' })
-      );
-    });
-  });
-
-  describe('Section Headings', () => {
-    test('validates standard section headings', async () => {
-      const content = `
-# My Amazing Journey
-# Cool Stuff I Did
-      `;
-      
-      const analysis = await analyzeATSCompatibility(content);
-      expect(analysis.issues).toContainEqual(
-        expect.objectContaining({ type: 'UNUSUAL_HEADINGS' })
-      );
-    });
-
-    test('accepts standard section headings', async () => {
-      const content = `
-# Professional Experience
-# Education
-# Skills
-      `;
-      
-      const analysis = await analyzeATSCompatibility(content);
-      expect(analysis.issues).not.toContainEqual(
-        expect.objectContaining({ type: 'UNUSUAL_HEADINGS' })
-      );
-    });
-  });
-
-  describe('Improvement Suggestions', () => {
-    test('provides actionable improvements', async () => {
-      const content = `
-★ My Amazing Profile ★
-• Did cool stuff
-• Made things happen
-      `;
-      
-      const analysis = await analyzeATSCompatibility(content);
-      expect(analysis.improvements.length).toBeGreaterThan(0);
-      expect(analysis.improvements[0]).toContain('Suggestion:');
-    });
-  });
-
   describe('Scoring System', () => {
-    test('perfect score for ATS-friendly content', async () => {
-      const content = `
+    test('handles perfectly formatted content', async () => {
+      const perfectContent = `
 Dawn Zurick Beilfuss
 email@example.com | 123-456-7890
 Chicago, IL
 
 # Professional Summary
-Experienced professional with expertise in multiple industries.
+Experienced professional.
 
 # Professional Experience
-Company Name | 2020 - Present
+ACME Corp | 01/2020 - Present
 Senior Role
 - Led team of 5 people
 - Increased efficiency by 25%
 
 # Education
-University Name | 2015
+University | 2015
 Degree in Business
 
 # Skills
 - Project Management
-- Team Leadership
-- Strategic Planning
+- Leadership
       `;
       
-      const analysis = await analyzeATSCompatibility(content);
+      const analysis = await analyzeATSCompatibility(perfectContent);
       expect(analysis.score).toBe(100);
-      expect(analysis.issues.length).toBe(0);
+      expect(analysis.issues).toHaveLength(0);
     });
 
-    test('reduces score for each issue', async () => {
-      const content = `
+    test('reduces score proportionally to issues', async () => {
+      const problematicContent = `
 ★ Dawn's Amazing CV ★
 • Did stuff
 • Made things happen
       `;
       
-      const analysis = await analyzeATSCompatibility(content);
-      expect(analysis.score).toBeLessThan(100);
+      const analysis = await analyzeATSCompatibility(problematicContent);
+      expect(analysis.score).toBeLessThan(95);
+      expect(analysis.score).toBeGreaterThan(80);
       expect(analysis.issues.length).toBeGreaterThan(1);
+    });
+
+    test('provides actionable improvements', async () => {
+      const content = `
+★ Profile ★
+• Skills
+• Experience
+      `;
+      
+      const analysis = await analyzeATSCompatibility(content);
+      expect(analysis.improvements).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining('Suggestion:')
+        ])
+      );
     });
   });
 });

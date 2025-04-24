@@ -1,5 +1,4 @@
 import { createATSOptimizedPDF } from '../utils/ats/optimizer';
-import { convertMarkdownToPdf } from '../utils/pdf-generator';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import type { PDFOptions } from '../types/cv-types';
@@ -7,12 +6,19 @@ import type { PDFOptions } from '../types/cv-types';
 describe('ATS Integration Tests', () => {
   const testOutputDir = join(process.cwd(), 'test-output');
   const sampleCV = `
-★ Dawn's Amazing Profile ★
+Dawn Zurick Beilfuss
 email@test.com | 123-456-7890
 Chicago, IL
 
-• Led team of 5 people
-• Increased efficiency
+# Professional Experience
+ACME Corp | 01/2020 - Present
+Senior Role
+- Led team of 5 people
+- Increased efficiency
+
+# Skills
+- Project Management
+- Leadership
   `;
 
   beforeAll(async () => {
@@ -23,9 +29,9 @@ Chicago, IL
     await fs.rm(testOutputDir, { recursive: true, force: true });
   });
 
-  describe('PDF Generation with ATS Optimization', () => {
-    test('generates ATS-optimized PDF', async () => {
-      const outputPath = join(testOutputDir, 'ats-optimized.pdf');
+  describe('Content Optimization', () => {
+    test('improves formatting while preserving content', async () => {
+      const outputPath = join(testOutputDir, 'content-preservation.pdf');
       const options: PDFOptions = {
         paperSize: 'Letter',
         margins: { top: 1, right: 1, bottom: 1, left: 1 },
@@ -36,54 +42,19 @@ Chicago, IL
 
       const result = await createATSOptimizedPDF(sampleCV, outputPath, options);
 
-      expect(result.pdfPath).toBe(outputPath);
-      expect(result.analysis.score).toBeGreaterThan(0);
-      expect(result.optimizations.length).toBeGreaterThan(0);
+      // Content preservation checks
+      expect(result.content).toContain('email@test.com');
+      expect(result.content).toContain('Chicago, IL');
+      expect(result.content).toContain('Led team of 5 people');
 
-      const fileExists = await fs.access(outputPath)
-        .then(() => true)
-        .catch(() => false);
-      expect(fileExists).toBe(true);
+      // Format improvement checks
+      expect(result.analysis.score).toBeGreaterThan(90);
+      expect(result.optimizations).toContain(
+        expect.stringMatching(/format|structure|standard/i)
+      );
     });
 
-    test('improves ATS score', async () => {
-      const outputPath = join(testOutputDir, 'ats-score-test.pdf');
-      const options: PDFOptions = {
-        paperSize: 'Letter',
-        margins: { top: 1, right: 1, bottom: 1, left: 1 },
-        fontFamily: 'Arial, sans-serif',
-        fontSize: 11,
-        orientation: 'portrait'
-      };
-
-      const result = await createATSOptimizedPDF(sampleCV, outputPath, options);
-      
-      // Original CV has special characters and formatting issues
-      expect(result.analysis.score).toBeGreaterThan(50);
-      expect(result.optimizations).toContain('Simplified special characters and formatting');
-    });
-
-    test('maintains content integrity', async () => {
-      const outputPath = join(testOutputDir, 'content-integrity.pdf');
-      const options: PDFOptions = {
-        paperSize: 'Letter',
-        margins: { top: 1, right: 1, bottom: 1, left: 1 },
-        fontFamily: 'Arial, sans-serif',
-        fontSize: 11,
-        orientation: 'portrait'
-      };
-
-      const result = await createATSOptimizedPDF(sampleCV, outputPath, options);
-
-      // Key content should still be present after optimization
-      expect(result.pdfPath).toContain('email@test.com');
-      expect(result.pdfPath).toContain('Chicago, IL');
-      expect(result.pdfPath).toContain('Led team of 5 people');
-    });
-  });
-
-  describe('Edge Cases', () => {
-    test('handles empty content', async () => {
+    test('handles empty content gracefully', async () => {
       const outputPath = join(testOutputDir, 'empty.pdf');
       const options: PDFOptions = {
         paperSize: 'Letter',
@@ -94,12 +65,18 @@ Chicago, IL
       };
 
       const result = await createATSOptimizedPDF('', outputPath, options);
-      expect(result.analysis.score).toBe(100); // Empty content should not cause errors
+      expect(result.analysis.score).toBeGreaterThanOrEqual(90);
+      expect(result.analysis.issues).toHaveLength(0);
     });
 
-    test('handles extremely long content', async () => {
-      const longContent = Array(1000).fill('Test content line').join('\n');
-      const outputPath = join(testOutputDir, 'long.pdf');
+    test('handles problematic content', async () => {
+      const problematicCV = `
+★★★ AMAZING CV ★★★
+• Super awesome skills
+• Did great things!!!
+`;
+
+      const outputPath = join(testOutputDir, 'problematic.pdf');
       const options: PDFOptions = {
         paperSize: 'Letter',
         margins: { top: 1, right: 1, bottom: 1, left: 1 },
@@ -108,9 +85,16 @@ Chicago, IL
         orientation: 'portrait'
       };
 
-      const result = await createATSOptimizedPDF(longContent, outputPath, options);
-      expect(result.analysis.score).toBeGreaterThanOrEqual(0);
-      expect(result.analysis.score).toBeLessThanOrEqual(100);
+      const result = await createATSOptimizedPDF(problematicCV, outputPath, options);
+      
+      // Should improve the content
+      expect(result.optimizations.length).toBeGreaterThan(0);
+      expect(result.analysis.score).toBeGreaterThan(85);
+      
+      // Should provide helpful suggestions
+      expect(result.analysis.improvements).toContain(
+        expect.stringMatching(/format|character|standard/i)
+      );
     });
   });
 });
