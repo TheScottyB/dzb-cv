@@ -1,22 +1,41 @@
 {
   "title": "Recruitment Central Program Expert",
-  "company": "Department of Central Management Services (CMS), Bureau of Personnel",
-  "location": "Springfield, IL, US, 62702-5138",
-  "jobType": "Full Time, Salaried",
+  "company": "Illinois Department of Central Management Services (CMS), Bureau of Personnel",
+  "location": "Springfield, IL, 62702-5138",
+  "jobType": "Full Time, Salaried, Leadership & Management",
+  "jobId": "46252",
   "experienceLevel": "Two years professional HR experience",
+  "salaryRange": {
+    "min": 6339,
+    "max": 9178,
+    "period": "monthly",
+    "currency": "USD"
+  },
   "responsibilities": [
-    "Lead and execute recruitment and retention process including career counseling and outreach",
-    "Participate in recruitment activities like Veterans/Minority Outreach workshops and job fairs",
-    "Perform research to determine best practices for counseling applicants on hiring process",
-    "Serve as a lead worker",
-    "Conduct meetings and facilitate training"
+    "Lead and execute recruitment and retention processes",
+    "Provide career counseling and outreach services",
+    "Participate in recruitment activities like job fairs and workshops",
+    "Develop and implement process improvements for applicant hiring",
+    "Conduct Veterans/Minority Outreach workshops",
+    "Serve as a lead worker in the recruitment team",
+    "Facilitate training for recruitment staff and hiring managers",
+    "Coordinate with Applicant Tracking Systems"
   ],
   "qualifications": [
     "Two years of professional human resources experience",
+    "Strong leadership skills with ability to guide teams",
+    "Excellent written and verbal communication abilities",
+    "Strong interpersonal skills for working with diverse stakeholders",
+    "Presentation and training facilitation skills",
+    "Ability to adapt and work in a changing environment",
+    "Willingness to travel for recruitment events"
+  ],
+  "preferredQualifications": [
+    "Two years of professional career counseling/assessment experience",
     "Knowledge of Personnel Code, Rules, and Classification Plans",
-    "Working knowledge of Applicant Tracking Systems and HR management systems",
-    "Professional supervisory experience preferred",
-    "Understanding of process improvement concepts"
+    "Experience with Applicant Tracking Systems",
+    "One year of professional supervisory experience",
+    "Understanding of process improvement concepts and implementation"
   ],
   "educationRequirements": [
     "Four-year college degree"
@@ -27,26 +46,35 @@
     "Career Counseling",
     "Talent Acquisition",
     "Process Improvement",
+    "Leadership",
     "Workforce Development",
     "Outreach",
     "Training Facilitation",
     "Applicant Tracking Systems",
-    "HR management systems",
+    "HR Management Systems",
     "Personnel Code",
     "Classification Plans",
     "Veteran Outreach",
-    "Minority Outreach"
+    "Minority Outreach",
+    "Team Leadership",
+    "Interpersonal Skills",
+    "Communication Skills",
+    "Presentation Skills",
+    "Change Management"
   ],
   "requiredSkills": [
-    "Human resources recruitment",
+    "Team leadership",
+    "Recruitment process management",
     "Career counseling",
     "Process improvement",
     "Communication skills",
-    "Interpersonal skills"
+    "Interpersonal skills",
+    "Training facilitation",
+    "Presentation skills"
   ],
   "source": {
     "url": "https://illinois.jobs2web.com/job/Springfield-RECRUITMENT-CENTRAL-PROGRAM-EXPERT-IL-62702-5138/1282386400/",
     "site": "illinois.jobs2web.com",
-    "fetchDate": "2025-04-23T00:00:00.000Z"
+    "fetchDate": "2025-04-24T00:00:00.000Z"
   }
 }
