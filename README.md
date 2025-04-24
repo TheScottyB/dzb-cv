@@ -1,70 +1,119 @@
 # Dawn Zurick Beilfuss CV Repository
 
-A structured repository for managing multiple CV formats and job-specific applications for Dawn Zurick (Dawn Zurick Beilfuss).
+A professional CV and job application management system designed for ease of use while maintaining strict data accuracy.
 
-## Repository Structure
+## For Users 👤
 
-- `src/`: Source files and templates
-  - `templates/`: CV templates for different application types
-  - `components/`: Reusable CV sections
-  - `data/`: Core CV data and job-specific information
-  - `utils/`: Core utility functions
+### Quick Start
+```bash
+# Apply for a job
+pnpm cv apply "job-posting-url"
 
-- `cv-versions/`: Version-controlled Markdown CV files
-  - Contains all job-specific CVs in Markdown format
+# Generate an ATS-friendly CV
+pnpm cv site-cv indeed --ats-friendly
+```
 
-- `output/`: Generated CVs and application materials
-  - `federal/`: Federal job applications
-  - `state/`: State job applications
-  - `private/`: Private sector applications
-  - `sites/`: Job site optimized versions
+### Key Features
+- Automatically formats your CV for different job sites
+- Ensures all information is accurate and verified
+- Creates professional cover letters
+- Keeps track of your applications
 
-- `assets/`: Supporting materials
-  - `images/`: Photos and graphics
-  - `documents/`: Supporting documentation
+### Application Process
+1. Find a job posting you want to apply for
+2. Run the apply command with the URL
+3. Review the generated materials in the `output` folder
+4. Submit your application!
 
-- `utils/`: Helper scripts and tools
-  - `generate-job-pdf-template.js`: Template for creating PDF generators
-  - Various job-specific PDF generators
+---
 
-- `docs/`: Documentation and guides
+## For AI Agents & Developers 🤖
 
-## Workflow for New Job Applications
+### System Architecture
 
-1. **Analyze the job posting**:
-   ```bash
-   pnpm cv -- analyze <job-url>
+- `src/data/base-info.json`: SINGLE SOURCE OF TRUTH
+  - All experience claims must be verified against this
+  - No generated content may include unverified information
+  - Structured format for experience validation
+
+### Core Components
+
+```
+src/
+├── data/           # Source of truth + templates
+├── utils/          # Core tooling
+│   └── pdf-generator.ts    # Primary PDF generation
+└── types/          # Type definitions for verification
+
+runs/               # Application run configurations
+├── [job]-[date].json      # Complete context
+└── [job]-[date].md        # Strategy documentation
+
+output/            # Generated materials
+└── [job]/         # Job-specific outputs
+```
+
+### PDF Generation Hierarchy
+
+1. **ATS Standard** (`site-cv` command)
+   - Used for: Job board submissions
+   - Features: Optimized parsing, standard formatting
+   - Validation: Strict source data verification
+
+2. **Custom Format** (`pdf-generator.ts`)
+   - Used for: Special requirements
+   - Features: Full formatting control
+   - Validation: Requires explicit verification
+
+### Data Verification Requirements
+
+1. Experience Claims
+   ```typescript
+   // Must match structure in base-info.json
+   interface ExperienceClaim {
+     employer: string;
+     position: string;
+     period: string;
+     duties: string[];
+   }
    ```
 
-2. **Create tailored CV in Markdown**:
-   - Create a new file in `cv-versions/dawn-position-employer-cv.md`
-   - Customize content based on job requirements
+2. Content Generation
+   - All generated content must link to source data
+   - No unverified skills or experiences
+   - Date ranges must match records
 
-3. **Create matching cover letter**:
-   - Create in `output/<sector>/<position>/dawn-position-cover-letter.md`
+### Agent Tooling
 
-4. **Generate PDFs**:
-   - Copy `utils/generate-job-pdf-template.js` to a new file
-   - Update variables for the specific job
-   - Run the generator:
-     ```bash
-     node utils/generate-position-employer-pdf.js
-     ```
+```typescript
+// Example verification check
+async function verifyContent(claim: string): Promise<boolean> {
+  const sourceData = await loadSourceData();
+  return validateAgainstSource(claim, sourceData);
+}
+```
 
-5. **Track in agent-comments.md**:
-   - Update with details about the application
+### Best Practices
 
-## PDF Generation
+1. **Content Generation**
+   - Always verify against base-info.json
+   - No interpolation without verification
+   - Document all verification steps
 
-When generating PDFs for job applications:
+2. **PDF Generation**
+   - Use ATS-friendly by default
+   - Document any custom formatting
+   - Verify output accessibility
 
-1. Always use a script in the `utils/` directory
-2. Ensure it imports from `../dist/utils/pdf-generator.js`
-3. Use the template file as a starting point
-4. Make the script executable: `chmod +x utils/your-script.js`
+3. **Run Documentation**
+   - Store complete context
+   - Include verification steps
+   - Document format decisions
 
-## Key Documentation
+### Improvement Process
 
-- `CLAUDE.md`: Quick reference for common commands
-- `docs/USAGE.md`: Detailed usage instructions
-- `docs/technical-design-formatting.md`: Formatting specifications
+1. Create runs/ entry for each application
+2. Document technical challenges
+3. Update tooling based on needs
+4. Maintain user simplicity
+

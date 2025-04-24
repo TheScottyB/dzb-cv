@@ -1,0 +1,82 @@
+{
+  "run_date": "2025-04-24",
+  "position": {
+    "title": "Patient Service Representative",
+    "company": "Northwestern Medicine",
+    "location": "Crystal Lake, IL",
+    "type": "Part-time",
+    "schedule": "2 12-hour shifts (7:45am-8:15pm)",
+    "posting_url": "https://jobs.nm.org/job/crystal-lake/patient-service-representative-immediate-care-center-crystal-lake-part-time-days-1-000-sign-on-bonus/27763/80154530272"
+  },
+  "requirements": {
+    "required": [
+      "High school diploma or GED",
+      "0-2 years customer service experience"
+    ],
+    "preferred": [
+      "Previous healthcare setting experience",
+      "Working knowledge of medical terminology",
+      "Bilingual"
+    ],
+    "responsibilities": [
+      "Patient check-in/out",
+      "Insurance/demographic verification",
+      "Payment collection and processing",
+      "Appointment scheduling",
+      "Patient communication",
+      "Registration and consent collection"
+    ]
+  },
+  "experience_mapping": {
+    "primary_matches": [
+      {
+        "role": "Front Desk / Veterinary Assistant",
+        "employer": "Fox Lake Animal Hospital",
+        "key_alignments": [
+          "Patient flow (60-80 daily)",
+          "Registration and check-in/out",
+          "Payment processing"
+        ]
+      },
+      {
+        "role": "Supervisor, Front Desk & Call Center",
+        "employer": "Midwest Sports Medicine",
+        "key_alignments": [
+          "Insurance verification",
+          "Appointment scheduling",
+          "High-volume operations"
+        ]
+      }
+    ]
+  },
+  "application_package": {
+    "cv": {
+      "filename": "dawn-nm-psr-cv.pdf",
+      "focus_areas": [
+        "Healthcare experience",
+        "Patient service",
+        "Medical office operations"
+      ]
+    },
+    "cover_letter": {
+      "filename": "dawn-nm-psr-cover.pdf",
+      "key_points": [
+        "Direct experience with high patient volume",
+        "Verified healthcare administration experience",
+        "Schedule flexibility"
+      ]
+    }
+  },
+  "improvements_for_future": {
+    "technical": [
+      "Add support for custom filenames in cli",
+      "Improve job analyzer for healthcare positions",
+      "Add support for direct PDF generation from markdown"
+    ],
+    "content": [
+      "Create healthcare-specific template",
+      "Add section for schedule flexibility",
+      "Enhance medical terminology section"
+    ]
+  }
+}
