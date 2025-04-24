@@ -422,7 +422,6 @@ describe("CV Generator", () => {
         }
       });
     });
-  }); // End Helper Functions
 
   // =========================================================================
   // Template-Specific Tests

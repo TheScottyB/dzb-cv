@@ -335,10 +335,6 @@ function extractListItemsFromElements(elements: Element[]): string[] {
 
     // Quick filter: drop words shorter than 4, keep longer
     keyTerms = keyTerms.filter(term => term.length >= 4 && !/^\d+$/.test(term));
- * 
- * @param document The DOM document of the LinkedIn job posting
- * @param url The original URL of the job posting
- * @returns Structured JobPostingAnalysis object with extracted information
  */
 function parseLinkedInJob(document: Document, url: string): JobPostingAnalysis {
   const title = document.querySelector('.top-card-layout__title')?.textContent?.trim() || 'Unknown Position';

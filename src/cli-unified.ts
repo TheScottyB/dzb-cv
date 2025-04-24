@@ -269,7 +269,9 @@ async function createTailoredCV(
  */
 async function createCoverLetter(
   jobAnalysis: ExtendedJobPostingAnalysis,
-  sector?: SectorType
+  sector?: SectorType,
+  companyName?: string,
+  keyQualifications?: string[]
 ): Promise<string> {
   try {
     // Validate sector
@@ -283,6 +285,14 @@ async function createCoverLetter(
     }
     const cvData = await loadCVData(path.join(__dirname, "data", "base-info.json"));
     
+    // Use passed-in, sanitized company and qualifications if provided
+    const effectiveCompany = companyName || determineCompanyName(jobAnalysis);
+    const effectiveKeyQualifications = keyQualifications || extractKeyQualifications(jobAnalysis, validSector);
+
+    // ---- DEBUG LOGS ----
+    console.log(chalk.bgWhite.black("DEBUG (createCoverLetter): using company="), effectiveCompany);
+    console.log(chalk.bgWhite.black("DEBUG (createCoverLetter): using keyQualifications="), effectiveKeyQualifications);
+
     // Create a job-specific filename
     const safeJobTitle = jobAnalysis.title
       .toLowerCase()
@@ -297,13 +307,13 @@ async function createCoverLetter(
     await fs.mkdir(outputPath, { recursive: true });
     
     // Extract job details for better tailoring
-    const companyName = determineCompanyName(jobAnalysis);
-    const keyQualifications = extractKeyQualifications(jobAnalysis, validSector);
+    // const companyName = determineCompanyName(jobAnalysis);
+    // const keyQualifications = extractKeyQualifications(jobAnalysis, validSector);
     const experiencePoints = mapExperienceToRequirements(jobAnalysis, validSector);
     const interestReason = generateInterestReason(jobAnalysis, validSector);
     const keySkillsMatch = identifyKeySkillsMatch(jobAnalysis);
     const addressingLine = generateAddressingLine(jobAnalysis, validSector);
-    const closingLine = generateClosingLine(jobAnalysis, companyName, validSector);
+    const closingLine = generateClosingLine(jobAnalysis, effectiveCompany, validSector);
     
     // Generate customized cover letter based on sector
     let coverLetterContent = `# ${cvData.personalInfo.name.full}\n\n`;
@@ -327,14 +337,14 @@ async function createCoverLetter(
     if (validSector === 'state') {
       coverLetterContent += 
         `Human Resources Department\n` +
-        `${companyName}\n` +
+        `${effectiveCompany} COMPANY_OVERRIDE\n` + // TODO: Remove marker after confirming propagation
         `${jobAnalysis.location || 'Illinois'}\n\n`;
     } else {
-      coverLetterContent += `${companyName}\n\n`;
+      coverLetterContent += `${effectiveCompany} COMPANY_OVERRIDE\n\n`; // TODO: Remove marker after confirming propagation
     }
     
     // Add reference line
-    coverLetterContent += `RE: Application for ${jobAnalysis.title}`;
+    coverLetterContent += `RE: Application for ${jobAnalysis.title} at ${effectiveCompany}`;
     
     // Add position ID for government jobs
     if (validSector === 'federal' || validSector === 'state') {
@@ -351,18 +361,18 @@ async function createCoverLetter(
     
     // Introduction paragraph
     coverLetterContent += 
-      `I am writing to express my interest in the ${jobAnalysis.title} position with ${companyName}. ` +
+      `I am writing to express my interest in the ${jobAnalysis.title} position with ${effectiveCompany}. ` +
       `With over ${calculateYearsExperience(cvData)} years of professional experience in administrative leadership, ` +
       `real estate operations, and healthcare management, I offer a versatile skill set that aligns well with the requirements of this position.\n\n`;
     
     // Qualifications paragraph - tailored to the specific sector and job
     if (validSector === 'state') {
       coverLetterContent += 
-        `My professional background includes extensive experience in ${keyQualifications.join(', ')}, which directly relates to the qualifications specified in the job posting. ` +
+        `My professional background includes extensive experience in ${effectiveKeyQualifications && effectiveKeyQualifications.length ? effectiveKeyQualifications.join(', ') : 'HEALTHCARE_MARKER'}, which directly relates to the qualifications specified in the job posting. ` +
         `Having worked in both regulated industries and administrative roles, I understand the importance of compliance, attention to detail, and maintaining confidentiality—qualities essential for success in government service.\n\n`;
     } else {
       coverLetterContent += 
-        `My professional background includes extensive experience in ${keyQualifications.join(', ')}, which directly relates to the qualifications you are seeking. ` +
+        `My professional background includes extensive experience in ${effectiveKeyQualifications && effectiveKeyQualifications.length ? effectiveKeyQualifications.join(', ') : 'HEALTHCARE_MARKER'}, which directly relates to the qualifications you are seeking. ` +
         `I have consistently demonstrated my ability to adapt to new environments and deliver exceptional results across different industries.\n\n`;
     }
     
@@ -376,10 +386,12 @@ async function createCoverLetter(
     coverLetterContent += `\n`;
     
     // Interest paragraph - why this specific position/company
-    coverLetterContent += `${interestReason} I am confident that my skills in ${keySkillsMatch.join(', ')} would enable me to make meaningful contributions to your organization.\n\n`;
+    coverLetterContent += `${interestReason} I am confident that my skills in ${keySkillsMatch.join(', ')} would enable me to make meaningful contributions to ${effectiveCompany}.\n\n`;
     
     // Closing paragraph
-    coverLetterContent += `${closingLine}\n\n`;
+    coverLetterContent += `${closingLine.replace(effectiveCompany, effectiveCompany + " COMPANY_OVERRIDE")}\n\n`; // TODO: Remove marker after confirming propagation
+    // (Remove this after confirmation)
+    // console.log("Used company/quals for letter:", effectiveCompany, effectiveKeyQualifications);
     
     // Signature
     coverLetterContent += `Sincerely,\n\n${cvData.personalInfo.name.full}`;
@@ -1435,7 +1447,9 @@ program
       console.log('\n' + chalk.blue('Step 3: Creating cover letter...'));
       const coverLetterPath = await createCoverLetter(
         jobAnalysis,
-        currentSector
+        currentSector,
+        jobAnalysis.company,       // pass patched companyName
+        jobAnalysis.keyTerms       // pass patched keyQualifications
       );
       
       // Step 4: Log application to agent-comments.md

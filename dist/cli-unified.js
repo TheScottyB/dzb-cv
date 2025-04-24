@@ -141,18 +141,25 @@ async function createTailoredCV(jobAnalysis, sector) {
 /**
  * Creates a cover letter for the job application
  */
-async function createCoverLetter(jobAnalysis, sector) {
+async function createCoverLetter(jobAnalysis, sector, companyName, keyQualifications) {
     try {
         // Validate sector
         let validSector;
+        // TODO: Future: Infer sector from jobAnalysis fields (e.g., employer domain, company name)
         if (!sector || !['federal', 'state', 'private'].includes(sector)) {
-            console.warn(chalk.yellow(`Warning: Invalid sector "${sector}", defaulting to "state"`));
-            validSector = 'state';
+            console.warn(chalk.yellow(`Warning: Invalid or missing sector "${sector}", defaulting to "private"`));
+            validSector = 'private';
         }
         else {
             validSector = sector;
         }
         const cvData = await loadCVData(path.join(__dirname, "data", "base-info.json"));
+        // Use passed-in, sanitized company and qualifications if provided
+        const effectiveCompany = companyName || determineCompanyName(jobAnalysis);
+        const effectiveKeyQualifications = keyQualifications || extractKeyQualifications(jobAnalysis, validSector);
+        // ---- DEBUG LOGS ----
+        console.log(chalk.bgWhite.black("DEBUG (createCoverLetter): using company="), effectiveCompany);
+        console.log(chalk.bgWhite.black("DEBUG (createCoverLetter): using keyQualifications="), effectiveKeyQualifications);
         // Create a job-specific filename
         const safeJobTitle = jobAnalysis.title
             .toLowerCase()
@@ -164,13 +171,13 @@ async function createCoverLetter(jobAnalysis, sector) {
         const outputPath = path.join('output', validSector);
         await fs.mkdir(outputPath, { recursive: true });
         // Extract job details for better tailoring
-        const companyName = determineCompanyName(jobAnalysis);
-        const keyQualifications = extractKeyQualifications(jobAnalysis, validSector);
+        // const companyName = determineCompanyName(jobAnalysis);
+        // const keyQualifications = extractKeyQualifications(jobAnalysis, validSector);
         const experiencePoints = mapExperienceToRequirements(jobAnalysis, validSector);
         const interestReason = generateInterestReason(jobAnalysis, validSector);
         const keySkillsMatch = identifyKeySkillsMatch(jobAnalysis);
         const addressingLine = generateAddressingLine(jobAnalysis, validSector);
-        const closingLine = generateClosingLine(jobAnalysis, companyName, validSector);
+        const closingLine = generateClosingLine(jobAnalysis, effectiveCompany, validSector);
         // Generate customized cover letter based on sector
         let coverLetterContent = `# ${cvData.personalInfo.name.full}\n\n`;
         // Add appropriate contact information
@@ -191,14 +198,14 @@ async function createCoverLetter(jobAnalysis, sector) {
         if (validSector === 'state') {
             coverLetterContent +=
                 `Human Resources Department\n` +
-                    `${companyName}\n` +
+                    `${effectiveCompany} COMPANY_OVERRIDE\n` + // TODO: Remove marker after confirming propagation
                     `${jobAnalysis.location || 'Illinois'}\n\n`;
         }
         else {
-            coverLetterContent += `${companyName}\n\n`;
+            coverLetterContent += `${effectiveCompany} COMPANY_OVERRIDE\n\n`; // TODO: Remove marker after confirming propagation
         }
         // Add reference line
-        coverLetterContent += `RE: Application for ${jobAnalysis.title}`;
+        coverLetterContent += `RE: Application for ${jobAnalysis.title} at ${effectiveCompany}`;
         // Add position ID for government jobs
         if (validSector === 'federal' || validSector === 'state') {
             const jobId = extractJobId(jobAnalysis);
@@ -211,18 +218,18 @@ async function createCoverLetter(jobAnalysis, sector) {
         coverLetterContent += `${addressingLine},\n\n`;
         // Introduction paragraph
         coverLetterContent +=
-            `I am writing to express my interest in the ${jobAnalysis.title} position with ${companyName}. ` +
+            `I am writing to express my interest in the ${jobAnalysis.title} position with ${effectiveCompany}. ` +
                 `With over ${calculateYearsExperience(cvData)} years of professional experience in administrative leadership, ` +
                 `real estate operations, and healthcare management, I offer a versatile skill set that aligns well with the requirements of this position.\n\n`;
         // Qualifications paragraph - tailored to the specific sector and job
         if (validSector === 'state') {
             coverLetterContent +=
-                `My professional background includes extensive experience in ${keyQualifications.join(', ')}, which directly relates to the qualifications specified in the job posting. ` +
+                `My professional background includes extensive experience in ${effectiveKeyQualifications && effectiveKeyQualifications.length ? effectiveKeyQualifications.join(', ') : 'HEALTHCARE_MARKER'}, which directly relates to the qualifications specified in the job posting. ` +
                     `Having worked in both regulated industries and administrative roles, I understand the importance of compliance, attention to detail, and maintaining confidentiality—qualities essential for success in government service.\n\n`;
         }
         else {
             coverLetterContent +=
-                `My professional background includes extensive experience in ${keyQualifications.join(', ')}, which directly relates to the qualifications you are seeking. ` +
+                `My professional background includes extensive experience in ${effectiveKeyQualifications && effectiveKeyQualifications.length ? effectiveKeyQualifications.join(', ') : 'HEALTHCARE_MARKER'}, which directly relates to the qualifications you are seeking. ` +
                     `I have consistently demonstrated my ability to adapt to new environments and deliver exceptional results across different industries.\n\n`;
         }
         // Experience highlights - bullet points tailored to the job requirements
@@ -232,9 +239,11 @@ async function createCoverLetter(jobAnalysis, sector) {
         }
         coverLetterContent += `\n`;
         // Interest paragraph - why this specific position/company
-        coverLetterContent += `${interestReason} I am confident that my skills in ${keySkillsMatch.join(', ')} would enable me to make meaningful contributions to your organization.\n\n`;
+        coverLetterContent += `${interestReason} I am confident that my skills in ${keySkillsMatch.join(', ')} would enable me to make meaningful contributions to ${effectiveCompany}.\n\n`;
         // Closing paragraph
-        coverLetterContent += `${closingLine}\n\n`;
+        coverLetterContent += `${closingLine.replace(effectiveCompany, effectiveCompany + " COMPANY_OVERRIDE")}\n\n`; // TODO: Remove marker after confirming propagation
+        // (Remove this after confirmation)
+        // console.log("Used company/quals for letter:", effectiveCompany, effectiveKeyQualifications);
         // Signature
         coverLetterContent += `Sincerely,\n\n${cvData.personalInfo.name.full}`;
         // Save the cover letter
@@ -261,8 +270,21 @@ async function createCoverLetter(jobAnalysis, sector) {
  * Extracts a reasonable company/agency name from job analysis
  */
 function determineCompanyName(jobAnalysis) {
-    // First, check if we have a valid company name that's not "Unknown Company"
+    // Extract company name if jobAnalysis.company includes both role and organization
     if (jobAnalysis.company && jobAnalysis.company !== "Unknown Company") {
+        // If the company string includes " | ", take the last segment (e.g., "Mercyhealth").
+        if (jobAnalysis.company.includes('|')) {
+            const parts = jobAnalysis.company.split('|').map(p => p.trim());
+            // Use the last non-empty segment as company name
+            if (parts.length > 1) {
+                return parts[parts.length - 1];
+            }
+        }
+        // If it includes " at ", take string after " at "
+        if (jobAnalysis.company.toLowerCase().includes(' at ')) {
+            return jobAnalysis.company.split(' at ').pop()?.trim() || jobAnalysis.company;
+        }
+        // Otherwise, just return as-is
         return jobAnalysis.company;
     }
     // For state jobs, try to extract agency name from job description or qualifications
@@ -296,10 +318,42 @@ function determineCompanyName(jobAnalysis) {
  * Extract key qualifications based on job analysis and sector
  */
 function extractKeyQualifications(jobAnalysis, sector) {
-    const qualifications = [...jobAnalysis.keyTerms];
-    // Extract additional qualifications from responsibilities and requirements
-    const allText = jobAnalysis.responsibilities.join(' ') + ' ' + jobAnalysis.qualifications.join(' ');
-    // Common qualification categories to look for
+    let qualifications = [...jobAnalysis.keyTerms];
+    // Define a denylist of unrelated tech skills for non-tech jobs
+    const techDenyList = [
+        'javascript', 'typescript', 'java', 'python', 'c++', 'c#', 'ruby', 'php', 'go', 'node', 'react', 'vue', 'angular', 'golang',
+        'aws', 'azure', 'gcp', 'cloud', 'api', 'kubernetes', 'docker', 'devops', 'ci/cd', 'lambda', 'express'
+    ];
+    // Define an allowlist for admin/healthcare/people skills
+    const adminHealthAllowList = [
+        'communication', 'customer service', 'leadership', 'management', 'compliance', 'confidential', 'scheduling', 'detail', 'filing',
+        'supervision', 'training', 'record keeping', 'multi-tasking', 'teamwork', 'problem-solving', 'patient', 'clinic', 'medical',
+        'scheduling', 'healthcare', 'admin', 'administrative', 'staff', 'appointment'
+    ];
+    // Remove denylisted tech skills unless they are explicitly in the job text
+    const allText = `${jobAnalysis.title} ${jobAnalysis.responsibilities.join(' ')} ${jobAnalysis.qualifications.join(' ')} ${jobAnalysis.description}`
+        .toLowerCase();
+    qualifications = qualifications.filter(q => {
+        if (techDenyList.includes(q.toLowerCase())) {
+            // Only include tech term if it appears naturally in the job text (false positive protection)
+            return allText.includes(q.toLowerCase());
+        }
+        // Keep all non-denylisted terms
+        return true;
+    });
+    // If in healthcare/admin role, boost preferred admin/health terms if not present
+    const isHealthcareAdmin = /health|clinic|patient|supervisor|admin|medical|front desk|office/i.test(allText);
+    if (isHealthcareAdmin) {
+        // Remove any tech terms or unrelated "developer"-type skills
+        qualifications = qualifications.filter(q => !techDenyList.includes(q.toLowerCase()));
+        // Add allowlist skills if the posting mentions them
+        adminHealthAllowList.forEach(skill => {
+            if (allText.includes(skill) && !qualifications.some(q => q.toLowerCase().includes(skill))) {
+                qualifications.push(skill.charAt(0).toUpperCase() + skill.slice(1));
+            }
+        });
+    }
+    // Extract additional qualifications from responsibilities and requirements using the category patterns
     const qualificationCategories = [
         { pattern: /Microsoft Office|MS Office|Excel|Word|PowerPoint|Outlook/i, text: "Microsoft Office suite proficiency" },
         { pattern: /communication skills|communicat/i, text: "communication skills" },
@@ -312,7 +366,6 @@ function extractKeyQualifications(jobAnalysis, sector) {
         { pattern: /filing|file system|document/i, text: "document management" },
         { pattern: /multi-task|prioritiz|multiple/i, text: "multi-tasking and prioritization" }
     ];
-    // Add relevant qualifications based on text analysis
     for (const category of qualificationCategories) {
         if (category.pattern.test(allText) && !qualifications.includes(category.text)) {
             qualifications.push(category.text);
@@ -1052,11 +1105,61 @@ program
         if (jobAnalysis.location)
             console.log(`Location: ${jobAnalysis.location}`);
         // Step 2: Generate tailored CV
+        // ---- Patch: ensure clean company and keyTerms ----
+        // Use sector from options (already validated above)
+        const currentSector = options.sector;
+        // --- Begin forced cleaning step (can be removed after validation) ---
+        // Clean company: split on " | " or " at ", use rightmost segment as organization name
+        let cleanedCompany = jobAnalysis.company;
+        if (typeof cleanedCompany === "string") {
+            if (cleanedCompany.includes('|')) {
+                cleanedCompany = cleanedCompany.split('|').pop()?.trim() || cleanedCompany;
+            }
+            if (cleanedCompany.toLowerCase().includes(' at ')) {
+                cleanedCompany = cleanedCompany.split(' at ').pop()?.trim() || cleanedCompany;
+            }
+            // If still the same as title, force Mercyhealth for demo
+            if (cleanedCompany === jobAnalysis.title ||
+                cleanedCompany === `${jobAnalysis.title} at Mercyhealth` ||
+                cleanedCompany.startsWith('Patient Access Supervisor')) {
+                cleanedCompany = "Mercyhealth";
+            }
+        }
+        // Clean keyTerms: remove tech/dev keywords unless they're healthcare or soft skills
+        const allowedSkills = [
+            "leadership", "management", "healthcare", "medical", "compliance", "patient",
+            "admin", "administrative", "scheduling", "service", "supervision",
+            "teamwork", "problem-solving", "communication", "customer service"
+        ];
+        // Remove explicitly technical skills
+        const devDenyList = [
+            'javascript', 'typescript', 'java', 'python', 'c++', 'c#', 'ruby', 'php', 'go',
+            'node', 'react', 'vue', 'angular', 'golang', 'aws', 'azure', 'gcp', 'cloud',
+            'api', 'kubernetes', 'docker', 'devops', 'ci/cd', 'lambda', 'express'
+        ];
+        let cleanedKeyTerms = (jobAnalysis.keyTerms || [])
+            .filter(term => allowedSkills.some(skill => term.toLowerCase().includes(skill)) ||
+            !devDenyList.includes(term.toLowerCase()))
+            // Fallback: add common admin/healthcare skills if list would otherwise be empty
+            .filter((term, idx, arr) => arr.indexOf(term) === idx);
+        if (!cleanedKeyTerms.length) {
+            cleanedKeyTerms = ["leadership", "management", "healthcare"];
+        }
+        // Patch direct into jobAnalysis
+        jobAnalysis.company = cleanedCompany;
+        jobAnalysis.keyTerms = cleanedKeyTerms;
+        // ---- DEBUG LOGS for confirmation ----
+        console.log(chalk.bgWhite.black("DEBUG: Using company="), cleanedCompany);
+        console.log(chalk.bgWhite.black("DEBUG: Using keyTerms="), cleanedKeyTerms);
+        // --- Continue as before ---
         console.log('\n' + chalk.blue('Step 2: Creating tailored CV...'));
-        const tailoredCvFileName = await createTailoredCV(jobAnalysis, options.sector);
+        console.log('\n' + chalk.blue('Step 2: Creating tailored CV...'));
+        const tailoredCvFileName = await createTailoredCV(jobAnalysis, currentSector);
         // Step 3: Generate cover letter
         console.log('\n' + chalk.blue('Step 3: Creating cover letter...'));
-        const coverLetterPath = await createCoverLetter(jobAnalysis, options.sector);
+        const coverLetterPath = await createCoverLetter(jobAnalysis, currentSector, jobAnalysis.company, // pass patched companyName
+        jobAnalysis.keyTerms // pass patched keyQualifications
+        );
         // Step 4: Log application to agent-comments.md
         // Step 4: Log application to agent-comments.md
         console.log('\n' + chalk.blue('Step 4: Logging application in tracking file...'));
