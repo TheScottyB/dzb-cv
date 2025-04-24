@@ -224,8 +224,8 @@ describe("CV Generator", () => {
     expect(data.personalInfo.name).toBeDefined();
     expect(data.personalInfo.name.full).toBe("Dawn Zurick Beilfuss");
     expect(data.workExperience).toBeDefined();
-    expect(data.workExperience.realEstate).toBeTruthy();
-    expect(data.workExperience.healthcare).toBeTruthy();
+    expect(data.workExperience?.realEstate).toBeTruthy();
+    expect(data.workExperience?.healthcare).toBeTruthy();
   });
 
   test("Templates can be loaded", () => {
@@ -240,14 +240,14 @@ describe("CV Generator", () => {
     test('Uses chapter-based experience format', () => {
       // In the private CV, check for chapter headings or standard experience sections
       const chapterOrExperienceRegex = /(Chapter \d+:|Professional Experience|Work History)/gi;
-      const matches = privateCV.match(chapterOrExperienceRegex);
+      const matches = renderedTemplates.private.match(chapterOrExperienceRegex);
   
       // Should have at least one experience section heading
       expect(matches?.length).toBeGreaterThanOrEqual(1);
   
       // Check for date ranges in the format MM/YYYY
       const dateRangeRegex = /\d{2}\/\d{4} - (\d{2}\/\d{4}|Present)/g;
-      const dateMatches = privateCV.match(dateRangeRegex);
+      const dateMatches = renderedTemplates.private.match(dateRangeRegex);
   
       // Check the format of date ranges if they exist
       if (dateMatches && dateMatches.length > 0) {
