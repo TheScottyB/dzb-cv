@@ -20,9 +20,10 @@ import type { ATSAnalysis, ATSImprovement } from '../../types/ats-types.js';
 import type { PDFOptions } from '../../types/cv-types.js';
 
 interface OptimizationResult {
-  content: string;
+  content: string;           // Make sure this is preserved
   analysis: ATSAnalysis;
   appliedOptimizations: string[];
+  pdfPath?: string;          // Optional for PDF generation
 }
 
 /**
@@ -173,6 +174,7 @@ export async function createATSOptimizedPDF(
   options: PDFOptions
 ): Promise<{
   pdfPath: string;
+  content: string;          // Add this to preserve content
   analysis: ATSAnalysis;
   optimizations: string[];
 }> {
@@ -201,6 +203,7 @@ ${appliedOptimizations.map(opt => `- ${opt}`).join('\n')}
 
   return {
     pdfPath,
+    content: optimizedContent,  // Return the optimized content
     analysis,
     optimizations: appliedOptimizations
   };

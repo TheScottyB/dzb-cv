@@ -34,6 +34,7 @@
 _(Listed in reverse chronological order)_
 
 {{#sortByDate workExperience}}
+{{#each this}}
 ### {{position}} | {{employer}}
 *{{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}*
 {{#if address}}**Location:** {{address}}{{/if}}
@@ -64,6 +65,7 @@ _(Listed in reverse chronological order)_
 {{/if}}
 {{/if}}
 
+{{/each}}
 {{/sortByDate}}
 
 ## Areas of Expertise

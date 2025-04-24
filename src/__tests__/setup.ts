@@ -1,3 +1,14 @@
+import { jest } from '@jest/globals';
+import { registerHelpers } from '../utils/helpers.js';
+
+// Register Handlebars helpers before any tests run
+registerHelpers();
+
+// Make jest available globally for all tests
+global.jest = jest;
+
+console.log('Jest setup complete - Handlebars helpers registered');
+
 // Jest setup file for TypeScript
 // This file configures global test settings
 

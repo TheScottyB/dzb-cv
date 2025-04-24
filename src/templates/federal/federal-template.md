@@ -12,29 +12,33 @@
 ## Work Experience
 _(Listed in reverse chronological order as required by USAJOBS)_
 
-{{#sortByDate allExperience}}
+{{#sortByDate workExperience}}
+{{#each this}}
 ### {{position}}
-**Employer:** {{employer}}  
-**Location:** {{address}}  
-**Period of Employment:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}  
-**Hours per Week:** {{hours}}  
-**Federal Pay Grade Equivalent:** {{#if gradeEquivalent}}{{gradeEquivalent}}{{else}}GS-{{calculateGradeLevel position}}{{/if}}  
-**Salary:** {{#if salary}}{{formatSalary salary}}{{else}}{{#if employmentType}}{{employmentType}}{{else}}Available upon request{{/if}}{{/if}}  
-**Supervisor:** {{supervisor}}{{#if mayContact}} (May be contacted){{/if}}  
-**Working Conditions:** {{#if industry}}{{#eq industry "healthcare"}}Medical/Clinical environment with regular patient interaction{{else}}Professional office environment with regular local travel{{/eq}}{{else}}Professional office environment{{/if}}
+**Employer:** {{#if employer}}{{employer}}{{else}}{{organization}}{{/if}}
+{{#if address}}**Location:** {{address}}{{/if}}
 
-**Duties, Accomplishments and Related Skills:**
+**Period of Employment:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}
+**Hours per Week:** {{#if hoursPerWeek}}{{hoursPerWeek}}{{else}}40{{/if}} hrs/wk
+
+**Federal Pay Grade Equivalent:** {{#if payGrade}}{{payGrade}}{{else}}GS-{{calculateGradeLevel position}}{{/if}}
+**Salary:** {{#if salary}}{{formatSalary salary}}{{else}}Available upon request{{/if}}
+**Supervisor:** {{#if supervisor}}{{supervisor}}{{else}}Available upon request{{/if}}
+**Working Conditions:** {{#if workConditions}}{{workConditions}}{{else}}Professional office environment{{/if}}
+
+**Primary Duties and Responsibilities:**
 {{#each duties}}
 - {{this}}
 {{/each}}
 
 {{#if achievements}}
-**Notable Achievements:**
+**Key Accomplishments and Outcomes:**
 {{#each achievements}}
 - {{this}}
 {{/each}}
 {{/if}}
 
+{{/each}}
 {{/sortByDate}}
 
 ## Education, Training, and Development
@@ -63,7 +67,7 @@ _(Listed in reverse chronological order)_
 ### Professional Training
 {{#each trainingAndCoaching}}
 **{{role}} - {{organization}}**  
-**Period:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}  
+**Period:** {{#if startDate}}{{formatFederalDateRange startDate endDate}}{{else}}{{formatFederalDateRange period "Present"}}{{/if}}
 **Hours Completed:** {{#if hours}}{{hours}}{{else}}40{{/if}}
 
 **Program Focus:**

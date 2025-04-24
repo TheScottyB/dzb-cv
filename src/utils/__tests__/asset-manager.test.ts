@@ -514,8 +514,8 @@ describe('Asset Manager', () => {
       
       const catalog = await loadAssetCatalog();
       
-      
       expect(catalog).toEqual(mockCatalog);
       expect(mockedWriteFile).toHaveBeenCalled();
     });
   });
+});

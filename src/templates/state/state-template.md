@@ -56,7 +56,6 @@ _(Listed in reverse chronological order)_
 {{#each achievements}}
 - {{this}}
 {{/each}}
-{{/sortByDate}}
 {{/if}}
 
 {{#if training}}
@@ -66,6 +65,7 @@ _(Listed in reverse chronological order)_
 {{/each}}
 {{/if}}
 
+{{/each}}
 {{/sortByDate}}
 
 ## Professional Competencies
