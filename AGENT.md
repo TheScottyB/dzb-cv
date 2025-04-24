@@ -2,96 +2,89 @@
 
 ## Project Overview
 
-DZB-CV is a specialized CV/resume generator for Dawn Zurick Beilfuss that creates tailored resumes for different sectors (federal, state, and private) from a single source of data. The project uses TypeScript with ESM modules and Handlebars for templating.
+DZB-CV is a CV generator for Dawn Zurick Beilfuss that creates tailored resumes for different sectors (federal, state, private) from a single source of data. It features job posting analysis to optimize CVs for specific positions.
 
 ## Architecture
 
 ### Core Components
 
-1. **Data Layer**
-   - `src/data/base-info.json`: Central source of truth for CV data
-   - `src/types/cv-types.ts`: TypeScript interfaces defining CV data structure
+1. **Data Management**
+   - `src/data/base-info.json`: Source of truth for CV data
+   - `src/types/cv-types.ts`: TypeScript interfaces for data structures
 
-2. **Generator Engine**
-   - `src/generator.ts`: Core logic for processing templates and data
-   - `src/utils/helpers.ts`: Utility functions for data loading and processing
+2. **Generator System**
+   - `src/generator.ts`: Core template processing logic
+   - `src/utils/helpers.ts`: Utility functions
+   - `src/utils/pdf-generator.ts`: PDF conversion with Puppeteer
 
-3. **Templates**
-   - `src/templates/{sector}/{sector}-template.md`: Sector-specific Handlebars templates
-   - Templates follow a consistent structure but with sector-specific formatting
+3. **Job Analysis**
+   - `src/utils/job-analyzer.ts`: Extracts data from job postings
+   - `src/cli-job-analyzer.ts`: CLI for job analysis
 
-4. **Command Line Interface**
-   - `src/cli.ts`: Provides CLI for generating CVs with options
+4. **Templates**
+   - `src/templates/{sector}/{sector}-template.md`: Sector-specific templates
+   - `src/styles/pdf-styles.css`: Styling for PDF output
 
-5. **Testing Framework**
-   - `src/__tests__/`: Jest tests for core functionality
-   - ESM-compatible test configuration
+5. **CLI & Tools**
+   - `src/cli.ts`: Main CV generation interface
+   - `generate-pdf.js`: Helper script for PDF generation
 
 ## Data Flow
 
 1. User invokes CLI with sector parameter
-2. System loads CV data from `base-info.json`
-3. System loads appropriate sector template
-4. Handlebars processes template with data
-5. Output is saved to `output/{sector}/` directory
+2. System loads CV data and selected template
+3. Optional job analysis data is incorporated
+4. Template is rendered with Handlebars
+5. Output is saved as markdown and/or PDF
 
-## Module Details
+## Key Features
 
-### CV Data Structure
+### CV Generator
+- Supports federal, state, and private sector formats
+- PDF generation with customizable styling
+- Custom templates for each sector
 
-The CV data follows this structure (defined in `cv-types.ts`):
-- Personal Information (name, contact details)
-- Work Experience (company, position, dates, achievements)
-- Education (institution, degree, dates)
-- Skills (categorized skills with proficiency levels)
-- Sector-specific requirements and formatting
+### Job Analyzer
+- Parses job postings from multiple sites
+- Extracts key requirements and responsibilities
+- Identifies relevant skills and qualifications
+- Generates tailoring recommendations
 
-### Template System
+### Asset Management
+- Handles supporting files and metadata
+- Manages versioning of generated CVs
 
-Templates use Handlebars syntax:
-- Variable substitution: `{{variable}}`
-- Sections/loops: `{{#each items}}...{{/each}}`
-- Conditionals: `{{#if condition}}...{{/if}}`
+## Implementation Details
 
-Each sector template emphasizes different aspects:
-- Federal: Detailed work history with specific requirements for government applications
-- State: Format optimized for state government applications
-- Private: Concise, achievement-focused format for private sector
+### TypeScript Configuration
+- ESM modules (all imports use `.js` extension)
+- Strong typing for all data structures
+- Type-safe template context generation
 
-### Build System
+### Testing
+- Jest for unit and integration tests
+- Test cases for core generator functions
+- Mocked external dependencies
 
-- TypeScript with ESM modules
-- Jest for testing
-- pnpm for package management
-
-## Implementation Notes
-
-1. **ESM Compatibility**
-   - All imports use `.js` extension even for TypeScript files
-   - Module resolution configured for Node.js ESM
-
-2. **Testing Approach**
-   - Jest configured for ESM support
-   - Tests verify data loading and template processing
-
-3. **Extensibility**
-   - New templates can be added by creating new sector directories
-   - Helper functions can be extended for additional data processing
+### PDF Generation
+- Uses Puppeteer for HTML to PDF conversion
+- Custom CSS styling for professional output
+- Configurable headers, footers, and metadata
 
 ## Development Guidelines
 
-1. **Adding New CV Sections**
-   - Update `cv-types.ts` with new interface properties
-   - Add corresponding data to `base-info.json`
-   - Update templates to include new sections
+### Adding New Features
+- Follow existing code patterns and naming conventions
+- Update type definitions in `cv-types.ts`
+- Add tests for new functionality
 
-2. **Creating New Templates**
-   - Add new directory under `src/templates/`
-   - Create template file with Handlebars syntax
-   - Update CLI to support new template type
+### Extending Job Analysis
+- Add new site parsers in `job-analyzer.ts`
+- Update analysis options as needed
+- Ensure error handling for site-specific issues
 
-3. **Testing Changes**
-   - Add tests for new functionality
-   - Run tests with `pnpm test`
-   - Verify output manually for formatting accuracy
+### Template Customization
+- Use Handlebars syntax consistently
+- Add conditional sections for specific job requirements
+- Test rendering with various data combinations
 
