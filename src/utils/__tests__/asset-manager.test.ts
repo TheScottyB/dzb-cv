@@ -32,8 +32,13 @@ jest.mock('fs/promises', () => ({
   writeFile: jest.fn()
 }));
 
-// Create mock objects
-const mockedFs = jest.mocked(fs);
+// Create typed mock objects
+const mockedStat = jest.mocked(fs.stat);
+const mockedReaddir = jest.mocked(fs.readdir);
+const mockedReadFile = jest.mocked(fs.readFile);
+const mockedWriteFile = jest.mocked(fs.writeFile);
+const mockedMkdir = jest.mocked(fs.mkdir);
+
 // Setup test environment
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const testTempDir = join(os.tmpdir(), `asset-manager-test-${Date.now()}`);
@@ -71,102 +76,6 @@ const mockCatalog = {
     [AssetType.OTHER]: []
   }
 };
-    }),
-    readdir: jest.fn().mockImplementation(async (path, options) => {
-      console.log(`Mock readdir: ${path}`);
-      
-      // Return sample files for test directories
-      if (path === testDocumentsDir) {
-        return [
-          { 
-            name: 'sample-doc.pdf', 
-            isDirectory: () => false,
-            isFile: () => true
-          },
-          { 
-            name: 'sample-doc.docx', 
-            isDirectory: () => false,
-            isFile: () => true
-          }
-        ];
-      } else if (path === testImagesDir) {
-        return [
-          { 
-            name: 'sample-image.jpg', 
-            isDirectory: () => false,
-            isFile: () => true
-          },
-          { 
-            name: 'sample-image.png', 
-            isDirectory: () => false,
-            isFile: () => true
-          }
-        ];
-      } else if (path === testVideoDir) {
-        return [
-          { 
-            name: 'sample-video.mp4', 
-            isDirectory: () => false,
-            isFile: () => true
-          }
-        ];
-      }
-      
-      return [];
-    }),
-    readFile: jest.fn().mockImplementation(async (path, options) => {
-      console.log(`Mock readFile: ${path}`);
-      
-      if (path.endsWith('asset-catalog.json')) {
-        return JSON.stringify({
-          lastUpdated: new Date().toISOString(),
-          totalAssets: mockCatalog.totalAssets,
-          assets: mockCatalog.assets.map(asset => ({
-            ...asset,
-            lastModified: asset.lastModified.toISOString(),
-            createdAt: asset.createdAt.toISOString()
-          })),
-          assetsByType: {
-            document: mockCatalog.assetsByType[AssetType.DOCUMENT].map(asset => ({
-              ...asset,
-              lastModified: asset.lastModified.toISOString(),
-              createdAt: asset.createdAt.toISOString()
-            })),
-            image: mockCatalog.assetsByType[AssetType.IMAGE].map(asset => ({
-              ...asset,
-              lastModified: asset.lastModified.toISOString(),
-              createdAt: asset.createdAt.toISOString()
-            })),
-            video: [],
-            other: []
-          }
-        });
-      }
-      
-      throw new Error(`File not found: ${path}`);
-    }),
-    writeFile: jest.fn().mockImplementation(async (path, data, options) => {
-      console.log(`Mock writeFile: ${path}`);
-      return null;
-    })
-  };
-});
-// Mock exec implementation for image processing
-const mockedExec = exec as unknown as Mock<typeof exec>;
-// Uncomment when needed:
-/*
-mockedExec.mockImplementation((command, callback) => {
-  console.log(`Mock exec: ${command}`);
-  if (typeof callback === 'function') {
-    callback(null, { stdout: '800 600', stderr: '' });
-  }
-  return {
-    on: jest.fn(),
-    stdout: { on: jest.fn() },
-    stderr: { on: jest.fn() },
-  } as any;
-});
-*/
 
 // Mock exec for image processing functions
 jest.mock('child_process', () => ({
@@ -201,31 +110,40 @@ describe('Asset Manager', () => {
     // Reset mocks
     jest.clearAllMocks();
     
-    // Default mock implementations
-    mockedFs.stat.mockImplementation(async (path) => ({
+    // Setup default mock implementations
+    mockedStat.mockImplementation(async (path) => ({
       isFile: () => true,
+      isDirectory: () => false,
       size: 12345,
       mtime: new Date(),
       birthtime: new Date()
     }));
     
-    mockedFs.readdir.mockImplementation(async (path) => {
+    mockedReaddir.mockImplementation(async (path) => {
       if (path === testDocumentsDir) {
         return [
           { name: 'sample-doc.pdf', isDirectory: () => false, isFile: () => true }
+        ];
+      } else if (path === testImagesDir) {
+        return [
+          { name: 'sample-image.jpg', isDirectory: () => false, isFile: () => true }
         ];
       }
       return [];
     });
     
-    mockedFs.readFile.mockImplementation(async (path) => {
+    mockedReadFile.mockImplementation(async (path) => {
       if (path.includes('asset-catalog.json')) {
         return JSON.stringify(mockCatalog);
       }
-      throw { code: 'ENOENT' };
+      const error = new Error('ENOENT: no such file or directory') as NodeJS.ErrnoException;
+      error.code = 'ENOENT';
+      throw error;
     });
+    
+    mockedWriteFile.mockResolvedValue(undefined);
+    mockedMkdir.mockResolvedValue(undefined);
   });
-  
   // Cleanup after each test
   afterEach(() => {
     jest.clearAllMocks();
@@ -233,46 +151,6 @@ describe('Asset Manager', () => {
   
   //
   describe('File Type Detection', () => {
-    test.skip('optimizeImage should execute correct ImageMagick command', async () => {
-      const inputPath = join(testImagesDir, 'sample-image.jpg');
-      const outputPath = join(testImagesDir, 'sample-image-optimized.jpg');
-      
-      // Mock readFile to throw ENOENT
-    test.skip('optimizeImage should execute correct ImageMagick command', async () => {
-      const inputPath = join(testImagesDir, 'sample-image.jpg');
-      const outputPath = join(testImagesDir, 'sample-image-optimized.jpg');
-      
-      // Mock stat to return different sizes for input/output
-      mockedFs.stat.mockImplementation(async (path) => {
-        if (path === inputPath) {
-          return {
-            isFile: () => true,
-            size: 100000, // Original size 100KB
-            mtime: new Date(),
-            birthtime: new Date()
-          };
-        } else if (path === outputPath) {
-          return {
-            isFile: () => true,
-            size: 75000, // Optimized size 75KB (25% reduction)
-            mtime: new Date(),
-            birthtime: new Date()
-          };
-        }
-        return {
-          isFile: () => true,
-          size: 12345,
-          mtime: new Date(),
-          birthtime: new Date()
-        };
-      });
-      
-      // Skip test - Image processing would need more setup
-    });
-      // Mock stat to return success for this file
-      mockedFs.stat.mockImplementation(async (path) => {
-          isFile: () => true,
-          size: 12345,
           mtime: new Date(),
           birthtime: new Date(),
         };

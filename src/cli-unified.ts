@@ -274,9 +274,10 @@ async function createCoverLetter(
   try {
     // Validate sector
     let validSector: SectorType;
+    // TODO: Future: Infer sector from jobAnalysis fields (e.g., employer domain, company name)
     if (!sector || !['federal', 'state', 'private'].includes(sector)) {
-      console.warn(chalk.yellow(`Warning: Invalid sector "${sector}", defaulting to "state"`));
-      validSector = 'state';
+      console.warn(chalk.yellow(`Warning: Invalid or missing sector "${sector}", defaulting to "private"`));
+      validSector = 'private';
     } else {
       validSector = sector as SectorType;
     }

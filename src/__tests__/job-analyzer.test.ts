@@ -134,4 +134,15 @@ describe('Job Analyzer', () => {
     expect(result.source.site).toBe('example.com');
     expect(result.source.fetchDate).toBeInstanceOf(Date);
   });
+  test('Throws a descriptive error on HTTP 404 when analyzing job posting', async () => {
+    // Mock HTTP 404 error
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 404,
+      text: () => Promise.resolve('Not Found')
+    });
+
+    const url = 'https://example.com/job/should-404';
+    await expect(analyzeJobPosting(url, {})).rejects.toThrow(/404|not found|Failed to fetch job posting/i);
+  });
 });
