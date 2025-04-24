@@ -13,6 +13,9 @@ async function main() {
   const outputPath = `output/${sector}`;
   
   try {
+    // Create the sector directory if it doesn't exist
+    await import('fs/promises').then(fs => fs.mkdir(outputPath, { recursive: true }));
+    
     const content = await generateCV(sector, outputPath);
     console.log(`Successfully generated ${sector} CV`);
   } catch (error) {

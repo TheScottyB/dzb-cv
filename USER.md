@@ -48,7 +48,9 @@ pnpm analyze-job <job-posting-url>
 ### Output Location
 
 Generated CVs are saved to:
-- `output/` - All generated CV files
+- `output/federal/` - Federal job applications
+- `output/state/` - State job applications 
+- `output/private/` - Private sector applications
 
 ## Customizing Your CV
 

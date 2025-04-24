@@ -8,7 +8,7 @@ async function main() {
     const markdownContent = await fs.readFile('./cv-versions/dawn-recruitment-specialist-cv.md', 'utf-8');
     
     // Create output directory if it doesn't exist
-    const outputDir = './output/state';
+    const outputDir = './output';
     await fs.mkdir(outputDir, { recursive: true });
     
     // Convert to PDF
