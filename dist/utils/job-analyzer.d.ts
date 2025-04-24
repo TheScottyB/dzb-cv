@@ -1,11 +1,6 @@
 import type { JobPostingAnalysis } from '../types/cv-types.js';
 /**
  * Analyzes a job posting URL and extracts relevant information
- *
- * @param url The URL of the job posting
- * @param options Optional configuration for analysis
- * @returns A structured JobPostingAnalysis object with extracted information
- * @throws Error if the URL is invalid or content cannot be fetched/parsed
  */
 export declare function analyzeJobPosting(url: string, options?: {
     skipRateLimiting?: boolean;

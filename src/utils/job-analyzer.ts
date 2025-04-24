@@ -714,27 +714,78 @@ function parseGlassdoorJob(document: Document, url: string): JobPostingAnalysis 
     const title = document.querySelector('[data-test="jobTitle"]')?.textContent?.trim() || 'Unknown Position';
     const company = document.querySelector('[data-test="employerName"]')?.textContent?.trim() || 'Unknown Company';
     const location = document.querySelector('[data-test="location"]')?.textContent?.trim();
-
     const description = document.querySelector('#JobDescriptionContainer')?.textContent?.trim() || '';
+    const jobDescription = description; // Use consistent variable name
 
-    // Simplified extraction for Glassdoor
-    const responsibilities: string[] = [];
-    const qualifications: string[] = [];
+    // --- Detailed Glassdoor Parsing Logic ---
+    let salaryRange: JobPostingAnalysis['salaryRange'] = undefined;
+    const salaryText = document.querySelector('[data-test="detailSalary"]')?.textContent || '';
+    const salaryRegex = /\$([0-9,.]+)K?\s*(?:-|to|–)\s*\$?([0-9,.]+)K?/i;
+    const salaryMatch = salaryText.match(salaryRegex);
 
-    const keyTerms = extractKeyTerms(description);
+    if (salaryMatch) {
+      const parseAmount = (str: string) => {
+        let amount = parseFloat(str.replace(/[,$]/g, ''));
+        if (str.toLowerCase().includes('k')) amount *= 1000;
+        return amount;
+      };
+      salaryRange = {
+        min: parseAmount(salaryMatch[1]), max: parseAmount(salaryMatch[2]),
+        currency: 'USD', period: salaryText.toLowerCase().includes('hour') ? 'hourly' : 'yearly'
+      };
+    }
+
+    const experienceLevelMatch = jobDescription.match(/(\d+)[+]?\s+years?(?:\s+of)?\s+experience/i);
+    const experienceLevel = experienceLevelMatch ? `${experienceLevelMatch[1]}+ years` : undefined;
+
+    const sections = detectDocumentSections(document);
+    const responsibilities = extractListItemsFromElements(sections.responsibilities);
+    const qualifications = [
+      ...extractListItemsFromElements(sections.qualifications),
+      ...extractListItemsFromElements(sections.requirements),
+      ...extractListItemsFromElements(sections.skills)
+    ];
+    const educationRequirements = extractListItemsFromElements(sections.education);
+
+    if (responsibilities.length === 0 && qualifications.length === 0) {
+      const lists = Array.from(document.querySelectorAll('ul, ol'));
+      for (const list of lists) {
+        const previousEl = list.previousElementSibling;
+        const prevText = previousEl?.textContent?.toLowerCase() || '';
+        const listItems = Array.from(list.querySelectorAll('li'))
+          .map(li => li.textContent?.trim()).filter(Boolean) as string[];
+
+        if (prevText.includes('responsib') || prevText.includes('duties') || prevText.includes('what you will do')) {
+          responsibilities.push(...listItems);
+        } else if (prevText.includes('qualif') || prevText.includes('requir') || prevText.includes('skills') || prevText.includes('experience') || prevText.includes('looking for')) {
+          qualifications.push(...listItems);
+        } else if (prevText.includes('education') || prevText.includes('degree')) {
+          educationRequirements.push(...listItems);
+        } else if (responsibilities.length === 0 && listItems.length > 0) {
+          responsibilities.push(...listItems);
+        } else if (qualifications.length === 0 && listItems.length > 0) {
+          qualifications.push(...listItems);
+        }
+      }
+    }
+
+    const keyTerms = extractKeyTerms(jobDescription);
 
     return {
-        title,
-        company,
-        location,
-        description,
-        responsibilities,
-        qualifications,
-        keyTerms,
-        requiredSkills: keyTerms,
-        desiredSkills: [],
-        source: { url, site: 'Glassdoor', fetchDate: new Date() }
+      title, company, location, description: jobDescription, // Use consistent name
+      jobType: jobDescription.includes('full-time') ? 'Full-time' :
+               jobDescription.includes('part-time') ? 'Part-time' :
+               jobDescription.includes('contract') ? 'Contract' : undefined,
+      experienceLevel,
+      requiredSkills: keyTerms, // Keep consistent
+      responsibilities,
+      qualifications,
+      educationRequirements,
+      keyTerms, // Keep consistent
+      source: { url, site: 'Glassdoor', fetchDate: new Date() },
+      salaryRange
     };
+}
 }
 
 /**
@@ -809,177 +860,6 @@ function parseGenericJob(document: Document, url: string): JobPostingAnalysis {
 }
 
 // --- End Parser Functions ---
-// This block should already be moved above analyzeJobPosting. 
-// No changes needed here if the previous step was applied correctly.
-      let amount = parseFloat(str.replace(/[,$]/g, ''));
-      if (str.toLowerCase().includes('k')) {
-        amount *= 1000;
-      }
-      return amount;
-    };
-    
-    salaryRange = {
-      min: parseAmount(salaryMatch[1]),
-      max: parseAmount(salaryMatch[2]),
-      currency: 'USD',
-      period: salaryText.toLowerCase().includes('hour') ? 'hourly' : 'yearly'
-    };
-  }
-  
-  // Extract experience level
-  const experienceLevelMatch = jobDescription.match(/(\d+)[+]?\s+years?(?:\s+of)?\s+experience/i);
-  const experienceLevel = experienceLevelMatch ? `${experienceLevelMatch[1]}+ years` : undefined;
-  
-  // Use section detection to find responsibilities and qualifications
-  const sections = detectDocumentSections(document);
-  
-  const responsibilities = extractListItemsFromElements(sections.responsibilities);
-  const qualifications = [
-    ...extractListItemsFromElements(sections.qualifications),
-    ...extractListItemsFromElements(sections.requirements),
-    ...extractListItemsFromElements(sections.skills)
-  ];
-  const educationRequirements = extractListItemsFromElements(sections.education);
-  
-  // If no sections found through headers, look for bulleted lists
-  if (responsibilities.length === 0 && qualifications.length === 0) {
-    const lists = Array.from(document.querySelectorAll('ul, ol'));
-    
-    for (const list of lists) {
-      const previousEl = list.previousElementSibling;
-      const prevText = previousEl?.textContent?.toLowerCase() || '';
-      
-      const listItems = Array.from(list.querySelectorAll('li'))
-        .map(li => li.textContent?.trim())
-        .filter(Boolean) as string[];
-      
-      if (prevText.includes('responsib') || prevText.includes('duties') || prevText.includes('what you will do')) {
-        responsibilities.push(...listItems);
-      } else if (prevText.includes('qualif') || prevText.includes('requir') || prevText.includes('skills') || 
-                 prevText.includes('experience') || prevText.includes('looking for')) {
-        qualifications.push(...listItems);
-      } else if (prevText.includes('education') || prevText.includes('degree')) {
-        educationRequirements.push(...listItems);
-      } else if (responsibilities.length === 0 && listItems.length > 0) {
-        // If we haven't found responsibilities yet and this list doesn't have a clear header,
-        // assume it might be responsibilities
-        responsibilities.push(...listItems);
-      } else if (qualifications.length === 0 && listItems.length > 0) {
-        // If we haven't found qualifications yet, assume this list might be qualifications
-        qualifications.push(...listItems);
-      }
-    }
-  }
-  
-  // Extract key terms from the job description
-  const keyTerms = extractKeyTerms(jobDescription);
-  
-  return {
-    title,
-    company,
-    location,
-    jobType: jobDescription.includes('full-time') ? 'Full-time' : 
-             jobDescription.includes('part-time') ? 'Part-time' : 
-             jobDescription.includes('contract') ? 'Contract' : undefined,
-    experienceLevel,
-    requiredSkills: keyTerms,
-    responsibilities,
-    qualifications,
-    educationRequirements,
-    keyTerms,
-    source: {
-      url,
-      site: 'Glassdoor',
-      fetchDate: new Date()
-    },
-    salaryRange
-  };
-}
-
-/**
- * Generic parser for unknown job sites
- * Attempts to extract job information using common patterns and HTML structure
- * 
- * @param document The DOM document to analyze
- * @param url The original URL of the job posting
- * @returns Structured JobPostingAnalysis with best-effort extracted information
- */
-function parseGenericJob(document: Document, url: string): JobPostingAnalysis {
-  // Try to extract from page metadata first
-  const metaTitle = document.querySelector('meta[property="og:title"]')?.getAttribute('content') ||
-                    document.querySelector('meta[name="twitter:title"]')?.getAttribute('content');
-  
-  // Then try standard heading elements
-  const title = metaTitle || 
-                document.querySelector('h1')?.textContent?.trim() ||
-                document.querySelector('.job-title, .jobtitle, .position-title, .posting-title')?.textContent?.trim() ||
-                document.title.replace(/\s*\|.*$/, '').trim() ||
-                'Unknown Position';
-  
-  // Try to find company name
-  const metaCompany = document.querySelector('meta[property="og:site_name"]')?.getAttribute('content');
-  const company = metaCompany ||
-                 document.querySelector('.company-name, .employer, .org, [itemprop="hiringOrganization"]')?.textContent?.trim() ||
-                 'Unknown Company';
-  
-  // Try to find location
-  const location = document.querySelector('.location, .job-location, [itemprop="jobLocation"]')?.textContent?.trim();
-  
-  // Identify the main content area (likely to contain the job description)
-  const mainContent = document.querySelector('main, #main, .main, #content, .content, article, .job-description, .jobsearch-JobComponent') || document.body;
-  const fullText = mainContent.textContent || document.body.textContent || '';
-  
-  // Attempt to detect job type
-  let jobType: string | undefined = undefined;
-  if (fullText.match(/\bfull[ -]time\b/i)) jobType = 'Full-time';
-  else if (fullText.match(/\bpart[ -]time\b/i)) jobType = 'Part-time';
-  else if (fullText.match(/\bcontract(or)?\b/i)) jobType = 'Contract';
-  else if (fullText.match(/\bfreelance\b/i)) jobType = 'Freelance';
-  else if (fullText.match(/\bintern(ship)?\b/i)) jobType = 'Internship';
-  
-  // Extract experience level
-  const experienceRegex = /(\d+)[+]?\s+years?(?:\s+of)?\s+experience/i;
-  const experienceMatch = fullText.match(experienceRegex);
-  const experienceLevel = experienceMatch ? `${experienceMatch[1]}+ years` : undefined;
-  
-  // Try to identify sections and their content
-  const sections = detectDocumentSections(document);
-  
-  // Extract lists from the most likely content areas
-  const lists = Array.from(mainContent.querySelectorAll('ul, ol'));
-  
-  // Process each list to determine if it contains responsibilities, qualifications, etc.
-  let responsibilities: string[] = extractListItemsFromElements(sections.responsibilities);
-  let qualifications: string[] = [
-    ...extractListItemsFromElements(sections.qualifications),
-    ...extractListItemsFromElements(sections.requirements),
-    ...extractListItemsFromElements(sections.skills)
-  ];
-  const educationRequirements = extractListItemsFromElements(sections.education);
-  
-  // If section detection didn't find responsibilities or qualifications, try to infer from lists
-  if (responsibilities.length === 0 || qualifications.length === 0) {
-    for (const list of lists) {
-      // Check if there's a header before this list that might indicate what it contains
-      let headerEl = list.previousElementSibling;
-      while (headerEl && !headerEl.textContent?.trim()) {
-        headerEl = headerEl.previousElementSibling;
-      }
-      
-      const headerText = headerEl?.textContent?.toLowerCase() || '';
-      const listItems = Array.from(list.querySelectorAll('li'))
-        .map(li => li.textContent?.trim())
-        .filter(Boolean) as string[];
-      
-      if (listItems.length > 0) {
-        if (headerText.match(/responsib|duties|functions|what you('ll)? do/i) && responsibilities.length === 0) {
-          responsibilities = listItems;
-        } else if (headerText.match(/qualif|requir|skills|experience|what you('ll)? need/i) && qualifications.length === 0) {
-          qualifications = listItems;
-        }
-      }
-    }
-  }
   
   // If we still don't have responsibilities or qualifications, make an educated guess based on list content
   if (responsibilities.length === 0 && qualifications.length === 0 && lists.length > 0) {

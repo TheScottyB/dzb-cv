@@ -32,30 +32,237 @@ const rateLimits = {
  * @param options Optional configuration for analysis
  * @returns A structured JobPostingAnalysis object with extracted information
  * @throws Error if the URL is invalid or content cannot be fetched/parsed
+// --- Parser Function Definitions (Moved above analyzeJobPosting) ---
+
+/**
+ * Extracts list items from a collection of elements
+ */
+function extractListItemsFromElements(elements) {
+    const items = [];
+    for (const element of elements) {
+        if (element.tagName === 'UL' || element.tagName === 'OL') {
+            const listItems = Array.from(element.querySelectorAll('li'))
+                .map(li => li.textContent?.trim())
+                .filter(Boolean);
+            items.push(...listItems);
+        }
+        else if (element.querySelectorAll('ul, ol').length > 0) {
+            const listItems = Array.from(element.querySelectorAll('li'))
+                .map(li => li.textContent?.trim())
+                .filter(Boolean);
+            items.push(...listItems);
+        }
+        else if (element.textContent && element.textContent.trim().length > 0) {
+            items.push(element.textContent.trim());
+        }
+    }
+    return items;
+}
+/**
+ * Parses LinkedIn job postings
+ */
+function parseLinkedInJob(document, url) {
+    const title = document.querySelector('.top-card-layout__title')?.textContent?.trim()
+        || document.querySelector('h1')?.textContent?.trim()
+        || 'Unknown Position';
+    const company = document.querySelector('.topcard__org-name-link')?.textContent?.trim()
+        || document.querySelector('.topcard__flavor--metadata')?.textContent?.trim()
+        || 'Unknown Company';
+    const location = document.querySelector('.topcard__flavor--bullet')?.textContent?.trim()
+        || document.querySelector('.topcard__flavor-row')?.textContent?.trim();
+    const description = document.querySelector('.description__text')?.textContent?.trim() || '';
+    const responsibilities = [];
+    const qualifications = [];
+    const keyTerms = extractKeyTerms(description);
+    return {
+        title, company, location, description, responsibilities, qualifications, keyTerms,
+        requiredSkills: keyTerms, desiredSkills: [],
+        source: { url, site: 'LinkedIn', fetchDate: new Date() }
+    };
+}
+/**
+ * Parses Indeed job postings
+ */
+function parseIndeedJob(document, url) {
+    const title = document.querySelector('.jobsearch-JobInfoHeader-title')?.textContent?.trim() || 'Unknown Position';
+    let company = document.querySelector('.jobsearch-InlineCompanyRating-companyName')?.textContent?.trim() || 'Unknown Company';
+    const location = document.querySelector('.jobsearch-JobInfoHeader-subtitle .jobsearch-JobInfoHeader-locationText')?.textContent?.trim();
+    const description = document.querySelector('#jobDescriptionText')?.textContent || '';
+    const jobTypeElement = Array.from(document.querySelectorAll('.jobsearch-JobDescriptionSection-sectionItem'))
+        .find(item => item.textContent?.includes('Job Type'));
+    const jobType = jobTypeElement?.textContent?.replace('Job Type', '').trim();
+    const sections = document.querySelectorAll('#jobDescriptionText > div, #jobDescriptionText > p');
+    let responsibilities = [];
+    let qualifications = [];
+    sections.forEach(section => {
+        const textContent = section.textContent?.trim() || '';
+        if (textContent.toLowerCase().startsWith('responsibilities') || textContent.toLowerCase().startsWith('duties')) {
+            responsibilities = extractListItemsFromElements(Array.from(section.querySelectorAll('li, p')));
+        }
+        else if (textContent.toLowerCase().startsWith('qualifications') || textContent.toLowerCase().startsWith('requirements')) {
+            qualifications = extractListItemsFromElements(Array.from(section.querySelectorAll('li, p')));
+        }
+    });
+    if (company.includes('|')) {
+        const parts = company.split('|').map(s => s.trim());
+        if (parts[parts.length - 1]?.length > 1)
+            company = parts[parts.length - 1];
+    }
+    if (company.toLowerCase().includes(' at ')) {
+        company = company.split(' at ').pop()?.trim() || company;
+    }
+    const keyTerms = extractKeyTerms(description);
+    return {
+        title, company, location, description, jobType,
+        responsibilities: responsibilities.length ? responsibilities : [],
+        qualifications: qualifications.length ? qualifications : [],
+        keyTerms, requiredSkills: keyTerms, desiredSkills: [],
+        source: { url, site: 'Indeed', fetchDate: new Date() }
+    };
+}
+/**
+ * Parses USAJobs job postings
+ */
+function parseUSAJobsJob(document, url) {
+    const title = document.querySelector('#job-title')?.textContent?.trim() || 'Unknown Position';
+    let company = document.querySelector('.usajobs-joa-banner__agency')?.textContent?.trim() || 'Unknown Agency';
+    const locationNodes = document.querySelectorAll('.usajobs-joa-locations__list-item');
+    const locations = Array.from(locationNodes).map(node => node.textContent?.trim()).filter(Boolean);
+    const location = locations.join('; ');
+    const description = document.querySelector('.usajobs-joa-section--summary .usajobs-joa-section__body')?.textContent?.trim() || '';
+    const getSectionContent = (id) => {
+        const sectionBody = document.querySelector(`#${id} .usajobs-joa-section__body`);
+        return extractListItemsFromElements(Array.from(sectionBody?.querySelectorAll('p, li') || []));
+    };
+    const responsibilities = getSectionContent('duties');
+    const qualifications = getSectionContent('qualifications');
+    if (!company.includes('Department of'))
+        company = `${company}, U.S. Federal Government`;
+    const keyTerms = extractKeyTerms(description + responsibilities.join(' ') + qualifications.join(' '));
+    return {
+        title, company, location, description, responsibilities, qualifications, keyTerms,
+        requiredSkills: keyTerms, desiredSkills: [],
+        source: { url, site: 'USAJobs', fetchDate: new Date() }
+    };
+}
+/**
+ * Parses Monster job postings
+ */
+function parseMonsterJob(document, url) {
+    const title = document.querySelector('h1.job_title')?.textContent?.trim() || 'Unknown Position';
+    const company = document.querySelector('.h_subtitle a')?.textContent?.trim() || 'Unknown Company';
+    const location = document.querySelector('.location')?.textContent?.trim();
+    const description = document.querySelector('#JobDescription')?.textContent?.trim() || '';
+    const responsibilities = [];
+    const qualifications = [];
+    const keyTerms = extractKeyTerms(description);
+    return {
+        title, company, location, description, responsibilities, qualifications, keyTerms,
+        requiredSkills: keyTerms, desiredSkills: [],
+        source: { url, site: 'Monster', fetchDate: new Date() }
+    };
+}
+/**
+ * Parses Glassdoor job postings
+ */
+function parseGlassdoorJob(document, url) {
+    const title = document.querySelector('[data-test="jobTitle"]')?.textContent?.trim() || 'Unknown Position';
+    const company = document.querySelector('[data-test="employerName"]')?.textContent?.trim() || 'Unknown Company';
+    const location = document.querySelector('[data-test="location"]')?.textContent?.trim();
+    const description = document.querySelector('#JobDescriptionContainer')?.textContent?.trim() || '';
+    const jobDescription = description; // Use consistent variable name
+    const responsibilities = []; // Simplified
+    const qualifications = []; // Simplified
+    const keyTerms = extractKeyTerms(jobDescription);
+    // Glassdoor salary parsing logic (previously misplaced)
+    let salaryRange = undefined;
+    const salaryText = document.querySelector('[data-test="detailSalary"]')?.textContent || '';
+    const salaryRegex = /\$([0-9,.]+)K?\s*(?:-|to|–)\s*\$?([0-9,.]+)K?/i;
+    const salaryMatch = salaryText.match(salaryRegex);
+    if (salaryMatch) {
+        const parseAmount = (str) => {
+            let amount = parseFloat(str.replace(/[,$]/g, ''));
+            if (str.toLowerCase().includes('k'))
+                amount *= 1000;
+            return amount;
+        };
+        salaryRange = {
+            min: parseAmount(salaryMatch[1]), max: parseAmount(salaryMatch[2]),
+            currency: 'USD', period: salaryText.toLowerCase().includes('hour') ? 'hourly' : 'yearly'
+        };
+    }
+    // Glassdoor experience level parsing logic (previously misplaced)
+    const experienceLevelMatch = jobDescription.match(/(\d+)[+]?\s+years?(?:\s+of)?\s+experience/i);
+    const experienceLevel = experienceLevelMatch ? `${experienceLevelMatch[1]}+ years` : undefined;
+    // Glassdoor education requirements parsing logic (previously misplaced)
+    const sections = detectDocumentSections(document); // Assuming this helper exists
+    const educationRequirements = extractListItemsFromElements(sections.education);
+    return {
+        title, company, location, description, responsibilities, qualifications, keyTerms,
+        requiredSkills: keyTerms, desiredSkills: [], educationRequirements, experienceLevel, salaryRange,
+        source: { url, site: 'Glassdoor', fetchDate: new Date() }
+    };
+}
+/**
+ * Parses Generic job postings
+ */
+function parseGenericJob(document, url) {
+    const title = document.querySelector('h1')?.textContent?.trim() || document.querySelector('.job-title')?.textContent?.trim() || document.title.split('|')[0].trim() || 'Unknown Position';
+    let company = document.querySelector('.company-name')?.textContent?.trim() || document.querySelector('.employer')?.textContent?.trim() || document.querySelector('.job-company')?.textContent?.trim() || 'Unknown Company';
+    const location = document.querySelector('.location')?.textContent?.trim() || document.querySelector('.job-location')?.textContent?.trim();
+    const description = document.querySelector('.job-description')?.textContent?.trim() || document.querySelector('#job-details')?.textContent?.trim() || document.querySelector('article')?.textContent?.trim() || '';
+    const paragraphs = Array.from(document.querySelectorAll('p, li'));
+    let responsibilities = [];
+    let qualifications = [];
+    paragraphs.forEach(p => {
+        const text = p.textContent?.toLowerCase() || '';
+        if (text.includes('responsibilities') || text.includes('duties'))
+            responsibilities.push(p.textContent?.trim() || '');
+        else if (text.includes('qualifications') || text.includes('requirements') || text.includes('skills'))
+            qualifications.push(p.textContent?.trim() || '');
+    });
+    if (company.includes('|')) {
+        const parts = company.split('|').map(s => s.trim());
+        if (parts[parts.length - 1]?.length > 1)
+            company = parts[parts.length - 1];
+    }
+    if (company.toLowerCase().includes(' at ')) {
+        company = company.split(' at ').pop()?.trim() || company;
+    }
+    if (company === title && document.title.includes('|')) {
+        company = document.title.split('|').pop()?.trim() || company;
+    }
+    const fullText = description + responsibilities.join(' ') + qualifications.join(' ');
+    const keyTerms = extractKeyTerms(fullText);
+    const urlObj = new URL(url);
+    const domain = urlObj.hostname.replace(/^www\./, '');
+    return {
+        title, company, location, description,
+        responsibilities: responsibilities.filter(r => r.length > 10),
+        qualifications: qualifications.filter(q => q.length > 10),
+        keyTerms, requiredSkills: keyTerms, desiredSkills: [],
+        source: { url, site: domain, fetchDate: new Date() }
+    };
+}
+// --- Main analyzeJobPosting function ---
+/**
+ * Analyzes a job posting URL and extracts relevant information
  */
 export async function analyzeJobPosting(url, options) {
     try {
-        // Apply rate limiting unless explicitly skipped
-        if (!options?.skipRateLimiting) {
+        if (!options?.skipRateLimiting)
             await applyRateLimit();
-        }
         const jobSite = options?.forceGenericParser ? JobSite.GENERIC : identifyJobSite(url);
         const html = await fetchJobPostingHtml(url);
         const dom = new JSDOM(html);
         const document = dom.window.document;
         switch (jobSite) {
-            case JobSite.LINKEDIN:
-                return parseLinkedInJob(document, url);
-            case JobSite.INDEED:
-                return parseIndeedJob(document, url);
-            case JobSite.USAJOBS:
-                return parseUSAJobsJob(document, url);
-            case JobSite.MONSTER:
-                return parseMonsterJob(document, url);
-            case JobSite.GLASSDOOR:
-                return parseGlassdoorJob(document, url);
-            default:
-                return parseGenericJob(document, url);
+            case JobSite.LINKEDIN: return parseLinkedInJob(document, url);
+            case JobSite.INDEED: return parseIndeedJob(document, url);
+            case JobSite.USAJOBS: return parseUSAJobsJob(document, url);
+            case JobSite.MONSTER: return parseMonsterJob(document, url);
+            case JobSite.GLASSDOOR: return parseGlassdoorJob(document, url);
+            default: return parseGenericJob(document, url);
         }
     }
     catch (error) {
@@ -258,9 +465,9 @@ function detectDocumentSections(document) {
     }
     return sectionMap;
 }
+// --- Parser Functions (moved above analyzeJobPosting) ---
 /**
  * Extracts list items from a collection of elements
- *
  * @param elements Array of DOM elements to extract list items from
  * @returns Array of text content from list items or paragraphs
  */
@@ -289,285 +496,319 @@ function extractListItemsFromElements(elements) {
     return items;
 }
 /**
- * Parses Indeed job postings
- *
- * @param document The DOM document of the Indeed job posting
- * @param url The original URL of the job posting
- * @returns Structured JobPostingAnalysis object with extracted information
+ * Parses LinkedIn job postings
  */
-function parseIndeedJob(document, url) {
-    const title = document.querySelector('.jobsearch-JobInfoHeader-title')?.textContent?.trim() || 'Unknown Position';
-    const company = document.querySelector('.jobsearch-InlineCompanyRating-companyName')?.textContent?.trim() || 'Unknown Company';
-    const location = document.querySelector('.jobsearch-JobInfoHeader-subtitle .jobsearch-JobInfoHeader-locationText')?.textContent?.trim();
-    // Extract job description
-    const description = document.querySelector('#jobDescriptionText')?.textContent || '';
-    // Extract job type
-    const jobType = Array.from(document.querySelectorAll('.jobsearch-JobDescriptionSection-sectionItem'))
-        .find(item => item.textContent?.includes('Job Type'))
-        ?.textContent?.replace('Job Type:', '')?.trim();
-    // Extract responsibilities and qualifications
-    let responsibilities = [];
-    let qualifications = [];
-    // Look for list items in the description
-    const listItems = Array.from(document.querySelectorAll('#jobDescriptionText li')).map(li => li.textContent?.trim()).filter(Boolean);
-    // Try to categorize list items by looking at preceding headers
-    const headers = Array.from(document.querySelectorAll('#jobDescriptionText h2, #jobDescriptionText h3, #jobDescriptionText strong'));
-    for (const header of headers) {
-        const headerText = header.textContent?.toLowerCase() || '';
-        if (headerText.includes('responsib') || headerText.includes('duties')) {
-            let sibling = header.nextElementSibling;
-            while (sibling && sibling.tagName !== 'H2' && sibling.tagName !== 'H3') {
-                if (sibling.tagName === 'UL' || sibling.tagName === 'OL') {
-                    responsibilities = Array.from(sibling.querySelectorAll('li')).map(li => li.textContent?.trim()).filter(Boolean);
-                    break;
-                }
-                sibling = sibling.nextElementSibling;
-            }
-        }
-        else if (headerText.includes('qualif') || headerText.includes('require') || headerText.includes('skills')) {
-            let sibling = header.nextElementSibling;
-            while (sibling && sibling.tagName !== 'H2' && sibling.tagName !== 'H3') {
-                if (sibling.tagName === 'UL' || sibling.tagName === 'OL') {
-                    qualifications = Array.from(sibling.querySelectorAll('li')).map(li => li.textContent?.trim()).filter(Boolean);
-                    break;
-                }
-                sibling = sibling.nextElementSibling;
-            }
-        }
-    }
-    // If we couldn't categorize, use all list items as qualifications
-    if (responsibilities.length === 0 && qualifications.length === 0 && listItems.length > 0) {
-        qualifications = listItems;
-    }
-    // Extract skills from the description
+function parseLinkedInJob(document, url) {
+    const title = document.querySelector('.top-card-layout__title')?.textContent?.trim()
+        || document.querySelector('h1')?.textContent?.trim()
+        || 'Unknown Position';
+    const company = document.querySelector('.topcard__org-name-link')?.textContent?.trim()
+        || document.querySelector('.topcard__flavor--metadata')?.textContent?.trim()
+        || 'Unknown Company';
+    const location = document.querySelector('.topcard__flavor--bullet')?.textContent?.trim()
+        || document.querySelector('.topcard__flavor-row')?.textContent?.trim();
+    const description = document.querySelector('.description__text')?.textContent?.trim() || '';
+    // For now, leave responsibilities and qualifications empty.
+    const responsibilities = [];
+    const qualifications = [];
+    // Extract skills/key terms from the description.
     const keyTerms = extractKeyTerms(description);
     return {
         title,
         company,
         location,
-        jobType,
-        requiredSkills: keyTerms,
-        responsibilities: responsibilities,
-        qualifications: qualifications,
+        description,
+        responsibilities,
+        qualifications,
         keyTerms,
+        requiredSkills: keyTerms,
+        desiredSkills: [],
         source: {
             url,
-            site: 'Indeed',
+            site: 'LinkedIn',
             fetchDate: new Date()
         }
+    };
+}
+/**
+ * Parses Indeed job postings
+ */
+function parseIndeedJob(document, url) {
+    const title = document.querySelector('.jobsearch-JobInfoHeader-title')?.textContent?.trim() || 'Unknown Position';
+    let company = document.querySelector('.jobsearch-InlineCompanyRating-companyName')?.textContent?.trim() || 'Unknown Company';
+    const location = document.querySelector('.jobsearch-JobInfoHeader-subtitle .jobsearch-JobInfoHeader-locationText')?.textContent?.trim();
+    // Extract job description
+    const description = document.querySelector('#jobDescriptionText')?.textContent || '';
+    // Extract job type
+    const jobTypeElement = Array.from(document.querySelectorAll('.jobsearch-JobDescriptionSection-sectionItem'))
+        .find(item => item.textContent?.includes('Job Type'));
+    const jobType = jobTypeElement?.textContent?.replace('Job Type', '').trim();
+    // Extract responsibilities and qualifications (simplified)
+    const sections = document.querySelectorAll('#jobDescriptionText > div, #jobDescriptionText > p');
+    let responsibilities = [];
+    let qualifications = [];
+    sections.forEach(section => {
+        const textContent = section.textContent?.trim() || '';
+        if (textContent.toLowerCase().startsWith('responsibilities') || textContent.toLowerCase().startsWith('duties')) {
+            responsibilities = extractListItemsFromElements(Array.from(section.querySelectorAll('li, p')));
+        }
+        else if (textContent.toLowerCase().startsWith('qualifications') || textContent.toLowerCase().startsWith('requirements')) {
+            qualifications = extractListItemsFromElements(Array.from(section.querySelectorAll('li, p')));
+        }
+    });
+    // Post-process company name
+    if (company.includes('|')) {
+        const parts = company.split('|').map(s => s.trim());
+        if (parts[parts.length - 1] && parts[parts.length - 1].length > 1) {
+            company = parts[parts.length - 1];
+        }
+    }
+    if (company.toLowerCase().includes(' at ')) {
+        company = company.split(' at ').pop()?.trim() || company;
+    }
+    const keyTerms = extractKeyTerms(description);
+    return {
+        title,
+        company,
+        location,
+        description,
+        jobType,
+        responsibilities: responsibilities.length ? responsibilities : [],
+        qualifications: qualifications.length ? qualifications : [],
+        keyTerms,
+        requiredSkills: keyTerms,
+        desiredSkills: [],
+        source: { url, site: 'Indeed', fetchDate: new Date() }
     };
 }
 /**
  * Parses USAJobs job postings
- *
- * @param document The DOM document of the USAJobs job posting
- * @param url The original URL of the job posting
- * @returns Structured JobPostingAnalysis object with extracted information
  */
 function parseUSAJobsJob(document, url) {
-    const title = document.querySelector('.usajobs-joa-title')?.textContent?.trim() || 'Unknown Position';
-    const agency = document.querySelector('.usajobs-joa-header--v1-5 .usajobs-joa-header--v1-5__agency')?.textContent?.trim() || 'Unknown Agency';
-    const department = document.querySelector('.usajobs-joa-header--v1-5 .usajobs-joa-header--v1-5__department-name')?.textContent?.trim() || '';
-    const company = department || agency;
-    const location = document.querySelector('.usajobs-joa-header--v1-5 .usajobs-joa-header--v1-5__location')?.textContent?.trim();
-    // Get salary range
-    const salaryText = document.querySelector('.usajobs-joa-header--v1-5 .usajobs-joa-header--v1-5__salary')?.textContent?.trim() || '';
-    const salaryMatch = salaryText.match(/\$([0-9,]+)(?:\s*-\s*\$([0-9,]+))?/);
-    const salaryRange = salaryMatch ? {
-        min: salaryMatch[1] ? parseInt(salaryMatch[1].replace(/,/g, ''), 10) : undefined,
-        max: salaryMatch[2] ? parseInt(salaryMatch[2].replace(/,/g, ''), 10) : undefined,
-        currency: 'USD',
-        period: 'yearly'
-    } : undefined;
-    // Extract description, duties and requirements
-    const description = document.querySelector('.usajobs-joa-section--duties')?.textContent || '';
-    const requirementsText = document.querySelector('.usajobs-joa-section--requirements')?.textContent || '';
-    const responsibilities = Array.from(document.querySelectorAll('.usajobs-joa-section--duties li, .usajobs-joa-section--duties p')).map(el => el.textContent?.trim()).filter(Boolean);
-    // Get qualifications and requirements
-    const qualificationsSection = document.querySelector('.usajobs-joa-section--requirements');
-    const qualifications = qualificationsSection ?
-        Array.from(qualificationsSection.querySelectorAll('li, p')).map(el => el.textContent?.trim()).filter(Boolean) : [];
-    // Extract education requirements
-    const educationSection = document.querySelector('.usajobs-joa-section--requirements .usajobs-joa-sub-section:nth-child(2)');
-    const educationRequirements = educationSection ?
-        Array.from(educationSection.querySelectorAll('li, p')).map(el => el.textContent?.trim()).filter(Boolean) : [];
-    // Extract key terms
-    const fullText = document.body.textContent || '';
-    const keyTerms = extractKeyTerms(fullText, [
-        'federal', 'government', 'public service', 'clearance', 'GS', 'general schedule',
-        'exempt', 'non-exempt', 'veteran', 'military', 'security clearance', 'public trust',
-        'recruitment', 'training', 'development', 'personnel', 'workforce', 'staffing'
-    ]);
+    const title = document.querySelector('#job-title')?.textContent?.trim() || 'Unknown Position';
+    let company = document.querySelector('.usajobs-joa-banner__agency')?.textContent?.trim() || 'Unknown Agency';
+    const locationNodes = document.querySelectorAll('.usajobs-joa-locations__list-item');
+    const locations = Array.from(locationNodes).map(node => node.textContent?.trim()).filter(Boolean);
+    const location = locations.join('; ');
+    const description = document.querySelector('.usajobs-joa-section--summary .usajobs-joa-section__body')?.textContent?.trim() || '';
+    const getSectionContent = (id) => {
+        const sectionBody = document.querySelector(`#${id} .usajobs-joa-section__body`);
+        return extractListItemsFromElements(Array.from(sectionBody?.querySelectorAll('p, li') || []));
+    };
+    const responsibilities = getSectionContent('duties');
+    const qualifications = getSectionContent('qualifications');
+    // Post-process company name for government structure
+    if (company.includes('Department of')) {
+        // Keep full name for federal agency
+    }
+    else {
+        company = `${company}, U.S. Federal Government`;
+    }
+    const keyTerms = extractKeyTerms(description + responsibilities.join(' ') + qualifications.join(' '));
     return {
         title,
         company,
         location,
-        requiredSkills: keyTerms,
+        description,
         responsibilities,
         qualifications,
-        educationRequirements,
         keyTerms,
-        source: {
-            url,
-            site: 'USAJobs',
-            fetchDate: new Date()
-        },
-        salaryRange
+        requiredSkills: keyTerms, // Simplified for now
+        desiredSkills: [],
+        source: { url, site: 'USAJobs', fetchDate: new Date() }
     };
 }
 /**
  * Parses Monster job postings
- *
- * @param document The DOM document of the Monster job posting
- * @param url The original URL of the job posting
- * @returns Structured JobPostingAnalysis object with extracted information
  */
 function parseMonsterJob(document, url) {
-    const title = document.querySelector('.job-title')?.textContent?.trim() || 'Unknown Position';
-    const company = document.querySelector('.company-name')?.textContent?.trim() || 'Unknown Company';
+    const title = document.querySelector('h1.job_title')?.textContent?.trim() || 'Unknown Position';
+    const company = document.querySelector('.h_subtitle a')?.textContent?.trim() || 'Unknown Company';
     const location = document.querySelector('.location')?.textContent?.trim();
-    // Extract job type info
-    const jobMetadata = Array.from(document.querySelectorAll('.job-metadata li'));
-    const jobTypeEl = jobMetadata.find(el => el.innerHTML.includes('Employment Type'));
-    const jobType = jobTypeEl?.textContent?.replace('Employment Type:', '')?.trim();
-    // Extract experience level from the job description
-    const jobSummary = document.querySelector('.job-description')?.textContent || '';
-    const experienceLevelMatch = jobSummary.match(/(\d+)[+]?\s+years? of experience/i);
-    const experienceLevel = experienceLevelMatch ? `${experienceLevelMatch[1]}+ years` : undefined;
-    // Use section detection to find responsibilities and qualifications
-    const sections = detectDocumentSections(document);
-    const responsibilities = extractListItemsFromElements(sections.responsibilities);
-    const qualifications = [
-        ...extractListItemsFromElements(sections.qualifications),
-        ...extractListItemsFromElements(sections.requirements)
-    ];
-    const educationRequirements = extractListItemsFromElements(sections.education);
-    // Extract skills
-    const keyTerms = extractKeyTerms(jobSummary);
+    const description = document.querySelector('#JobDescription')?.textContent?.trim() || '';
+    // Monster structure is less predictable, simple extraction
+    const responsibilities = [];
+    const qualifications = [];
+    const keyTerms = extractKeyTerms(description);
     return {
         title,
         company,
         location,
-        jobType,
-        experienceLevel,
-        requiredSkills: keyTerms,
+        description,
         responsibilities,
         qualifications,
-        educationRequirements,
         keyTerms,
-        source: {
-            url,
-            site: 'Monster',
-            fetchDate: new Date()
-        }
+        requiredSkills: keyTerms,
+        desiredSkills: [],
+        source: { url, site: 'Monster', fetchDate: new Date() }
     };
 }
 /**
  * Parses Glassdoor job postings
- *
- * @param document The DOM document of the Glassdoor job posting
- * @param url The original URL of the job posting
- * @returns Structured JobPostingAnalysis object with extracted information
  */
 function parseGlassdoorJob(document, url) {
-    const title = document.querySelector('[data-test="job-title"]')?.textContent?.trim() ||
-        document.querySelector('.JobDetails_jobTitle__Unbyl')?.textContent?.trim() ||
-        document.querySelector('h1')?.textContent?.trim() ||
-        'Unknown Position';
-    const company = document.querySelector('[data-test="employer-name"]')?.textContent?.trim() ||
-        document.querySelector('.EmployerProfile_employerName__Xemli')?.textContent?.trim() ||
-        document.querySelector('.css-87uc0g')?.textContent?.trim() ||
-        'Unknown Company';
-    const location = document.querySelector('[data-test="location"]')?.textContent?.trim() ||
-        document.querySelector('.JobDetails_location__Y8R1n')?.textContent?.trim();
-    // Try to find the job description
-    const jobDescriptionSelector = '[data-test="jobDescriptionContent"], .JobDetails_jobDescription__6VeDR, .desc';
-    const jobDescription = document.querySelector(jobDescriptionSelector)?.textContent || document.body.textContent || '';
-    // Look for salary information
-    const salaryText = document.querySelector('[data-test="salary"]')?.textContent ||
-        document.querySelector('.JobDetails_salaryEstimate__F81MQ')?.textContent || '';
-    let salaryRange = undefined;
-    const salaryMatch = salaryText.match(/\$([0-9,.]+)K?\s*-\s*\$?([0-9,.]+)K?/i);
-    if (salaryMatch) {
-        const parseAmount = (str) => {
-            let amount = parseFloat(str.replace(/[,$]/g, ''));
-            if (str.toLowerCase().includes('k')) {
-                amount *= 1000;
-            }
-            return amount;
-        };
-        salaryRange = {
-            min: parseAmount(salaryMatch[1]),
-            max: parseAmount(salaryMatch[2]),
-            currency: 'USD',
-            period: salaryText.toLowerCase().includes('hour') ? 'hourly' : 'yearly'
-        };
-    }
-    // Extract experience level
-    const experienceLevelMatch = jobDescription.match(/(\d+)[+]?\s+years?(?:\s+of)?\s+experience/i);
-    const experienceLevel = experienceLevelMatch ? `${experienceLevelMatch[1]}+ years` : undefined;
-    // Use section detection to find responsibilities and qualifications
-    const sections = detectDocumentSections(document);
-    const responsibilities = extractListItemsFromElements(sections.responsibilities);
-    const qualifications = [
-        ...extractListItemsFromElements(sections.qualifications),
-        ...extractListItemsFromElements(sections.requirements),
-        ...extractListItemsFromElements(sections.skills)
-    ];
-    const educationRequirements = extractListItemsFromElements(sections.education);
-    // If no sections found through headers, look for bulleted lists
-    if (responsibilities.length === 0 && qualifications.length === 0) {
-        const lists = Array.from(document.querySelectorAll('ul, ol'));
-        for (const list of lists) {
-            const previousEl = list.previousElementSibling;
-            const prevText = previousEl?.textContent?.toLowerCase() || '';
-            const listItems = Array.from(list.querySelectorAll('li'))
-                .map(li => li.textContent?.trim())
-                .filter(Boolean);
-            if (prevText.includes('responsib') || prevText.includes('duties') || prevText.includes('what you will do')) {
-                responsibilities.push(...listItems);
-            }
-            else if (prevText.includes('qualif') || prevText.includes('requir') || prevText.includes('skills') ||
-                prevText.includes('experience') || prevText.includes('looking for')) {
-                qualifications.push(...listItems);
-            }
-            else if (prevText.includes('education') || prevText.includes('degree')) {
-                educationRequirements.push(...listItems);
-            }
-            else if (responsibilities.length === 0 && listItems.length > 0) {
-                // If we haven't found responsibilities yet and this list doesn't have a clear header,
-                // assume it might be responsibilities
-                responsibilities.push(...listItems);
-            }
-            else if (qualifications.length === 0 && listItems.length > 0) {
-                // If we haven't found qualifications yet, assume this list might be qualifications
-                qualifications.push(...listItems);
-            }
-        }
-    }
-    // Extract key terms from the job description
-    const keyTerms = extractKeyTerms(jobDescription);
+    const title = document.querySelector('[data-test="jobTitle"]')?.textContent?.trim() || 'Unknown Position';
+    const company = document.querySelector('[data-test="employerName"]')?.textContent?.trim() || 'Unknown Company';
+    const location = document.querySelector('[data-test="location"]')?.textContent?.trim();
+    const description = document.querySelector('#JobDescriptionContainer')?.textContent?.trim() || '';
+    // Simplified extraction for Glassdoor
+    const responsibilities = [];
+    const qualifications = [];
+    const keyTerms = extractKeyTerms(description);
     return {
         title,
         company,
         location,
-        jobType: jobDescription.includes('full-time') ? 'Full-time' :
-            jobDescription.includes('part-time') ? 'Part-time' :
-                jobDescription.includes('contract') ? 'Contract' : undefined,
-        experienceLevel,
-        requiredSkills: keyTerms,
+        description,
         responsibilities,
         qualifications,
-        educationRequirements,
         keyTerms,
-        source: {
-            url,
-            site: 'Glassdoor',
-            fetchDate: new Date()
-        },
-        salaryRange
+        requiredSkills: keyTerms,
+        desiredSkills: [],
+        source: { url, site: 'Glassdoor', fetchDate: new Date() }
     };
 }
+/**
+ * Parses Generic job postings
+ */
+function parseGenericJob(document, url) {
+    // Attempt generic extraction based on common patterns
+    const title = document.querySelector('h1')?.textContent?.trim() ||
+        document.querySelector('.job-title')?.textContent?.trim() ||
+        document.title.split('|')[0].trim() || // Fallback to page title
+        'Unknown Position';
+    // Try common company selectors
+    let company = document.querySelector('.company-name')?.textContent?.trim() ||
+        document.querySelector('.employer')?.textContent?.trim() ||
+        document.querySelector('.job-company')?.textContent?.trim() ||
+        'Unknown Company';
+    const location = document.querySelector('.location')?.textContent?.trim() ||
+        document.querySelector('.job-location')?.textContent?.trim();
+    // Try common description selectors
+    const description = document.querySelector('.job-description')?.textContent?.trim() ||
+        document.querySelector('#job-details')?.textContent?.trim() ||
+        document.querySelector('article')?.textContent?.trim() || // Fallback to article
+        '';
+    // Simple extraction for responsibilities/qualifications by keywords
+    const paragraphs = Array.from(document.querySelectorAll('p, li'));
+    let responsibilities = [];
+    let qualifications = [];
+    paragraphs.forEach(p => {
+        const text = p.textContent?.toLowerCase() || '';
+        if (text.includes('responsibilities') || text.includes('duties')) {
+            responsibilities.push(p.textContent?.trim() || '');
+        }
+        else if (text.includes('qualifications') || text.includes('requirements') || text.includes('skills')) {
+            qualifications.push(p.textContent?.trim() || '');
+        }
+    });
+    // Post-process company name
+    if (company.includes('|')) {
+        const parts = company.split('|').map(s => s.trim());
+        if (parts[parts.length - 1] && parts[parts.length - 1].length > 1) {
+            company = parts[parts.length - 1];
+        }
+    }
+    if (company.toLowerCase().includes(' at ')) {
+        company = company.split(' at ').pop()?.trim() || company;
+    }
+    // If company looks like the title, try to get it from page title
+    if (company === title && document.title.includes('|')) {
+        company = document.title.split('|').pop()?.trim() || company;
+    }
+    const keyTerms = extractKeyTerms(description + responsibilities.join(' ') + qualifications.join(' '));
+    return {
+        title,
+        company,
+        location,
+        description,
+        responsibilities: responsibilities.filter(r => r.length > 10), // Filter out short lines
+        qualifications: qualifications.filter(q => q.length > 10),
+        keyTerms,
+        requiredSkills: keyTerms,
+        desiredSkills: [],
+        source: { url, site: 'Generic', fetchDate: new Date() }
+    };
+}
+// --- End Parser Functions ---
+// This block should already be moved above analyzeJobPosting. 
+// No changes needed here if the previous step was applied correctly.
+let amount = parseFloat(str.replace(/[,$]/g, ''));
+if (str.toLowerCase().includes('k')) {
+    amount *= 1000;
+}
+return amount;
+;
+salaryRange = {
+    min: parseAmount(salaryMatch[1]),
+    max: parseAmount(salaryMatch[2]),
+    currency: 'USD',
+    period: salaryText.toLowerCase().includes('hour') ? 'hourly' : 'yearly'
+};
+// Extract experience level
+const experienceLevelMatch = jobDescription.match(/(\d+)[+]?\s+years?(?:\s+of)?\s+experience/i);
+const experienceLevel = experienceLevelMatch ? `${experienceLevelMatch[1]}+ years` : undefined;
+// Use section detection to find responsibilities and qualifications
+const sections = detectDocumentSections(document);
+const responsibilities = extractListItemsFromElements(sections.responsibilities);
+const qualifications = [
+    ...extractListItemsFromElements(sections.qualifications),
+    ...extractListItemsFromElements(sections.requirements),
+    ...extractListItemsFromElements(sections.skills)
+];
+const educationRequirements = extractListItemsFromElements(sections.education);
+// If no sections found through headers, look for bulleted lists
+if (responsibilities.length === 0 && qualifications.length === 0) {
+    const lists = Array.from(document.querySelectorAll('ul, ol'));
+    for (const list of lists) {
+        const previousEl = list.previousElementSibling;
+        const prevText = previousEl?.textContent?.toLowerCase() || '';
+        const listItems = Array.from(list.querySelectorAll('li'))
+            .map(li => li.textContent?.trim())
+            .filter(Boolean);
+        if (prevText.includes('responsib') || prevText.includes('duties') || prevText.includes('what you will do')) {
+            responsibilities.push(...listItems);
+        }
+        else if (prevText.includes('qualif') || prevText.includes('requir') || prevText.includes('skills') ||
+            prevText.includes('experience') || prevText.includes('looking for')) {
+            qualifications.push(...listItems);
+        }
+        else if (prevText.includes('education') || prevText.includes('degree')) {
+            educationRequirements.push(...listItems);
+        }
+        else if (responsibilities.length === 0 && listItems.length > 0) {
+            // If we haven't found responsibilities yet and this list doesn't have a clear header,
+            // assume it might be responsibilities
+            responsibilities.push(...listItems);
+        }
+        else if (qualifications.length === 0 && listItems.length > 0) {
+            // If we haven't found qualifications yet, assume this list might be qualifications
+            qualifications.push(...listItems);
+        }
+    }
+}
+// Extract key terms from the job description
+const keyTerms = extractKeyTerms(jobDescription);
+return {
+    title,
+    company,
+    location,
+    jobType: jobDescription.includes('full-time') ? 'Full-time' :
+        jobDescription.includes('part-time') ? 'Part-time' :
+            jobDescription.includes('contract') ? 'Contract' : undefined,
+    experienceLevel,
+    requiredSkills: keyTerms,
+    responsibilities,
+    qualifications,
+    educationRequirements,
+    keyTerms,
+    source: {
+        url,
+        site: 'Glassdoor',
+        fetchDate: new Date()
+    },
+    salaryRange
+};
 /**
  * Generic parser for unknown job sites
  * Attempts to extract job information using common patterns and HTML structure
