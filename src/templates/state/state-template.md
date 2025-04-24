@@ -39,7 +39,7 @@ _(Listed in reverse chronological order)_
 {{#each allExperience}}
 ### {{position}}
 **{{employer}}** - {{#if address}}{{address}}{{/if}}
-*{{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}*
+*{{formatFederalDateRange startDate endDate}}*
 {{#if address}}**Location:** {{address}}{{/if}}  
 
 {{#if industry}}
@@ -106,7 +106,7 @@ _(Listed in reverse chronological order)_
 ## Professional Development & Training
 {{#each trainingAndCoaching}}
 ### {{role}} | {{organization}}
-**Service Period:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}
+**Service Period:** {{formatFederalDateRange startDate endDate}}
 **Hours Completed:** {{#if hours}}{{hours}}{{else}}40{{/if}}
 
 **Program Focus:**
@@ -127,7 +127,7 @@ _(Listed in reverse chronological order)_
 {{#each volunteerWork}}
 ### {{organization}}
 {{#if position}}**Service Role:** {{position}}{{/if}}
-{{#if startDate}}**Period of Service:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}{{else}}{{#if year}}**Year of Service:** {{year}}{{/if}}{{/if}}
+{{#if startDate}}**Period of Service:** {{formatFederalDateRange startDate endDate}}{{else}}{{#if year}}**Year of Service:** {{year}}{{/if}}{{/if}}
 
 **Service Activities:**
 {{#each activities}}

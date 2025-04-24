@@ -36,7 +36,7 @@ _(Listed in reverse chronological order)_
 {{#sortByDate workExperience}}
 {{#each this}}
 ### {{position}} | {{employer}}
-*{{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}*
+*{{formatFederalDateRange startDate endDate}}*
 {{#if address}}**Location:** {{address}}{{/if}}
 
 {{#if isLeadership}}
@@ -88,7 +88,7 @@ _(Listed in reverse chronological order)_
 ## Industry Leadership & Board Service
 {{#each professionalAffiliations}}
 ### {{organization}}
-{{#if startDate}}**Period of Service:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}{{/if}}
+{{#if startDate}}**Period of Service:** {{formatFederalDateRange startDate endDate}}{{/if}}
 
 {{#if roles}}
 **Leadership Positions:**
@@ -107,7 +107,7 @@ _(Listed in reverse chronological order)_
 
 ## Recognition & Awards
 {{#each awards}}
-- **{{title}} - {{organization}}:** {{#if achievement}}{{achievement}}{{/if}}{{#if startDate}} ({{formatUSDate startDate}}{{#if endDate}} to {{formatUSDate endDate}}{{/if}}){{/if}}
+- **{{title}} - {{organization}}:** {{#if achievement}}{{achievement}}{{/if}}{{#if startDate}} ({{formatFederalDateRange startDate endDate}}){{/if}}
 {{/each}}
 
 ## Professional Development
@@ -115,7 +115,7 @@ _(Listed in reverse chronological order)_
 
 {{#each trainingAndCoaching}}
 ### {{role}} | {{organization}}
-*{{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}*
+*{{formatFederalDateRange startDate endDate}}*
 {{#if responsibilities}}
 **Program Focus:**
 {{#each responsibilities}}

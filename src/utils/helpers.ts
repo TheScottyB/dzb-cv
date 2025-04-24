@@ -205,12 +205,41 @@ export function parseTextualPeriodForTotalYears(periodText: string): PeriodDates
     console.error(`Error parsing period dates: ${periodText}`, error);
     return { startDate: null, endDate: null, approximateYears: null };
   }
-};
 /**
- * Ensures month is always padded with a leading zero (e.g., "01/2024" instead of "1/2024")
- * @param {string|Date} dateStr - Date string or Date object to format
- * @returns {string} Formatted date in MM/YYYY format with padded month
+ * Formats a date into the standard MM/YYYY format with zero-padded month for federal resume standards.
+ * 
+ * @param {string|Date} dateStr - The date to format, can be:
+ *   - A Date object
+ *   - "Present" or "Ongoing" (case-insensitive) to indicate current position
+ *   - MM/YYYY format (e.g., "1/2024" or "01/2024") - will ensure month is zero-padded
+ *   - Month YYYY format (e.g., "January 2024" or "Jan 2024")
+ *   - ISO date format (e.g., "2024-01-15")
+ *   - Year only (e.g., "2024") - will default to January (01/YYYY)
+ * 
+ * @returns {string} Formatted date string in "MM/YYYY" format with zero-padded month, 
+ *                   or "Present" for ongoing positions, or empty string for empty/undefined input
+ * 
+ * @example
+ * // Returns "01/2024"
+ * formatUSDate("January 2024")
+ * formatUSDate("Jan 2024")
+ * formatUSDate("1/2024")
+ * formatUSDate(new Date(2024, 0, 15))
+ * 
+ * // Returns "Present"
+ * formatUSDate("Present")
+ * formatUSDate("present")
+ * formatUSDate("Ongoing")
+ * 
+ * // Error handling
+ * formatUSDate("")  // Returns ""
+ * formatUSDate(undefined)  // Returns ""
+ * formatUSDate(null)  // Returns ""
+ * 
+ * // Invalid dates fall back to using the current date in test environments
+ * // or return the original string in production
  */
+export function formatUSDate(dateStr: string | Date): string {
 export function formatUSDate(dateStr: string | Date): string {
   if (!dateStr) return '';
   
@@ -296,10 +325,41 @@ export function formatUSDate(dateStr: string | Date): string {
 }
 
 /**
- * Formats a date range using the federal standard format with en-dash
- * @param {string|Date} start - Start date string or Date object
- * @param {string|Date} end - End date string or Date object, or "Present" for ongoing positions
+ * Formats a date range using the federal standard format with en-dash (–) for resume/CV display.
+ * Consistently formats date ranges either as "MM/YYYY – Present" for ongoing positions
+ * or "MM/YYYY – MM/YYYY" for completed positions.
+ * 
+ * @param {string|Date} start - The start date, accepted in any format supported by formatUSDate():
+ *   - A Date object
+ *   - MM/YYYY format (e.g., "01/2024")
+ *   - Month YYYY format (e.g., "January 2024" or "Jan 2024")
+ *   - ISO date format (e.g., "2024-01-15")
+ * 
+ * @param {string|Date} end - The end date (or undefined/null/"Present" for ongoing positions):
+ *   - A Date object (if current date or within ~45 days, treated as "Present")
+ *   - "Present" or "Ongoing" (case-insensitive)
+ *   - Any date format supported by formatUSDate()
+ *   - undefined/null/empty string (treated as "Present")
+ * 
  * @returns {string} Formatted date range: "MM/YYYY – Present" or "MM/YYYY – MM/YYYY"
+ *                   with proper en-dash (–) character, or empty string if start date is invalid
+ * 
+ * @example
+ * // Returns "01/2022 – Present"
+ * formatFederalDateRange("January 2022", "Present")
+ * formatFederalDateRange("01/2022", null)
+ * formatFederalDateRange("Jan 2022", "") 
+ * formatFederalDateRange("1/2022", "ongoing")
+ * formatFederalDateRange(new Date(2022, 0, 1), new Date()) // Current date treated as Present
+ * 
+ * // Returns "01/2022 – 12/2023"
+ * formatFederalDateRange("January 2022", "December 2023")
+ * formatFederalDateRange("Jan 2022", "Dec 2023")
+ * formatFederalDateRange("1/2022", "12/2023")
+ * 
+ * // Error handling
+ * formatFederalDateRange("", "12/2023")  // Returns ""
+ * formatFederalDateRange(undefined, "12/2023")  // Returns ""
  */
 export function formatFederalDateRange(start?: string | Date, end?: string | Date): string {
   if (!start) return '';
@@ -612,3 +672,32 @@ export function registerHelpers(): void {
   
   console.log('CV template helpers registered successfully');
 };
+
+/**
+ * TEMPLATE IMPROVEMENT SUGGESTIONS:
+ * 
+ * The following templates should be updated for consistent date formatting:
+ * 
+ * 1. state-template.md:
+ *    - Line 42: Uses "formatUSDate startDate" and "formatUSDate endDate" with "to" separator
+ *      Consider changing to: "{{formatFederalDateRange startDate endDate}}" for consistency
+ *    - Line 109: Uses "formatUSDate startDate" and "formatUSDate endDate" with "to" separator
+ *      Consider changing to: "{{formatFederalDateRange startDate endDate}}" for consistency
+ *    - Line 130: Uses "formatUSDate startDate" and "formatUSDate endDate" with "to" separator
+ *      Consider changing to: "{{formatFederalDateRange startDate endDate}}" for consistency
+ * 
+ * 2. private-template.md:
+ *    - Line 39: Uses "formatUSDate startDate" and "formatUSDate endDate" with "to" separator
+ *      Consider changing to: "{{formatFederalDateRange startDate endDate}}" for consistency
+ *    - Line 91: Uses "formatUSDate startDate" and "formatUSDate endDate" with "to" separator
+ *      Consider changing to: "{{formatFederalDateRange startDate endDate}}" for consistency
+ *    - Line 110: Uses "formatUSDate startDate" and "formatUSDate endDate" inside parentheses
+ *      Consider changing to: "({{formatFederalDateRange startDate endDate}})" for consistency
+ *    - Line 118: Uses "formatUSDate startDate" and "formatUSDate endDate" with "to" separator
+ *      Consider changing to: "{{formatFederalDateRange startDate endDate}}" for consistency
+ * 
+ * These changes would improve:
+ * 1. Consistent date range formatting across all templates
+ * 2. Proper en-dash usage (instead of "to" or "-")
+ * 3. Unified handling of empty/null end dates and "Present" values
+ */
