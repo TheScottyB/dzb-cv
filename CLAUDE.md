@@ -8,6 +8,18 @@
 - Analyze job: `pnpm analyze-job`
 - Import profile: `pnpm import-cv`
 
+## Unified CLI Tool
+- Primary command: `pnpm cv -- [command] [options]`
+- Commands:
+  - `analyze <url>` - Analyze a job posting for key requirements
+  - `generate <sector>` - Generate a CV for a specific sector
+  - `import <file>` - Import a markdown CV into the profile system
+  - `apply <url>` - Run the complete job application workflow
+- Examples:
+  - `pnpm cv -- analyze https://example.com/job/12345`
+  - `pnpm cv -- generate state --format pdf`
+  - `pnpm cv -- apply https://example.com/job/12345 --sector federal`
+
 ## Code Style
 - **Imports**: 1) Node.js modules 2) Third-party packages 3) Local imports
 - **Naming**: camelCase for functions/variables, PascalCase for types/interfaces, kebab-case for files
