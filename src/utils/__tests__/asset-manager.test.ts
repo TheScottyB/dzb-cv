@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import * as os from 'os';
 import { exec } from 'child_process';
-import { promises as fs } from 'fs';
+import * as fs from 'fs/promises';
 
 import {
   createAssetMetadata,
@@ -33,11 +33,6 @@ jest.mock('fs/promises', () => ({
 }));
 
 // Create typed mock objects
-const mockedStat = jest.mocked(fs.stat);
-const mockedReaddir = jest.mocked(fs.readdir);
-const mockedReadFile = jest.mocked(fs.readFile);
-const mockedWriteFile = jest.mocked(fs.writeFile);
-const mockedMkdir = jest.mocked(fs.mkdir);
 
 // Setup test environment
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -111,7 +106,7 @@ describe('Asset Manager', () => {
     jest.clearAllMocks();
     
     // Setup default mock implementations
-    mockedStat.mockImplementation(async (path) => ({
+    (fs.stat as jest.Mock).mockImplementation(async (path) => ({
       isFile: () => true,
       isDirectory: () => false,
       size: 12345,
@@ -119,7 +114,7 @@ describe('Asset Manager', () => {
       birthtime: new Date()
     }));
     
-    mockedReaddir.mockImplementation(async (path) => {
+    (fs.readdir as jest.Mock).mockImplementation(async (path) => {
       if (path === testDocumentsDir) {
         return [
           { name: 'sample-doc.pdf', isDirectory: () => false, isFile: () => true }
@@ -132,7 +127,7 @@ describe('Asset Manager', () => {
       return [];
     });
     
-    mockedReadFile.mockImplementation(async (path) => {
+    (fs.readFile as jest.Mock).mockImplementation(async (path) => {
       if (path.includes('asset-catalog.json')) {
         return JSON.stringify(mockCatalog);
       }
@@ -141,8 +136,8 @@ describe('Asset Manager', () => {
       throw error;
     });
     
-    mockedWriteFile.mockResolvedValue(undefined);
-    mockedMkdir.mockResolvedValue(undefined);
+    (fs.writeFile as jest.Mock).mockResolvedValue(undefined);
+    (fs.mkdir as jest.Mock).mockResolvedValue(undefined);
   });
   // Cleanup after each test
   afterEach(() => {
@@ -152,7 +147,7 @@ describe('Asset Manager', () => {
   describe('File Type Detection', () => {
     test('validateFile should return valid for existing file with correct extension', async () => {
       const filePath = join(testDocumentsDir, 'sample-doc.pdf');
-      mockedStat.mockImplementationOnce(async (path) => ({
+      (fs.stat as jest.Mock).mockImplementationOnce(async (path) => ({
         isFile: () => true,
         isDirectory: () => false,
         size: 12345,
@@ -166,7 +161,7 @@ describe('Asset Manager', () => {
     
     test('getDocumentInfo should return document information', async () => {
       const filePath = join(testDocumentsDir, 'sample-doc.pdf');
-      mockedStat.mockImplementationOnce(async (path) => ({
+      (fs.stat as jest.Mock).mockImplementationOnce(async (path) => ({
         isFile: () => true,
         isDirectory: () => false,
         size: 12345,
@@ -184,7 +179,7 @@ describe('Asset Manager', () => {
     
     test('createAssetMetadata should return valid metadata for a file', async () => {
       const filePath = join(testDocumentsDir, 'sample-doc.pdf');
-      mockedStat.mockImplementationOnce(async (path) => ({
+      (fs.stat as jest.Mock).mockImplementationOnce(async (path) => ({
         isFile: () => true,
         isDirectory: () => false,
         size: 12345,
@@ -202,7 +197,7 @@ describe('Asset Manager', () => {
     test('createAssetCatalog should create a catalog with assets', async () => {
       // Setup mock readdir to return test files
       // Setup mock readdir to return test files
-      mockedReaddir.mockImplementation(async (path, options) => {
+      (fs.readdir as jest.Mock).mockImplementation(async (path, options) => {
         if (path === testDocumentsDir) {
           return [
             { name: 'sample-doc.pdf', isDirectory: () => false, isFile: () => true }
@@ -222,7 +217,7 @@ describe('Asset Manager', () => {
       jest.clearAllMocks();
       
       // Mock stat to simulate missing directories
-      mockedStat.mockImplementation(async (path) => {
+      (fs.stat as jest.Mock).mockImplementation(async (path) => {
         if (path === testAssetsDir) {
           return { isDirectory: () => true };
         }
@@ -239,7 +234,7 @@ describe('Asset Manager', () => {
     
     test('validateFile should return valid for existing file with correct extension', async () => {
       // Mock stat to return success for this file
-      mockedStat.mockImplementation(async (path) => ({
+      (fs.stat as jest.Mock).mockImplementation(async (path) => ({
         isFile: () => true,
         size: 12345,
         mtime: new Date(),
@@ -257,7 +252,7 @@ describe('Asset Manager', () => {
     
     test('validateFile should return invalid for unsupported extension', async () => {
       // Mock stat to return success for this file
-      mockedStat.mockImplementation(async (path) => ({
+      (fs.stat as jest.Mock).mockImplementation(async (path) => ({
         isFile: () => true,
         size: 12345,
         mtime: new Date(),
@@ -276,7 +271,7 @@ describe('Asset Manager', () => {
     
     test('validateFile should return invalid for non-existent file', async () => {
       // Mock stat to throw error for this file
-      mockedStat.mockImplementation(async (path) => {
+      (fs.stat as jest.Mock).mockImplementation(async (path) => {
         throw { code: 'ENOENT' };
       });
       
@@ -297,7 +292,7 @@ describe('Asset Manager', () => {
     
     test('findFilesByExtension should find files with matching extensions', async () => {
       // Mock readdir to return test files
-      mockedReaddir.mockImplementation(async (path, options) => {
+      (fs.readdir as jest.Mock).mockImplementation(async (path, options) => {
         if (path === testDocumentsDir) {
           return [
             { name: 'doc1.pdf', isDirectory: () => false, isFile: () => true },
@@ -325,10 +320,10 @@ describe('Asset Manager', () => {
     
     test('findFilesByExtension should not recurse when recursive is false', async () => {
       // Reset mock implementation
-      mockedReaddir.mockReset();
+      (fs.readdir as jest.Mock).mockReset();
       
       // Mock readdir to return test files
-      mockedReaddir.mockImplementation(async (path, options) => {
+      (fs.readdir as jest.Mock).mockImplementation(async (path, options) => {
         if (path === testDocumentsDir) {
           return [
             { name: 'doc1.pdf', isDirectory: () => false, isFile: () => true },
@@ -354,7 +349,7 @@ describe('Asset Manager', () => {
     
     test('createAssetMetadata should handle errors properly', async () => {
       // Mock stat to throw an error
-      mockedStat.mockImplementation(async () => {
+      (fs.stat as jest.Mock).mockImplementation(async () => {
         throw new Error('Test error');
       });
       
@@ -378,7 +373,7 @@ describe('Asset Manager', () => {
     
     test('loadAssetCatalog should create new catalog if none exists', async () => {
       // Mock readFile to throw ENOENT
-      mockedReadFile.mockImplementation(async () => {
+      (fs.readFile as jest.Mock).mockImplementation(async () => {
         throw { code: 'ENOENT' };
       });
       

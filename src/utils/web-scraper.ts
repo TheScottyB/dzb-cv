@@ -353,7 +353,7 @@ async function scrapeIndeedJob(
   });
   
   // Extract company name
-  const company = await page.evaluate(() => {
+  let company = await page.evaluate(() => {
     const companySelector = document.querySelector('.jobsearch-InlineCompanyRating-companyName');
     if (companySelector && companySelector.textContent) {
       return companySelector.textContent.trim();
@@ -366,7 +366,17 @@ async function scrapeIndeedJob(
     
     return 'Unknown Company';
   });
-  
+
+  // --- Post-process company string for edge cases ---
+  if (company.includes('|')) {
+    const parts = company.split('|').map(s => s.trim());
+    if (parts[parts.length - 1] && parts[parts.length - 1].length > 1) {
+      company = parts[parts.length - 1];
+    }
+  }
+  if (company.toLowerCase().includes(' at ')) {
+    company = company.split(' at ').pop()?.trim() || company;
+  }
   // Extract location
   const location = await page.evaluate(() => {
     const locationSelector = document.querySelector('.jobsearch-JobInfoHeader-subtitle .jobsearch-JobInfoHeader-locationText');

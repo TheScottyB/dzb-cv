@@ -6,6 +6,7 @@ import Handlebars from "handlebars";
 import { jest, describe, test, expect, beforeAll } from '@jest/globals';
 
 // Import helpers for registration
+// Import helpers to ensure Handlebars helpers are registered globally
 import '../utils/helpers.js';
 
 // Constants for date validation
@@ -356,7 +357,6 @@ describe("CV Generator", () => {
         indeed: renderAndCheckTemplate(indeedTemplate, data),
         general: renderAndCheckTemplate(generalTemplate, data)
       };
-  });
   // =========================================================================
   // Basic Tests
   // =========================================================================

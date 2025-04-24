@@ -306,17 +306,35 @@ function extractListItemsFromElements(elements: Element[]): string[] {
         .filter(Boolean) as string[];
       items.push(...listItems);
     }
-    // Otherwise use the element's text if it's not too long (likely a paragraph)
-    else if (element.textContent?.trim() && element.textContent.length < 200) {
-      items.push(element.textContent.trim());
-    }
-  }
-  
-  return items;
-}
+    // Collate keywords and responsibilities for keyTerms
+    let keyTerms = Array.from(new Set([
+      ...responsibilities,
+      ...qualifications,
+      ...description.match(/\b([A-Za-z]{4,})\b/g) || []
+    ]))
+      .map(s => s.toLowerCase())
+      .filter(Boolean);
 
-/**
- * Parses LinkedIn job postings
+    // --- Post-process keyTerms: filter out unrelated dev/tech keywords unless present in job text ---
+    // Denylist of tech skills for non-tech jobs
+    const techDenyList = [
+      'javascript', 'typescript', 'java', 'python', 'c++', 'c#', 'ruby', 'php', 'go', 'node', 'react', 'vue', 'angular', 'golang',
+      'aws', 'azure', 'gcp', 'cloud', 'api', 'kubernetes', 'docker', 'devops', 'ci/cd', 'lambda', 'express'
+    ];
+
+    const allJobText = (description + ' ' + responsibilities.join(' ') + ' ' + qualifications.join(' ')).toLowerCase();
+    const isTechRole = /developer|engineer|software|it|cloud|devops|data/i.test(allJobText);
+
+    keyTerms = keyTerms.filter(q => {
+      if (techDenyList.includes(q)) {
+        // Only keep tech terms if found in job text or if job is obviously technical
+        return isTechRole || allJobText.includes(q);
+      }
+      return true;
+    });
+
+    // Quick filter: drop words shorter than 4, keep longer
+    keyTerms = keyTerms.filter(term => term.length >= 4 && !/^\d+$/.test(term));
  * 
  * @param document The DOM document of the LinkedIn job posting
  * @param url The original URL of the job posting
@@ -338,11 +356,24 @@ function parseLinkedInJob(document: Document, url: string): JobPostingAnalysis {
   
   for (const section of sections) {
     const heading = section.querySelector('h3, h2')?.textContent?.toLowerCase() || '';
-    const listItems = Array.from(section.querySelectorAll('li')).map(li => li.textContent?.trim()).filter(Boolean) as string[];
-    
-    if (heading.includes('responsib') || heading.includes('duties') || heading.includes('what you\'ll do')) {
-      responsibilities = listItems;
-    } else if (heading.includes('qualif') || heading.includes('require') || heading.includes('skills') || heading.includes('what you need')) {
+    let company = companyElem?.textContent?.trim() ||
+      dom.window.document.querySelector('a[data-company]')?.textContent?.trim() ||
+      dom.window.document.querySelector('.postingcompany')?.textContent?.trim() ||
+      dom.window.document.querySelector('.icl-u-lg-mr--sm.icl-u-xs-mb--xs')?.textContent?.trim() ||
+      'Unknown Company';
+
+    // --- Post-process company name ---
+    // If company includes "|" (pipe), use last segment. If " at ", use after that.
+    // Avoid using job title as company if they're identical.
+    if (company.includes('|')) {
+      const parts = company.split('|').map(s => s.trim());
+      if (parts[parts.length - 1] && parts[parts.length - 1].length > 1) {
+        company = parts[parts.length - 1];
+      }
+    }
+    if (company.toLowerCase().includes(' at ')) {
+      company = company.split(' at ').pop()?.trim() || company;
+    }
       qualifications = listItems;
     }
   }
