@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { loadTemplate } from "./utils/helpers.js";
+import Handlebars from 'handlebars';
+import { loadTemplate, registerHelpers, sortByDate, formatUSDate, formatFederalDateRange, calculateGradeLevel, calculateTotalYears, formatSalary, defaultValue, formatWithPrefix } from "./utils/helpers.js";
 import { resolveDataPath } from "./utils/path-resolver.js";
 import { convertMarkdownToPdf, DEFAULT_PDF_OPTIONS } from './utils/pdf-generator.js';
 /**
@@ -23,6 +24,36 @@ async function generateCV(sector, cvData, outputPath, options) {
     try {
         // Merge defaults with provided options
         const mergedOptions = { ...DEFAULT_CV_OPTIONS, ...options };
+        // Register Handlebars helpers directly
+        console.log('Registering Handlebars helpers directly...');
+        try {
+            // Call the standard registerHelpers function first
+            registerHelpers();
+            // Then explicitly register each helper to ensure they're available
+            Handlebars.registerHelper('sortByDate', sortByDate);
+            Handlebars.registerHelper('formatDateRange', formatFederalDateRange);
+            Handlebars.registerHelper('formatFederalDateRange', formatFederalDateRange);
+            Handlebars.registerHelper('formatUSDate', formatUSDate);
+            Handlebars.registerHelper('calculateGradeLevel', calculateGradeLevel);
+            Handlebars.registerHelper('calculateTotalYears', calculateTotalYears);
+            Handlebars.registerHelper('formatSalary', formatSalary);
+            Handlebars.registerHelper('defaultValue', defaultValue);
+            Handlebars.registerHelper('formatWithPrefix', formatWithPrefix);
+            // Add a test helper to verify registration
+            Handlebars.registerHelper('testHelper', function () {
+                return 'Helper registration is working!';
+            });
+            // Verify helpers are available
+            if (typeof Handlebars.helpers['sortByDate'] !== 'function') {
+                console.error('Helper registration failed! sortByDate is not available.');
+                throw new Error('Helper registration verification failed');
+            }
+            console.log('Successfully registered all Handlebars helpers directly');
+        }
+        catch (error) {
+            console.error('Error registering Handlebars helpers:', error);
+            throw new Error(`Failed to register Handlebars helpers: ${error instanceof Error ? error.message : String(error)}`);
+        }
         // Get the template path
         const templatePath = resolveDataPath(`templates/${sector}/${sector}-template.md`);
         // Load the template
