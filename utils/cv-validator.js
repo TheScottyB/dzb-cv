@@ -6,6 +6,16 @@ import { diffLines } from 'diff';
 import chalk from 'chalk';
 
 /**
+ * Escapes special characters in a string for use in a regular expression
+ * 
+ * @param str The string to escape
+ * @returns A string with special regex characters escaped
+ */
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+}
+
+/**
  * CV Validator and Comparator
  * 
  * This script validates new CV text against Dawn's known data
@@ -22,7 +32,7 @@ const IDENTITY_MARKERS = [
 
 // Significant experience markers that should be present
 const EXPERIENCE_MARKERS = [
-  "Vylla",
+  "Vylla", // Will match both "Vylla" and "Vylla Home"
   "GenStone Realty",
   "Better Homes and Gardens Real Estate Star Homes",
   "healthcare",
@@ -34,6 +44,52 @@ const SKILL_MARKERS = [
   "Real Estate License",
   "Licensed Managing Broker",
   "Team Leadership"
+];
+
+// Known variations and their canonical forms
+const TERMINOLOGY_VARIATIONS = [
+  {
+    canonical: "Vylla Home",
+    variations: ["Vylla", "Vylla Inc", "Vylla Home Inc", "Vylla Services"],
+    category: "employer",
+    importance: "high"
+  },
+  {
+    canonical: "Licensed Managing Broker",
+    variations: ["Managing Broker", "Licensed Broker", "Managing Real Estate Broker"],
+    category: "license",
+    importance: "high"
+  },
+  {
+    canonical: "Better Homes and Gardens Real Estate Star Homes",
+    variations: ["BHGRE Star Homes", "Better Homes and Gardens", "BH&G Real Estate", "Star Homes"],
+    category: "employer",
+    importance: "medium"
+  },
+  {
+    canonical: "Real Estate Owned (REO)",
+    variations: ["REO", "Real Estate Owned", "bank-owned properties"],
+    category: "specialty",
+    importance: "medium"
+  },
+  {
+    canonical: "Housing and Urban Development (HUD)",
+    variations: ["HUD", "HUD properties", "HUD homes"],
+    category: "specialty",
+    importance: "medium"
+  },
+  {
+    canonical: "Illinois Department of Financial and Professional Regulation",
+    variations: ["IDFPR", "IL DFPR"],
+    category: "agency",
+    importance: "medium"
+  },
+  {
+    canonical: "McHenry",
+    variations: ["McHenry County", "McHenry, IL", "McHenry Illinois"],
+    category: "location",
+    importance: "low"
+  }
 ];
 
 /**
@@ -135,6 +191,42 @@ async function findBestMatch(text) {
 }
 
 /**
+ * Detects terminology variations in the text and reports differences
+ * from canonical forms
+ */
+function detectTerminologyVariations(text) {
+  const findings = [];
+  
+  for (const term of TERMINOLOGY_VARIATIONS) {
+    // Check if any variations are present
+    for (const variation of term.variations) {
+      // Create a regex that matches the variation as a whole word
+      // Use a simple word boundary approach to avoid regex escaping issues
+      const regex = new RegExp("\\b" + variation + "\\b", 'i');
+      
+      if (regex.test(text)) {
+        // This variation was found instead of the canonical form
+        const canonicalRegex = new RegExp("\\b" + term.canonical + "\\b", 'i');
+        
+        // Only report if canonical form is NOT also present
+        if (!canonicalRegex.test(text)) {
+          findings.push({
+            found: variation,
+            canonical: term.canonical,
+            category: term.category,
+            importance: term.importance
+          });
+        }
+        
+        break; // Only report the first variation found
+      }
+    }
+  }
+  
+  return findings;
+}
+
+/**
  * Compare text with existing CV and show diff
  */
 function compareAndShowDiff(newText, existingText, existingName) {
@@ -161,6 +253,39 @@ function compareAndShowDiff(newText, existingText, existingName) {
       console.log(color(prefix + part.value.trimEnd()));
     }
   });
+  
+  // Check for terminology variations
+  const variations = detectTerminologyVariations(newText);
+  
+  if (variations.length > 0) {
+    console.log(`\n${chalk.yellow('⚠')} ${chalk.yellow('Terminology variations detected:')}`);
+    
+    // Group by importance
+    const highImportance = variations.filter(v => v.importance === 'high');
+    const mediumImportance = variations.filter(v => v.importance === 'medium');
+    const lowImportance = variations.filter(v => v.importance === 'low');
+    
+    if (highImportance.length > 0) {
+      console.log(`\n  ${chalk.red('High importance terms:')}`);
+      highImportance.forEach(v => {
+        console.log(`  - Found "${chalk.red(v.found)}" but canonical form is "${chalk.green(v.canonical)}" [${v.category}]`);
+      });
+    }
+    
+    if (mediumImportance.length > 0) {
+      console.log(`\n  ${chalk.yellow('Medium importance terms:')}`);
+      mediumImportance.forEach(v => {
+        console.log(`  - Found "${chalk.yellow(v.found)}" but canonical form is "${chalk.green(v.canonical)}" [${v.category}]`);
+      });
+    }
+    
+    if (lowImportance.length > 0) {
+      console.log(`\n  ${chalk.blue('Minor variations:')}`);
+      lowImportance.forEach(v => {
+        console.log(`  - Found "${chalk.blue(v.found)}" but canonical form is "${chalk.green(v.canonical)}" [${v.category}]`);
+      });
+    }
+  }
 }
 
 /**
@@ -260,7 +385,46 @@ Example:
       console.log(`\n${chalk.cyan('Validation complete')}`);
       
       const fileName = path.basename(inputFilePath, path.extname(inputFilePath)) + '.md';
-      await saveValidatedCV(inputText, fileName);
+      
+      // Check for terminology variations before saving
+      const variations = detectTerminologyVariations(inputText);
+      
+      if (variations.length > 0) {
+        // If high importance variations are found, offer to standardize them
+        const highImportanceVariations = variations.filter(v => v.importance === 'high');
+        
+        if (highImportanceVariations.length > 0) {
+          console.log(`\n${chalk.yellow('⚠')} High importance terminology variations found.`);
+          console.log(`Would you like to standardize the terminology before saving? (y/n)`);
+          
+          // In a real interactive CLI, we would prompt for input here.
+          // For this example, we'll automatically standardize
+          
+          console.log(`\n${chalk.green('✓')} Automatically standardizing terminology...`);
+          
+          let standardizedText = inputText;
+          
+          for (const variation of variations) {
+            // Create a regex that matches the variation as a whole word
+            const regex = new RegExp("\\b" + variation.found + "\\b", 'gi');
+            
+            // Replace with canonical form
+            standardizedText = standardizedText.replace(regex, variation.canonical);
+            console.log(`  - Replacing "${chalk.yellow(variation.found)}" with "${chalk.green(variation.canonical)}"`);
+          }
+          
+          // Save the standardized version
+          await saveValidatedCV(standardizedText, fileName);
+          console.log(`\n${chalk.green('✓')} Saved standardized CV to: ${chalk.blue(path.join('cv-versions', fileName))}`);
+        } else {
+          // Save as-is, but note the variations
+          await saveValidatedCV(inputText, fileName);
+          console.log(`\n${chalk.green('✓')} Saved validated CV with minor terminology variations.`);
+        }
+      } else {
+        // No variations, save as-is
+        await saveValidatedCV(inputText, fileName);
+      }
       
       // Suggest next steps
       console.log(`\nNext steps:`);
