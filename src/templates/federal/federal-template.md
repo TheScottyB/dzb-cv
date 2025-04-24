@@ -12,27 +12,27 @@
 ## Work Experience
 _(Listed in reverse chronological order as required by USAJOBS)_
 
-{{#sortByDate workExperience}}
-{{#each this}}
+{{#sortByDate this}}
+{{#each allExperience}}
 ### {{position}}
-**Employer:** {{#if employer}}{{employer}}{{else}}{{organization}}{{/if}}
+**Employer:** {{employer}}
 {{#if address}}**Location:** {{address}}{{/if}}
 
 **Period of Employment:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}
 **Hours per Week:** {{#if hoursPerWeek}}{{hoursPerWeek}}{{else}}40{{/if}} hrs/wk
 
-**Federal Pay Grade Equivalent:** {{#if payGrade}}{{payGrade}}{{else}}GS-{{calculateGradeLevel position}}{{/if}}
+**Federal Pay Grade Equivalent:** GS-{{calculateGradeLevel position}}
 **Salary:** {{#if salary}}{{formatSalary salary}}{{else}}Available upon request{{/if}}
 **Supervisor:** {{#if supervisor}}{{supervisor}}{{else}}Available upon request{{/if}}
 **Working Conditions:** {{#if workConditions}}{{workConditions}}{{else}}Professional office environment{{/if}}
 
-**Primary Duties and Responsibilities:**
+**Key Responsibilities and Achievements:**
 {{#each duties}}
 - {{this}}
 {{/each}}
 
 {{#if achievements}}
-**Key Accomplishments and Outcomes:**
+**Notable Achievements:**
 {{#each achievements}}
 - {{this}}
 {{/each}}
