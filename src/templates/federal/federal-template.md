@@ -1,45 +1,138 @@
-# Federal Resume Template
+# {{personalInfo.name.full}}
 
 ## Personal Information
-- Full Name: {{full_name}}
-- Email: {{email}}
-- Phone: {{phone}}
-- Location: {{location}}
+**Email:** {{personalInfo.contact.email}}  
+**Phone:** {{personalInfo.contact.phone}}  
+**Address:** {{personalInfo.contact.address}}  
+**Citizenship Status:** {{personalInfo.citizenship}}
 
-## Citizenship and Security Clearance
-- Citizenship Status: {{citizenship}}
-- Security Clearance: {{clearance_level}}
+## Professional Summary
+{{professionalSummary}}
 
 ## Work Experience
-{{#each positions}}
-### {{title}} at {{organization}}
-**Location:** {{location}}
-**Start Date:** {{start_date}} to {{end_date}}
-**Hours per week:** {{hours_per_week}}
-**Salary:** {{salary}}
-**Supervisor:** {{supervisor_name}} ({{supervisor_phone}})
-Contact Supervisor: {{ok_to_contact}}
+_(Listed in reverse chronological order as required by USAJOBS)_
+
+{{#sortByDate allExperience}}
+### {{position}}
+**Employer:** {{employer}}  
+**Location:** {{address}}  
+**Period of Employment:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}  
+**Hours per Week:** {{hours}}  
+**Federal Pay Grade Equivalent:** {{#if gradeEquivalent}}{{gradeEquivalent}}{{else}}GS-{{calculateGradeLevel position}}{{/if}}  
+**Salary:** {{#if salary}}{{formatSalary salary}}{{else}}{{#if employmentType}}{{employmentType}}{{else}}Available upon request{{/if}}{{/if}}  
+**Supervisor:** {{supervisor}}{{#if mayContact}} (May be contacted){{/if}}  
+**Working Conditions:** {{#if industry}}{{#eq industry "healthcare"}}Medical/Clinical environment with regular patient interaction{{else}}Professional office environment with regular local travel{{/eq}}{{else}}Professional office environment{{/if}}
 
 **Duties, Accomplishments and Related Skills:**
-{{description}}
-
+{{#each duties}}
+- {{this}}
 {{/each}}
 
-## Education
+{{#if achievements}}
+**Notable Achievements:**
+{{#each achievements}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+{{/sortByDate}}
+
+## Education, Training, and Development
+_(Listed in reverse chronological order)_
+
+### Formal Education
 {{#each education}}
-### {{degree}} in {{field}}
-**Institution:** {{school}}
-**Location:** {{location}}
-**Graduation Date:** {{completion_date}}
-**GPA:** {{gpa}}
+**{{certification}}**  
+{{#if institution}}Institution: {{institution}}{{/if}}  
+{{#if year}}Year Completed: {{year}}{{/if}}  
+{{#if status}}Current Status: {{status}}{{/if}}  
+{{#if notes}}Additional Information: {{notes}}{{/if}}
 
 {{/each}}
 
-## Additional Information
-- Veterans' Preference: {{veterans_preference}}
-- Federal Civilian Status: {{federal_status}}
+### Certifications
+{{#each certifications}}
+**{{name}}**  
+{{#if issuer}}Issuing Organization: {{issuer}}{{/if}}  
+{{#if dateObtained}}Date Obtained: {{formatUSDate dateObtained}}{{/if}}  
+{{#if expirationDate}}Expiration Date: {{#if expirationDate}}{{formatUSDate expirationDate}}{{else}}No Expiration{{/if}}{{/if}}  
+{{#if licenseNumber}}License/Certification Number: {{licenseNumber}}{{/if}}
 
-## References
-Available upon request
+{{/each}}
 
-_Note: This template follows USAJOBS format requirements_
+### Professional Training
+{{#each trainingAndCoaching}}
+**{{role}} - {{organization}}**  
+**Period:** {{formatUSDate startDate}} to {{#if endDate}}{{formatUSDate endDate}}{{else}}Present{{/if}}  
+**Hours Completed:** {{#if hours}}{{hours}}{{else}}40{{/if}}
+
+**Program Focus:**
+{{#each responsibilities}}
+- {{this}}
+{{/each}}
+
+{{#if coursesCompleted}}
+**Completed Training:**
+{{#each coursesCompleted}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+{{/each}}
+
+## Job-Related Skills and Competencies
+
+### Healthcare Administration
+{{#each skills.healthcareAdministration}}
+- {{this}}
+{{/each}}
+
+### Leadership and Management
+{{#each skills.managementAndLeadership}}
+- {{this}}
+{{/each}}
+
+### Technical Skills
+{{#each skills.technical}}
+- {{this}}
+{{/each}}
+
+## Professional Affiliations and Leadership Roles
+{{#each professionalAffiliations}}
+### {{organization}}
+{{#if roles}}
+**Leadership Positions:**
+{{#each roles}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+{{#if activities}}
+**Activities and Contributions:**
+{{#each activities}}
+- {{this}}
+{{/each}}
+{{/if}}
+
+{{/each}}
+
+## Additional Federal Information
+- **Citizenship Status:** {{personalInfo.citizenship}}
+- **Security Clearance:** Not Required
+- **Veterans' Preference:** Not Applicable
+- **Federal Civilian Status:** Not Applicable
+- **Availability:** Immediate
+- **Travel Requirements:** Willing to Travel as Needed
+- **Desired Locations:** Illinois and surrounding states
+- **Work Schedule:** Full-time, including occasional evenings and weekends as required
+- **Work Environment:** Professional office environment with field work as needed
+- **Physical Requirements:** Able to perform essential functions with or without reasonable accommodation
+- **Total Years of Professional Experience:** {{calculateTotalYears allExperience}}
+
+---
+
+CERTIFICATION OF ACCURACY: I certify that, to the best of my knowledge and belief, all of the information included in this resume is true, correct, and complete. I understand that any falsification or material omission of information may result in denial of employment, removal from federal service, and/or prosecution under 18 U.S.C. § 1001.
+
+_Supporting documentation available upon request_
+
+**Note: This resume follows USAJOBS format requirements and Office of Personnel Management (OPM) guidelines**

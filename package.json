@@ -6,8 +6,11 @@
   "type": "module",
   "scripts": {
     "clean": "rm -rf dist",
-    "build": "npm run clean && tsc && npm run copy-templates",
-    "copy-templates": "mkdir -p dist/templates && cp -r src/templates/* dist/templates/ && mkdir -p dist/components && cp -r src/components/* dist/components/",
+    "build": "npm run clean && tsc && node tools/build-utils.js",
+    "copy-assets": "node tools/build-utils.js",
+    "test-generation": "node tools/test-generation.js",
+    "validate": "node tools/validate-implementation.js",
+    "verify": "node tools/verify-fixes.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "start": "node dist/cli.js",
     "analyze-job": "node dist/cli-job-analyzer.js",

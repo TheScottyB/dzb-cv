@@ -1,12 +1,17 @@
-import { fileURLToPath } from 'url';
-import { join, dirname } from 'path';
 import { promises as fs } from 'fs';
-import { loadTemplate, loadCVData } from "./utils/helpers.js";
+import { join } from 'path';
+import { 
+  loadTemplate, 
+  loadCVData, 
+  initializeTemplateSystem 
+} from "./utils/helpers.js";
+import { 
+  resolveOutputPath, 
+  resolveDataPath, 
+  ensureProjectDirectories 
+} from "./utils/path-resolver.js";
 import { convertMarkdownToPdf, DEFAULT_PDF_OPTIONS } from './utils/pdf-generator.js';
 import type { CVData, PDFOptions } from "./types/cv-types.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export interface CVGenerationOptions {
   format: 'markdown' | 'pdf';
@@ -31,27 +36,6 @@ const DEFAULT_CV_OPTIONS: CVGenerationOptions = {
  * @param options Options for CV generation
  * @returns Path to the generated CV file
  */
-async function generateCV(
-  sector: "federal" | "state" | "private", 
-  outputPath: string,
-  options: Partial<CVGenerationOptions> = {}
-): Promise<string> {
-  // Merge options with defaults
-  const mergedOptions: CVGenerationOptions = {
-    ...DEFAULT_CV_OPTIONS,
-    ...options,
-    pdfOptions: {
-      ...DEFAULT_CV_OPTIONS.pdfOptions,
-      ...(options.pdfOptions || {})
-    }
-  };
-
-  try {
-    // Load base CV data
-    const cvData = await loadCVData(join(__dirname, "data", "base-info.json"));
-    
-    // Load sector-specific template
-    const templatePath = join(__dirname, "templates", sector, `${sector}-template.md`);
     const template = await loadTemplate(templatePath);
     
     // Generate CV content from template
