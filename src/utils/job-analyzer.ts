@@ -288,56 +288,6 @@ function detectDocumentSections(document: Document): Record<string, Element[]> {
  * @param elements Array of DOM elements to extract list items from
  * @returns Array of text content from list items or paragraphs
  */
-function extractListItemsFromElements(elements: Element[]): string[] {
-  const items: string[] = [];
-  for (const element of elements) {
-    // If element is a list, extract its items
-    if (element.tagName === 'UL' || element.tagName === 'OL') {
-      const listItems = Array.from(element.querySelectorAll('li'))
-        .map(li => li.textContent?.trim())
-        .filter(Boolean) as string[];
-      items.push(...listItems);
-    } 
-    // If element contains lists, extract those as well
-    else if (element.querySelectorAll('ul, ol').length > 0) {
-      const listItems = Array.from(element.querySelectorAll('li'))
-        .map(li => li.textContent?.trim())
-        .filter(Boolean) as string[];
-      items.push(...listItems);
-    }
-    // Otherwise, if it's a paragraph or standalone with text
-    else if (element.tagName === 'P' || (element.textContent && element.textContent.trim().length > 0)) {
-      items.push(element.textContent!.trim());
-    }
-  }
-  return items;
-}
-
-// MINIMAL ROBUST VERSION - replaces all previous block and closes properly
-function parseLinkedInJob(document: Document, url: string): JobPostingAnalysis {
-  const title = document.querySelector('.top-card-layout__title')?.textContent?.trim()
-    || document.querySelector('h1')?.textContent?.trim()
-    || 'Unknown Position';
-  const company = document.querySelector('.topcard__org-name-link')?.textContent?.trim()
-    || document.querySelector('.topcard__flavor--metadata')?.textContent?.trim()
-    || 'Unknown Company';
-  const location = document.querySelector('.topcard__flavor--bullet')?.textContent?.trim()
-    || document.querySelector('.topcard__flavor-row')?.textContent?.trim();
-
-  const description = document.querySelector('.description__text')?.textContent?.trim() || '';
-
-  // For now, leave responsibilities and qualifications empty.
-  const responsibilities: string[] = [];
-  const qualifications: string[] = [];
-
-  // Extract skills/key terms from the description.
-  const keyTerms = extractKeyTerms(description);
-
-  return {
-    title,
-    company,
-    location,
-    responsibilities,
     qualifications,
     keyTerms,
     requiredSkills: keyTerms,
@@ -880,5 +830,4 @@ function detectAntiBotMeasures(document: Document): boolean {
   
   // Not detected as anti-bot page
   return false;
-}
 }
