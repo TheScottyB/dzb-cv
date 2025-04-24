@@ -224,7 +224,7 @@ Example:
     } else {
       console.log(`${chalk.red('✗')} Identity validation failed (${chalk.red(Math.round(identityValidation.percentageFound))}% of markers found)`);
       console.log(`   Missing identity markers: ${chalk.yellow(identityValidation.missingMarkers.join(', '))}`);
-      console.log(`\n${chalk.red('This does not appear to be Dawn Zurick Beilfuss\\'s CV.')}`);
+      console.log(`\n${chalk.red('This does not appear to be Dawn Zurick Beilfuss\'s CV.')}`);
       process.exit(1);
     }
     
@@ -246,7 +246,7 @@ Example:
         console.log(`   Missing expected skills: ${chalk.yellow(contentValidation.missingSkills.join(', '))}`);
       }
       
-      console.log(`\n${chalk.yellow('This CV appears to be incomplete or differs significantly from Dawn\\'s normal format.')}`);
+      console.log(`\n${chalk.yellow('This CV appears to be incomplete or differs significantly from Dawn\'s normal format.')}`);
     }
     
     // Find best match for comparison
