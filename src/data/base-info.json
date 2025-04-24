@@ -40,6 +40,11 @@
       "Process Improvement",
       "Training & Onboarding",
       "Realtor Board Service & Committee Leadership",
+      "Agent Coaching & Development",
+      "Training Program Development",
+      "Performance Evaluation & Feedback",
+      "Career Development Planning",
+      "Mentorship & Guidance",
       "Supervision (Healthcare Front Desk/Call Center)"
     ],
     "realEstateOperations": [
@@ -74,6 +79,9 @@
       "REO Platforms (Equator, Pyramid, Res.Net)",
       "CRM/Marketing (Follow Up Boss, YLOPO)",
       "Industry Tools (Broker Kit, Monday.com, Phone.com)",
+      "Transaction Management Systems (DotLoop, MRED)",
+      "BHGRE Connect Platform",
+      "MLS Systems",
       "Healthcare Scheduling Software"
     ],
     "certifications": [
@@ -303,10 +311,34 @@
           "Ensured compliance with Illinois Department of Financial and Professional Regulation (IDFPR) requirements",
           "Directed operations according to Illinois real estate law and regulations",
           "Facilitated numerous property transactions",
-          "Board of Directors for Heartland Realtor Organization"
+          "Board of Directors for Heartland Realtor Organization",
+          "Coached and mentored new real estate agents on business development strategies",
+          "Developed and delivered training sessions on real estate best practices and compliance",
+          "Created and maintained training materials for onboarding new agents",
+          "Conducted regular performance evaluations and provided constructive feedback",
+          "Led team meetings focused on professional development and market trends",
+          "Assisted agents with CRM setup and marketing materials",
+          "Worked on multiple committees including Contracts and Forms, Public Relations, and RPAC/Government Affairs",
+          "Utilized transaction management systems including DotLoop and MRED"
         ],
         "supervisor": "Jim Starwalt, Owner",
-        "mayContact": true
+        "mayContact": true,
+        "training": [
+          "Virtual Grow",
+          "Virtual Productive Systems",
+          "Virtual Agent Series",
+          "Listing Mastery",
+          "Business Planning",
+          "Learning Leaders",
+          "Virtual Maestro",
+          "Virtual Value Proposition",
+          "Recruiting Essentials",
+          "Coaching Classes",
+          "Virtual Prosper",
+          "Ninja Training",
+          "Green Nation",
+          "Office Productivity"
+        ]
       },
       {
         "employer": "O.K. & Assoc., Realty Plus",
@@ -451,6 +483,51 @@
       "organization": "GenStone Realty",
       "achievement": "Supervised hundreds of purchase offers and transactions",
       "period": "October 2021 - December 2022"
+    }
+  ],
+  "trainingAndCoaching": [
+    {
+      "role": "Agent Development Lead",
+      "organization": "Better Homes and Gardens Real Estate Star Homes",
+      "period": "October 2017 - October 2021",
+      "responsibilities": [
+        "Developed and implemented comprehensive onboarding program for new agents",
+        "Conducted training sessions on transaction management and compliance",
+        "Provided one-on-one coaching to agents on business development strategies",
+        "Created training materials on Illinois real estate regulations and best practices",
+        "Mentored new agents through their first transactions to ensure proper documentation",
+        "Led regular team meetings focused on professional development",
+        "Assisted agents with CRM setup and marketing materials",
+        "Coached agents on committee involvement and leadership opportunities",
+        "Promoted agent participation in industry events and professional organizations"
+      ],
+      "coursesCompleted": [
+        "Virtual Grow",
+        "Virtual Productive Systems",
+        "Virtual Agent Series",
+        "Listing Mastery",
+        "Business Planning",
+        "Learning Leaders",
+        "Virtual Maestro",
+        "Virtual Value Proposition",
+        "Recruiting Essentials",
+        "Coaching Classes",
+        "Virtual Prosper",
+        "Ninja Training",
+        "Green Nation",
+        "Office Productivity"
+      ]
+    },
+    {
+      "role": "New Hire Trainer",
+      "organization": "Washington Mutual",
+      "period": "2003-2005",
+      "responsibilities": [
+        "Trained new Personal Financial Representatives on banking products and services",
+        "Developed quick-reference guides for loan application processing",
+        "Provided shadowing opportunities for new hires to observe customer interactions",
+        "Conducted follow-up coaching sessions to ensure proper implementation of procedures"
+      ]
     }
   ],
   "cvTypes": {
