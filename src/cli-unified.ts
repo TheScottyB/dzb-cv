@@ -412,11 +412,23 @@ async function createCoverLetter(
  * Extracts a reasonable company/agency name from job analysis
  */
 function determineCompanyName(jobAnalysis: ExtendedJobPostingAnalysis): string {
-  // First, check if we have a valid company name that's not "Unknown Company"
+  // Extract company name if jobAnalysis.company includes both role and organization
   if (jobAnalysis.company && jobAnalysis.company !== "Unknown Company") {
+    // If the company string includes " | ", take the last segment (e.g., "Mercyhealth").
+    if (jobAnalysis.company.includes('|')) {
+      const parts = jobAnalysis.company.split('|').map(p => p.trim());
+      // Use the last non-empty segment as company name
+      if (parts.length > 1) {
+        return parts[parts.length - 1];
+      }
+    }
+    // If it includes " at ", take string after " at "
+    if (jobAnalysis.company.toLowerCase().includes(' at ')) {
+      return jobAnalysis.company.split(' at ').pop()?.trim() || jobAnalysis.company;
+    }
+    // Otherwise, just return as-is
     return jobAnalysis.company;
   }
-
   // For state jobs, try to extract agency name from job description or qualifications
   const fullText = 
     [jobAnalysis.title, jobAnalysis.description || ''].join(' ') + ' ' +
@@ -453,12 +465,50 @@ function determineCompanyName(jobAnalysis: ExtendedJobPostingAnalysis): string {
  * Extract key qualifications based on job analysis and sector
  */
 function extractKeyQualifications(jobAnalysis: ExtendedJobPostingAnalysis, sector: SectorType): string[] {
-  const qualifications = [...jobAnalysis.keyTerms];
-  
-  // Extract additional qualifications from responsibilities and requirements
-  const allText = jobAnalysis.responsibilities.join(' ') + ' ' + jobAnalysis.qualifications.join(' ');
-  
-  // Common qualification categories to look for
+  let qualifications = [...jobAnalysis.keyTerms];
+
+  // Define a denylist of unrelated tech skills for non-tech jobs
+  const techDenyList = [
+    'javascript', 'typescript', 'java', 'python', 'c++', 'c#', 'ruby', 'php', 'go', 'node', 'react', 'vue', 'angular', 'golang',
+    'aws', 'azure', 'gcp', 'cloud', 'api', 'kubernetes', 'docker', 'devops', 'ci/cd', 'lambda', 'express'
+  ];
+  // Define an allowlist for admin/healthcare/people skills
+  const adminHealthAllowList = [
+    'communication', 'customer service', 'leadership', 'management', 'compliance', 'confidential', 'scheduling', 'detail', 'filing',
+    'supervision', 'training', 'record keeping', 'multi-tasking', 'teamwork', 'problem-solving', 'patient', 'clinic', 'medical',
+    'scheduling', 'healthcare', 'admin', 'administrative', 'staff', 'appointment'
+  ];
+
+  // Remove denylisted tech skills unless they are explicitly in the job text
+  const allText = `${jobAnalysis.title} ${jobAnalysis.responsibilities.join(' ')} ${jobAnalysis.qualifications.join(' ')} ${jobAnalysis.description}`
+    .toLowerCase();
+
+  qualifications = qualifications.filter(q => {
+    if (techDenyList.includes(q.toLowerCase())) {
+      // Only include tech term if it appears naturally in the job text (false positive protection)
+      return allText.includes(q.toLowerCase());
+    }
+    // Keep all non-denylisted terms
+    return true;
+  });
+
+  // If in healthcare/admin role, boost preferred admin/health terms if not present
+  const isHealthcareAdmin = /health|clinic|patient|supervisor|admin|medical|front desk|office/i.test(allText);
+
+  if (isHealthcareAdmin) {
+    // Remove any tech terms or unrelated "developer"-type skills
+    qualifications = qualifications.filter(q =>
+      !techDenyList.includes(q.toLowerCase())
+    );
+    // Add allowlist skills if the posting mentions them
+    adminHealthAllowList.forEach(skill => {
+      if (allText.includes(skill) && !qualifications.some(q => q.toLowerCase().includes(skill))) {
+        qualifications.push(skill.charAt(0).toUpperCase() + skill.slice(1));
+      }
+    });
+  }
+
+  // Extract additional qualifications from responsibilities and requirements using the category patterns
   const qualificationCategories = [
     { pattern: /Microsoft Office|MS Office|Excel|Word|PowerPoint|Outlook/i, text: "Microsoft Office suite proficiency" },
     { pattern: /communication skills|communicat/i, text: "communication skills" },
@@ -471,14 +521,12 @@ function extractKeyQualifications(jobAnalysis: ExtendedJobPostingAnalysis, secto
     { pattern: /filing|file system|document/i, text: "document management" },
     { pattern: /multi-task|prioritiz|multiple/i, text: "multi-tasking and prioritization" }
   ];
-  
-  // Add relevant qualifications based on text analysis
+
   for (const category of qualificationCategories) {
     if (category.pattern.test(allText) && !qualifications.includes(category.text)) {
       qualifications.push(category.text);
     }
   }
-  
   // For state jobs, add some relevant government experience points if appropriate
   if (sector === 'state' && (allText.includes("regulation") || allText.includes("compliance"))) {
     qualifications.push("regulatory compliance");

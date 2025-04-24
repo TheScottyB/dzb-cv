@@ -32,7 +32,6 @@ const isValidUSDateFormat = (dateStr: string): boolean => {
          year >= MIN_VALID_YEAR && 
          year <= CURRENT_YEAR + MAX_FUTURE_YEARS;
 };
-};
 
 describe("CV Generator", () => {
   // Test data and templates
@@ -357,12 +356,7 @@ describe("CV Generator", () => {
         indeed: renderAndCheckTemplate(indeedTemplate, data),
         general: renderAndCheckTemplate(generalTemplate, data)
       };
-    } catch (error) {
-      console.error("Error in test setup:", error);
-      throw error;
-    }
   });
-
   // =========================================================================
   // Basic Tests
   // =========================================================================

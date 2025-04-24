@@ -149,13 +149,16 @@ describe('Asset Manager', () => {
     jest.clearAllMocks();
   });
   
-  //
   describe('File Type Detection', () => {
-          mtime: new Date(),
-          birthtime: new Date(),
-        };
-      });
-      
+    test('validateFile should return valid for existing file with correct extension', async () => {
+      const filePath = join(testDocumentsDir, 'sample-doc.pdf');
+      mockedStat.mockImplementationOnce(async (path) => ({
+        isFile: () => true,
+        isDirectory: () => false,
+        size: 12345,
+        mtime: new Date(),
+        birthtime: new Date(),
+      }));
       const result = await validateFile(filePath, ['pdf', 'docx']);
       expect(result.valid).toBe(true);
       expect(mockedStat).toHaveBeenCalled();
@@ -163,17 +166,14 @@ describe('Asset Manager', () => {
     
     test('getDocumentInfo should return document information', async () => {
       const filePath = join(testDocumentsDir, 'sample-doc.pdf');
-      
-      // Mock stat to return success for this file
-          isFile: () => true,
-          size: 12345,
-          mtime: new Date(),
-          birthtime: new Date()
-        };
-      });
-      
+      mockedStat.mockImplementationOnce(async (path) => ({
+        isFile: () => true,
+        isDirectory: () => false,
+        size: 12345,
+        mtime: new Date(),
+        birthtime: new Date(),
+      }));
       const docInfo = await getDocumentInfo(filePath);
-      
       expect(docInfo).toBeDefined();
       expect(docInfo.name).toBe('sample-doc.pdf');
       expect(docInfo.extension).toBe('pdf');
@@ -184,8 +184,14 @@ describe('Asset Manager', () => {
     
     test('createAssetMetadata should return valid metadata for a file', async () => {
       const filePath = join(testDocumentsDir, 'sample-doc.pdf');
+      mockedStat.mockImplementationOnce(async (path) => ({
+        isFile: () => true,
+        isDirectory: () => false,
+        size: 12345,
+        mtime: new Date(),
+        birthtime: new Date(),
+      }));
       const metadata = await createAssetMetadata(filePath);
-      
       expect(metadata).toBeDefined();
       expect(metadata.id).toBeDefined();
       expect(metadata.name).toBe('sample-doc.pdf');
