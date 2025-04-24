@@ -48,6 +48,21 @@ The generator:
 - Produces professional PDF output
 - Adds headers and footers as needed
 
+### Import-to-PDF Utility
+
+Converts imported CV text directly to PDF with enhanced formatting.
+
+```bash
+node utils/import-to-pdf.js [input_path]
+```
+
+This tool:
+- Reads imported CV markdown files
+- Strips front matter metadata
+- Enhances formatting for PDF output
+- Applies professional styling
+- Saves to appropriate sector directory
+
 ## Workflow Example
 
 A typical workflow using these tools:
