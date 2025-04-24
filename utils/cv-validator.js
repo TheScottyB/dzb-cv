@@ -42,21 +42,28 @@ const EXPERIENCE_MARKERS = [
 // Key skills that should be referenced
 const SKILL_MARKERS = [
   "Real Estate License",
-  "Licensed Managing Broker",
-  "Team Leadership"
+  "Managing Broker",
+  "Team Leadership",
+  "Broker"
 ];
 
 // Known variations and their canonical forms
 const TERMINOLOGY_VARIATIONS = [
   {
     canonical: "Vylla Home",
-    variations: ["Vylla", "Vylla Inc", "Vylla Home Inc", "Vylla Services"],
+    variations: ["Vylla", "Vylla Services", "Vylla Team"],
     category: "employer",
     importance: "high"
   },
   {
-    canonical: "Licensed Managing Broker",
-    variations: ["Managing Broker", "Licensed Broker", "Managing Real Estate Broker"],
+    canonical: "Managing Broker (IL)",
+    variations: ["Broker IL", "Illinois Broker", "Real Estate Broker Illinois", "Licensed Broker Illinois", "IL Broker"],
+    category: "license",
+    importance: "high"
+  },
+  {
+    canonical: "Broker (WI)",
+    variations: ["Wisconsin Agent", "Licensed Agent WI", "Real Estate Agent Wisconsin"],
     category: "license",
     importance: "high"
   },
@@ -85,10 +92,22 @@ const TERMINOLOGY_VARIATIONS = [
     importance: "medium"
   },
   {
+    canonical: "Wisconsin Department of Safety and Professional Services",
+    variations: ["DSPS", "WI DSPS", "Wisconsin DSPS"],
+    category: "agency",
+    importance: "medium"
+  },
+  {
     canonical: "McHenry",
     variations: ["McHenry County", "McHenry, IL", "McHenry Illinois"],
     category: "location",
     importance: "low"
+  },
+  {
+    canonical: "R.I.G.H.T. Team",
+    variations: ["RIGHT Team", "The RIGHT Team", "R.I.G.H.T Team", "RIGHT"],
+    category: "team",
+    importance: "medium"
   }
 ];
 
