@@ -37,10 +37,17 @@ program
   .option('--pdf', 'Save PDF of the page')
   .option('--analyze', 'Analyze the scraped job posting after scraping')
   .option('--user-agent <string>', 'Custom user agent string to use')
+  .option('--use-existing-browser', 'Connect to an existing Chrome instance instead of launching a new one')
+  .option('--cdp-url <url>', 'URL for Chrome DevTools Protocol when using existing browser', 'http://localhost:9222')
   .addHelpText('after', `
 Note: This command will automatically detect CAPTCHAs and verification challenges.
       If detected in headless mode, it will switch to visible browser mode and
-      prompt you to solve the CAPTCHA manually before continuing.`)
+      prompt you to solve the CAPTCHA manually before continuing.
+      
+To use an existing Chrome instance (recommended for sites with login/CAPTCHA):
+  1. Start Chrome with: chrome --remote-debugging-port=9222
+  2. Login to the job site manually and navigate to the job listing
+  3. Run this command with: --use-existing-browser`)
   .action(async (url, options) => {
     try {
       console.log(chalk.blue.bold('🔍 Scraping job posting from browser...'));
@@ -56,7 +63,9 @@ Note: This command will automatically detect CAPTCHAs and verification challenge
         saveHtml: true,
         saveScreenshot: options.screenshot,
         savePdf: options.pdf,
-        customUserAgent: options.userAgent
+        customUserAgent: options.userAgent,
+        useExistingBrowser: options.useExistingBrowser,
+        cdpUrl: options.cdpUrl
       };
       
       console.log(chalk.yellow('Launching browser and navigating to URL...'));

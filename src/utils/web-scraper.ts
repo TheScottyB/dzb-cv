@@ -22,6 +22,8 @@ export interface ScraperOptions {
     value: string;
     domain: string;
   }>;
+  useExistingBrowser?: boolean;
+  cdpUrl?: string;
 }
 
 /**
@@ -39,7 +41,11 @@ const DEFAULT_SCRAPER_OPTIONS: ScraperOptions = {
     height: 1080
   },
   // Latest Chrome user agent string with current version
-  customUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+  customUserAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+  // By default, don't use existing browser
+  useExistingBrowser: false,
+  // Default Chrome DevTools Protocol URL (when Chrome is started with --remote-debugging-port=9222)
+  cdpUrl: 'http://localhost:9222'
 };
 
 /**
@@ -94,16 +100,37 @@ export async function scrapeJobPosting(
   // Generate a filename based on the URL
   const filename = generateFilename(url);
   
-  // Initialize browser
-  const browser = await puppeteer.launch({
-    headless: mergedOptions.headless,
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-web-security',
-      '--disable-features=IsolateOrigins,site-per-process'
-    ]
-  });
+  // Initialize browser - either connect to existing instance or launch new one
+  let browser;
+  
+  if (mergedOptions.useExistingBrowser) {
+    try {
+      console.log(`Connecting to existing Chrome instance at ${mergedOptions.cdpUrl}...`);
+      
+      // Connect to the browser instance
+      browser = await puppeteer.connect({
+        browserURL: mergedOptions.cdpUrl,
+        defaultViewport: mergedOptions.viewport
+      });
+      
+      console.log('Successfully connected to existing Chrome instance.');
+    } catch (error) {
+      throw new Error(`Failed to connect to existing Chrome instance: ${error instanceof Error ? error.message : String(error)}\n` + 
+        `Make sure Chrome is running with the remote debugging port enabled.\n` +
+        `You can start Chrome with: chrome --remote-debugging-port=9222`);
+    }
+  } else {
+    // Launch a new browser
+    browser = await puppeteer.launch({
+      headless: mergedOptions.headless,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-web-security',
+        '--disable-features=IsolateOrigins,site-per-process'
+      ]
+    });
+  }
   
   try {
     const page = await browser.newPage();
@@ -168,8 +195,12 @@ export async function scrapeJobPosting(
         console.log(`CAPTCHA screenshot saved to: ${captchaScreenshotPath}`);
       }
       
-      // Close the headless browser
-      await browser.close();
+      // Close the headless browser or disconnect if using existing browser
+      if (mergedOptions.useExistingBrowser) {
+        await browser.disconnect();
+      } else {
+        await browser.close();
+      }
       
       // Notify about switching to visible mode for manual CAPTCHA solving
       console.log('Switching to visible browser mode for manual CAPTCHA solving...');
@@ -262,15 +293,28 @@ export async function scrapeJobPosting(
         jobData = await scrapeGenericJob(page, url, htmlPath, screenshotPath);
       }
       
-      // Close browser
-      await browser.close();
+      // Close browser or disconnect if using existing browser
+      if (mergedOptions.useExistingBrowser) {
+        await browser.disconnect();
+      } else {
+        await browser.close();
+      }
       
       return jobData;
     }
     
   } catch (error) {
-    // Close browser on error
-    await browser.close();
+    // Close browser or disconnect if using existing browser
+    try {
+      if (mergedOptions.useExistingBrowser) {
+        await browser.disconnect();
+      } else {
+        await browser.close();
+      }
+    } catch (closeError) {
+      // Ignore any errors during browser closing/disconnection
+      console.error('Error during browser cleanup:', closeError);
+    }
     
     throw new Error(`Failed to scrape job posting: ${error instanceof Error ? error.message : String(error)}`);
   }

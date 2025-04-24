@@ -102,14 +102,31 @@ pnpm cv -- scrape https://linkedin.com/jobs/view/12345 --no-headless
 pnpm cv -- scrape https://monster.com/job/12345 --analyze
 ```
 
-This command uses Puppeteer to open a headless (or visible) browser, navigate to the job posting URL, and scrape the content. It works around anti-scraping measures by acting like a real browser. The command saves:
+This command uses Puppeteer to scrape job postings in one of three ways:
 
-1. HTML file of the job posting
-2. Screenshot of the job posting page
-3. Text file containing the structured job details
-4. Optional PDF of the entire page
+1. **Headless Browser (Default):** Fast, invisible browser automation
+2. **Visible Browser (`--no-headless`):** Shows the browser UI for monitoring
+3. **Existing Browser (`--use-existing-browser`):** Connects to a Chrome instance you've already started
 
-It works well with Indeed, LinkedIn, and other job sites that might block regular web requests.
+The command saves:
+- HTML file of the job posting
+- Screenshot of the job posting page
+- Text file containing the structured job details
+- Optional PDF of the entire page
+
+For sites with strong anti-scraping measures (like Indeed), the recommended approach is:
+
+```bash
+# Step 1: Start Chrome with remote debugging enabled
+chrome --remote-debugging-port=9222   # On macOS: /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9222
+
+# Step 2: Manually navigate to the job posting and login if needed
+
+# Step 3: Run the scraper connected to your browser instance
+pnpm cv -- scrape <URL> --use-existing-browser --analyze
+```
+
+This approach bypasses most anti-scraping measures since it uses your authenticated browser session.
 
 #### 5. Generate Job Site Optimized CV
 
