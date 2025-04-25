@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job-description>
+  <metadata>
+    <title>Full Stack Developer</title>
+    <company>Test Corp</company>
+    <employment-type>FULL_TIME</employment-type>
+    <date-posted>2024-01-15</date-posted>
+    <valid-through>2024-12-31</valid-through>
+    <location>
+      <city>Remote</city>
+      <state>US</state>
+      <address></address>
+    </location>
+  </metadata>
+
+  <section name="overview">
+    <description>We&apos;re seeking a talented Full Stack Developer to help build our next-generation platform.</description>
+  </section>
+  <section name="benefits">
+    <description>• Remote work options• Flexible hours• Professional development budget</description>
+  </section>
+</job-description>

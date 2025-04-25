@@ -1,0 +1,14 @@
+{
+  "analysisId": "fheync",
+  "timestamp": "2025-04-25T14:38:49.943Z",
+  "processingTime": 6061,
+  "url": "https://www.linkedin.com/jobs/view/mock-job-1",
+  "jobSite": "linkedin",
+  "files": {
+    "html": "www.linkedin.com-jobs-mock-job-1-2025-04-25T14-38-49-884Z.html",
+    "xml": "job-description-mock-job-1.xml",
+    "data": "job-data.json",
+    "text": "job-text.json",
+    "metadata": "job-metadata.json"
+  }
+}

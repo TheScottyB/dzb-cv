@@ -91,5 +91,12 @@
       "eslint --fix",
       "prettier --write"
     ]
-  }
+  },
+  "types": "./dist/cli/index.d.ts",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

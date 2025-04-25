@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job-description>
+  <metadata>
+    <title>Senior Software Engineer</title>
+    <company>Test Company</company>
+    <employment-type>FULL_TIME</employment-type>
+    <date-posted>2024-01-01</date-posted>
+    <valid-through>2024-12-31</valid-through>
+    <location>
+      <city>San Francisco</city>
+      <state>CA</state>
+      <address>123 Main St</address>
+    </location>
+  </metadata>
+
+  <section name="overview">
+    <description>As a Senior Software Engineer, you will be responsible for designing and implementing scalable solutions.</description>
+  </section>
+  <section name="responsibilities">
+    <description>• Lead technical projects from conception to deployment• Write clean, maintainable code• Mentor junior developers</description>
+  </section>
+  <section name="benefits">
+    <description>• Competitive salary• Health insurance• 401(k) matching</description>
+  </section>
+</job-description>

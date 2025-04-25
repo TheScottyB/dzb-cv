@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job-description>
-  <title>Medical Laboratory Scientist/Medical Laboratory Technician</title>
-  <company>Mercyhealth</company>
-  <location>
-    <city>Harvard</city>
-    <state>Illinois</state>
-    <address>901 Grant St</address>
-  </location>
-  <employment-type>PART_TIME</employment-type>
-  <section name="Overview">
+  <metadata>
+    <title>Medical Laboratory Scientist/Medical Laboratory Technician</title>
+    <company>Mercyhealth</company>
+    <employment-type>PART_TIME</employment-type>
+    <date-posted>2025-04-17T18:22:00+0000</date-posted>
+    <valid-through>2026-04-17T18:24:04.000Z</valid-through>
+    <location>
+      <city>Harvard</city>
+      <state>Illinois</state>
+      <address>901 Grant St</address>
+    </location>
+  </metadata>
+
+  <section name="overview">
+    <description>Provides patient care by collecting and processing samples and performing clinical laboratory procedures. Work at other Mercy facilities performing the same functions, as required. Perform other duties and projects as assigned.Authorization to work in the United States without sponsorship.&amp;nbsp;Experience a rewarding and fulfilling career with Mercyhealth. Mercyhealth is committed to offering our partners a best place to work. Our unique workplace Culture of Excellence is built upon:</description>
     <list>
       <item>MLS/MLT</item>
       <item>Harvard Hospital and Medical Center, Harvard IL</item>
       <item>40 Hours/2 Weeks</item>
       <item>Day Shift</item>
+      <item>&lt;strong&gt;$10,000 Sign On Bonus&lt;/strong&gt;</item>
     </list>
   </section>
-  <section name="Responsibilities">
-  </section>
-  <section name="Education and Experience">
-  </section>
-  <section name="Certification/Licensure">
-  </section>
-  <section name="Special Physical Demands">
-  </section>
-  <section name="Culture of Excellence Behavior Expectations">
-  </section>
-  <section name="Benefits">
-  </section>
-  <section name="Responsibilities">
+  <section name="responsibilities">
+    <description>Essential Duties and Responsibilities&amp;nbsp;</description>
     <list>
-      <item>Essential Duties and Responsibilities</item>
       <item>Utilize the Information System to receive patients, order and collect samples, result tests, answer questions from nurses and physicians, document quality control activities and produce reports required to perform job tasks.</item>
       <item>Confirms accuracy of patient sample identification prior to performing analyses; evaluates specimen quality and identifies when unacceptable. Documents information concerning quality of specimen, impact of sub-optimal specimens on test values. Initiates recollection procedure as indicated.</item>
       <item>Perform waived, moderate and high complexity lab tests as defined by CLIA in the lab specialties of hematology, urinalysis, chemistry and blood bank or microbiology by automated and manual methods according to defined policies and procedures.</item>
@@ -48,14 +43,22 @@
       <item>Develops updates and procedures as requested.</item>
       <item>Serves as a resource to inexperienced partners.</item>
       <item>Performs additional tasks such as scheduling, antibiograms, etc.</item>
-      <item>Maintain competency in current procedures and gain competency for new methods implemented.&amp;nbsp;</item>
+      <item>Maintain competency in current procedures and gain competency for new methods implemented.</item>
     </list>
   </section>
-  <section name="Qualifications">
-    <paragraph>1.Bachelor of Science degree in Medical Technology</paragraph>
-    <paragraph>Must be qualified to perform high complexity testing according to CLIA 493.1489 Standard; Testing personnel qualifications.</paragraph>
-    <paragraph>OR</paragraph>
-    <paragraph>2.Associates degree in Medical Technology AND MLT certification</paragraph>
-    <paragraph>Must be qualified to perform high complexity testing according to CLIA 493.1489 Standard; Testing personnel qualifications.</paragraph>
+  <section name="education">
+    <description>1.Bachelor of Science degree in Medical TechnologyMust be qualified to perform high complexity testing according to CLIA 493.1489 Standard; Testing personnel qualifications.OR2.Associates degree in Medical Technology AND MLT certificationMust be qualified to perform high complexity testing according to CLIA 493.1489 Standard; Testing personnel qualifications.</description>
+  </section>
+  <section name="certification">
+    <description>1. MT/MLS Generalist Certification or Specialty Certification BB, C, H or M required within 12 months of hire.&amp;nbsp;OR&amp;nbsp;2. MLT Certification and 5 years of experience.</description>
+  </section>
+  <section name="benefits">
+    <description>Mercyhealth offers a generous total rewards package to eligible employees including, but not limited to:&amp;nbsp;&amp;middot; Comprehensive Benefits Package: Mercyhealth offers a retirement plan with competitive matching contribution, comprehensive medical, dental, and vision insurance options, life and disability coverage, access to flexible spending plans, and a variety of other discounted voluntary benefit options.&amp;middot; Competitive Compensation: Mercyhealth offers market competitive rates of pay and participates in various shift differential and special pay incentive programs.&amp;middot; Paid Time Off: Mercyhealth offers a generous paid time off plan, which increases with milestone anniversaries, to allow employees the opportunity for a great work-life balance.&amp;middot; Career Advancement: Mercyhealth offers a number of educational assistance programs and career ladders to support employees in their educational journey and advancement within Mercyhealth.&amp;middot; Employee Wellbeing: Mercyhealth has a focus on wellbeing for employees across the organization and offers a number of tools and resources, such as an employer-sponsored health risk assessment and a Wellbeing mobile application, to assist employees on their wellbeing journey.&amp;middot; Additional Benefits: Mercyhealth employees have access to our internal and external employee assistance programs, employee-only discount packages, paid parental and caregiver leaves, on-demand pay, special payment programs for patient services, and financial education to help with retirement planning.</description>
+  </section>
+  <section name="hospital">
+    <value>as required. Perform other duties and projects as assigned.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;MLS/MLT&lt;/li&gt;&lt;li&gt;Harvard</value>
+  </section>
+  <section name="compensation">
+    <sign-on-bonus>10,000</sign-on-bonus>
   </section>
 </job-description>

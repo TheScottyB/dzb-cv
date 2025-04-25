@@ -19,7 +19,19 @@ const rateLimits = {
     requestsPerMinute: 10,
     lastRequestTime: 0,
     minTimeBetweenRequests: 6000, // milliseconds (6 seconds)
+    maxRetries: 3,
+    retryDelay: 1000, // Initial retry delay in milliseconds
 };
+
+class JobAnalyzerError extends Error {
+    constructor(message, type, details = {}) {
+        super(message);
+        this.name = 'JobAnalyzerError';
+        this.type = type;
+        this.details = details;
+    }
+}
+
 // --- Helper Functions (Moved to top) ---
 /**
  * Identifies which job site the URL belongs to
@@ -41,22 +53,49 @@ function identifyJobSite(url) {
 /**
  * Applies rate limiting to prevent overloading job sites
  */
-async function applyRateLimit() {
+async function applyRateLimit(retryCount = 0) {
     const now = Date.now();
     const timeSinceLastRequest = now - rateLimits.lastRequestTime;
+    
     if (timeSinceLastRequest < rateLimits.minTimeBetweenRequests) {
         const waitTime = rateLimits.minTimeBetweenRequests - timeSinceLastRequest;
         await new Promise(resolve => setTimeout(resolve, waitTime));
     }
+    
     rateLimits.lastRequestTime = Date.now();
+    
+    // Implement exponential backoff for retries
+    if (retryCount > 0) {
+        const backoffDelay = Math.min(
+            rateLimits.retryDelay * Math.pow(2, retryCount - 1),
+            30000 // Max 30 seconds
+        );
+        await new Promise(resolve => setTimeout(resolve, backoffDelay));
+    }
 }
 /**
  * Fetches the HTML content from a job posting URL
  */
-async function fetchJobPostingHtml(url) {
+async function fetchJobPostingHtml(url, options = {}) {
     try {
+        await applyRateLimit(options.retryCount || 0);
+        
+        // If we're in test mode and have a mock fetch function, use it
+        if (options.testMode && global.fetch) {
+            const response = await global.fetch(url);
+            if (!response.ok) {
+                throw new JobAnalyzerError(
+                    `HTTP error! Status: ${response.status}`,
+                    'HTTP_ERROR',
+                    { status: response.status, url }
+                );
+            }
+            return await response.text();
+        }
+        
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        
         const response = await fetch(url, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -66,13 +105,30 @@ async function fetchJobPostingHtml(url) {
             redirect: 'follow',
             signal: controller.signal
         });
+        
         clearTimeout(timeoutId);
-        if (!response.ok)
-            throw new Error(`HTTP error! Status: ${response.status}`);
+        
+        if (!response.ok) {
+            if (response.status === 429 && (options.retryCount || 0) < rateLimits.maxRetries) {
+                return fetchJobPostingHtml(url, { ...options, retryCount: (options.retryCount || 0) + 1 });
+            }
+            throw new JobAnalyzerError(
+                `HTTP error! Status: ${response.status}`,
+                'HTTP_ERROR',
+                { status: response.status, url }
+            );
+        }
+        
         return await response.text();
-    }
-    catch (error) {
-        throw new Error(`Failed to fetch job posting: ${error instanceof Error ? error.message : String(error)}`);
+    } catch (error) {
+        if (error.name === 'AbortError' && (options.retryCount || 0) < rateLimits.maxRetries) {
+            return fetchJobPostingHtml(url, { ...options, retryCount: (options.retryCount || 0) + 1 });
+        }
+        throw new JobAnalyzerError(
+            `Failed to fetch job posting: ${error.message}`,
+            'FETCH_ERROR',
+            { originalError: error, url, retryCount: options.retryCount || 0 }
+        );
     }
 }
 /**
@@ -84,40 +140,141 @@ function escapeRegExp(str) {
 /**
  * Extracts key terms from text content
  */
-export function extractKeyTerms(text, additionalTerms = []) {
-    const commonSkills = [
-        'javascript', 'typescript', 'python', 'java', 'c#', 'c\\+\\+', 'ruby', 'go', 'rust',
-        'react', 'angular', 'vue', 'node', 'express', 'django', 'flask', 'spring',
-        'aws', 'azure', 'gcp', 'docker', 'kubernetes', 'ci/cd', 'jenkins', 'git',
-        'sql', 'nosql', 'mongodb', 'postgresql', 'mysql', 'oracle', 'redis',
-        'rest', 'graphql', 'api', 'microservices', 'serverless',
-        'agile', 'scrum', 'kanban', 'jira', 'confluence',
-        'leadership', 'management', 'teamwork', 'communication',
-        'federal', 'government', 'clearance', 'security', 'public sector',
-        'state', 'local', 'municipality', 'policy', 'regulation',
-        'civil service', 'public administration', 'public policy', 'state agency',
-        'rutan', 'public employment', 'state employment', 'hiring process',
-        'central management services', 'cms', 'recruitment', 'human resources',
-        'applicant tracking', 'selection process', 'interview panel', 'administrative',
-        'program management', 'grant', 'grants management', 'procurement',
-        'budget', 'fiscal', 'legislative', 'statutory', 'compliance'
+function extractKeyTerms(text, additionalTerms = []) {
+    const categories = {
+        programming: [
+            'javascript', 'typescript', 'python', 'java', 'c#', 'c++', 'ruby', 'go', 'rust',
+            'react', 'angular', 'vue', 'node', 'express', 'django', 'flask', 'spring',
+            'aws', 'azure', 'gcp', 'docker', 'kubernetes', 'ci/cd', 'jenkins', 'git',
+            'sql', 'nosql', 'mongodb', 'postgresql', 'mysql', 'oracle', 'redis',
+            'rest', 'graphql', 'api', 'microservices', 'serverless',
+            'html', 'css', 'sass', 'less', 'webpack', 'babel', 'typescript',
+            'redux', 'vuex', 'mobx', 'rxjs', 'jquery', 'bootstrap', 'material-ui',
+            'php', 'laravel', 'symfony', 'wordpress', 'drupal',
+            'swift', 'objective-c', 'kotlin', 'android', 'ios', 'react native', 'flutter'
+        ],
+        methodologies: [
+            'agile', 'scrum', 'kanban', 'jira', 'confluence',
+            'devops', 'tdd', 'bdd', 'ci/cd', 'pair programming',
+            'waterfall', 'lean', 'xp', 'extreme programming',
+            'continuous integration', 'continuous deployment', 'continuous delivery',
+            'code review', 'peer review', 'version control'
+        ],
+        softSkills: [
+            'leadership', 'management', 'teamwork', 'communication',
+            'problem solving', 'critical thinking', 'time management',
+            'collaboration', 'adaptability', 'creativity',
+            'presentation', 'negotiation', 'conflict resolution',
+            'mentoring', 'coaching', 'public speaking',
+            'project management', 'stakeholder management',
+            'analytical', 'detail oriented', 'multitasking'
+        ],
+        government: [
+            'federal', 'government', 'clearance', 'security', 'public sector',
+            'state', 'local', 'municipality', 'policy', 'regulation',
+            'civil service', 'public administration', 'public policy', 'state agency',
+            'rutan', 'public employment', 'state employment', 'hiring process',
+            'central management services', 'cms', 'recruitment', 'human resources',
+            'applicant tracking', 'selection process', 'interview panel', 'administrative',
+            'program management', 'grant', 'grants management', 'procurement',
+            'budget', 'fiscal', 'legislative', 'statutory', 'compliance'
+        ],
+        healthcare: [
+            'patient', 'healthcare', 'medical', 'clinical', 'hospital',
+            'registration', 'scheduling', 'insurance', 'billing', 'hipaa',
+            'customer service', 'patient care', 'electronic health record',
+            'ehr', 'emr', 'epic', 'cerner', 'meditech',
+            'medical coding', 'medical billing', 'medical records',
+            'healthcare compliance', 'healthcare administration',
+            'patient safety', 'patient experience', 'patient satisfaction'
+        ],
+        certifications: [
+            'pmp', 'scrum master', 'csm', 'aws certified', 'azure certified',
+            'cissp', 'ceh', 'comptia', 'itil', 'prince2',
+            'cpa', 'cfa', 'series 7', 'series 63', 'finra',
+            'rn', 'bsn', 'msn', 'np', 'pa',
+            'cna', 'lpn', 'md', 'do', 'phd'
+        ],
+        education: [
+            'bachelor', 'master', 'phd', 'doctorate', 'mba',
+            'bs', 'ba', 'ms', 'ma', 'associate',
+            'certification', 'degree', 'diploma', 'graduate',
+            'computer science', 'information technology', 'engineering',
+            'business administration', 'finance', 'accounting'
+        ],
+        industries: [
+            'healthcare', 'finance', 'banking', 'insurance', 'technology',
+            'retail', 'manufacturing', 'education', 'government',
+            'consulting', 'telecommunications', 'media', 'advertising',
+            'automotive', 'aerospace', 'defense', 'energy', 'utilities',
+            'real estate', 'construction', 'transportation', 'logistics'
+        ]
+    };
+
+    const allTerms = [
+        ...Object.values(categories).flat(),
+        ...additionalTerms
     ];
-    const allTerms = [...commonSkills, ...additionalTerms];
-    const terms = [];
+
+    const terms = {
+        programming: new Set(),
+        methodologies: new Set(),
+        softSkills: new Set(),
+        government: new Set(),
+        healthcare: new Set(),
+        certifications: new Set(),
+        education: new Set(),
+        industries: new Set(),
+        other: new Set()
+    };
+
+    // First pass: exact matches
     for (const skill of allTerms) {
         try {
             const escapedSkill = skill.includes('\\') ? skill : escapeRegExp(skill);
             const regex = new RegExp(`\\b${escapedSkill}\\b`, 'i');
             if (regex.test(text)) {
                 const originalTerm = skill.replace(/\\\+/g, '+').replace(/\\/g, '');
-                terms.push(originalTerm.toLowerCase());
+                const category = Object.entries(categories).find(([_, terms]) => 
+                    terms.includes(originalTerm.toLowerCase())
+                )?.[0] || 'other';
+                
+                terms[category].add(originalTerm.toLowerCase());
             }
-        }
-        catch (error) {
-            console.warn(`Skipping problematic term "${skill}": ${error instanceof Error ? error.message : String(error)}`);
+        } catch (error) {
+            console.warn(`Skipping problematic term "${skill}": ${error.message}`);
         }
     }
-    return [...new Set(terms)];
+
+    // Second pass: variations and combinations
+    const variations = {
+        'years of experience': /(\d+)\+?\s*(?:years?|yrs?)(?:\s+of)?\s+experience/gi,
+        'degree required': /(?:requires?|must have)\s+(?:a\s+)?([^.]+?(?:degree|certification))/gi,
+        'programming languages': /(?:proficient|experienced?|skilled?)\s+in\s+([^.]+)/gi
+    };
+
+    for (const [key, pattern] of Object.entries(variations)) {
+        const matches = text.matchAll(pattern);
+        for (const match of matches) {
+            const value = match[1].trim().toLowerCase();
+            if (key === 'years of experience') {
+                terms.education.add(`${value} years experience`);
+            } else if (key === 'degree required') {
+                terms.education.add(value);
+            } else if (key === 'programming languages') {
+                const languages = value.split(/[,\s]+/)
+                    .map(lang => lang.trim())
+                    .filter(lang => categories.programming.includes(lang));
+                languages.forEach(lang => terms.programming.add(lang));
+            }
+        }
+    }
+
+    // Convert Sets to arrays and add category information
+    return Object.entries(terms).reduce((acc, [category, termSet]) => {
+        acc[category] = Array.from(termSet);
+        return acc;
+    }, {});
 }
 /**
  * Gets all text content from elements matching a selector
@@ -131,62 +288,86 @@ function getTextFromElements(document, selector) {
  */
 function detectDocumentSections(document) {
     const sectionMap = {
-        responsibilities: [], qualifications: [], requirements: [], skills: [],
-        benefits: [], about: [], education: []
+        responsibilities: [],
+        qualifications: [],
+        requirements: [],
+        skills: [],
+        benefits: [],
+        about: [],
+        education: [],
+        experience: [],
+        compensation: [],
+        location: [],
+        schedule: [],
+        culture: []
     };
+
     const headers = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6, strong, b'));
+    
     for (const header of headers) {
         const text = header.textContent?.toLowerCase() || '';
         let sectionType = null;
-        if (/responsib|duties|what you('ll)? do|role|functions|day to day/i.test(text))
+
+        // Enhanced section detection patterns
+        if (/responsib|duties|what you('ll)? do|role|functions|day to day|key accountabilities/i.test(text))
             sectionType = 'responsibilities';
-        else if (/qualif|what you('ll)? need|experience|background/i.test(text))
+        else if (/qualif|what you('ll)? need|experience|background|requirements?|must have|essential/i.test(text))
             sectionType = 'qualifications';
-        else if (/requirements?|must have|essential/i.test(text))
-            sectionType = 'requirements';
-        else if (/skills?|competenc|proficien|expertise/i.test(text))
+        else if (/skills?|competenc|proficien|expertise|technical skills|tools/i.test(text))
             sectionType = 'skills';
-        else if (/benefits?|perks|offer|compensation|salary/i.test(text))
+        else if (/benefits?|perks|offer|compensation|salary|pay|bonus|incentive/i.test(text))
             sectionType = 'benefits';
-        else if (/about|company|who we are|our team/i.test(text))
+        else if (/about|company|who we are|our team|organization|mission|vision/i.test(text))
             sectionType = 'about';
-        else if (/education|degree|academic|diploma/i.test(text))
+        else if (/education|degree|academic|diploma|certification|training/i.test(text))
             sectionType = 'education';
+        else if (/experience|years? of experience|work history|background/i.test(text))
+            sectionType = 'experience';
+        else if (/compensation|salary|pay|bonus|incentive|remuneration/i.test(text))
+            sectionType = 'compensation';
+        else if (/location|where you('ll)? work|office|remote|hybrid|onsite/i.test(text))
+            sectionType = 'location';
+        else if (/schedule|hours?|shift|work schedule|time|flexible/i.test(text))
+            sectionType = 'schedule';
+        else if (/culture|values?|environment|workplace|team|diversity|inclusion/i.test(text))
+            sectionType = 'culture';
+
         if (sectionType) {
             let sibling = header.nextElementSibling;
-            while (sibling && !['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(sibling.tagName) && !(sibling.tagName === 'STRONG' && sibling.textContent && sibling.textContent.length > 15)) {
-                if (sibling.textContent?.trim())
-                    sectionMap[sectionType].push(sibling);
+            const sectionContent = [];
+
+            // Collect content until next section header
+            while (sibling && !['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(sibling.tagName)) {
+                if (sibling.textContent?.trim()) {
+                    // Handle different types of content
+                    if (sibling.tagName === 'UL' || sibling.tagName === 'OL') {
+                        const listItems = Array.from(sibling.querySelectorAll('li'))
+                            .map(li => li.textContent?.trim())
+                            .filter(Boolean);
+                        sectionContent.push(...listItems);
+                    } else if (sibling.tagName === 'P') {
+                        const text = sibling.textContent?.trim();
+                        if (text) {
+                            // Split paragraphs that contain bullet points
+                            if (text.includes('•') || text.includes('-') || text.includes('*')) {
+                                const bulletPoints = text.split(/[•\-*]/)
+                                    .map(point => point.trim())
+                                    .filter(Boolean);
+                                sectionContent.push(...bulletPoints);
+                            } else {
+                                sectionContent.push(text);
+                            }
+                        }
+                    }
+                }
                 sibling = sibling.nextElementSibling;
             }
+
+            sectionMap[sectionType] = sectionContent;
         }
     }
-    return sectionMap;
-}
-// Added parseLinkedInJob definition here
-/**
- * Parses LinkedIn job postings
- */
-function parseLinkedInJob(document, url) {
-    const title = document.querySelector('.top-card-layout__title')?.textContent?.trim() || document.querySelector('h1')?.textContent?.trim() || 'Unknown Position';
-    const company = document.querySelector('.topcard__org-name-link')?.textContent?.trim() || document.querySelector('.topcard__flavor--metadata')?.textContent?.trim() || 'Unknown Company';
-    const location = document.querySelector('.topcard__flavor--bullet')?.textContent?.trim() || document.querySelector('.topcard__flavor-row')?.textContent?.trim();
-    const descriptionText = document.querySelector('.description__text')?.textContent?.trim() || '';
-    const responsibilities = [];
-    const qualifications = [];
-    const keyTerms = extractKeyTerms(descriptionText);
 
-    return {
-        title,
-        company,
-        location,
-        responsibilities,
-        qualifications,
-        keyTerms,
-        requiredSkills: keyTerms,
-        desiredSkills: [],
-        source: { url, site: 'LinkedIn', fetchDate: new Date() }
-    };
+    return sectionMap;
 }
 /**
  * Extracts list items from a collection of elements
@@ -201,49 +382,186 @@ function extractListItemsFromElements(elements) {
             items.push(...listItems);
         }
         else if (element.textContent && element.textContent.trim().length > 0) {
-            items.push(element.textContent.trim());
+            // Split text into bullet points if it contains bullet characters
+            const text = element.textContent.trim();
+            if (text.includes('•') || text.includes('-') || text.includes('*')) {
+                const bulletPoints = text.split(/[•\-*]/)
+                    .map(point => point.trim())
+                    .filter(Boolean);
+                items.push(...bulletPoints);
+            } else {
+                items.push(text);
+            }
         }
     }
     return items;
 }
-/**
- * Parses Indeed job postings
- */
-function parseIndeedJob(document, url) {
-    const title = document.querySelector('.jobsearch-JobInfoHeader-title')?.textContent?.trim() || 'Unknown Position';
-    const company = document.querySelector('.jobsearch-InlineCompanyRating-companyName')?.textContent?.trim() || 'Unknown Company';
-    const location = document.querySelector('.jobsearch-JobInfoHeader-subtitle .jobsearch-JobInfoHeader-locationText')?.textContent?.trim();
-    const description = document.querySelector('#jobDescriptionText')?.textContent || '';
-    const jobTypeElement = Array.from(document.querySelectorAll('.jobsearch-JobDescriptionSection-sectionItem'))
-        .find(item => item.textContent?.includes('Job Type'));
-    const jobType = jobTypeElement?.textContent?.replace('Job Type', '').trim();
-    const sections = document.querySelectorAll('#jobDescriptionText > div, #jobDescriptionText > p');
-    const responsibilities = [];
-    const qualifications = [];
 
-    sections.forEach(section => {
-        const textContent = section.textContent?.trim() || '';
-        if (textContent.toLowerCase().startsWith('responsibilities') || textContent.toLowerCase().startsWith('duties')) {
-            responsibilities.push(...extractListItemsFromElements(Array.from(section.querySelectorAll('li, p'))));
+const SITE_SELECTORS = {
+    linkedin: {
+        title: [
+            'h1.job-title',
+            'h1.top-card-layout__title',
+            '.job-details-jobs-unified-top-card__job-title',
+            'h1'
+        ],
+        company: [
+            '.company-name',
+            '.employer-name',
+            '.job-details-jobs-unified-top-card__company-name',
+            '.topcard__org-name-link'
+        ],
+        location: [
+            '.job-details-jobs-unified-top-card__bullet',
+            '.job-details-jobs-unified-top-card__workplace-type',
+            '.topcard__flavor--bullet'
+        ]
+    },
+    indeed: {
+        title: [
+            'h1.jobsearch-JobInfoHeader-title',
+            '.jobsearch-JobComponent-title'
+        ],
+        company: [
+            '.jobsearch-CompanyInfoContainer',
+            '.jobsearch-InlineCompanyRating'
+        ],
+        location: [
+            '.jobsearch-JobInfoHeader-subtitle',
+            '.jobsearch-CompanyLocation'
+        ]
+    }
+};
+
+function trySelectors(document, selectors) {
+    for (const selector of selectors) {
+        const element = document.querySelector(selector);
+        if (element) {
+            const text = element.textContent.trim();
+            if (text) return text;
         }
-        else if (textContent.toLowerCase().startsWith('qualifications') || textContent.toLowerCase().startsWith('requirements')) {
-            qualifications.push(...extractListItemsFromElements(Array.from(section.querySelectorAll('li, p'))));
-        }
-    });
-
-    const keyTerms = extractKeyTerms(description);
-
-    return {
-        title,
-        company,
-        location,
-        jobType,
-        responsibilities,
-        qualifications,
-        keyTerms,
-        source: { url, site: 'Indeed', fetchDate: new Date() }
-    };
+    }
+    return null;
 }
+
+function parseLinkedInJob(document, url) {
+    try {
+        // Try structured data first
+        const jsonLd = document.querySelector('script[type="application/ld+json"]');
+        let structuredData = null;
+        if (jsonLd) {
+            try {
+                structuredData = JSON.parse(jsonLd.textContent);
+            } catch (e) {
+                console.warn('Failed to parse LinkedIn JSON-LD:', e);
+            }
+        }
+
+        const title = structuredData?.title || 
+                     trySelectors(document, SITE_SELECTORS.linkedin.title) || 
+                     'Unknown Title';
+
+        const company = structuredData?.hiringOrganization?.name || 
+                       trySelectors(document, SITE_SELECTORS.linkedin.company) || 
+                       'Unknown Company';
+
+        const location = structuredData?.jobLocation?.address?.addressLocality || 
+                        trySelectors(document, SITE_SELECTORS.linkedin.location) || 
+                        'Unknown Location';
+
+        // Extract sections with validation
+        const sections = extractSectionContent(document, 'responsibilities');
+        const qualifications = extractSectionContent(document, 'qualifications');
+
+        if (!sections && !qualifications) {
+            throw new JobAnalyzerError(
+                'Failed to extract both responsibilities and qualifications',
+                'PARSING_ERROR',
+                { url }
+            );
+        }
+
+        const fullDescription = extractFullDescription(document);
+        const keyTerms = extractKeyTerms(fullDescription);
+
+        return {
+            title,
+            company,
+            location: formatLocation(location),
+            responsibilities: sections || [],
+            qualifications: qualifications || [],
+            fullDescription,
+            keyTerms,
+            url
+        };
+    } catch (error) {
+        throw new JobAnalyzerError(
+            'Failed to parse LinkedIn job posting',
+            'PARSING_ERROR',
+            { url, originalError: error }
+        );
+    }
+}
+
+function parseIndeedJob(document, url) {
+    try {
+        // Try structured data first
+        const jsonLd = document.querySelector('script[type="application/ld+json"]');
+        let structuredData = null;
+        if (jsonLd) {
+            try {
+                structuredData = JSON.parse(jsonLd.textContent);
+            } catch (e) {
+                console.warn('Failed to parse Indeed JSON-LD:', e);
+            }
+        }
+
+        const title = structuredData?.title || 
+                     trySelectors(document, SITE_SELECTORS.indeed.title) || 
+                     'Unknown Title';
+
+        const company = structuredData?.hiringOrganization?.name || 
+                       trySelectors(document, SITE_SELECTORS.indeed.company) || 
+                       'Unknown Company';
+
+        const location = structuredData?.jobLocation?.address?.addressLocality || 
+                        trySelectors(document, SITE_SELECTORS.indeed.location) || 
+                        'Unknown Location';
+
+        // Extract sections with validation
+        const sections = extractSectionContent(document, 'responsibilities');
+        const qualifications = extractSectionContent(document, 'qualifications');
+
+        if (!sections && !qualifications) {
+            throw new JobAnalyzerError(
+                'Failed to extract both responsibilities and qualifications',
+                'PARSING_ERROR',
+                { url }
+            );
+        }
+
+        const fullDescription = extractFullDescription(document);
+        const keyTerms = extractKeyTerms(fullDescription);
+
+        return {
+            title,
+            company,
+            location: formatLocation(location),
+            responsibilities: sections || [],
+            qualifications: qualifications || [],
+            fullDescription,
+            keyTerms,
+            url
+        };
+    } catch (error) {
+        throw new JobAnalyzerError(
+            'Failed to parse Indeed job posting',
+            'PARSING_ERROR',
+            { url, originalError: error }
+        );
+    }
+}
+
 /**
  * Parses USAJobs job postings
  */
@@ -436,7 +754,168 @@ function parseGenericJob(document, url) {
     };
 }
 // --- Main analyzeJobPosting function ---
-async function extractFullDescription(document) {
+async function analyzeJobPosting(url, options = {}) {
+    const startTime = Date.now();
+    const analysisId = Math.random().toString(36).substring(7);
+    
+    console.log(`[${analysisId}] Starting job analysis for URL: ${url}`);
+    
+    try {
+        // Standardize URL
+        const urlInfo = standardizeUrl(url);
+        console.log(`[${analysisId}] Standardized URL:`, urlInfo);
+        
+        // Apply rate limiting
+        await applyRateLimit();
+        
+        // Fetch HTML content
+        console.log(`[${analysisId}] Fetching job posting HTML...`);
+        const html = await fetchJobPostingHtml(urlInfo.fullUrl, { ...options, analysisId });
+        
+        // Save the raw HTML content
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const domain = new URL(urlInfo.fullUrl).hostname;
+        const basePath = path.join('job-postings', `${domain}-${urlInfo.jobId}`);
+        
+        // Ensure directory exists
+        await fs.mkdir(basePath, { recursive: true });
+        
+        // Save HTML
+        const htmlFilename = `${domain}-jobs-${urlInfo.jobId}-${timestamp}.html`;
+        const htmlPath = path.join(basePath, htmlFilename);
+        await fs.writeFile(htmlPath, html, 'utf-8');
+        console.log(`[${analysisId}] Saved raw HTML content to: ${htmlPath}`);
+        
+        // Parse HTML
+        const dom = new JSDOM(html);
+        const document = dom.window.document;
+        
+        // Extract full description
+        console.log(`[${analysisId}] Extracting full description...`);
+        const fullDescription = await extractFullDescription(document);
+        
+        // Generate XML
+        console.log(`[${analysisId}] Generating XML description...`);
+        const xml = generateXMLFromHTML(document);
+        const xmlPath = path.join(basePath, `job-description-${urlInfo.jobId}.xml`);
+        await fs.writeFile(xmlPath, xml, 'utf-8');
+        console.log(`[${analysisId}] Saved XML description to: ${xmlPath}`);
+        
+        // Identify job site and parse accordingly
+        const jobSite = identifyJobSite(urlInfo.fullUrl);
+        console.log(`[${analysisId}] Identified job site: ${jobSite}`);
+        
+        let analysis;
+        try {
+            switch (jobSite) {
+                case JobSite.LINKEDIN:
+                    analysis = parseLinkedInJob(document, urlInfo.fullUrl);
+                    break;
+                case JobSite.INDEED:
+                    analysis = parseIndeedJob(document, urlInfo.fullUrl);
+                    break;
+                case JobSite.USAJOBS:
+                    analysis = parseUSAJobsJob(document, urlInfo.fullUrl);
+                    break;
+                case JobSite.MONSTER:
+                    analysis = parseMonsterJob(document, urlInfo.fullUrl);
+                    break;
+                case JobSite.GLASSDOOR:
+                    analysis = parseGlassdoorJob(document, urlInfo.fullUrl);
+                    break;
+                default:
+                    analysis = parseGenericJob(document, urlInfo.fullUrl);
+            }
+        } catch (parseError) {
+            throw new JobAnalyzerError(
+                `Failed to parse job posting: ${parseError.message}`,
+                'PARSE_ERROR',
+                { originalError: parseError, jobSite }
+            );
+        }
+        
+        // Add URL information to analysis
+        analysis.urlInfo = urlInfo;
+        
+        // Create separate JSON files for different data types
+        const jobDataPath = path.join(basePath, 'job-data.json');
+        const jobTextPath = path.join(basePath, 'job-text.json');
+        const jobMetadataPath = path.join(basePath, 'job-metadata.json');
+        
+        // Split the data
+        const { description, responsibilities, qualifications } = fullDescription || {};
+        const textData = {
+            description,
+            responsibilities,
+            qualifications
+        };
+        
+        // Create metadata
+        const metadata = {
+            analysisId,
+            timestamp: new Date().toISOString(),
+            processingTime: Date.now() - startTime,
+            url: urlInfo.fullUrl,
+            jobSite,
+            files: {
+                html: htmlFilename,
+                xml: `job-description-${urlInfo.jobId}.xml`,
+                data: 'job-data.json',
+                text: 'job-text.json',
+                metadata: 'job-metadata.json'
+            }
+        };
+        
+        // Merge the data, prioritizing fullDescription over analysis
+        const mainData = {
+            url: fullDescription?.url || urlInfo.fullUrl,
+            title: fullDescription?.title || analysis.title,
+            company: fullDescription?.company || analysis.company,
+            department: fullDescription?.department || 'Unknown Department',
+            location: formatLocation(fullDescription?.location || analysis.location),
+            employmentType: fullDescription?.employmentType || analysis.employmentType,
+            jobId: fullDescription?.jobId || urlInfo.jobId,
+            salary: fullDescription?.salary || analysis.salary,
+            description: fullDescription?.description || '',
+            sections: fullDescription?.sections || {},
+            datePosted: fullDescription?.datePosted || new Date().toISOString(),
+            validThrough: fullDescription?.validThrough || null,
+            responsibilities: analysis.responsibilities || [],
+            qualifications: analysis.qualifications || [],
+            keyTerms: analysis.keyTerms || {},
+            source: {
+                url: urlInfo.fullUrl,
+                site: jobSite,
+                fetchDate: new Date().toISOString()
+            },
+            urlInfo: urlInfo
+        };
+        
+        // Save all files
+        await Promise.all([
+            fs.writeFile(jobDataPath, JSON.stringify(mainData, null, 2), 'utf-8'),
+            fs.writeFile(jobTextPath, JSON.stringify(textData, null, 2), 'utf-8'),
+            fs.writeFile(jobMetadataPath, JSON.stringify(metadata, null, 2), 'utf-8')
+        ]);
+        
+        console.log(`[${analysisId}] Analysis completed successfully in ${Date.now() - startTime}ms`);
+        console.log(`[${analysisId}] Results saved to: ${basePath}`);
+        
+        return {
+            ...mainData,
+            metadata
+        };
+    } catch (error) {
+        console.error(`[${analysisId}] Error analyzing job posting:`, error);
+        throw new JobAnalyzerError(
+            `Failed to analyze job posting: ${error.message}`,
+            'ANALYSIS_ERROR',
+            { originalError: error, url, analysisId }
+        );
+    }
+}
+
+function extractFullDescription(document) {
     console.log('Extracting full description...');
     
     // Try to find the JSON-LD script tag containing job data
@@ -447,15 +926,12 @@ async function extractFullDescription(document) {
             if (jobData['@type'] === 'JobPosting') {
                 console.log('Found job data in JSON-LD');
                 
-                // Extract salary information
-                let salary = null;
                 const description = jobData.description || '';
                 
-                // Extract sign-on bonus
+                // Extract salary information
+                let salary = null;
                 const signOnBonusMatch = description.match(/\$(\d{1,3}(?:,\d{3})*)\s+Sign On Bonus/i);
                 const signOnBonus = signOnBonusMatch ? parseInt(signOnBonusMatch[1].replace(/,/g, '')) : null;
-                
-                // Extract work schedule
                 const scheduleMatch = description.match(/(\d+)\s+Hours\/(\d+)\s+Weeks/i);
                 const shiftMatch = description.match(/Shift:\s*([^\n<]+)/i);
                 
@@ -468,183 +944,116 @@ async function extractFullDescription(document) {
                     };
                 }
 
-                // Extract department from description
-                const departmentMatch = description.match(/Department:\s*([^\n<]+)/i);
-                const department = departmentMatch ? departmentMatch[1].trim() : 'Medical Laboratory';
-
-                // Extract hospital from description
-                const hospitalMatch = description.match(/([^,]+)\s+Hospital/i);
-                const hospital = hospitalMatch ? hospitalMatch[1].trim() : null;
-
-                // Extract responsibilities
-                const responsibilities = [];
-                const responsibilitiesMatch = description.match(/<strong>Essential Duties and Responsibilities<\/strong><\/p><ul>(.*?)<\/ul>/is);
-                if (responsibilitiesMatch) {
-                    const items = responsibilitiesMatch[1].match(/<li>(.*?)<\/li>/gis);
-                    if (items) {
-                        responsibilities.push({
-                            title: "Essential Duties and Responsibilities",
-                            items: items.map(item => item.replace(/<[^>]+>/g, '').trim())
-                        });
-                    }
-                }
-
-                // Extract qualifications
-                const qualifications = {
-                    education: [],
-                    certification: []
+                // Extract sections with improved regex patterns
+                const sections = {
+                    overview: extractSection(description, 'Overview', 'Responsibilities'),
+                    responsibilities: extractSection(description, 'Responsibilities', 'Education and Experience'),
+                    education: extractSection(description, 'Education and Experience', 'Certification/Licensure'),
+                    certification: extractSection(description, 'Certification/Licensure', 'Special Physical Demands'),
+                    physicalDemands: extractSection(description, 'Special Physical Demands', 'Culture of Excellence'),
+                    culture: extractSection(description, 'Culture of Excellence', 'Benefits'),
+                    benefits: extractSection(description, 'Benefits', null)
                 };
-                
-                // Extract education requirements
-                const educationMatch = description.match(/Education and Experience<br><br>(.*?)<br>/is);
-                if (educationMatch) {
-                    const educationText = educationMatch[1].replace(/<[^>]+>/g, '');
-                    qualifications.education = educationText.split(/<br\s*\/?>/).map(item => item.trim()).filter(Boolean);
-                }
 
-                // Extract certification requirements
-                const certificationMatch = description.match(/Certification\/Licensure<br><br>(.*?)<br>/is);
-                if (certificationMatch) {
-                    const certificationText = certificationMatch[1].replace(/<[^>]+>/g, '');
-                    qualifications.certification = certificationText.split(/<br\s*\/?>/).map(item => item.trim()).filter(Boolean);
-                }
+                // Process sections to extract text and lists
+                Object.keys(sections).forEach(key => {
+                    if (sections[key]) {
+                        const lists = sections[key].match(/<ul>.*?<\/ul>/gs) || [];
+                        sections[key] = {
+                            text: sections[key].replace(/<ul>.*?<\/ul>/gs, '').replace(/<[^>]+>/g, '').trim(),
+                            lists: lists.map(list => {
+                                const items = list.match(/<li>.*?<\/li>/g) || [];
+                                return items.map(item => item.replace(/<\/?li>/g, '').trim());
+                            })
+                        };
+                    }
+                });
+
+                // Extract responsibilities and qualifications
+                const responsibilities = sections.responsibilities?.lists?.[0] || [];
+                const qualifications = extractQualifications(sections);
 
                 // Extract culture of excellence
-                const cultureOfExcellence = {
-                    quality: [],
-                    service: [],
-                    partnering: [],
-                    cost: []
-                };
+                const cultureText = sections.culture?.text || '';
+                const cultureOfExcellence = extractCultureOfExcellence(cultureText);
 
-                const cultureMatch = description.match(/Culture of Excellence Behavior Expectations<br><br>(.*?)<br>/is);
-                if (cultureMatch) {
-                    const cultureText = cultureMatch[1];
-                    const sections = cultureText.match(/<u>([^<]+)<\/u>\s*-\s*([^<]+)/g);
-                    if (sections) {
-                        sections.forEach(section => {
-                            const match = section.match(/<u>([^<]+)<\/u>\s*-\s*([^<]+)/);
-                            if (match) {
-                                const type = match[1].toLowerCase();
-                                const content = match[2].trim();
-                                if (cultureOfExcellence[type]) {
-                                    cultureOfExcellence[type] = content.split(';').map(item => item.trim());
-                                }
-                            }
-                        });
-                    }
-                }
+                // Extract benefits
+                const benefitsText = sections.benefits?.text || '';
+                const benefits = extractBenefits(benefitsText);
 
                 // Extract physical demands
+                const physicalDemandsText = sections.physicalDemands?.text || '';
                 const physicalDemands = {
-                    description: '',
-                    requirements: [],
-                    visionRequirements: []
+                    text: physicalDemandsText,
+                    requirements: extractPhysicalRequirements(physicalDemandsText)
                 };
 
-                const physicalMatch = description.match(/Special Physical Demands<br><br>(.*?)<br>/is);
-                if (physicalMatch) {
-                    const physicalText = physicalMatch[1].replace(/<[^>]+>/g, '');
-                    const sentences = physicalText.split('.');
-                    
-                    physicalDemands.description = sentences[0].trim();
-                    
-                    const requirementsMatch = physicalText.match(/required to ([^.;]+)/gi);
-                    if (requirementsMatch) {
-                        physicalDemands.requirements = requirementsMatch.map(req => req.trim());
-                    }
-
-                    const visionMatch = physicalText.match(/vision abilities required by this job include ([^.;]+)/i);
-                    if (visionMatch) {
-                        physicalDemands.visionRequirements = visionMatch[1].split(',').map(item => item.trim());
-                    }
-                }
+                // Extract key terms
+                const keyTerms = extractKeyTerms(description, [
+                    'patient', 'healthcare', 'medical', 'clinical', 'hospital',
+                    'registration', 'scheduling', 'insurance', 'billing', 'hipaa',
+                    'customer service', 'patient care', 'electronic health record',
+                    'ehr', 'emr', 'epic', 'cerner', 'meditech'
+                ]);
 
                 return {
                     url: jobData.url,
                     title: jobData.title,
-                    company: jobData.hiringOrganization?.name || 'Mercyhealth',
-                    department: department,
-                    location: jobData.jobLocation?.address ? {
-                        city: jobData.jobLocation.address.addressLocality,
-                        state: jobData.jobLocation.address.addressRegion,
-                        hospital: hospital,
-                        address: jobData.jobLocation.address.streetAddress
-                    } : null,
+                    company: jobData.hiringOrganization?.name || 'Unknown Company',
+                    department: extractDepartment(description),
+                    location: {
+                        city: jobData.jobLocation?.address?.addressLocality || 'Unknown',
+                        state: jobData.jobLocation?.address?.addressRegion || 'Unknown',
+                        hospital: extractHospital(description),
+                        address: jobData.jobLocation?.address?.streetAddress || 'Unknown'
+                    },
                     employmentType: jobData.employmentType,
                     jobId: jobData.jobId,
                     salary: salary,
                     description: description,
+                    sections: sections,
                     responsibilities: responsibilities,
                     qualifications: qualifications,
                     cultureOfExcellence: cultureOfExcellence,
-                    physicalDemands: physicalDemands
+                    benefits: benefits,
+                    physicalDemands: physicalDemands,
+                    keyTerms: keyTerms,
+                    datePosted: jobData.datePosted,
+                    validThrough: jobData.validThrough
                 };
             }
         } catch (error) {
             console.error('Error parsing JSON-LD:', error);
         }
     }
+    return null;
+}
 
-    // Fallback to traditional content extraction if JSON-LD not found
-    console.log('No JSON-LD found, trying traditional content extraction...');
-    const selectors = [
-        'main .job-description',
-        'main .description',
-        'main .job-details',
-        'main .job-content',
-        'main article',
-        'main section',
-        'main .content',
-        'main'
+function extractSection(text, startSection, endSection) {
+    const startRegex = new RegExp(`${startSection}<br><br>(.*?)${endSection ? `(?=${endSection}<br><br>)` : '$'}`, 's');
+    const match = text.match(startRegex);
+    return match ? match[1].trim() : null;
+}
+
+function extractDepartment(text) {
+    const match = text.match(/Department:\s*([^<\n]+)/i);
+    return match ? match[1].trim() : 'Medical Laboratory';
+}
+
+function extractHospital(description) {
+    const hospitalPatterns = [
+        /at\s+([A-Za-z\s]+Hospital)/i,
+        /([A-Za-z\s]+Hospital\s+and\s+Medical\s+Center)/i,
+        /([A-Za-z\s]+Hospital)/i
     ];
-
-    let content = '';
-    for (const selector of selectors) {
-        const element = document.querySelector(selector);
-        if (element) {
-            console.log(`Found content with selector: ${selector}`);
-            const walker = document.createTreeWalker(
-                element,
-                NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-                {
-                    acceptNode: function(node) {
-                        if (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE') {
-                            return NodeFilter.FILTER_REJECT;
-                        }
-                        return NodeFilter.FILTER_ACCEPT;
-                    }
-                }
-            );
-
-            let currentNode;
-            while (currentNode = walker.nextNode()) {
-                if (currentNode.nodeType === Node.TEXT_NODE) {
-                    const text = currentNode.textContent.trim();
-                    if (text) {
-                        content += text + '\n\n';
-                    }
-                } else if (currentNode.nodeType === Node.ELEMENT_NODE) {
-                    const tagName = currentNode.tagName.toLowerCase();
-                    if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
-                        content += currentNode.textContent.trim() + '\n\n';
-                    }
-                }
-            }
-            break;
+    
+    for (const pattern of hospitalPatterns) {
+        const match = description.match(pattern);
+        if (match) {
+            return match[1].trim();
         }
     }
-
-    if (!content) {
-        console.log('No content found with selectors, trying fallback...');
-        const main = document.querySelector('main');
-        if (main) {
-            content = main.textContent;
-        }
-    }
-
-    console.log(`Extracted content length: ${content.length}`);
-    return content.trim();
+    return null;
 }
 
 function generateXMLFromHTML(document) {
@@ -671,98 +1080,90 @@ function generateXMLFromHTML(document) {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<job-description>\n';
 
-    // Add basic job information
-    xml += `  <title>${escapeXML(jsonLdData.title)}</title>\n`;
-    xml += `  <company>${escapeXML(jsonLdData.hiringOrganization?.name || '')}</company>\n`;
+    // Add metadata
+    xml += '  <metadata>\n';
+    xml += `    <title>${escapeXML(jsonLdData.title)}</title>\n`;
+    xml += `    <company>${escapeXML(jsonLdData.hiringOrganization?.name || '')}</company>\n`;
+    xml += `    <employment-type>${escapeXML(jsonLdData.employmentType || '')}</employment-type>\n`;
+    xml += `    <date-posted>${escapeXML(jsonLdData.datePosted || '')}</date-posted>\n`;
+    xml += `    <valid-through>${escapeXML(jsonLdData.validThrough || '')}</valid-through>\n`;
     
     // Add location information
     if (jsonLdData.jobLocation?.address) {
         const address = jsonLdData.jobLocation.address;
-        xml += '  <location>\n';
-        xml += `    <city>${escapeXML(address.addressLocality || '')}</city>\n`;
-        xml += `    <state>${escapeXML(address.addressRegion || '')}</state>\n`;
-        xml += `    <address>${escapeXML(address.streetAddress || '')}</address>\n`;
-        xml += '  </location>\n';
+        xml += '    <location>\n';
+        xml += `      <city>${escapeXML(address.addressLocality || '')}</city>\n`;
+        xml += `      <state>${escapeXML(address.addressRegion || '')}</state>\n`;
+        xml += `      <address>${escapeXML(address.streetAddress || '')}</address>\n`;
+        xml += '    </location>\n';
     }
-
-    // Add employment type
-    xml += `  <employment-type>${escapeXML(jsonLdData.employmentType || '')}</employment-type>\n`;
+    xml += '  </metadata>\n\n';
 
     // Process description sections
     const description = jsonLdData.description || '';
-    const sections = description.split(/<br>([^<]+)<br>/g)
-        .filter(Boolean)
-        .map(section => section.trim())
-        .filter(section => section.length > 0);
+    const sections = {
+        overview: extractSection(description, 'Overview', 'Responsibilities'),
+        responsibilities: extractSection(description, 'Responsibilities', 'Education and Experience'),
+        education: extractSection(description, 'Education and Experience', 'Certification/Licensure'),
+        certification: extractSection(description, 'Certification/Licensure', 'Special Physical Demands'),
+        physicalDemands: extractSection(description, 'Special Physical Demands', 'Culture of Excellence'),
+        culture: extractSection(description, 'Culture of Excellence', 'Benefits'),
+        benefits: extractSection(description, 'Benefits', null)
+    };
 
-    let currentSection = '';
-    for (const section of sections) {
-        const sectionMatch = section.match(/^([^<]+)/);
-        if (sectionMatch) {
-            currentSection = sectionMatch[1].trim();
-            xml += `  <section name="${escapeXML(currentSection)}">\n`;
+    // Add each section to XML
+    Object.entries(sections).forEach(([sectionName, content]) => {
+        if (content) {
+            xml += `  <section name="${escapeXML(sectionName)}">\n`;
             
-            // Extract content
-            const content = section.replace(/^[^<]+/, '').trim();
-            if (content) {
-                // Handle lists
-                if (content.includes('<ul>')) {
-                    const listItems = content.match(/<li>([^<]+)<\/li>/g);
-                    if (listItems) {
-                        xml += '    <list>\n';
-                        listItems.forEach(item => {
-                            const text = item.replace(/<\/?li>/g, '').trim();
-                            xml += `      <item>${escapeXML(text)}</item>\n`;
-                        });
-                        xml += '    </list>\n';
-                    }
-                } else {
-                    // Handle paragraphs
-                    const paragraphs = content.split(/<p[^>]*>/).filter(Boolean);
-                    paragraphs.forEach(p => {
-                        const text = p.replace(/<[^>]+>/g, '').trim();
+            // Extract and clean the main text content
+            const mainText = content.replace(/<ul>.*?<\/ul>/gs, '')
+                                  .replace(/<[^>]+>/g, '')
+                                  .trim();
+            if (mainText) {
+                xml += `    <description>${escapeXML(mainText)}</description>\n`;
+            }
+
+            // Extract lists
+            const lists = content.match(/<ul>.*?<\/ul>/gs) || [];
+            if (lists.length > 0) {
+                xml += '    <list>\n';
+                lists.forEach(list => {
+                    const items = list.match(/<li>.*?<\/li>/g) || [];
+                    items.forEach(item => {
+                        const text = item.replace(/<\/?li>/g, '').trim();
                         if (text) {
-                            xml += `    <paragraph>${escapeXML(text)}</paragraph>\n`;
+                            xml += `      <item>${escapeXML(text)}</item>\n`;
                         }
                     });
-                }
+                });
+                xml += '    </list>\n';
             }
+
             xml += '  </section>\n';
         }
-    }
+    });
 
-    // Add responsibilities section if available separately
-    if (jsonLdData.responsibilities) {
-        xml += '  <section name="Responsibilities">\n';
-        const responsibilities = jsonLdData.responsibilities
-            .replace(/<\/?p[^>]*>/g, '')
-            .replace(/<\/?strong[^>]*>/g, '')
-            .replace(/<ul>/g, '')
-            .replace(/<\/ul>/g, '')
-            .split(/<li>/)
-            .filter(Boolean)
-            .map(item => item.replace(/<\/li>/g, '').trim());
-
-        xml += '    <list>\n';
-        responsibilities.forEach(item => {
-            xml += `      <item>${escapeXML(item)}</item>\n`;
-        });
-        xml += '    </list>\n';
+    // Add special sections if they exist
+    const departmentMatch = description.match(/Department:\s*([^<\n]+)/i);
+    if (departmentMatch) {
+        xml += '  <section name="department">\n';
+        xml += `    <value>${escapeXML(departmentMatch[1].trim())}</value>\n`;
         xml += '  </section>\n';
     }
 
-    // Add qualifications section if available separately
-    if (jsonLdData.qualifications) {
-        xml += '  <section name="Qualifications">\n';
-        const qualifications = jsonLdData.qualifications
-            .replace(/<\/?p[^>]*>/g, '')
-            .split(/<br\s*\/?>/g)
-            .filter(Boolean)
-            .map(item => item.trim());
+    const hospitalMatch = description.match(/([^,]+)\s+Hospital/i);
+    if (hospitalMatch) {
+        xml += '  <section name="hospital">\n';
+        xml += `    <value>${escapeXML(hospitalMatch[1].trim())}</value>\n`;
+        xml += '  </section>\n';
+    }
 
-        qualifications.forEach(item => {
-            xml += `    <paragraph>${escapeXML(item)}</paragraph>\n`;
-        });
+    // Add salary information if available
+    const salaryMatch = description.match(/\$(\d{1,3}(?:,\d{3})*)\s+Sign On Bonus/i);
+    if (salaryMatch) {
+        xml += '  <section name="compensation">\n';
+        xml += `    <sign-on-bonus>${escapeXML(salaryMatch[1])}</sign-on-bonus>\n`;
         xml += '  </section>\n';
     }
 
@@ -781,105 +1182,242 @@ function escapeXML(str) {
 }
 
 function standardizeUrl(url) {
-    try {
-        const urlObj = new URL(url);
-        // Remove tracking parameters
-        const trackingParams = ['lang', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
-        trackingParams.forEach(param => urlObj.searchParams.delete(param));
-        
-        // Get base URL and job ID
-        const pathParts = urlObj.pathname.split('/');
-        const jobId = pathParts[pathParts.length - 1];
-        const baseUrl = `${urlObj.protocol}//${urlObj.hostname}`;
-        
-        return {
-            fullUrl: urlObj.toString(),
-            baseUrl,
-            jobId
-        };
-    } catch (error) {
-        console.error('Error standardizing URL:', error);
-        return {
-            fullUrl: url,
-            baseUrl: '',
-            jobId: ''
-        };
-    }
+    const urlObj = new URL(url);
+    const pathParts = urlObj.pathname.split('/');
+    const jobId = pathParts[pathParts.length - 1].replace(/\?.*$/, ''); // Remove query parameters
+    return {
+        fullUrl: `${urlObj.origin}${urlObj.pathname.replace(/\?.*$/, '')}`,
+        baseUrl: urlObj.origin,
+        jobId
+    };
 }
 
-export async function analyzeJobPosting(url, options) {
-    try {
-        // Standardize URL
-        const urlInfo = standardizeUrl(url);
-        console.log('Standardized URL:', urlInfo);
-        
-        await applyRateLimit();
-        const html = await fetchJobPostingHtml(urlInfo.fullUrl);
-        
-        // Save the raw HTML content
-        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-        const domain = new URL(urlInfo.fullUrl).hostname;
-        const basePath = path.join('job-postings', `mercy-health-${urlInfo.jobId}`);
-        
-        // Ensure directory exists
-        await fs.mkdir(basePath, { recursive: true });
-        
-        // Save HTML
-        const htmlFilename = `${domain}-jobs-${urlInfo.jobId}-${timestamp}.html`;
-        const htmlPath = path.join(basePath, htmlFilename);
-        await fs.writeFile(htmlPath, html, 'utf-8');
-        console.log(`Saved raw HTML content to: ${htmlPath}`);
-        
-        const dom = new JSDOM(html);
-        const document = dom.window.document;
-        
-        // Extract full description
-        const fullDescription = await extractFullDescription(document);
-        
-        // Generate XML
-        const xml = generateXMLFromHTML(document);
-        const xmlPath = path.join(basePath, `job-description-${urlInfo.jobId}.xml`);
-        await fs.writeFile(xmlPath, xml, 'utf-8');
-        console.log(`Saved XML description to: ${xmlPath}`);
-        
-        const jobSite = identifyJobSite(urlInfo.fullUrl);
-        let analysis;
+function extractListItems(items) {
+    return items.map(item => item.trim()).filter(item => item.length > 0);
+}
 
-        switch (jobSite) {
-            case JobSite.LINKEDIN:
-                analysis = parseLinkedInJob(document, urlInfo.fullUrl);
-                break;
-            case JobSite.INDEED:
-                analysis = parseIndeedJob(document, urlInfo.fullUrl);
-                break;
-            case JobSite.USAJOBS:
-                analysis = parseUSAJobsJob(document, urlInfo.fullUrl);
-                break;
-            case JobSite.MONSTER:
-                analysis = parseMonsterJob(document, urlInfo.fullUrl);
-                break;
-            case JobSite.GLASSDOOR:
-                analysis = parseGlassdoorJob(document, urlInfo.fullUrl);
-                break;
-            default:
-                analysis = parseGenericJob(document, urlInfo.fullUrl);
+function extractCultureOfExcellence(text) {
+    const culture = {
+        quality: [],
+        service: [],
+        partnering: [],
+        cost: []
+    };
+
+    const sections = {
+        quality: /Quality[^-]*-([^]*?)(?=Service)/i,
+        service: /Service[^-]*-([^]*?)(?=Partnering)/i,
+        partnering: /Partnering[^-]*-([^]*?)(?=Cost)/i,
+        cost: /Cost[^-]*-([^]*?)(?=\n|$)/i
+    };
+
+    Object.entries(sections).forEach(([key, pattern]) => {
+        const match = text.match(pattern);
+        if (match) {
+            culture[key] = match[1].split(';')
+                .map(item => item.trim())
+                .filter(Boolean);
         }
+    });
 
-        // Add URL information and full description to analysis
-        analysis.urlInfo = urlInfo;
-        analysis.fullDescription = fullDescription;
-
-        // Save updated job data
-        const jobDataPath = path.join(basePath, 'job-data.json');
-        await fs.writeFile(jobDataPath, JSON.stringify(analysis, null, 2), 'utf-8');
-        console.log(`Updated job data saved to: ${jobDataPath}`);
-
-        return analysis;
-    } catch (error) {
-        console.error('Error analyzing job posting:', error);
-        throw error;
-    }
+    return culture;
 }
+
+function extractBenefits(text) {
+    const benefits = {
+        comprehensiveBenefits: [],
+        compensation: [],
+        timeOff: [],
+        careerAdvancement: [],
+        employeeWellbeing: [],
+        additionalBenefits: []
+    };
+
+    const sections = {
+        comprehensiveBenefits: /Comprehensive Benefits Package:\s*([^•]+)/i,
+        compensation: /Competitive Compensation:\s*([^•]+)/i,
+        timeOff: /Paid Time Off:\s*([^•]+)/i,
+        careerAdvancement: /Career Advancement:\s*([^•]+)/i,
+        employeeWellbeing: /Employee Wellbeing:\s*([^•]+)/i,
+        additionalBenefits: /Additional Benefits:\s*([^•]+)/i
+    };
+
+    Object.entries(sections).forEach(([key, pattern]) => {
+        const match = text.match(pattern);
+        if (match) {
+            benefits[key] = [match[1].trim()];
+        }
+    });
+
+    return benefits;
+}
+
+function extractBulletPoints(text) {
+    const points = [];
+    const bulletRegex = /[•\-\*]\s*(.*?)(?=[•\-\*]|$)/g;
+    let match;
+    while ((match = bulletRegex.exec(text)) !== null) {
+        points.push(match[1].trim());
+    }
+    return points;
+}
+
+function extractPhysicalRequirements(text) {
+    const requirements = [];
+    const sentences = text.split(/[.;]\s+/);
+    
+    for (const sentence of sentences) {
+        const requirement = sentence.trim();
+        if (requirement && !requirement.startsWith('The') && !requirement.startsWith('While')) {
+            requirements.push(requirement);
+        }
+    }
+    
+    return requirements;
+}
+
+function extractQualifications(sections) {
+    const qualifications = [];
+    
+    // Extract from education section
+    if (sections.education?.text) {
+        const educationText = sections.education.text;
+        const requirements = educationText.split(/\s*(?:OR|AND)\s*/);
+        qualifications.push(...requirements.map(req => req.trim()).filter(Boolean));
+    }
+    
+    // Extract from certification section
+    if (sections.certification?.text) {
+        const certText = sections.certification.text;
+        const requirements = certText.split(/\s*(?:OR|AND)\s*/);
+        qualifications.push(...requirements.map(req => req.trim()).filter(Boolean));
+    }
+    
+    return qualifications;
+}
+
+function extractCultureSection(text, sectionName, nextSection) {
+    const pattern = nextSection
+        ? new RegExp(`${sectionName}[^-]*-([^]*?)(?=${nextSection})`, 'i')
+        : new RegExp(`${sectionName}[^-]*-([^]*)$`, 'i');
+    
+    const match = text.match(pattern);
+    if (!match) return [];
+    
+    return match[1].split(';')
+        .map(item => item.trim())
+        .filter(Boolean);
+}
+
+function extractBenefitsSection(text, sectionName) {
+    const pattern = new RegExp(`${sectionName}:\\s*([^•]+)`, 'i');
+    const match = text.match(pattern);
+    if (!match) return [];
+    
+    return [match[1].trim()];
+}
+
+function formatLocation(location) {
+    if (typeof location === 'string') {
+        return location;
+    }
+    
+    if (typeof location === 'object') {
+        const parts = [];
+        if (location.city && location.city !== 'Unknown') parts.push(location.city);
+        if (location.state && location.state !== 'Unknown') parts.push(location.state);
+        if (location.address && location.address !== 'Unknown' && !parts.includes(location.address)) {
+            parts.unshift(location.address);
+        }
+        if (location.hospital && location.hospital !== 'Unknown') {
+            parts.unshift(location.hospital);
+        }
+        return parts.join(', ') || 'Unknown Location';
+    }
+    
+    return 'Unknown Location';
+}
+
+function extractSectionContent(document, sectionType) {
+    const sectionPatterns = {
+        responsibilities: [
+            'h2, h3',  // Select all h2 and h3 elements
+            '.job-description h2, .job-description h3',
+            '#job-details h2, #job-details h3',
+            '.description h2, .description h3'
+        ],
+        qualifications: [
+            'h2, h3',
+            '.job-description h2, .job-description h3',
+            '#job-details h2, #job-details h3',
+            '.description h2, .description h3'
+        ]
+    };
+
+    // First try to find the section using JSON-LD data
+    const jsonLd = document.querySelector('script[type="application/ld+json"]');
+    if (jsonLd) {
+        try {
+            const data = JSON.parse(jsonLd.textContent);
+            if (sectionType === 'responsibilities' && data.responsibilities) {
+                return Array.isArray(data.responsibilities) ? data.responsibilities : [data.responsibilities];
+            }
+            if (sectionType === 'qualifications' && data.qualifications) {
+                return Array.isArray(data.qualifications) ? data.qualifications : [data.qualifications];
+            }
+        } catch (error) {
+            console.log('Failed to parse JSON-LD data:', error);
+        }
+    }
+
+    // If JSON-LD approach fails, try to find the section in the document
+    const patterns = sectionPatterns[sectionType];
+    let content = [];
+
+    for (const selector of patterns) {
+        const headers = document.querySelectorAll(selector);
+        for (const header of headers) {
+            const headerText = header.textContent.toLowerCase();
+            if (headerText.includes(sectionType === 'responsibilities' ? 'responsibilit' : 'qualification') ||
+                headerText.includes('requirements') ||
+                (sectionType === 'responsibilities' && headerText.includes('what you\'ll do')) ||
+                (sectionType === 'qualifications' && headerText.includes('what you\'ll need'))) {
+                
+                // Get the content following the header until the next header or end of section
+                let currentNode = header.nextElementSibling;
+                let sectionContent = [];
+                
+                while (currentNode && !['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(currentNode.tagName)) {
+                    if (currentNode.tagName === 'UL' || currentNode.tagName === 'OL') {
+                        const items = currentNode.querySelectorAll('li');
+                        items.forEach(item => {
+                            const text = item.textContent.trim();
+                            if (text) sectionContent.push(text);
+                        });
+                    } else if (currentNode.tagName === 'P') {
+                        const text = currentNode.textContent.trim();
+                        if (text) sectionContent.push(text);
+                    }
+                    currentNode = currentNode.nextElementSibling;
+                }
+
+                if (sectionContent.length > 0) {
+                    content = content.concat(sectionContent);
+                }
+            }
+        }
+    }
+
+    return content.length > 0 ? content : null;
+}
+
+// Export necessary functions
+export {
+    analyzeJobPosting,
+    extractKeyTerms,
+    JobSite,
+    JobAnalyzerError
+};
 
 // Add main function to run the script
 if (process.argv[2]) {
