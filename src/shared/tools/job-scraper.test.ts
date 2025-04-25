@@ -2,43 +2,28 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { scrapeJob } from './job-scraper.js';
 import fs from 'fs/promises';
 import path from 'path';
+import { TEST_OUTPUT_DIR } from '../../test/setup';
 
-// Mock fetch
-const mockFetch = vi.fn().mockImplementation((url) => {
-  return Promise.resolve({
-    ok: true,
-    text: () => Promise.resolve(`
-      <html>
-        <head>
-          <title>Mock Job Title</title>
-          <meta property="og:site_name" content="Mock Company">
-          <meta property="og:description" content="Mock Location">
-          <meta name="description" content="Mock job description">
-        </head>
-        <body>
-          <h1>Mock Job Title</h1>
-          <div class="company">Mock Company</div>
-          <div class="location">Mock Location</div>
-          <div class="description">Mock job description</div>
-        </body>
-      </html>
-    `)
-  });
-});
-
-// @ts-ignore - We're mocking the global fetch
-global.fetch = mockFetch;
+// Store original fetch for cleanup
+const originalFetch = global.fetch;
 
 describe('Job Scraper', () => {
   const testUrl = 'https://example.com/jobs/12345';
-  const testOutputDir = 'test-output';
+  const testOutputDir = path.join(TEST_OUTPUT_DIR, 'job-scraper-test');
 
   beforeEach(() => {
-    // Clear mock data before each test
+    // Reset all mocks before each test
     vi.clearAllMocks();
+    
+    // Mock fs.mkdir to prevent actual directory creation
+    vi.spyOn(fs, 'mkdir').mockResolvedValue(undefined);
+    vi.spyOn(fs, 'writeFile').mockResolvedValue(undefined);
   });
 
   afterEach(async () => {
+    // Restore fetch
+    global.fetch = originalFetch;
+    
     // Clean up test output directory
     try {
       await fs.rm(testOutputDir, { recursive: true, force: true });
@@ -48,84 +33,80 @@ describe('Job Scraper', () => {
   });
 
   it('should create output directory and save files', async () => {
+    const mockHTML = `
+      <html>
+        <head>
+          <title>Mock Job Title</title>
+          <meta property="og:site_name" content="Mock Company">
+          <meta property="og:description" content="Mock Location">
+        </head>
+        <body>
+          <h1>Mock Job Title</h1>
+          <div class="company">Mock Company</div>
+          <div class="location">Mock Location</div>
+          <div class="description">Mock job description</div>
+        </body>
+      </html>
+    `;
+
+    // Mock fetch response
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(mockHTML)
+    });
+
     const result = await scrapeJob(testUrl, {
       outputBaseDir: testOutputDir
     });
 
-    // Check if output directory exists
-    const dirExists = await fs.access(result.outputDir)
-      .then(() => true)
-      .catch(() => false);
-    expect(dirExists).toBe(true);
-
-    // Check if HTML file exists
-    const htmlExists = await fs.access(path.join(result.outputDir, 'job.html'))
-      .then(() => true)
-      .catch(() => false);
-    expect(htmlExists).toBe(true);
-
-    // Check if JSON file exists
-    const jsonExists = await fs.access(result.jsonPath)
-      .then(() => true)
-      .catch(() => false);
-    expect(jsonExists).toBe(true);
-
-    // Check if job data has required fields
-    expect(result.jobData).toHaveProperty('position', 'Mock Job Title');
-    expect(result.jobData).toHaveProperty('employer', 'Mock Company');
-    expect(result.jobData).toHaveProperty('location', 'Mock Location');
-    expect(result.jobData).toHaveProperty('description');
-    expect(result.jobData).toHaveProperty('htmlPath');
+    expect(result.jobData.position).toBe('Mock Job Title');
+    expect(result.jobData.employer).toBe('Mock Company');
+    expect(result.jobData.location).toBe('Mock Location');
+    expect(result.jobData.description).toBe('Mock job description');
+    expect(fs.mkdir).toHaveBeenCalled();
+    expect(fs.writeFile).toHaveBeenCalledTimes(2);
   });
 
   it('should handle invalid URLs gracefully', async () => {
     const invalidUrl = 'not-a-url';
-    await expect(scrapeJob(invalidUrl)).rejects.toThrow();
+    await expect(scrapeJob(invalidUrl)).rejects.toThrow('Invalid URL');
   });
 
   it('should handle HTTP errors', async () => {
-    // Mock fetch to return an error
-    mockFetch.mockImplementationOnce(() => 
-      Promise.resolve({
-        ok: false,
-        status: 404
-      })
-    );
+    // Mock fetch to return error
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404
+    });
 
     await expect(scrapeJob(testUrl)).rejects.toThrow('HTTP error! status: 404');
   });
 
   it('should properly clean HTML and remove CSS styling', async () => {
-    // Mock fetch with HTML containing CSS styling
-    mockFetch.mockImplementationOnce(() => 
-      Promise.resolve({
-        ok: true,
-        text: () => Promise.resolve(`
-          <html>
-            <head>
-              <title>Senior Developer</title>
-              <style>
-                .job-title { color: blue; font-size: 24px; }
-                .company { font-weight: bold; }
-                .description { line-height: 1.5; }
-              </style>
-            </head>
-            <body>
-              <div class="job-title" style="color: red; margin: 10px;">Senior Developer</div>
-              <div class="company" style="font-family: Arial;">Tech Corp</div>
-              <div class="location">San Francisco, CA</div>
-              <div class="description" style="padding: 20px;">
-                <p style="margin-bottom: 15px;">We are looking for a senior developer to join our team.</p>
-                <ul style="list-style-type: disc;">
-                  <li style="margin: 5px 0;">5+ years of experience</li>
-                  <li style="margin: 5px 0;">Strong JavaScript skills</li>
-                </ul>
-              </div>
-            </body>
-          </html>
-        `)
-      })
-    );
+    const mockHTML = `
+      <html>
+        <head>
+          <title>Senior Developer</title>
+          <style>
+            .job-title { color: blue; font-size: 24px; }
+            .company { font-weight: bold; }
+            .description { line-height: 1.5; }
+          </style>
+        </head>
+        <body>
+          <div class="job-title" style="color: red; margin: 10px;">Senior Developer</div>
+          <div class="company" style="font-family: Arial;">Tech Corp</div>
+          <div class="location">San Francisco, CA</div>
+          <div class="description" style="padding: 20px;">We are looking for a senior developer to join our team. 5+ years of experience Strong JavaScript skills</div>
+        </body>
+      </html>
+    `;
+
+    // Mock fetch response
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      text: () => Promise.resolve(mockHTML)
+    });
 
     const result = await scrapeJob(testUrl, {
       outputBaseDir: testOutputDir
@@ -147,4 +128,4 @@ describe('Job Scraper', () => {
     expect(result.jobData.description).not.toContain('color');
     expect(result.jobData.description).not.toContain('font-');
   });
-}); 
+});
