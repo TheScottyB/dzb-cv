@@ -83,7 +83,7 @@ describe('AcademicTemplate', () => {
         description: 'Three-year grant for neural network research'
       }
     ]
-  });
+  };
 
   describe('section generation', () => {
     it('should generate complete academic CV with all sections', () => {
