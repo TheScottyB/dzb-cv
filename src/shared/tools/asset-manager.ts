@@ -308,9 +308,11 @@ export async function getImageDimensions(imagePath: string): Promise<{ width: nu
     // Using magick (per rules) instead of convert for ImageMagick v7
     const { stdout } = await execAsync(`magick identify -format "%w %h" "${imagePath}"`);
     
-    const [width, height] = stdout.trim().split(' ').map(Number);
+    const dimensions = stdout.trim().split(' ').map(Number);
+    const width = dimensions[0];
+    const height = dimensions[1];
     
-    if (isNaN(width) || isNaN(height)) {
+    if (width === undefined || height === undefined || isNaN(width) || isNaN(height)) {
       return null;
     }
     
@@ -569,20 +571,16 @@ export async function addWatermark(
       transparency = 50,
       color = 'white'
     } = options;
-    
-    // Convert transparency to alpha value for ImageMagick (0-1)
+
     const alpha = 1 - transparency / 100;
+    const command = `magick "${inputPath}" -gravity ${position} -pointsize ${fontSize} -fill "${color}" -draw "alpha ${alpha} text 10,10 '${watermarkText}'" "${outputPath}"`;
     
-    // Build command with proper positioning
-    await execAsync(
-      `magick "${inputPath}" -gravity ${position} -pointsize ${fontSize} ` +
-      `-fill "${color}" -draw "text 10,10 '${watermarkText}'" "${outputPath}"`
-    );
+    await execAsync(command);
     
-    console.log(`Watermark added to image and saved to ${outputPath}`);
+    console.log(`Added watermark to ${outputPath}`);
     return outputPath;
   } catch (error) {
-    console.error(`Error adding watermark to image ${inputPath}:`, error);
+    console.error(`Error adding watermark to ${inputPath}:`, error);
     throw new Error(`Error adding watermark: ${error instanceof Error ? error.message : String(error)}`);
   }
 }

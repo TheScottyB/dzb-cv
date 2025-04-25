@@ -1,5 +1,4 @@
 import { readFile } from "fs/promises";
-import { fileURLToPath } from "url";
 import Handlebars from "handlebars";
 import type { CVData } from "../types/cv-types.js";
 
@@ -94,46 +93,53 @@ export function registerHelpers(): void {
   console.log('CV template helpers registered successfully');
 }
 
+function monthToNumber(monthName: string): number | null {
+  const months = [
+    'january', 'february', 'march', 'april', 'may', 'june',
+    'july', 'august', 'september', 'october', 'november', 'december'
+  ];
+  const monthIndex = months.indexOf(monthName.toLowerCase());
+  return monthIndex !== -1 ? monthIndex : null;
+}
 
 /** Parse a date string into a JS Date object, supporting Present, MM/YYYY, Month YYYY, YYYY, and textual periods */
-export function parseDate(dateStr: string | undefined): Date | null {
-  if (!dateStr) return null;
-  if (typeof dateStr === "string" && dateStr.toLowerCase() === "present") return new Date();
-
-  // MM/YYYY
-  const mmYYYYMatch = /^(\d{2})\/(\d{4})$/.exec(dateStr);
-  if (mmYYYYMatch) {
-    return new Date(parseInt(mmYYYYMatch[2]), parseInt(mmYYYYMatch[1]) - 1, 1);
-  }
-  // Month YYYY
-  const monthYearMatch = /^([A-Za-z]+)\s+(\d{4})$/.exec(dateStr);
-  if (monthYearMatch) {
-    const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    const monthIndex = months.findIndex(
-      m => m.toLowerCase() === monthYearMatch[1].toLowerCase() || m.slice(0, 3).toLowerCase() === monthYearMatch[1].slice(0, 3).toLowerCase()
-    );
-    if (monthIndex !== -1) {
-      return new Date(parseInt(monthYearMatch[2]), monthIndex, 1);
+export function parseDate(dateString: string): Date | null {
+  try {
+    // Format: MM/YYYY
+    const mmYYYYMatch = dateString.match(/^(\d{1,2})\/(\d{4})$/);
+    if (mmYYYYMatch?.[1] && mmYYYYMatch?.[2]) {
+      const month = parseInt(mmYYYYMatch[1], 10) - 1;
+      const year = parseInt(mmYYYYMatch[2], 10);
+      if (!isNaN(month) && !isNaN(year)) {
+        return new Date(year, month);
+      }
     }
-  }
-  // YYYY
-  const yearMatch = /^\d{4}$/.exec(dateStr);
-  if (yearMatch) {
-    return new Date(parseInt(dateStr), 0, 1);
-  }
 
-  // Fallback: Try parsing full date string
-  const date = new Date(dateStr);
-  if (!isNaN(date.getTime())) return date;
+    // Format: Month YYYY
+    const monthNameMatch = dateString.match(/^([a-zA-Z]+)\s+(\d{4})$/);
+    if (monthNameMatch?.[1] && monthNameMatch?.[2]) {
+      const monthName = monthNameMatch[1].toLowerCase();
+      const year = parseInt(monthNameMatch[2], 10);
+      const monthNum = monthToNumber(monthName);
+      if (monthNum !== null && !isNaN(year)) {
+        return new Date(year, monthNum);
+      }
+    }
 
-  // Fallback: Try to parse out from period text
-  const fallback = parseTextualPeriod(dateStr);
-  if (fallback) {
-    const parsed = new Date(fallback);
-    if (!isNaN(parsed.getTime())) return parsed;
+    // Format: YYYY
+    const yearMatch = dateString.match(/^(\d{4})$/);
+    if (yearMatch?.[1]) {
+      const year = parseInt(yearMatch[1], 10);
+      if (!isNaN(year)) {
+        return new Date(year, 0);
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error(`Error parsing date: ${dateString}`, error);
+    return null;
   }
-
-  return null;
 }
 
 /** Extracts a start date in ISO format (YYYY-MM-DD) from a period text string, e.g. "Jan 2020 - Mar 2023" or "2018-Present" */
@@ -142,27 +148,30 @@ export function parseTextualPeriod(periodText: string | undefined): string | nul
 
   // Match formats like "January 2020 - Present" or "Jan 2020 - Mar 2023"
   const fullDateMatch = /([A-Za-z]+ \d{4})\s*-\s*([A-Za-z]+ \d{4}|Present)/.exec(periodText);
-  if (fullDateMatch) {
-    const startDate = new Date(fullDateMatch[1]);
+  if (fullDateMatch?.[1]) {
+    const dateStr = fullDateMatch[1];
+    const startDate = new Date(dateStr);
     if (!isNaN(startDate.getTime())) return startDate.toISOString();
   }
 
   // Match formats like "2018-2022" or "2012-Present"
   const yearRangeMatch = /(\d{4})\s*-\s*(\d{4}|Present)/.exec(periodText);
-  if (yearRangeMatch) {
+  if (yearRangeMatch?.[1]) {
     const year = yearRangeMatch[1];
     return `${year}-01-01`;
   }
 
   // Match single month/year or single year
   const monthYearMatch = /([A-Za-z]+ \d{4})/.exec(periodText);
-  if (monthYearMatch) {
-    const d = new Date(monthYearMatch[1]);
+  if (monthYearMatch?.[1]) {
+    const dateStr = monthYearMatch[1];
+    const d = new Date(dateStr);
     if (!isNaN(d.getTime())) return d.toISOString();
   }
   const yearMatch = /(\d{4})/.exec(periodText);
-  if (yearMatch) {
-    return `${yearMatch[1]}-01-01`;
+  if (yearMatch?.[1]) {
+    const year = yearMatch[1];
+    return `${year}-01-01`;
   }
 
   return null;
@@ -173,47 +182,50 @@ export function parseTextualPeriodForTotalYears(periodText: string | undefined):
   try {
     // Approximate year counts like "Approximately 8 years"
     const approxYearsMatch = /[Aa]pproximately\s+(\d+)\s+years?/i.exec(periodText);
-    if (approxYearsMatch) {
+    if (approxYearsMatch?.[1]) {
       const years = parseInt(approxYearsMatch[1], 10);
       if (!isNaN(years)) {
         return { startDate: null, endDate: null, approximateYears: years };
       }
     }
+
     // Full month/year to month/year format
     const fullDateMatch = /(\w+\s+\d{4})\s*-\s*(\w+\s+\d{4}|Present)/i.exec(periodText);
-    if (fullDateMatch) {
-      const startDate = new Date(fullDateMatch[1]);
-      const endDate = fullDateMatch[2].toLowerCase() === 'present' 
+    if (fullDateMatch?.[1] && fullDateMatch?.[2]) {
+      const startDateStr = fullDateMatch[1];
+      const endDateStr = fullDateMatch[2];
+      const startDate = new Date(startDateStr);
+      const endDate = endDateStr.toLowerCase() === 'present' 
         ? new Date()  
-        : new Date(fullDateMatch[2]);
+        : new Date(endDateStr);
       if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
         return { startDate, endDate, approximateYears: null };
       }
     }
+
     // Year to year format (e.g., "2019-2022")
     const yearRangeMatch = /(\d{4})\s*-\s*(\d{4}|[Pp]resent)/i.exec(periodText);
-    if (yearRangeMatch) {
+    if (yearRangeMatch?.[1] && yearRangeMatch?.[2]) {
       const startYear = parseInt(yearRangeMatch[1], 10);
       const endStr = yearRangeMatch[2].toLowerCase();
       if (!isNaN(startYear)) {
         const startDate = new Date(startYear, 0, 1); // January 1st of start year
-        let endDate;
+        let endDate: Date;
         if (endStr === 'present') {
           endDate = new Date();
         } else {
           const endYear = parseInt(endStr, 10);
           if (!isNaN(endYear)) {
             endDate = new Date(endYear, 11, 31); // December 31st of end year
+            return { startDate, endDate, approximateYears: null };
           }
-        }
-        if (endDate) {
-          return { startDate, endDate, approximateYears: null };
         }
       }
     }
+
     // For a single year like "2023"
     const singleYearMatch = /^\s*(\d{4})\s*$/i.exec(periodText);
-    if (singleYearMatch) {
+    if (singleYearMatch?.[1]) {
       const year = parseInt(singleYearMatch[1], 10);
       if (!isNaN(year)) {
         const startDate = new Date(year, 0, 1);  // January 1st
@@ -221,6 +233,7 @@ export function parseTextualPeriodForTotalYears(periodText: string | undefined):
         return { startDate, endDate, approximateYears: null };
       }
     }
+
     return { startDate: null, endDate: null, approximateYears: null };
   } catch (error) {
     console.error(`Error parsing period dates: ${periodText}`, error);
@@ -281,7 +294,7 @@ export function formatUSDate(dateStr: string | Date | undefined): string {
   try {
     // Handle already formatted dates (MM/YYYY)
     const mmYYYYMatch = /^(\d{1,2})\/(\d{4})$/.exec(dateStr);
-    if (mmYYYYMatch) {
+    if (mmYYYYMatch && mmYYYYMatch[1] && mmYYYYMatch[2]) {
       const month = mmYYYYMatch[1].padStart(2, '0');
       return `${month}/${mmYYYYMatch[2]}`;
     }
@@ -297,21 +310,22 @@ export function formatUSDate(dateStr: string | Date | undefined): string {
 
     // Next try to extract from periods like "January 2020 - Present"
     const monthNameMatch = /([A-Za-z]+)\s+(\d{4})/.exec(dateStr);
-    if (monthNameMatch) {
+    if (monthNameMatch?.[1] && monthNameMatch?.[2]) {
       const months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
       const monthName = monthNameMatch[1];
       const year = monthNameMatch[2];
       
-      let monthIndex = months.indexOf(monthName.toLowerCase());
+      // Try full month names
+      const monthIndex = months.indexOf(monthName.toLowerCase());
       if (monthIndex !== -1) {
         return `${(monthIndex + 1).toString().padStart(2, '0')}/${year}`;
       }
       
       // Try short month names (Jan, Feb, etc)
-      for (let i = 0; i < months.length; i++) {
-        if (months[i].substring(0, 3) === monthName.toLowerCase().substring(0, 3)) {
-          return `${(i + 1).toString().padStart(2, '0')}/${year}`;
-        }
+      const shortMonthName = monthName.toLowerCase().substring(0, 3);
+      const shortMonthIndex = months.findIndex(month => month.substring(0, 3) === shortMonthName);
+      if (shortMonthIndex !== -1) {
+        return `${(shortMonthIndex + 1).toString().padStart(2, '0')}/${year}`;
       }
     }
 
@@ -498,31 +512,27 @@ export function calculateTotalYears(experiences: any[]): number {
     return 0;
   }
   
-  let totalMonths = 0;
-  
-  experiences.forEach(exp => {
+  return experiences.reduce((totalMonths, exp) => {
     let startDate = exp.startDate ? new Date(exp.startDate) : null;
     let endDate = exp.endDate ? new Date(exp.endDate) : new Date(); // Use current date for ongoing positions
     
     // If we have a period text instead of explicit dates
     if (!startDate && exp.period) {
       const dates = parseTextualPeriodForTotalYears(exp.period);
+      if (dates.approximateYears) return totalMonths + (dates.approximateYears * 12);
       if (dates.startDate) startDate = dates.startDate;
       if (dates.endDate) endDate = dates.endDate;
-      if (dates.approximateYears) return dates.approximateYears;
     }
     
     // If we still don't have dates, skip this experience
-    if (!startDate) return;
+    if (!startDate) return totalMonths;
     
     // Calculate months between dates
     const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 + 
                    (endDate.getMonth() - startDate.getMonth());
     
-    totalMonths += Math.max(0, months);
-  });
-  
-  return Math.round(totalMonths / 12);
+    return totalMonths + Math.max(0, months);
+  }, 0) / 12;
 }
 
 /**
