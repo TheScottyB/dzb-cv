@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { promises as fs } from 'fs';
-import path from 'path';
+import _path from 'path';
 import { convertMarkdownToPdf } from '../dist/utils/pdf-generator.js';
 
 /**

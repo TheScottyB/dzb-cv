@@ -41,7 +41,7 @@ interface OptimizationResult {
 export async function optimizeForATS(markdown: string): Promise<OptimizationResult> {
   // Get initial ATS analysis
   const analysis = await analyzeForATS(markdown);
-  let optimizedMarkdown = markdown;
+  const optimizedMarkdown = markdown;
   
   // Apply recommendations from analysis
   analysis.suggestions.forEach(() => {

@@ -62,4 +62,27 @@ async function verifyFixes() {
     // If a step fails, stop the process
     if (!result.success) {
       console.log(chalk.yellow('\nStopping verification due to step failure.'));
+      break;
+    }
+  }
+  
+  // Report overall results
+  const allSuccess = results.every(r => r.success);
+  
+  console.log(chalk.bold('\n================================================='));
+  console.log(chalk.bold(`   Verification ${allSuccess ? 'SUCCESSFUL' : 'FAILED'}`));
+  console.log(chalk.bold('=================================================\n'));
+  
+  // Display summary
+  console.log(chalk.cyan('Summary:'));
+  results.forEach(result => {
+    const icon = result.success ? chalk.green('✓') : chalk.red('✗');
+    console.log(`${icon} ${result.label}`);
+  });
+  
+  // Exit with appropriate code
+  process.exit(allSuccess ? 0 : 1);
+}
 
+// Run the verification
+verifyFixes();

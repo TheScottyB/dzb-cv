@@ -11,7 +11,7 @@ import chalk from 'chalk';
  * @param str The string to escape
  * @returns A string with special regex characters escaped
  */
-function escapeRegExp(str) {
+function _escapeRegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
 }
 
@@ -114,7 +114,7 @@ const TERMINOLOGY_VARIATIONS = [
 /**
  * Loads the base CV data for comparison
  */
-async function loadBaseData() {
+async function _loadBaseData() {
   try {
     const baseInfoPath = path.join(process.cwd(), 'src', 'data', 'base-info.json');
     const baseInfoData = await fs.readFile(baseInfoPath, 'utf-8');

@@ -18,7 +18,7 @@ import { convertMarkdownToPdf } from './pdf-generator.js';
 /**
  * Optimizes content for ATS compatibility
  */
-export async function optimizeForATS(content, options) {
+export function optimizeMarkdown(markdown, _options = {}) {
     // First analyze current content
     const initialAnalysis = await analyzeATSCompatibility(content);
     let optimizedContent = content;

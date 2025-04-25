@@ -1,6 +1,6 @@
 import { analyzeJobPosting } from './job-analyzer.js';
 import { getMockJobHtml } from './mock-job-data.js';
-import { JSDOM } from 'jsdom';
+import { JSDOM as _JSDOM } from 'jsdom';
 
 // Mock fetch function
 global.fetch = async (url) => {

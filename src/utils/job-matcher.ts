@@ -1,5 +1,13 @@
 import { dawnTemplate } from '../templates/dawn-template.js';
 
+export interface JobData {
+  responsibilities?: string[];
+  educationAndExperience?: {
+    requirements?: string[];
+  };
+  // Add additional properties as needed
+}
+
 export interface JobRequirement {
   category: string;
   requirement: string;
@@ -27,12 +35,12 @@ export interface ExperiencePattern {
 export class JobMatcher {
   private template = dawnTemplate;
 
-  matchRequirements(jobData: any): MatchResult[] {
+  matchRequirements(jobData: JobData): MatchResult[] {
     const requirements = this.extractRequirements(jobData);
     return requirements.map(req => this.findMatches(req));
   }
 
-  private extractRequirements(jobData: any): JobRequirement[] {
+  private extractRequirements(jobData: JobData): JobRequirement[] {
     // Extract requirements from job data based on our known structure
     const requirements: JobRequirement[] = [];
 

@@ -559,7 +559,7 @@ async function scrapeGenericJob(page, url, htmlPath, screenshotPath) {
             const headingText = heading.textContent.toLowerCase();
             // Look for lists after each heading
             let sibling = heading.nextElementSibling;
-            let items = [];
+            const items = [];
             // Collect list items until next heading
             while (sibling && !['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(sibling.tagName)) {
                 if (sibling.tagName === 'UL' || sibling.tagName === 'OL') {
@@ -613,7 +613,7 @@ async function scrapeGenericJob(page, url, htmlPath, screenshotPath) {
  */
 async function detectCaptcha(page) {
     // Get the page title
-    const title = await page.title();
+    const _title = await page.title();
     // Check if the title contains verification keywords
     if (title.includes('Verification') ||
         title.includes('Security Check') ||

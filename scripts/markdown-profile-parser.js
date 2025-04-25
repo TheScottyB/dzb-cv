@@ -478,7 +478,7 @@ export class MarkdownProfileParser {
      * Helper to add an education entry from parsed data
      */
     addEducationEntry(education, fieldOfStudy, institution, completionYear) {
-        let startDate = new Date();
+        const startDate = new Date();
         startDate.setFullYear(startDate.getFullYear() - 1); // Estimate 1 year for completion
         let endDate = null;
         if (completionYear) {
@@ -533,8 +533,8 @@ export class MarkdownProfileParser {
                 // Look for date information in subsequent lines
                 let dateObtained = new Date();
                 let expirationDate = null;
-                let credentialId = null;
-                let credentialURL = null;
+                const credentialId = null;
+                const credentialURL = null;
                 // Check the next few lines for date information
                 for (let j = i + 1; j < Math.min(i + 5, certSection.length); j++) {
                     const dateLine = certSection[j].trim();
@@ -654,7 +654,7 @@ export class MarkdownProfileParser {
         // Parse dates if available
         let startDate = new Date();
         startDate.setFullYear(startDate.getFullYear() - 1); // Default to 1 year ago if dates unknown
-        let endDate = null;
+        const endDate = null;
         // Extract date if available
         if (dates) {
             const dateMatch = dates.match(/(\d{4})/);

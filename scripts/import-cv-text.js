@@ -169,7 +169,7 @@ async function main() {
   const args = process.argv.slice(2);
   const outputPath = args[0] || DEFAULT_OUTPUT_PATH;
   
-  const rl = createReadlineInterface();
+  const _rl = createReadlineInterface();
   
   console.log(`
 CV Text Import Tool

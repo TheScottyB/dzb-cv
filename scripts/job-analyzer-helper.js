@@ -97,7 +97,7 @@ function parseTextInput(content) {
     const lines = content.split('\n').map(line => line.trim()).filter(Boolean);
     
     // Initialize job details
-    let jobDetails = {
+    const jobDetails = {
       title: 'Unknown Position',
       company: 'Unknown Company',
       location: '',

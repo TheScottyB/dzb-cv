@@ -1,4 +1,4 @@
-#\!/usr/bin/env node
+#!/usr/bin/env node
 
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -92,7 +92,7 @@ const TERMINOLOGY_VARIATIONS = [
 /**
  * Loads the base CV data for comparison
  */
-async function loadBaseData() {
+async function _loadBaseData() {
   try {
     const baseInfoPath = path.join(process.cwd(), 'src', 'data', 'base-info.json');
     const baseInfoData = await fs.readFile(baseInfoPath, 'utf-8');
@@ -117,7 +117,7 @@ function validateIdentity(text) {
     isValid: percentageFound >= 75, // At least 75% of identity markers must be present
     foundMarkers,
     percentageFound,
-    missingMarkers: IDENTITY_MARKERS.filter(marker => \!foundMarkers.includes(marker))
+    missingMarkers: IDENTITY_MARKERS.filter(marker => !foundMarkers.includes(marker))
   };
 }
 
@@ -140,8 +140,8 @@ function validateContent(text) {
     isConsistent: experiencePercentage >= 50 && skillsPercentage >= 50,
     experienceScore: experiencePercentage,
     skillsScore: skillsPercentage,
-    missingExperience: EXPERIENCE_MARKERS.filter(marker => \!foundExperience.includes(marker)),
-    missingSkills: SKILL_MARKERS.filter(marker => \!foundSkills.includes(marker))
+    missingExperience: EXPERIENCE_MARKERS.filter(marker => !foundExperience.includes(marker)),
+    missingSkills: SKILL_MARKERS.filter(marker => !foundSkills.includes(marker))
   };
 }
 
@@ -205,7 +205,7 @@ function detectTerminologyVariations(text) {
         const canonicalRegex = new RegExp(`\\b${escapeRegExp(term.canonical)}\\b`, 'i');
         
         // Only report if canonical form is NOT also present
-        if (\!canonicalRegex.test(text)) {
+        if (!canonicalRegex.test(text)) {
           findings.push({
             found: variation,
             canonical: term.canonical,
@@ -239,7 +239,7 @@ function compareAndShowDiff(newText, existingText, existingName) {
                   part.removed ? '- ' : '  ';
     
     // Only show first 3 lines for unchanged parts to reduce clutter
-    if (\!part.added && \!part.removed && part.value.split('\n').length > 4) {
+    if (!part.added && !part.removed && part.value.split('\n').length > 4) {
       const lines = part.value.split('\n');
       const firstLines = lines.slice(0, 3).join('\n');
       const lineCount = lines.length - 3;

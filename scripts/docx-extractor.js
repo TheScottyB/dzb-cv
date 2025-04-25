@@ -108,7 +108,7 @@ function analyzeCoachingInfo(text) {
 /**
  * Extract entity information from text
  */
-function extractEntities(text) {
+function extractTextFromParagraphs(paragraphs, _fullText = '') {
   // Simple regex-based entity extraction
   // Names (capitalized words in sequence)
   const namePattern = /\b[A-Z][a-z]+ (?:[A-Z][a-z]+ )*[A-Z][a-z]+\b/g;

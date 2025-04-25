@@ -23,7 +23,7 @@ async function main() {
                 includeHeaderFooter: false
             }
         };
-        const content = await generateCV(sector, cvData, outputPath, cvOptions);
+    const _content = await generateCV(sector, cvData, outputPath, cvOptions);
         console.log(`Successfully generated ${sector} CV`);
     }
     catch (error) {

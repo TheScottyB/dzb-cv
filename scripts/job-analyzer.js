@@ -134,7 +134,10 @@ async function fetchJobPostingHtml(url, options = {}) {
 /**
  * Escapes special characters in a string for use in a regular expression
  */
-function escapeRegExp(str) {
+function _extractBenefitsSection(document) {
+on(document) {
+(text) {
+ntainer) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 /**
@@ -279,7 +282,7 @@ function extractKeyTerms(text, additionalTerms = []) {
 /**
  * Gets all text content from elements matching a selector
  */
-function getTextFromElements(document, selector) {
+function _getTextFromElements(elements) {
     const elements = document.querySelectorAll(selector);
     return Array.from(elements).map(el => el.textContent?.trim()).filter(Boolean);
 }
@@ -1385,7 +1388,7 @@ function extractSectionContent(document, sectionType) {
                 
                 // Get the content following the header until the next header or end of section
                 let currentNode = header.nextElementSibling;
-                let sectionContent = [];
+                const sectionContent = [];
                 
                 while (currentNode && !['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(currentNode.tagName)) {
                     if (currentNode.tagName === 'UL' || currentNode.tagName === 'OL') {

@@ -258,7 +258,7 @@ export function formatUSDate(dateStr) {
             const months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
             const monthName = monthNameMatch[1];
             const year = monthNameMatch[2];
-            let monthIndex = months.indexOf(monthName.toLowerCase());
+            const monthIndex = months.indexOf(monthName.toLowerCase());
             if (monthIndex !== -1) {
                 return `${(monthIndex + 1).toString().padStart(2, '0')}/${year}`;
             }
