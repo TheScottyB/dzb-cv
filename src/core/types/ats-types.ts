@@ -1,17 +1,3 @@
-/**
- * ATS analysis result
- */
-export interface ATSAnalysis {
-  score: number;
-  keywordMatches: string[];
-  missingKeywords: string[];
-  suggestions: string[];
-  formattingIssues: string[];
-}
-
-/**
- * ATS compatibility improvement suggestion
- */
 export interface ATSImprovement {
   type: string;
   score: number;
@@ -21,17 +7,12 @@ export interface ATSImprovement {
   priority?: 'critical' | 'high' | 'medium' | 'low';
 }
 
-/**
- * ATS compatibility score breakdown
- */
-export interface ATSScore {
-  total: number;
-  categories: {
-    formatting: number;
-    content: number;
-    structure: number;
-    metadata: number;
-  };
+export interface ATSAnalysis {
+  score: number;
+  keywordMatches: string[];
+  missingKeywords: string[];
+  suggestions: string[];
+  formattingIssues: string[];
 }
 
 export interface ATSKeywordAnalysis {
@@ -60,4 +41,4 @@ export interface ATSCompatibilityReport {
   keywordAnalysis: ATSKeywordAnalysis;
   parseRate: number;
   recommendation: string;
-}
+} 

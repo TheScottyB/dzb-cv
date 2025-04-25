@@ -77,63 +77,69 @@ export interface CVData {
       first?: string;
       last?: string;
     };
-    title?: string;
     contact: {
       email: string;
       phone: string;
       address?: string;
+      linkedin?: string;
+      website?: string;
     };
-    citizenship?: string;
+    summary?: string;
   };
-  profiles?: {
-    linkedIn?: string;
-    github?: string;
-    twitter?: string;
-    website?: string;
-    [key: string]: string | undefined;
-  };
-  professionalSummary?: string;
+  experience: Array<{
+    title: string;
+    company: string;
+    location?: string;
+    startDate: string;
+    endDate?: string;
+    responsibilities: string[];
+    achievements?: string[];
+    employment_type?: 'full-time' | 'part-time' | 'contract' | 'internship' | 'academic' | 'government';
+    grade_level?: string;  // For government positions
+  }>;
   education: Array<{
     degree: string;
     institution: string;
+    location?: string;
     year: string;
-    field?: string;
-    degreeType?: string;
-    completionDate?: string;
-    status?: string;
-    notes?: string;
+    gpa?: string;
+    honors?: string[];
+    courses?: string[];
   }>;
   skills: string[];
   certifications: string[];
-  professionalAffiliations?: Array<{
-    organization: string;
-    roles?: string[];
-    activities?: string[];
+  projects?: Array<{
+    name: string;
+    description: string;
+    technologies?: string[];
+    url?: string;
+    startDate?: string;
+    endDate?: string;
   }>;
-  volunteerWork?: Array<{
-    organization?: string;
-    year?: string;
-    position?: string;
-    responsibilities?: string[];
-    activities?: string[];
-    location?: string;
-    duration?: string;
-  }>;
-  awards?: Array<{
+  publications?: Array<{
     title: string;
-    organization?: string;
-    year?: string;
-    notes?: string;
-    achievement?: string;
+    publisher: string;
+    date: string;
+    url?: string;
     description?: string;
   }>;
-  cvTypes?: {
-    federal?: CVTypeConfiguration;
-    state?: CVTypeConfiguration;
-    private?: CVTypeConfiguration;
-    [key: string]: CVTypeConfiguration | undefined;
-  };
-  experience: Array<Experience>;
+  awards?: Array<{
+    name: string;
+    issuer: string;
+    date: string;
+    description?: string;
+  }>;
+  languages?: Array<{
+    name: string;
+    proficiency: 'native' | 'fluent' | 'professional' | 'intermediate' | 'basic';
+  }>;
+  volunteer?: Array<{
+    organization: string;
+    role: string;
+    startDate?: string;
+    endDate?: string;
+    description?: string;
+  }>;
 }
 
 /**

@@ -271,5 +271,4 @@ describe('AcademicCVValidator', () => {
       expect(message).toBeNull();
     });
             });
-          });
-        });
+});
