@@ -110,12 +110,12 @@ async function generatePDFs() {
             color: #2c3e50;
             max-width: 8.5in;
             margin: 0 auto;
-            padding: 0.5in 0.6in;
-            font-size: 11pt;
+            padding: 0.25in 0.6in 0.25in;
+            font-size: 10.5pt;
           }
           .date {
             text-align: center;
-            margin-bottom: 1.5em;
+            margin-bottom: 1.2em;
             color: #34495e;
           }
           .header {
@@ -139,9 +139,9 @@ async function generatePDFs() {
             padding-left: 1.5em;
           }
           .name {
-            font-size: 13pt;
+            font-size: 12.5pt;
             color: #2c3e50;
-            margin-bottom: 0.6em;
+            margin-bottom: 0.5em;
             letter-spacing: 0.02em;
           }
           .contact-group {
@@ -159,23 +159,24 @@ async function generatePDFs() {
             letter-spacing: 0.01em;
           }
           .skills-section {
-            margin: 1em 0;
-            padding: 1em 1.5em;
+            margin: 0.8em 0;
+            padding: 0.8em 1.5em;
             margin-left: 1em;
             margin-right: 1em;
             background: #f8f9fa;
             border-left: 2px solid #bdc3c7;
+            line-height: 1.3;
           }
           .skills-intro {
-            margin-bottom: 0.8em;
+            margin-bottom: 0.6em;
             color: #34495e;
             font-style: italic;
           }
           .skills-grid {
-            gap: 0.5em;
+            gap: 0.3em;
           }
           .skill-item {
-            padding-bottom: 0.5em;
+            padding-bottom: 0.3em;
           }
           .paragraph {
             margin-bottom: 1em;
@@ -187,7 +188,7 @@ async function generatePDFs() {
           }
           .timestamp {
             position: fixed;
-            bottom: 0.3in;
+            bottom: 0.2in;
             right: 0.6in;
             color: #bdc3c7;
             font-size: 7pt;
