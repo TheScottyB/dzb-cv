@@ -315,5 +315,104 @@ export const dawnTemplate = {
       specificity: "healthcare-focused",
       personalization: "company-specific"
     }
+  },
+
+  // Simple CV generation prompt
+  cvPrompt: {
+    basic: "Generate a professional CV for [Name] with the following sections:",
+    sections: [
+      "Contact Information (name, address, email, phone)",
+      "Professional Summary (2-3 sentences highlighting key experience)",
+      "Core Qualifications (bullet points of key skills)",
+      "Professional Experience (most recent first, with dates)",
+      "Education & Certifications",
+      "Technical Skills",
+      "Professional Affiliations",
+      "Volunteer Experience"
+    ],
+    format: {
+      style: "professional",
+      length: "1-2 pages",
+      focus: "healthcare administration and leadership"
+    },
+    defaultValues: {
+      name: "Dawn Zurick Beilfuss",
+      contact: {
+        address: "15810 IL Rt. 173 #2F, Harvard, IL 60033",
+        email: "DZ4100@gmail.com",
+        phone: "847.287.1148"
+      },
+      summary: "Over 15 years of experience in healthcare administration, team leadership, and revenue cycle operations.",
+      experience: [
+        {
+          title: "Front Desk/Veterinary Assistant",
+          company: "Fox Lake Animal Hospital",
+          period: "2023-2024",
+          highlights: [
+            "Managed 60-80 patients daily",
+            "Implemented triage protocols",
+            "Handled scheduling systems"
+          ]
+        },
+        {
+          title: "Licensed Managing Broker",
+          company: "Vylla",
+          period: "2022-2023",
+          highlights: [
+            "Led team of 4 professionals",
+            "Developed training programs",
+            "Implemented performance management"
+          ]
+        }
+      ],
+      education: [
+        "High School Diploma",
+        "Certified Pharmacy Technician",
+        "Real Estate License",
+        "Notary Public"
+      ],
+      skills: [
+        "Healthcare Systems",
+        "Office Software",
+        "Communication Systems",
+        "Customer Service Platforms",
+        "Financial Systems"
+      ],
+      affiliations: [
+        "Illinois Realtors Association",
+        "National Association of Realtors",
+        "McHenry County Association of Realtors"
+      ],
+      volunteer: [
+        "Home of the Sparrow",
+        "Habitat for Humanity"
+      ]
+    }
+  },
+
+  // Simple command prompts
+  commands: {
+    makeCV: {
+      basic: "Generate a professional CV",
+      helper: "I'll help you create a CV. Just tell me if you want to use the default template or customize any sections.",
+      default: true,
+      output: {
+        path: "job-postings/[jobId]/cv.md",
+        formats: ["markdown", "html", "pdf"]
+      }
+    },
+    makeCover: {
+      basic: "Generate a cover letter",
+      helper: "I'll help you create a cover letter. Just tell me the job title and company, or I can use the default template.",
+      default: true,
+      output: {
+        path: "job-postings/[jobId]/cover-letter.md",
+        formats: ["markdown", "html", "pdf"]
+      }
+    },
+    help: {
+      basic: "Show available commands",
+      response: "You can use:\n- 'make CV' to generate a CV\n- 'make cover' to generate a cover letter\n- 'help' to see this message"
+    }
   }
 }; 
