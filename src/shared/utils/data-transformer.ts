@@ -32,23 +32,44 @@ function parsePeriod(period?: string): { startDate: string; endDate?: string } {
   }
 
   // Handle various period formats
-  let startDate: string, endDate: string | undefined;
+  let startDate: string = new Date().toISOString();
+  let endDate: string | undefined = undefined;
   
   if (period.includes('-')) {
-    const [start, end] = period.split('-').map(p => p.trim());
-    startDate = parseDate(start);
-    endDate = end.toLowerCase() === 'present' ? undefined : parseDate(end);
+    const parts = period.split('-').map(p => p.trim());
+    const start = parts[0];
+    const end = parts[1];
+    
+    if (start) {
+      startDate = parseDate(start);
+    }
+    
+    if (end) {
+      endDate = end.toLowerCase() === 'present' ? undefined : parseDate(end);
+    }
   } else if (period.includes('to')) {
-    const [start, end] = period.split('to').map(p => p.trim());
-    startDate = parseDate(start);
-    endDate = end.toLowerCase() === 'present' ? undefined : parseDate(end);
+    const parts = period.split('to').map(p => p.trim());
+    const start = parts[0];
+    const end = parts[1];
+    
+    if (start) {
+      startDate = parseDate(start);
+    }
+    
+    if (end) {
+      endDate = end.toLowerCase() === 'present' ? undefined : parseDate(end);
+    }
   } else {
     // Assume single year or date
     startDate = parseDate(period);
     endDate = undefined;
   }
 
-  return { startDate, endDate };
+  // Return the parsed dates
+  return { 
+    startDate, 
+    ...(endDate !== undefined ? { endDate } : {}) 
+  };
 }
 
 /**
@@ -125,9 +146,23 @@ export function transformCVData(cvData: CVData): CVData {
   // Flatten work experience if it's a nested object
   if (transformedData.workExperience && typeof transformedData.workExperience === 'object' && 
       !Array.isArray(transformedData.workExperience)) {
-    transformedData.workExperience = flattenWorkExperience(
+    // First capture the flattened array
+    const flattened = flattenWorkExperience(
       transformedData.workExperience as unknown as WorkExperienceCategories
     );
+    
+    // Then construct a new object that has the same shape as the original
+    // but with the flattened data added as a property
+    const newWorkExperience: Record<string, any> = {};
+    newWorkExperience.flattened = flattened;
+    
+    // Copy original categories as empty arrays to maintain structure
+    Object.keys(transformedData.workExperience).forEach(key => {
+      newWorkExperience[key] = [];
+    });
+    
+    // Replace the work experience with our modified version
+    transformedData.workExperience = newWorkExperience as any;
   }
   
   return transformedData;
