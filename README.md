@@ -4,11 +4,12 @@ A modular CV management system with job analysis capabilities. This tool helps c
 
 ## Features
 
-- **CV Generation**: Generate CVs for different sectors (federal, state, private)
+- **CV Generation**: Generate CVs for different sectors (federal, state, private, academic)
 - **Job Analysis**: Analyze job postings to extract key requirements for CV tailoring
 - **Profile Management**: Import, export, and manage CV profiles
 - **Multiple Output Formats**: Export as PDF, Markdown, or JSON
-- **ATS Optimization**: Tailor CVs to pass Applicant Tracking Systems
+- **ATS Optimization**: Tailor CVs to pass Applicant Tracking Systems with scoring and improvement suggestions
+- **Multiple Templates**: Support for various CV templates including Basic, Minimal, Federal, and Academic
 - **Verification System**: Track and verify content sources
 - **Modular CLI**: Extensible command structure
 
@@ -18,29 +19,40 @@ A modular CV management system with job analysis capabilities. This tool helps c
 
 - [Node.js](https://nodejs.org/) 20.10.0 or higher
 - [Volta](https://volta.sh/) (recommended for managing Node.js and pnpm versions)
-- [pnpm](https://pnpm.io/) 8.12.1 or higher
+- [pnpm](https://pnpm.io/) 10.9.0 or higher (8.12.1 minimum)
 - Git for version control
 
 ### Quick Start
-
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/dzb-cv.git
    cd dzb-cv
    ```
 
-2. Run the setup script:
+2. Install Volta (if not already installed):
+   ```bash
+   curl https://get.volta.sh | bash
+   ```
+
+3. Let Volta install the correct Node.js and pnpm versions:
+   ```bash
+   # Volta will automatically use versions from package.json
+   volta install node@20.10.0
+   volta install pnpm@10.9.0
+   ```
+
+4. Run the setup script:
    ```bash
    chmod +x setup.sh
    ./setup.sh
    ```
 
-3. Build the CLI:
+5. Build the CLI:
    ```bash
    pnpm build
    ```
 
-4. Link the CLI globally (optional):
+6. Link the CLI globally (optional):
    ```bash
    pnpm link-cli
    ```
@@ -48,6 +60,7 @@ A modular CV management system with job analysis capabilities. This tool helps c
 The setup script will:
 - Install dependencies
 - Set up TypeScript configurations
+- Configure Git hooks for code quality
 - Configure Git hooks for code quality
 
 ## Command Documentation
@@ -74,12 +87,14 @@ dzb-cv generate <sector> [options]
 ```
 
 Arguments:
-- `<sector>`: The sector to generate for (`federal`, `state`, or `private`)
+- `<sector>`: The sector to generate for (`federal`, `state`, `private`, or `academic`)
 
 Options:
 - `-f, --format <format>`: Output format (`markdown` or `pdf`, default: `pdf`)
 - `-o, --output <path>`: Output directory for the generated CV (default: `output`)
 - `--filename <name>`: Base filename for the generated CV
+- `--template <name>`: Specify template to use (default varies by sector)
+- `--ats-optimize`: Apply ATS optimization to the generated CV
 
 Examples:
 ```bash
@@ -91,6 +106,9 @@ dzb-cv generate state --format markdown
 
 # Generate a private CV with a custom filename
 dzb-cv generate private --filename my-custom-cv --output ./my-output
+
+# Generate an academic CV with ATS optimization
+dzb-cv generate academic --ats-optimize
 ```
 
 ### Job Analysis
@@ -110,6 +128,9 @@ Options:
 - `--file`: Treat the source as a local file path instead of URL
 - `--force-generic`: Force using the generic parser for any site
 - `--no-rate-limit`: Disable rate limiting (use with caution)
+- `--extract-keywords`: Extract and prioritize keywords from the job posting
+- `--match-skills`: Match job requirements with your existing skill set
+- `--generate-suggestions`: Generate suggestions for CV customization
 
 Examples:
 ```bash
@@ -121,6 +142,9 @@ dzb-cv analyze ./job-descriptions/analyst.txt --file
 
 # Save analysis output to a JSON file
 dzb-cv analyze https://example.com/jobs/12345 --output ./analysis.json --format json
+
+# Analyze a job posting and match with your skills
+dzb-cv analyze https://example.com/jobs/12345 --match-skills --profile-id profile-123
 ```
 
 ### Profile Management
@@ -210,6 +234,66 @@ Example:
 dzb-cv profile list --verbose
 ```
 
+## Templates
+
+The system supports multiple CV templates for different purposes:
+
+### Basic Template
+
+A clean, professional layout suitable for most industries with balanced content presentation.
+
+### Minimal Template
+
+A modern, minimalist design focusing on essential information, perfect for technology and creative industries.
+
+### Federal Template
+
+Detailed format following US government guidelines for applications to federal positions.
+
+### Academic Template
+
+Comprehensive format for academic and research positions, with sections for:
+
+- Publications
+- Conference presentations
+- Grants and funding
+- Research interests
+- Academic service
+
+## ATS Optimization
+
+The system includes built-in ATS (Applicant Tracking System) optimization features:
+
+### ATS Analysis
+
+```bash
+dzb-cv ats analyze <file> [options]
+```
+
+Analyzes your CV for ATS compatibility, checking for:
+
+- Complex formatting that may confuse ATS parsers
+- Non-standard section headings
+- Missing or unclear dates
+- Graphics or special characters
+- Contact information formatting
+
+The analysis provides a compatibility score and specific improvement suggestions.
+
+### ATS Optimization
+
+```bash
+dzb-cv ats optimize <input-file> <output-file> [options]
+```
+
+Automatically optimizes your CV for ATS compatibility by:
+
+- Standardizing headings
+- Fixing date formats
+- Improving keyword density
+- Enhancing readability
+- Removing complex formatting
+
 ## Configuration Options
 
 The CLI supports configuration through:
@@ -232,6 +316,15 @@ Example configuration file (`config.json`):
   "analyze": {
     "noRateLimit": false,
     "forceGeneric": false
+  },
+  "ats": {
+    "optimize": true,
+    "targetScore": 90
+  },
+  "templates": {
+    "default": "basic",
+    "federal": "federal",
+    "academic": "academic"
   }
 }
 ```
@@ -246,19 +339,34 @@ dzb-cv -c ./config.json generate federal
 ### Project Structure
 
 ```
-.
-├── src/                # Source code
-│   ├── cli/            # CLI implementation
-│   │   ├── commands/   # Command modules
-│   │   └── index.ts    # CLI entry point
-│   ├── shared/         # Shared utilities and types
-│   ├── tools/          # Core functionality
-│   └── core/           # Business logic
-├── dist/               # Compiled JavaScript
-├── job-postings/       # Sample job postings
-└── scripts/            # Utility scripts
 ```
-
+.
+├── src/                      # Source code
+│   ├── ats/                  # ATS optimization tools
+│   │   ├── analyzer.ts       # ATS compatibility analysis
+│   │   └── optimizer.ts      # CV optimization for ATS
+│   ├── cli/                  # CLI implementation
+│   │   ├── commands/         # Command modules
+│   │   └── index.ts          # CLI entry point
+│   ├── core/                 # Business logic
+│   │   ├── services/         # Core services
+│   │   │   ├── pdf/          # PDF generation
+│   │   │   │   ├── templates/  # CV templates
+│   │   │   └── storage/      # Data storage
+│   │   └── types/            # Type definitions
+│   ├── shared/               # Shared utilities and types
+│   │   ├── components/       # Reusable components
+│   │   ├── templates/        # Markdown templates
+│   │   ├── tools/            # Shared tools
+│   │   └── utils/            # Utility functions
+│   ├── templates/            # Template definitions
+│   ├── tools/                # Core functionality
+│   └── utils/                # Utility functions
+├── dist/                     # Compiled JavaScript
+├── job-postings/             # Sample job postings
+├── docs/                     # Documentation
+└── scripts/                  # Utility scripts
+```
 ### Development Workflow
 
 ```bash
@@ -411,7 +519,62 @@ Please use conventional commit messages:
 - `test:` for adding or modifying tests
 - `chore:` for maintenance tasks
 
+## PDF Generation and Templates
+
+The system includes robust PDF generation capabilities with multiple templates:
+
+```bash
+dzb-cv pdf generate <input> <output> --template <template-name>
+```
+
+Options:
+- `--template <name>`: Template to use (basic, minimal, federal, academic)
+- `--paper-size <size>`: Paper size (letter, a4, legal)
+- `--font <font>`: Primary font family
+- `--font-size <size>`: Base font size
+- `--margins <value>`: Page margins
+- `--header <text>`: Custom header text
+- `--footer <text>`: Custom footer text
+
+The PDF generator supports:
+
+- Full Markdown syntax
+- Custom CSS styling
+- Headers and footers
+- Page numbers
+- Custom fonts
+- Template inheritance and customization
+
+## Markdown Templates
+
+The system uses Markdown templates for generating different CV formats:
+
+- **Federal Templates**: Detailed templates following federal resume guidelines
+- **Private Templates**: Various templates for private sector applications
+- **State Templates**: Templates for state government positions
+- **Academic Templates**: Comprehensive templates for academic positions
+
+Templates support variables and conditional sections using Handlebars syntax:
+
+```markdown
+# {{personalInfo.name.full}}
+
+{{#if personalInfo.title}}
+*{{personalInfo.title}}*
+{{/if}}
+
+{{#each experience}}
+## {{position}} at {{employer}}
+{{startDate}} - {{endDate}}
+
+{{#each responsibilities}}
+- {{this}}
+{{/each}}
+{{/each}}
+```
+
+Templates are stored in the `src/shared/templates` directory and can be customized or extended.
+
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
+This project is licensed under the ISC License - see the LICENSE file for details.
