@@ -18,7 +18,7 @@ export abstract class BaseTemplate {
 
   protected abstract generateAwards(data: CVData, options?: TemplateOptions): string;
 
-  public generate(data: CVData, options?: TemplateOptions): string {
+  public generateMarkdown(data: CVData, options?: TemplateOptions): string {
     return `
 ${this.generateExperience(data, options)}
 

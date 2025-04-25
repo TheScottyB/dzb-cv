@@ -6,7 +6,7 @@ import { AcademicCVData } from '../../../types/academic-types.js';
  * Academic CV template following standard academic formatting
  */
 export class AcademicTemplate extends BaseTemplate {
-  protected name = 'academic';
+  name = 'academic';
 
   protected generateHeader(data: CVData): string {
     if (!this.isAcademicCVData(data)) {
@@ -231,7 +231,7 @@ ${service.description ? `<div class="description">${service.description}</div>` 
     `.trim();
   }
 
-  public override generate(data: CVData): string {
+  public override generateMarkdown(data: CVData): string {
     if (!this.isAcademicCVData(data)) {
       throw new Error('Invalid data type for academic template');
     }
