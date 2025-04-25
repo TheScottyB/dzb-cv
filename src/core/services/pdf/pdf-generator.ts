@@ -49,6 +49,10 @@ export interface IPDFGenerator {
  */
 export class PDFGenerator implements IPDFGenerator {
   async generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer> {
+    // Template validation: fail fast for unknown types
+    if (options?.template && !['default', 'minimal', 'federal', 'academic'].includes(options.template)) {
+      throw new Error(`Template '${options.template}' not found`);
+    }
     const browser = await puppeteer.launch();
     try {
       const page = await browser.newPage();

@@ -1,0 +1,31 @@
+{
+  "url": "https://example.com/mock-job",
+  "title": "Test Job",
+  "company": "Test Company",
+  "location": "Test Location",
+  "description": "Test Description",
+  "responsibilities": [
+    "Responsibility 1"
+  ],
+  "qualifications": [
+    "Qualification 1"
+  ],
+  "skills": [
+    "Skill 1"
+  ],
+  "education": [
+    "Education 1"
+  ],
+  "experience": [
+    "Experience 1"
+  ],
+  "metadata": {
+    "postedDate": "2024-01-01",
+    "closingDate": "2024-02-01",
+    "salary": "$50,000",
+    "employmentType": "Full-time"
+  },
+  "htmlPath": "job-postings/123-2025-04-25T23-22-19-966Z.html",
+  "screenshotPath": "job-postings/123-2025-04-25T23-22-19-966Z.png",
+  "pdfPath": "job-postings/123-2025-04-25T23-22-19-966Z.pdf"
+}

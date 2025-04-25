@@ -9,20 +9,11 @@ import { RuntimeOrchestratorAgent } from '../agents/RuntimeOrchestratorAgent';
 import { MemoryDesignerAgent } from '../agents/MemoryDesignerAgent';
 import { DocumentationAgent } from '../agents/DocumentationAgent';
 
+import { TaskAssignmentPlan, TaskStatus } from '../agents/builders/TaskAssignmentPlan.js';
+
 // Define the shape of the minimal AgentRegistry
 interface AgentRegistry {
   [name: string]: any; // TODO: Replace 'any' with shared agent interface
-}
-
-async function loadBlueprint(blueprintPath: string): Promise<string> {
-  try {
-    const blueprintRaw = await fs.readFile(blueprintPath, 'utf8');
-    console.info(`[Foreman] Loaded blueprint.md from ${blueprintPath}`);
-    return blueprintRaw;
-  } catch (e) {
-    console.error(`[Foreman] ERROR: Could not load blueprint at ${blueprintPath}`, e);
-    throw e;
-  }
 }
 
 async function main() {
@@ -34,8 +25,11 @@ async function main() {
   // Agent registry for inter-agent reference
   const registry: AgentRegistry = {};
 
+  // Setup TaskAssignmentPlan (shared plan for Foreman to all agents)
+  const taskPlan = new TaskAssignmentPlan();
+
   // 1. Instantiate agents with minimal context
-  registry['Foreman'] = new ConstructionForeman({ blueprint: blueprintRaw, registry, projectRoot });
+  registry['Foreman'] = new ConstructionForeman({ blueprint: blueprintRaw, registry, projectRoot, taskPlan });
   registry['ToolWrapperAgent'] = new ToolWrapperAgent({ blueprint: blueprintRaw, registry, projectRoot });
   registry['AgentScaffolderAgent'] = new AgentScaffolderAgent({ blueprint: blueprintRaw, registry, projectRoot });
   registry['RuntimeOrchestratorAgent'] = new RuntimeOrchestratorAgent({ blueprint: blueprintRaw, registry, projectRoot });
@@ -44,24 +38,40 @@ async function main() {
 
   console.info('[Foreman] Agents instantiated.');
 
-  // 2. Assign initial tasks to each agent (from blueprint)
-  registry['ToolWrapperAgent'].setInitialTask?.('Wrap 1 dummy utility (extract_text()) as Open Agent SDK tool.');
-  registry['AgentScaffolderAgent'].setInitialTask?.('Create base template for a “basic research agent.”');
-  registry['RuntimeOrchestratorAgent'].setInitialTask?.('Sketch a trivial 2-agent workflow using the new SDK format.');
-  registry['MemoryDesignerAgent'].setInitialTask?.('Define first shared memory schema (agent_memory object).');
-  registry['DocumentationAgent'].setInitialTask?.('Draft a skeleton README.md.');
-  registry['Foreman'].setInitialTask?.('Control architecture, assign agent tasks, ensure blueprint compliance.');
+  // ConstructionForeman with beginInitialAssignments hooks up the plan: 
+  // initial atomic tasks, assignment, builder invocation.
+  if (typeof registry['Foreman'].beginInitialAssignments === "function") {
+    registry['Foreman'].beginInitialAssignments();
+  } else {
+    // Fallback: Seed and assign atomic blueprint startup tasks here, then call setInitialTask on agents
+    const atomicTasks = [
+      { description: 'Wrap 1 dummy utility (extract_text()) as Open Agent SDK tool.', assignee: 'ToolWrapperAgent' },
+      { description: 'Create base template for a “basic research agent.”', assignee: 'AgentScaffolderAgent' },
+      { description: 'Sketch a trivial 2-agent workflow using the new SDK format.', assignee: 'RuntimeOrchestratorAgent' },
+      { description: 'Define first shared memory schema (agent_memory object).', assignee: 'MemoryDesignerAgent' },
+      { description: 'Draft a skeleton README.md.', assignee: 'DocumentationAgent' },
+    ];
+    for (const { description, assignee } of atomicTasks) {
+      const task = taskPlan.addTask(description);
+      taskPlan.assignTask(task.id, assignee);
+      if (registry[assignee] && typeof registry[assignee].setInitialTask === "function") {
+        registry[assignee].setInitialTask(description);
+        console.info(`[Foreman] Assigned task "${description}" to ${assignee} (taskId: ${task.id})`);
+      }
+    }
+    // Summary/output
+    console.info("[Foreman] Task plan seeded:");
+    console.info(taskPlan.summarize());
+  }
 
-  console.info('[Foreman] Initial tasks assigned to all agents.');
+  // TODO: Automate parsing from blueprint.md instead of hardcoded tasks
+  // TODO: Integrate agent/QA feedback and phase/task re-assignment loops
+  // TODO: Use taskPlan for registry, batch assignment, and reporting
 
   // TODO: Integrate Open Agent SDK agent/registry pattern
   // TODO: Bring in actual agent business logic and task flow
-}
 
 main().catch((e) => {
   console.error('[Foreman] Bootstrap sequence failed.', e);
   process.exit(1);
 });
-
-// TODO: Enforce TypeScript strict mode (ensure tsconfig.json strict: true)
-

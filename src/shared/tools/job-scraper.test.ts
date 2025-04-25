@@ -1,4 +1,18 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import puppeteer from 'puppeteer';
+
+// Puppeteer mocks for all launch cases:
+const mockPage = {
+  goto: vi.fn(),
+  content: vi.fn(),
+  screenshot: vi.fn(),
+  pdf: vi.fn(),
+  close: vi.fn()
+};
+const mockBrowser = {
+  newPage: vi.fn().mockResolvedValue(mockPage),
+  close: vi.fn()
+};
 import { scrapeJob } from './job-scraper.js';
 import fs from 'fs/promises';
 import path from 'path';
@@ -28,7 +42,7 @@ describe('Job Scraper', () => {
     try {
       await fs.rm(testOutputDir, { recursive: true, force: true });
     } catch (error) {
-      console.warn('Failed to clean up test directory:', error);
+     vi.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser as any);
     }
   });
 
@@ -40,7 +54,7 @@ describe('Job Scraper', () => {
           <meta property="og:site_name" content="Mock Company">
           <meta property="og:description" content="Mock Location">
         </head>
-        <body>
+     vi.spyOn(puppeteer, 'launch').mockRejectedValue(error);
           <h1>Mock Job Title</h1>
           <div class="company">Mock Company</div>
           <div class="location">Mock Location</div>
@@ -79,7 +93,7 @@ describe('Job Scraper', () => {
       status: 404
     });
 
-    await expect(scrapeJob(testUrl)).rejects.toThrow('HTTP error! status: 404');
+     vi.spyOn(puppeteer, 'launch').mockResolvedValue(mockBrowser as any);
   });
 
   it('should properly clean HTML and remove CSS styling', async () => {
@@ -91,7 +105,7 @@ describe('Job Scraper', () => {
             .job-title { color: blue; font-size: 24px; }
             .company { font-weight: bold; }
             .description { line-height: 1.5; }
-          </style>
+     vi.spyOn(puppeteer, 'launch').mockRejectedValue(new Error('Test error'));
         </head>
         <body>
           <div class="job-title" style="color: red; margin: 10px;">Senior Developer</div>

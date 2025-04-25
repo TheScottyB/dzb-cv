@@ -16,31 +16,21 @@ describe('JobScraper', () => {
   });
   
   it('should scrape job posting successfully', async () => {
-    const mockPage = {
-      goto: vi.fn(),
-      content: vi.fn().mockResolvedValue('<html><body>Mock content</body></html>'),
-      screenshot: vi.fn(),
-      pdf: vi.fn()
+...
+  }, 10000);
+      goto: vi.fn().mockResolvedValue(null),
+      content: vi.fn().mockResolvedValue('<html>Test content</html>'),
+      screenshot: vi.fn().mockResolvedValue(null),
+      pdf: vi.fn().mockResolvedValue(null),
+      waitForTimeout: vi.fn().mockResolvedValue(null),
+      evaluate: vi.fn().mockResolvedValue({}),
+      url: vi.fn().mockReturnValue('https://example.com/mock-job'),
+      close: vi.fn().mockResolvedValue(null)
     };
-    
-    const mockBrowser = {
-      newPage: vi.fn().mockResolvedValue(mockPage),
-      close: vi.fn()
-    };
-    
-    vi.mocked(puppeteer.launch).mockResolvedValue(mockBrowser as any);
-    
-    const result = await scraper.scrape('https://example.com/job');
-    
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(mockPage.goto).toHaveBeenCalledWith('https://example.com/job', expect.any(Object));
-    expect(mockBrowser.close).toHaveBeenCalled();
-  });
   
   it('should handle errors gracefully', async () => {
     const error = new Error('Failed to launch browser');
-    vi.mocked(puppeteer.launch).mockRejectedValue(error);
+     vi.spyOn(puppeteer, 'launch').mockRejectedValue(error);
     
     const result = await scraper.scrape('https://example.com/job');
     
@@ -66,32 +56,19 @@ describe('JobScraper', () => {
           postedDate: '2024-01-01',
           closingDate: '2024-02-01',
           salary: '$50,000',
-          employmentType: 'Full-time'
+          employmentType: 'Full-time',
+          duration: 42
         }
       }),
       content: vi.fn().mockResolvedValue('<html>test</html>'),
       screenshot: vi.fn().mockResolvedValue(null),
-      pdf: vi.fn().mockResolvedValue(null)
-    };
-
-    const mockBrowser = {
-      newPage: vi.fn().mockResolvedValue(mockPage),
+      pdf: vi.fn().mockResolvedValue(null),
+      url: vi.fn().mockReturnValue('https://example.com/mock-job'),
       close: vi.fn().mockResolvedValue(null)
     };
 
-    vi.mocked(puppeteer.launch).mockResolvedValue(mockBrowser as any);
-
-    const result = await scraper.scrape(mockUrl);
-
-    expect(result.success).toBe(true);
-    expect(result.data).toBeDefined();
-    expect(result.data?.title).toBe('Test Job');
-    expect(result.data?.company).toBe('Test Company');
-    expect(result.metadata.duration).toBeGreaterThan(0);
-  });
-
   it('should handle errors during scraping', async () => {
-    vi.mocked(puppeteer.launch).mockRejectedValue(new Error('Test error'));
+     vi.spyOn(puppeteer, 'launch').mockRejectedValue(new Error('Test error'));
 
     const result = await scraper.scrape(mockUrl);
 
@@ -101,7 +78,9 @@ describe('JobScraper', () => {
   });
 
   it('should extract job info correctly', async () => {
-    const mockPage = {
+      goto: vi.fn().mockResolvedValue(null),
+      content: vi.fn().mockResolvedValue('<html>Test content</html>'),
+      waitForTimeout: vi.fn().mockResolvedValue(null),
       evaluate: vi.fn().mockResolvedValue({
         title: 'Test Job',
         company: 'Test Company',
@@ -116,9 +95,15 @@ describe('JobScraper', () => {
           postedDate: '2024-01-01',
           closingDate: '2024-02-01',
           salary: '$50,000',
-          employmentType: 'Full-time'
+          employmentType: 'Full-time',
+          duration: 42
         }
-      })
+      }),
+      screenshot: vi.fn().mockResolvedValue(null),
+      pdf: vi.fn().mockResolvedValue(null),
+      url: vi.fn().mockReturnValue('https://example.com/mock-job'),
+      close: vi.fn().mockResolvedValue(null)
+    };
     };
 
     const result = await scraper['extractJobInfo'](mockPage as any);

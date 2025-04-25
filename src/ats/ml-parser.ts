@@ -113,33 +113,170 @@ export class MLResumeParser {
    * @param mimeType File MIME type
    */
   async parseResume(buffer: Buffer, mimeType: string): Promise<ParsedResume> {
-    // TODO: Implement actual ML parsing logic
-    // This would involve:
-    // 1. Converting the document to text
-    // 2. Running NLP processing
-    // 3. Extracting structured information
-    // 4. Validating and cleaning the data
+    let text = '';
+
+    if (mimeType === 'application/pdf') {
+      // TODO: Use real pdf text extraction (e.g. pdf-parse)
+      text = await this.extractTextFromPDF(buffer);
+    } else if (mimeType === 'text/markdown' || mimeType === 'text/x-markdown') {
+      text = buffer.toString('utf-8');
+    } else if (mimeType === 'text/plain') {
+      text = buffer.toString('utf-8');
+    } else {
+      // TODO: Add DOCX and other formats as needed
+      throw new Error('Unsupported file format for parsing: ' + mimeType);
+    }
+
+    return this.parseSectionsFromText(text, buffer, mimeType);
+  }
+
+  /**
+   * Extracts sections from plain text or markdown resumes
+   */
+  private parseSectionsFromText(text: string, buffer: Buffer, mimeType: string): ParsedResume {
+    // Normalize line endings and split into lines
+    const lines = text.replace(/\r\n/g, '\n').split('\n');
+    let personalInfoLines: string[] = [];
+    let curSection = '';
+    let curLines: string[] = [];
+    const sections: Record<string, string[]> = {};
+
+    // Identify section headings (case-insensitive, leading lines)
+    const headingPattern = /^(SUMMARY|TECHNICAL SKILLS?|SKILLS?|WORK EXPERIENCE|EDUCATION|CERTIFICATIONS?|PROJECTS?)\s*$/i;
+    let foundFirstSection = false;
+    for (const line of lines) {
+      if (!foundFirstSection && !headingPattern.test(line) && line.trim() !== '') {
+        // Accumulate header lines before first section
+        personalInfoLines.push(line);
+        continue;
+      }
+      foundFirstSection = true;
+      const match = line.match(headingPattern);
+      if (match) {
+        if (curSection && curLines.length) {
+          sections[curSection] = curLines;
+        }
+        curSection = match[1].toUpperCase();
+        curLines = [];
+      } else if (curSection) {
+        curLines.push(line);
+      }
+    }
+    if (curSection && curLines.length) {
+      sections[curSection] = curLines;
+    }
+
+    // Extract personal info
+    const personalInfoText = personalInfoLines.join('\n');
+    const emailMatch = personalInfoText.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+    const phoneMatch = personalInfoText.match(/(\(\d{3}\)\s*\d{3}-\d{4})|(\d{3}[-.\s]\d{3}[-.\s]\d{4})/);
+    const nameMatch = personalInfoLines.length > 0 ? personalInfoLines[0].trim() : '';
+    // Simplistic: "123 Main St" as location if found
+    const locationMatch = personalInfoText.match(/\d{1,4}\s+\w+\s+\w+/);
+
+    // Extract skills
+    const skillsSection = sections['TECHNICAL SKILL'] || sections['TECHNICAL SKILLS'] || sections['SKILLS'] || [];
+    const skillWords = skillsSection.flatMap(l => l.split(/[,;]+/).map(w => w.trim()));
+    const technicalSkills = skillWords.filter(w => w && w.match(/[A-Za-z0-9]/));
+
+    // Work Experience
+    const workSection = sections['WORK EXPERIENCE'] || [];
+    const workBlocks = [];
+    let block: string[] = [];
+    for (const line of workSection) {
+      if (line.trim() === '') {
+        if (block.length) {
+          workBlocks.push(block);
+          block = [];
+        }
+      } else {
+        block.push(line);
+      }
+    }
+    if (block.length) workBlocks.push(block);
+    const workExperience = workBlocks.map(blockLines => {
+      const title = (blockLines[0] || '').trim();
+      const companyLine = blockLines[1] || '';
+      const dateLine = blockLines.find(l => l.match(/\d{4}/)) || '';
+      const bullets = blockLines.slice(2).filter(l => l.startsWith('-')).map(l => l.slice(1).trim());
+      return {
+        title,
+        company: companyLine.trim(),
+        description: bullets,
+        achievements: [],
+      };
+    });
+
+    // Education block (very basic)
+    const educationSection = sections['EDUCATION'] || [];
+    const educationBlocks = [];
+    block = [];
+    for (const line of educationSection) {
+      if (line.trim() === '') {
+        if (block.length) {
+          educationBlocks.push(block);
+          block = [];
+        }
+      } else {
+        block.push(line);
+      }
+    }
+    if (block.length) educationBlocks.push(block);
+    const education = educationBlocks.map(b => ({
+      degree: b[0] || '',
+      institution: b[1] || '',
+      achievements: [],
+    }));
+
+    // Certifications
+    const certSection = sections['CERTIFICATIONS'] || [];
+    const certifications = certSection.filter(Boolean).map(l => ({
+      name: l.trim(),
+    }));
+
+    // Projects
+    const projSection = sections['PROJECTS'] || [];
+    const projects = projSection.filter(Boolean).map(l => ({
+      name: l.trim().split(' - ')[0],
+      description: [l.trim()],
+      technologies: [],
+    }));
+
     return {
       structuredData: {
-        personalInfo: {},
-        skills: {
-          technical: [],
-          soft: [],
-          languages: []
+        personalInfo: {
+          name: nameMatch,
+          email: emailMatch ? emailMatch[0].trim() : undefined,
+          phone: phoneMatch ? phoneMatch[0].trim() : undefined,
+          location: locationMatch ? locationMatch[0].trim() : undefined,
         },
-        workExperience: [],
-        education: [],
-        certifications: [],
-        projects: []
+        skills: {
+          technical: technicalSkills,
+          soft: [],
+          languages: [],
+        },
+        workExperience,
+        education,
+        certifications,
+        projects,
       },
       metadata: {
         fileType: mimeType,
         fileName: 'resume',
         fileSize: buffer.length,
         parseDate: new Date().toISOString(),
-        confidence: 0.9
+        confidence: 0.8
       }
     };
+  }
+
+  /**
+   * Stub for PDF text extraction - to be implemented with a real PDF library.
+   */
+  private async extractTextFromPDF(buffer: Buffer): Promise<string> {
+    // TODO: Use a PDF text extraction library here (e.g., pdf-parse), then parse
+    // For now, just return a placeholder string
+    return '';
   }
 
   /**

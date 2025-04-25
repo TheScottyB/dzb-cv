@@ -157,11 +157,19 @@ export class CVService {
     }
     
     // Compare individual experience entries
+    const robustKey = (exp: ExperienceEntry) => [
+      exp.position,
+      exp.employer,
+      exp.startDate,
+      exp.endDate || '',
+      exp.location || ''
+    ].join('|');
+
     const oldExperienceMap = new Map<string, ExperienceEntry>(
-      oldData.experience.map(exp => [exp.position + exp.employer, exp])
+      oldData.experience.map(exp => [robustKey(exp), exp])
     );
     const newExperienceMap = new Map<string, ExperienceEntry>(
-      newData.experience.map(exp => [exp.position + exp.employer, exp])
+      newData.experience.map(exp => [robustKey(exp), exp])
     );
     
     this.detectExperienceChanges(oldExperienceMap, newExperienceMap, changes);
@@ -188,7 +196,7 @@ export class CVService {
     for (const [key, oldExp] of oldMap) {
       if (!newMap.has(key)) {
         changes.push({
-          field: 'experience',
+          field: 'experience.remove',
           oldValue: oldExp,
           newValue: null,
           resolutionNote: `Removed experience: ${oldExp.position} at ${oldExp.employer}`
@@ -200,7 +208,7 @@ export class CVService {
     for (const [key, newExp] of newMap) {
       if (!oldMap.has(key)) {
         changes.push({
-          field: 'experience',
+          field: 'experience.add',
           oldValue: null,
           newValue: newExp,
           resolutionNote: `Added experience: ${newExp.position} at ${newExp.employer}`

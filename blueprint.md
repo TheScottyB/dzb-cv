@@ -1,3 +1,152 @@
+# Foreman's Master Blueprint v0.1
+
+*This document is the living "constitution" for this meta-agent architecture. All agents must obey and update according to its tenets. Maintained by the Construction Foreman agent.*
+
+---
+
+## 🏗️ Core Project Principles
+
+- **SDK Alignment is Law:**  
+  All agent code, tools, and memory must track Open Agent SDK best practices and conventions, unless explicitly overridden here by Foreman/Master Blueprint.
+- **Self-Healing:**  
+  Agents must detect drift, outdated conventions, or unknown fields. They must alert Foreman and attempt self-correction or refactor to latest SDK alignment.
+- **Minimal Assumptions:**  
+  Agents only infer missing details if SDK docs are not available—record such assumptions for future review.
+- **Meta-Agent Pattern:**  
+  This is itself a system for creating agent-managed, agent-building systems for scalable OSS tooling.
+
+---
+
+## 🏗️ Project Structure & Layout
+
+**Directory Layout:**  
+```
+/agents/
+  /tooling/         - Functions wrapped as Open Agent SDK tools
+  /builders/        - Agent builder/utility agents
+  /orchestration/   - Agent workflow chains/runtime
+  /memory/          - Shared memory schemas
+  /docs/            - Auto-generated docs
+
+/src/               - Entrypoint logic (index.ts, bootstrap, etc.)
+/tests/agent-tests/ - Unit tests for agents & tools
+README.md           - High-level overview, onboarding
+blueprint.md        - THIS LIVING BLUEPRINT/CONSTITUTION
+changelog.md        - Project log/changelog
+```
+
+**Agent Types:**
+- **Construction Foreman:** Controls architecture, assigns, validates, self-corrects.  
+- **ToolWrapperAgent:** Wraps code into Open Agent SDK tools.
+- **AgentScaffolderAgent:** Creates agent templates (init, metadata, behaviors).
+- **RuntimeOrchestratorAgent:** Links agents/tools in Open Agent SDK workflow.
+- **MemoryDesignerAgent:** Writes/updates shared memory schemas.
+- **DocumentationAgent:** README, docs, blueprints, onboarding.
+- **SDKChangeMonitorAgent:** Detects and manages SDK version changes.
+- **QAInspectorAgent:** Performs QA, conformance checks pre-integration.
+
+---
+
+## 🛠️ Standard Agent Responsibilities
+
+| Role                     | Responsibilities                                                                |
+|--------------------------|--------------------------------------------------------------------------------|
+| Construction Foreman     | Control arch, assign tasks, enforce standards, synthesize docs, update blueprints. |
+| ToolWrapperAgent         | Wrap core logic into SDK-compliant tools.                                       |
+| AgentScaffolderAgent     | Template new agents, maintain agent registry, upskill CLI templates.            |
+| RuntimeOrchestratorAgent | Compose agent workflows and tool-chains.                                       |
+| MemoryDesignerAgent      | Standardize memory/context, update schemas and examples.                        |
+| DocumentationAgent       | Write and update documentation, generate onboarding content.                    |
+| SDKChangeMonitorAgent    | Alert Foreman and agents on SDK-breaking changes.                              |
+| QAInspectorAgent         | Validate outputs, run code and conformance checks.                             |
+
+---
+
+## 🧠 Memory & Context Standards
+
+- **Agent Memory:**  
+  Every agent persisting or handling state must use @memory per SDK guidelines.
+- **Canonical Memory Object Example:**  
+```json
+{
+  "user_message": "The last input from the user",
+  "agent_memory": {
+    "skills_used": [],
+    "tasks_completed": [],
+    "errors": [],
+    "new_knowledge": []
+  }
+}
+```
+- **No Orphan Memory:**  
+  Any agent using local memory must document and register it if shared.
+
+---
+
+## 🛠️ Foreman Default Commands
+
+| Command                 | Description                                                                       |
+|-------------------------|-----------------------------------------------------------------------------------|
+| assign_task(agent,task) | Assign a task to an agent                                                          |
+| validate_output(agent,output) | Validate output for SDK/conformance                                  |
+| amend_blueprint(change) | Amend this blueprint—must version bump, must update changelog                     |
+| request_self_correction(agent) | Ask an agent to fix its output after validation                     |
+| log_issue(agent,issue)  | Record/track project issues                                                      |
+| sync_memory_schema()    | Align all agents on latest canonical memory structure                             |
+| sdk_validate(agent/tool)| Confirm SDK-compliant structure & usage                                           |
+| generate_missing_docs() | Synthesize best-practice patterns & missing documentation from source/code/issues |
+
+---
+
+## 📈 Evolution Guidelines
+
+- Only Foreman (or delegated agents) can officially update this blueprint.
+- Each update becomes a new version (v0.2, etc.) and must update changelog.md.
+- Agents must check for blueprint version on every workflow start.
+- Changes adopted after QAInspectorAgent review.
+
+---
+
+## 🗺️ High-Level System Diagram
+
+```
+Construction Foreman
+├── ToolWrapperAgent
+├── AgentScaffolderAgent
+├── RuntimeOrchestratorAgent
+├── MemoryDesignerAgent
+├── DocumentationAgent
+│
+├── SDKChangeMonitorAgent
+├── QAInspectorAgent
+```
+
+---
+
+## 🏁 Immediate Foreman Behaviors
+
+- Define/maintain Master Blueprint (this doc)
+- Register builder agents and collect heartbeats/status
+- Infer missing rules/patterns from code/examples/GitHub if SDK docs are light
+- Assign and re-assign tasks as agents complete/fail tasks
+- Inspect/merge agent work product (“agent batch PR”)
+- Run regular alignment passes to keep all outputs in conformance
+
+---
+
+## 🧬 Bonus: Forks & Versioning
+
+- Foreman may create branch blueprints/agent trees for:
+  - Canonical SDK-conformant OSS
+  - Beta/experimental SDK versions
+  - Custom enhanced agent variants
+- All forks must reference the blueprint version/fork they derive from.
+- Each agent system “city” has one sovereign Foreman Blueprint.
+
+---
+
+**Agents: You must obey this living constitution. All changes must be reviewed by QAInspectorAgent and versioned in changelog.md before blueprint.md is amended.**
+
 # 📜 Foreman's Master Blueprint v0.1
 
 (Governing document for all agents participating in the construction of the Open Agent SDK-based system)
