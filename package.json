@@ -15,7 +15,7 @@
     "pnpm": ">=10.9.0"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc",
     "postbuild": "chmod +x dist/cli/index.js",
     "start": "node dist/cli/index.js",
     "dev": "tsx watch src/cli/index.ts",
@@ -28,7 +28,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write src/**/*.ts",
     "setup": "chmod +x setup.sh && ./setup.sh",
-    "link-cli": "pnpm link --global"
+    "link-cli": "pnpm link --global",
+    "score": "node src/scripts/score-resume.js"
   },
   "dependencies": {
     "@types/inquirer": "^9.0.7",
@@ -51,6 +52,7 @@
     "marked-smartypants": "^1.1.3",
     "node-fetch": "^3.3.2",
     "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^5.1.91",
     "puppeteer": "^24.7.2",
     "supports-color": "^10.0.0",
     "uuid": "^11.1.0"
@@ -58,7 +60,7 @@
   "devDependencies": {
     "@types/debug": "^4",
     "@types/handlebars": "^4.1.0",
-    "@types/node": "^22.15.2",
+    "@types/node": "^20.0.0",
     "@types/pdfjs-dist": "^2.10.378",
     "@vitest/coverage-v8": "^1.3.1",
     "@vitest/ui": "^1.3.1",

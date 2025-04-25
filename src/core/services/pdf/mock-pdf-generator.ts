@@ -13,7 +13,7 @@ export class MockPDFGenerator implements PDFGenerationProvider {
       '',
       'Experience:',
       ...data.experience.map(exp => 
-        `- ${exp.position} at ${exp.employer} (${exp.startDate} - ${exp.endDate || 'Present'})`
+        `- ${exp.title} at ${exp.company} (${exp.startDate} - ${exp.endDate || 'Present'})`
       ),
       '',
       'Education:',

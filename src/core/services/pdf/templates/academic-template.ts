@@ -6,6 +6,7 @@ import { AcademicCVData } from '../../../types/academic-types.js';
  * Academic CV template following standard academic formatting
  */
 export class AcademicTemplate extends BaseTemplate {
+  id = 'academic';
   name = 'academic';
 
   protected generateHeader(data: CVData): string {

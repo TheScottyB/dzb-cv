@@ -5,8 +5,9 @@ import type { TemplateOptions } from '../../../types/cv-types.js';
 /**
  * Federal template following USA government resume guidelines
  */
-export class FederalTemplate extends BasicTemplate {
-  override name = 'federal';
+export class FederalTemplate implements CVTemplate {
+  id = 'federal';
+  name = 'federal';
 
   override getStyles(): string {
     return `

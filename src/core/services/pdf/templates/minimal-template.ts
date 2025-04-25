@@ -5,8 +5,9 @@ import { BasicTemplate } from './template-provider.js';
 /**
  * Minimal template with clean, minimalist styling
  */
-export class MinimalTemplate extends BasicTemplate {
-  override name = 'minimal';
+export class MinimalTemplate implements CVTemplate {
+  id = 'minimal';
+  name = 'minimal';
 
   override getStyles(): string {
     return `

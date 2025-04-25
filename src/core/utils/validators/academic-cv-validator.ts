@@ -54,27 +54,43 @@ export class AcademicCVValidator {
 
   private validateRequiredFields(data: Partial<AcademicCVData>, errors: ValidationError[]): void {
     // Validate personal info
+
+    // Name object required
     if (!data.personalInfo?.name) {
       errors.push({
         field: 'personalInfo.name',
         message: 'Name is required'
       });
     }
-    // Check if full name is present and non-empty
-    if (data.personalInfo?.name && typeof data.personalInfo.name.full === 'string' && !data.personalInfo.name.full.trim()) {
+
+    // Full name required & non-empty string
+    if (
+      data.personalInfo?.name &&
+      (typeof data.personalInfo.name.full !== 'string' || !data.personalInfo.name.full.trim())
+    ) {
       errors.push({
         field: 'personalInfo.name.full',
         message: 'Full name is required'
       });
     }
-    
-    if (!data.personalInfo?.contact?.email) {
+
+    // Email required & non-empty string
+    if (
+      !data.personalInfo?.contact ||
+      typeof data.personalInfo.contact.email !== 'string' ||
+      !data.personalInfo.contact.email.trim()
+    ) {
       errors.push({
         field: 'personalInfo.contact.email',
         message: 'Email is required'
       });
     }
-    if (!data.personalInfo?.contact?.phone) {
+    // Phone required & non-empty string
+    if (
+      !data.personalInfo?.contact ||
+      typeof data.personalInfo.contact.phone !== 'string' ||
+      !data.personalInfo.contact.phone.trim()
+    ) {
       errors.push({
         field: 'personalInfo.contact.phone',
         message: 'Phone number is required'
@@ -139,42 +155,42 @@ export class AcademicCVValidator {
 
   private validatePublications(publications: Publication[], errors: ValidationError[]): void {
     publications.forEach((pub, index) => {
-      if (!pub.authors) {
+      if (!pub.authors || (typeof pub.authors === 'string' && !pub.authors.trim())) {
         errors.push({
           field: `publications[${index}].authors`,
           message: 'Publication authors are required'
         });
       }
 
-      if (!pub.title) {
+      if (!pub.title || (typeof pub.title === 'string' && !pub.title.trim())) {
         errors.push({
           field: `publications[${index}].title`,
           message: 'Publication title is required'
         });
       }
 
-      if (!pub.journal) {
+      if (!pub.journal || (typeof pub.journal === 'string' && !pub.journal.trim())) {
         errors.push({
           field: `publications[${index}].journal`,
           message: 'Journal name is required'
         });
       }
 
-      if (!pub.year) {
+      if (!pub.year || (typeof pub.year === 'string' && !pub.year.trim())) {
         errors.push({
           field: `publications[${index}].year`,
           message: 'Publication year is required'
         });
       }
 
-      if (!pub.volume) {
+      if (!pub.volume || (typeof pub.volume === 'string' && !pub.volume.trim())) {
         errors.push({
           field: `publications[${index}].volume`,
           message: 'Volume information is required'
         });
       }
 
-      if (!pub.pages) {
+      if (!pub.pages || (typeof pub.pages === 'string' && !pub.pages.trim())) {
         errors.push({
           field: `publications[${index}].pages`,
           message: 'Page numbers are required'
@@ -185,35 +201,35 @@ export class AcademicCVValidator {
 
   private validateConferences(conferences: Conference[], errors: ValidationError[]): void {
     conferences.forEach((conf, index) => {
-      if (!conf.title) {
+      if (!conf.title || (typeof conf.title === 'string' && !conf.title.trim())) {
         errors.push({
           field: `conferences[${index}].title`,
           message: 'Conference presentation title is required'
         });
       }
 
-      if (!conf.authors) {
+      if (!conf.authors || (typeof conf.authors === 'string' && !conf.authors.trim())) {
         errors.push({
           field: `conferences[${index}].authors`,
           message: 'Presentation authors are required'
         });
       }
 
-      if (!conf.year) {
+      if (!conf.year || (typeof conf.year === 'string' && !conf.year.trim())) {
         errors.push({
           field: `conferences[${index}].year`,
           message: 'Presentation year is required'
         });
       }
 
-      if (!conf.conferenceName) {
+      if (!conf.conferenceName || (typeof conf.conferenceName === 'string' && !conf.conferenceName.trim())) {
         errors.push({
           field: `conferences[${index}].conferenceName`,
           message: 'Conference name is required'
         });
       }
 
-      if (!conf.location) {
+      if (!conf.location || (typeof conf.location === 'string' && !conf.location.trim())) {
         errors.push({
           field: `conferences[${index}].location`,
           message: 'Conference location is required'
@@ -224,28 +240,28 @@ export class AcademicCVValidator {
 
   private validateGrants(grants: Grant[], errors: ValidationError[]): void {
     grants.forEach((grant, index) => {
-      if (!grant.title) {
+      if (!grant.title || (typeof grant.title === 'string' && !grant.title.trim())) {
         errors.push({
           field: `grants[${index}].title`,
           message: 'Grant title is required'
         });
       }
 
-      if (!grant.year) {
+      if (!grant.year || (typeof grant.year === 'string' && !grant.year.trim())) {
         errors.push({
           field: `grants[${index}].year`,
           message: 'Grant year is required'
         });
       }
 
-      if (!grant.amount) {
+      if (!grant.amount || (typeof grant.amount === 'string' && !grant.amount.trim())) {
         errors.push({
           field: `grants[${index}].amount`,
           message: 'Grant amount is required'
         });
       }
 
-      if (!grant.agency) {
+      if (!grant.agency || (typeof grant.agency === 'string' && !grant.agency.trim())) {
         errors.push({
           field: `grants[${index}].agency`,
           message: 'Funding agency is required'
@@ -256,14 +272,14 @@ export class AcademicCVValidator {
 
   private validateAwards(awards: Award[], errors: ValidationError[]): void {
     awards.forEach((award, index) => {
-      if (!award.title) {
+      if (!award.title || (typeof award.title === 'string' && !award.title.trim())) {
         errors.push({
           field: `awards[${index}].title`,
           message: 'Award title is required'
         });
       }
 
-      if (!award.year) {
+      if (!award.year || (typeof award.year === 'string' && !award.year.trim())) {
         errors.push({
           field: `awards[${index}].year`,
           message: 'Award year is required'

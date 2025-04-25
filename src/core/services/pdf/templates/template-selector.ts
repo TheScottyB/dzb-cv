@@ -1,6 +1,6 @@
 import type { CVData } from '../../../types/cv-base.js';
 import type { TemplateOptions } from '../../../types/cv-types.js';
-import { BasicTemplate } from './template-provider.js';
+import { BasicTemplate } from './basic-template.js';
 import { MinimalTemplate } from './minimal-template.js';
 import { FederalTemplate } from './federal-template.js';
 import { AcademicTemplate } from './academic-template.js';
