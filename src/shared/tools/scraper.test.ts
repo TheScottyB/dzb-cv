@@ -1,9 +1,9 @@
-import { jest, describe, it, expect, afterEach, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { JobScraper } from './scraper.js';
 import type { ScraperResult } from '../types/job-posting.js';
 import puppeteer from 'puppeteer';
 
-jest.mock('puppeteer');
+vi.mock('./web-scraper');
 
 const mockUrl = 'https://example.com/jobs/123';
 
@@ -12,23 +12,23 @@ describe('JobScraper', () => {
   
   beforeEach(() => {
     scraper = new JobScraper();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
   
   it('should scrape job posting successfully', async () => {
     const mockPage = {
-      goto: jest.fn(),
-      content: jest.fn().mockResolvedValue('<html><body>Mock content</body></html>'),
-      screenshot: jest.fn(),
-      pdf: jest.fn()
+      goto: vi.fn(),
+      content: vi.fn().mockResolvedValue('<html><body>Mock content</body></html>'),
+      screenshot: vi.fn(),
+      pdf: vi.fn()
     };
     
     const mockBrowser = {
-      newPage: jest.fn().mockResolvedValue(mockPage),
-      close: jest.fn()
+      newPage: vi.fn().mockResolvedValue(mockPage),
+      close: vi.fn()
     };
     
-    (puppeteer.launch as jest.Mock).mockResolvedValue(mockBrowser);
+    vi.mocked(puppeteer.launch).mockResolvedValue(mockBrowser as any);
     
     const result = await scraper.scrape('https://example.com/job');
     
@@ -40,7 +40,7 @@ describe('JobScraper', () => {
   
   it('should handle errors gracefully', async () => {
     const error = new Error('Failed to launch browser');
-    (puppeteer.launch as jest.Mock).mockRejectedValue(error);
+    vi.mocked(puppeteer.launch).mockRejectedValue(error);
     
     const result = await scraper.scrape('https://example.com/job');
     
@@ -50,9 +50,9 @@ describe('JobScraper', () => {
 
   it('should successfully scrape job information', async () => {
     const mockPage = {
-      goto: jest.fn().mockResolvedValue(null),
-      waitForTimeout: jest.fn().mockResolvedValue(null),
-      evaluate: jest.fn().mockResolvedValue({
+      goto: vi.fn().mockResolvedValue(null),
+      waitForTimeout: vi.fn().mockResolvedValue(null),
+      evaluate: vi.fn().mockResolvedValue({
         title: 'Test Job',
         company: 'Test Company',
         location: 'Test Location',
@@ -69,17 +69,17 @@ describe('JobScraper', () => {
           employmentType: 'Full-time'
         }
       }),
-      content: jest.fn().mockResolvedValue('<html>test</html>'),
-      screenshot: jest.fn().mockResolvedValue(null),
-      pdf: jest.fn().mockResolvedValue(null)
+      content: vi.fn().mockResolvedValue('<html>test</html>'),
+      screenshot: vi.fn().mockResolvedValue(null),
+      pdf: vi.fn().mockResolvedValue(null)
     };
 
     const mockBrowser = {
-      newPage: jest.fn().mockResolvedValue(mockPage),
-      close: jest.fn().mockResolvedValue(null)
+      newPage: vi.fn().mockResolvedValue(mockPage),
+      close: vi.fn().mockResolvedValue(null)
     };
 
-    (puppeteer.launch as jest.Mock).mockResolvedValue(mockBrowser as any);
+    vi.mocked(puppeteer.launch).mockResolvedValue(mockBrowser as any);
 
     const result = await scraper.scrape(mockUrl);
 
@@ -91,7 +91,7 @@ describe('JobScraper', () => {
   });
 
   it('should handle errors during scraping', async () => {
-    (puppeteer.launch as jest.Mock).mockRejectedValue(new Error('Test error'));
+    vi.mocked(puppeteer.launch).mockRejectedValue(new Error('Test error'));
 
     const result = await scraper.scrape(mockUrl);
 
@@ -102,7 +102,7 @@ describe('JobScraper', () => {
 
   it('should extract job info correctly', async () => {
     const mockPage = {
-      evaluate: jest.fn().mockResolvedValue({
+      evaluate: vi.fn().mockResolvedValue({
         title: 'Test Job',
         company: 'Test Company',
         location: 'Test Location',

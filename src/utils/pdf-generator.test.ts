@@ -1,7 +1,8 @@
+import { describe, it, expect, beforeAll } from 'vitest';
 import { PDFGenerator } from './pdf-generator.js';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { JobMatcher } from './job-matcher.js';
+import { join } from 'path';
+import { readFileSync } from 'fs';
 
 describe('PDFGenerator', () => {
   let generator: PDFGenerator;
@@ -16,7 +17,7 @@ describe('PDFGenerator', () => {
     jobData = JSON.parse(readFileSync(jobDataPath, 'utf-8'));
   });
 
-  test('should generate PDF from markdown with custom theme', async () => {
+  it('should generate PDF from markdown with custom theme', async () => {
     const markdown = `
 # Test Document
 ## With Custom Theme
@@ -43,7 +44,7 @@ This is a test document with **bold** text and *italic* text.
     expect(() => readFileSync(outputPath)).not.toThrow();
   });
 
-  test('should generate PDF from job matches', async () => {
+  it('should generate PDF from job matches', async () => {
     const matches = matcher.matchRequirements(jobData);
     const outputPath = join(process.cwd(), 'job-analysis.pdf');
     

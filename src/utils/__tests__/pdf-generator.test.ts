@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeEach } from 'vitest';
 import { PDFGenerator } from '../pdf-generator.js';
 import { MatchResult } from '../job-matcher.js';
 

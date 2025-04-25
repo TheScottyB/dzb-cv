@@ -1,6 +1,7 @@
-import { JobMatcher } from './job-matcher.js';
-import { readFileSync } from 'fs';
+import { describe, it, expect, beforeAll } from 'vitest';
+import { JobMatcher } from './job-matcher';
 import { join } from 'path';
+import { readFileSync } from 'fs';
 
 describe('JobMatcher', () => {
   let matcher: JobMatcher;
@@ -13,7 +14,7 @@ describe('JobMatcher', () => {
     jobData = JSON.parse(readFileSync(jobDataPath, 'utf-8'));
   });
 
-  test('should match requirements from job posting', () => {
+  it('should match requirements from job posting', () => {
     const matches = matcher.matchRequirements(jobData);
     
     // Check that we found matches for key requirements
@@ -34,7 +35,7 @@ describe('JobMatcher', () => {
     expect(patientAccessMatches.length).toBeGreaterThan(0);
   });
 
-  test('should generate tailored content', () => {
+  it('should generate tailored content', () => {
     const matches = matcher.matchRequirements(jobData);
     const content = matcher.generateTailoredContent(matches);
     

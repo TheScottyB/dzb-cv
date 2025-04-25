@@ -1,10 +1,10 @@
-import { jest, describe, it, expect, afterEach, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { scrapeJob } from './job-scraper.js';
 import fs from 'fs/promises';
 import path from 'path';
 
 // Mock fetch
-const mockFetch = jest.fn().mockImplementation((url) => {
+const mockFetch = vi.fn().mockImplementation((url) => {
   return Promise.resolve({
     ok: true,
     text: () => Promise.resolve(`
@@ -35,7 +35,7 @@ describe('Job Scraper', () => {
 
   beforeEach(() => {
     // Clear mock data before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(async () => {
