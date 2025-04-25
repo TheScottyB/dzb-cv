@@ -1,23 +1,22 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { CVData } from '../types/cv-types.js';
-import type { Profile, ProfileVersion } from '../types/profile-types.js';
-import {
-  ProfileData,
+import type {
+  Profile,
+  ProfileVersion,
   ProfileChange,
-  ImportSource,
-  MergeStrategy,
-  MergeConfig,
-  ExperienceEntry,
-  EducationEntry,
-  SkillEntry,
-  CertificationEntry,
-  ProjectEntry
+  ProfileData
 } from '../types/profile-types.js';
 
 /**
  * Service for managing profile operations
  */
 export class ProfileService {
+  private profiles: Map<string, Profile>;
+
+  constructor() {
+    this.profiles = new Map();
+  }
+
   /**
    * Create a new profile with initial data
    * @param owner The name of the profile owner
@@ -25,37 +24,29 @@ export class ProfileService {
    * @returns The newly created profile
    */
   async createProfile(owner: string, data: CVData): Promise<Profile> {
-    const id = uuidv4();
-    const version: ProfileVersion = {
+    const profile: Profile = {
       id: uuidv4(),
-      profileId: id,
-      versionNumber: 1,
-      timestamp: new Date().toISOString(),
-      data
-    };
-    
-    return {
-      id,
       owner,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      versions: [version],
-      currentVersion: version
+      versions: [],
+      currentVersion: {
+        id: uuidv4(),
+        profileId: '',
+        versionNumber: 1,
+        timestamp: new Date().toISOString(),
+        data,
+        createdBy: owner
+      }
     };
+
+    profile.currentVersion.profileId = profile.id;
+    profile.versions.push(profile.currentVersion);
+    this.profiles.set(profile.id, profile);
+
+    return profile;
   }
-  
-  /**
-   * Get the latest version of a profile
-   * @param profileId The ID of the profile
-   * @returns The current profile version or null if not found
-   */
-  async getCurrentProfileVersion(profileId: string): Promise<ProfileVersion | null> {
-    const profile = await this.getProfileById(profileId);
-    if (!profile) return null;
-    
-    return this.getProfileVersionById(profile.currentVersion.id);
-  }
-  
+
   /**
    * Get a profile by ID (placeholder implementation)
    * @param profileId The ID of the profile to retrieve
@@ -93,18 +84,20 @@ export class ProfileService {
       }
     };
   }
-  
+
   /**
    * Get a profile version by ID (placeholder implementation)
    * @param versionId The ID of the version to retrieve
    * @returns The profile version or null if not found
    */
   private async getProfileVersionById(versionId: string): Promise<ProfileVersion | null> {
-    // This would normally fetch from a database
-    // For now, return null to simulate a new profile creation
+    for (const profile of this.profiles.values()) {
+      const version = profile.versions.find(v => v.id === versionId);
+      if (version) return version;
+    }
     return null;
   }
-  
+
   /**
    * Save a profile to the database (placeholder implementation)
    * @param profile The profile to save
@@ -114,7 +107,7 @@ export class ProfileService {
     console.log(`[Mock DB] Saving profile ${profile.id} for ${profile.owner}`);
     return Promise.resolve();
   }
-  
+
   /**
    * Save a profile version to the database (placeholder implementation)
    * @param version The profile version to save
@@ -124,7 +117,7 @@ export class ProfileService {
     console.log(`[Mock DB] Saving profile version ${version.id} for profile ${version.profileId}`);
     return Promise.resolve();
   }
-  
+
   /**
    * Create a new version of a profile
    * @param profileId The ID of the profile to update
@@ -239,5 +232,35 @@ export class ProfileService {
     }
     
     return changes;
+  }
+
+  async getProfile(id: string): Promise<Profile | null> {
+    return this.profiles.get(id) || null;
+  }
+
+  async updateProfile(id: string, data: Partial<CVData>): Promise<Profile> {
+    const profile = await this.getProfile(id);
+    if (!profile) {
+      throw new Error(`Profile not found: ${id}`);
+    }
+
+    const newVersion: ProfileVersion = {
+      id: uuidv4(),
+      profileId: profile.id,
+      versionNumber: profile.versions.length + 1,
+      timestamp: new Date().toISOString(),
+      data: {
+        ...profile.currentVersion.data,
+        ...data
+      },
+      previousVersionId: profile.currentVersion.id,
+      createdBy: profile.owner
+    };
+
+    profile.versions.push(newVersion);
+    profile.currentVersion = newVersion;
+    profile.updatedAt = new Date().toISOString();
+
+    return profile;
   }
 }

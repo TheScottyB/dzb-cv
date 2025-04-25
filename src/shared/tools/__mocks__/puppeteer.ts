@@ -1,32 +1,14 @@
-const mockPage = {
-  goto: jest.fn(),
-  setViewport: jest.fn(),
-  setUserAgent: jest.fn(),
-  setCookie: jest.fn(),
-  content: jest.fn().mockResolvedValue('<html><body>Mock content</body></html>'),
-  title: jest.fn().mockResolvedValue('Mock Job Title'),
-  screenshot: jest.fn(),
-  pdf: jest.fn(),
-  evaluate: jest.fn().mockImplementation((fn) => {
-    // Mock evaluate to return basic job data
-    return Promise.resolve({
-      title: 'Mock Job Title',
-      company: 'Mock Company',
-      location: 'Mock Location',
-      description: 'Mock job description',
-      responsibilities: ['Mock responsibility 1', 'Mock responsibility 2'],
-      qualifications: ['Mock qualification 1', 'Mock qualification 2']
-    });
+// Mock implementation of puppeteer for testing
+const puppeteer = {
+  launch: jest.fn().mockResolvedValue({
+    newPage: jest.fn().mockResolvedValue({
+      setContent: jest.fn().mockResolvedValue(undefined),
+      pdf: jest.fn().mockResolvedValue(Buffer.from('mock pdf content')),
+      close: jest.fn().mockResolvedValue(undefined),
+      evaluate: jest.fn().mockReturnValue(Promise.resolve('mock content'))
+    }),
+    close: jest.fn().mockResolvedValue(undefined)
   })
 };
 
-const mockBrowser = {
-  newPage: jest.fn().mockResolvedValue(mockPage),
-  close: jest.fn(),
-  disconnect: jest.fn()
-};
-
-export default {
-  launch: jest.fn().mockResolvedValue(mockBrowser),
-  connect: jest.fn().mockResolvedValue(mockBrowser)
-}; 
+export default puppeteer; 

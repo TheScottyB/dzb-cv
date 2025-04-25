@@ -1,4 +1,4 @@
-import type { CVData, Experience } from '../../../types/cv-base.js';
+import type { CVData } from '../../../types/cv-base.js';
 import type { TemplateOptions } from '../../../types/cv-types.js';
 import { BasicTemplate } from './template-provider.js';
 

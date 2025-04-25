@@ -87,10 +87,8 @@ export class TemplateSelector {
     options?: PDFOptions & { templateOptions?: TemplateOptions }
   ): Promise<Buffer> {
     const template = this.provider.getTemplate(templateId);
-    const markdown = template.generateMarkdown(data, options?.templateOptions);
-    const styles = template.getStyles();
-    // TODO: Implement PDF generation
-    return Buffer.from('');
+    // TODO: Implement PDF generation using markdown and styles
+    return Buffer.from(template.generateMarkdown(data, options?.templateOptions));
   }
 
   /**

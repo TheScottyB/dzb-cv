@@ -1,7 +1,6 @@
 import { BasicTemplate } from './template-provider.js';
 import type { CVData } from '../../../types/cv-base.js';
 import type { TemplateOptions } from '../../../types/cv-types.js';
-import type { Experience } from '../../../types/cv-base.js';
 
 /**
  * Federal template following USA government resume guidelines

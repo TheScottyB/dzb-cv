@@ -2,11 +2,10 @@
  * Mock implementation of PDF generator for testing
  */
 import type { CVData } from '../../types/cv-base.js';
-import type { PDFOptions } from '../../types/cv-generation.js';
 import type { PDFGenerationProvider } from '../cv-service.js';
 
 export class MockPDFGenerator implements PDFGenerationProvider {
-  async generate(data: CVData, options?: PDFOptions): Promise<Buffer> {
+  async generate(data: CVData): Promise<Buffer> {
     // Create a simple representation of the CV data as text
     const content = [
       `Name: ${data.personalInfo.name.full}`,
@@ -14,7 +13,7 @@ export class MockPDFGenerator implements PDFGenerationProvider {
       '',
       'Experience:',
       ...data.experience.map(exp => 
-        `- ${exp.title} at ${exp.company} (${exp.startDate} - ${exp.endDate || 'Present'})`
+        `- ${exp.position} at ${exp.employer} (${exp.startDate} - ${exp.endDate || 'Present'})`
       ),
       '',
       'Education:',

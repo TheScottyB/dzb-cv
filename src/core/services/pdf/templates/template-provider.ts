@@ -193,7 +193,7 @@ ${data.skills.map(skill => `<span class="skill-item">${skill}</span>`).join('\n'
   }
 
   protected generateCertifications(data: CVData, options?: TemplateOptions): string {
-    if (!data.certifications.length) return '';
+    if (options?.includeCertifications === false || !data.certifications.length) return '';
 
     return `
 ## Certifications

@@ -2,13 +2,21 @@ import type {
   AcademicCVData, 
   Publication, 
   Conference, 
-  Grant, 
-  Award 
+  Grant 
 } from '../../types/academic-types.js';
 
 interface ValidationError {
   field: string;
   message: string;
+}
+
+interface Award {
+  title: string;
+  organization?: string;
+  year?: string;
+  notes?: string;
+  achievement?: string;
+  description?: string;
 }
 
 /**
@@ -99,17 +107,6 @@ export class AcademicCVValidator {
         if (grant.year && !this.isValidYear(grant.year)) {
           errors.push({
             field: `grants[${index}].year`,
-            message: 'Year must be in YYYY format'
-          });
-        }
-      });
-    }
-    
-    if (data.awards) {
-      data.awards.forEach((award, index) => {
-        if (award.year && !this.isValidYear(award.year)) {
-          errors.push({
-            field: `awards[${index}].year`,
             message: 'Year must be in YYYY format'
           });
         }
@@ -281,7 +278,7 @@ export class AcademicCVValidator {
    */
   getFirstErrorMessage(data: Partial<AcademicCVData>): string | null {
     const errors = this.validate(data);
-    return errors.length > 0 ? errors[0].message : null;
+    return errors.length > 0 ? errors[0]?.message ?? null : null;
   }
 }
 

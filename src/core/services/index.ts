@@ -4,14 +4,14 @@
 import { CVService } from './cv-service.js';
 import { MemoryStorage } from './storage/memory-storage.js';
 import { PDFGeneratorImpl } from './pdf/pdf-generator-impl.js';
-import type { Storage } from './storage/storage.js';
+import type { CVStorageProvider } from './cv-service.js';
 import type { PDFGenerator, PDFGenerationOptions } from './pdf/pdf-generator.js';
 
 /**
  * Dependencies for CV service
  */
 interface CVDependencies {
-  storage?: Storage;
+  storage?: CVStorageProvider;
   pdfGenerator?: PDFGenerator;
 }
 

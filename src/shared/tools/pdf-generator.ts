@@ -1,31 +1,38 @@
 import { promises as fs } from 'fs';
 import { join, dirname } from 'path';
 import MarkdownIt from 'markdown-it';
-import puppeteer from 'puppeteer';
-import type { PDFOptions, CVTypeConfiguration } from '../shared/types/cv-types.js';
+import puppeteer, { PaperFormat } from 'puppeteer';
+import type { PDFOptions } from '../../core/types/cv-generation.js';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const DEFAULT_MARGINS = {
+  top: 0.75,
+  right: 0.75,
+  bottom: 0.75,
+  left: 0.75
+} as const;
+
 export const DEFAULT_PDF_OPTIONS: PDFOptions = {
-  paperSize: 'Letter',
-  margins: {
-    top: 0.75,
-    right: 0.75,
-    bottom: 0.75,
-    left: 0.75
-  },
-  fontFamily: 'Arial, sans-serif',
-  fontSize: 11,
   includeHeaderFooter: false,
+  paperSize: 'Letter',
+  margins: DEFAULT_MARGINS,
+  fontFamily: 'Arial, sans-serif',
   orientation: 'portrait',
-  pdfCreator: 'DZB CV Generator'
+  pdfTitle: 'CV Document'
 };
 
-interface StyleOptions extends PDFOptions {
+/**
+ * Extended options for styling PDFs
+ */
+export interface StyleOptions extends PDFOptions {
+  /** Type of CV */
   cvType?: 'federal' | 'state' | 'private';
+  /** Whether to optimize for ATS */
   atsOptimized?: boolean;
+  /** Additional custom CSS classes */
   customClasses?: string[];
 }
 
@@ -43,6 +50,7 @@ export function convertMarkdownToHtml(markdownContent: string): string {
   // Add custom renderer rules for ATS compatibility
   md.renderer.rules.heading_open = (tokens, idx) => {
     const token = tokens[idx];
+    if (!token) return '';
     const level = parseInt(token.tag.slice(1), 10);
     // Use semantic classes for different heading levels
     return `<${token.tag} class="cv-heading-${level}">`;
@@ -91,6 +99,7 @@ export async function applyHtmlStyling(
   options: StyleOptions
 ): Promise<string> {
   const css = await loadStylesheet(options);
+  const margins = options.margins || DEFAULT_MARGINS;
   
   const styledHtml = `
     <!DOCTYPE html>
@@ -102,8 +111,8 @@ export async function applyHtmlStyling(
       <style>
         ${css}
         @page {
-          size: ${options.paperSize} ${options.orientation};
-          margin: ${options.margins.top}in ${options.margins.right}in ${options.margins.bottom}in ${options.margins.left}in;
+          size: ${options.paperSize || 'Letter'} ${options.orientation || 'portrait'};
+          margin: ${margins.top}in ${margins.right}in ${margins.bottom}in ${margins.left}in;
         }
         @media print {
           .page-break { page-break-after: always; }
@@ -133,8 +142,10 @@ export async function convertMarkdownToPdf(
     ...DEFAULT_PDF_OPTIONS,
     ...options,
     margins: {
-      ...DEFAULT_PDF_OPTIONS.margins,
-      ...(options.margins || {})
+      top: options.margins?.top ?? DEFAULT_MARGINS.top,
+      right: options.margins?.right ?? DEFAULT_MARGINS.right,
+      bottom: options.margins?.bottom ?? DEFAULT_MARGINS.bottom,
+      left: options.margins?.left ?? DEFAULT_MARGINS.left
     }
   };
   
@@ -158,13 +169,13 @@ export async function convertMarkdownToPdf(
     // Generate PDF with enhanced options
     await page.pdf({
       path: outputPath,
-      format: pdfOptions.paperSize,
+      format: (pdfOptions.paperSize || 'Letter') as PaperFormat,
       landscape: pdfOptions.orientation === 'landscape',
       margin: {
-        top: `${pdfOptions.margins.top}in`,
-        right: `${pdfOptions.margins.right}in`,
-        bottom: `${pdfOptions.margins.bottom}in`,
-        left: `${pdfOptions.margins.left}in`
+        top: `${pdfOptions.margins?.top || DEFAULT_MARGINS.top}in`,
+        right: `${pdfOptions.margins?.right || DEFAULT_MARGINS.right}in`,
+        bottom: `${pdfOptions.margins?.bottom || DEFAULT_MARGINS.bottom}in`,
+        left: `${pdfOptions.margins?.left || DEFAULT_MARGINS.left}in`
       },
       printBackground: true,
       displayHeaderFooter: pdfOptions.includeHeaderFooter,
@@ -183,11 +194,11 @@ export async function convertMarkdownToPdf(
 // Helper functions
 function getHeaderFooterTemplates(options: StyleOptions) {
   const headerTemplate = options.includeHeaderFooter && options.headerText
-    ? `<div style="width: 100%; text-align: center; font-size: 8pt; font-family: ${options.fontFamily}; padding: 5px 0;">${options.headerText}</div>`
+    ? `<div style="width: 100%; text-align: center; font-size: 8pt; font-family: ${options.fontFamily || 'Arial, sans-serif'}; padding: 5px 0;">${options.headerText}</div>`
     : '';
     
   const footerTemplate = options.includeHeaderFooter && options.footerText
-    ? `<div style="width: 100%; text-align: center; font-size: 8pt; font-family: ${options.fontFamily}; padding: 5px 0;">
+    ? `<div style="width: 100%; text-align: center; font-size: 8pt; font-family: ${options.fontFamily || 'Arial, sans-serif'}; padding: 5px 0;">
         ${options.footerText} - <span class="pageNumber"></span> of <span class="totalPages"></span>
       </div>`
     : '';

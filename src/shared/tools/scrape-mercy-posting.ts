@@ -33,8 +33,8 @@ async function scrapeMercyPosting() {
     await fs.writeFile(jsonPath, JSON.stringify(jobData, null, 2), 'utf-8');
     
     console.log('Job posting scraped successfully');
-    console.log(`Job Title: ${jobData.title}`);
-    console.log(`Company: ${jobData.company}`);
+    console.log(`Job Title: ${jobData.position}`);
+    console.log(`Company: ${jobData.employer}`);
     console.log(`Location: ${jobData.location || 'Not specified'}`);
     console.log(`Data saved to: ${jsonPath}`);
     

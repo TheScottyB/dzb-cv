@@ -15,7 +15,7 @@
  */
 
 import { analyzeForATS } from './analyzer.js';
-import type { ATSAnalysis, ATSImprovement } from '../shared/types/ats-types.js';
+import type { ATSAnalysis } from '../shared/types/ats-types.js';
 import type { PDFOptions } from '../shared/types/cv-types.js';
 import { convertMarkdownToPdf } from '../shared/utils/pdf-generator.js';
 
@@ -73,46 +73,6 @@ export async function optimizeForATS(markdown: string): Promise<OptimizationResu
     },
     appliedOptimizations: analysis.suggestions
   };
-}
-
-/**
- * Extracts contact information from content
- */
-function extractContactInfo(content: string): string | null {
-  const lines = content.split('\n');
-  let contactSection = '';
-  let i = 0;
-
-  while (i < lines.length && i < 5) {
-    const line = lines[i];
-    if (line && (
-      line.includes('@') ||
-      line.match(/\d{3}[.-]\d{3}[.-]\d{4}/) ||
-      line.match(/[A-Za-z]+,\s*[A-Za-z]+/)
-    )) {
-      contactSection += line + '\n';
-    }
-    i++;
-  }
-
-  return contactSection || null;
-}
-
-/**
- * Formats contact information consistently
- */
-function formatContactInfo(contact: string): string {
-  const parts = contact.split('\n').filter(Boolean);
-  const name = parts.find(p => !p.includes('@') && !p.includes('-'))?.trim();
-  const email = parts.find(p => p.includes('@'))?.trim();
-  const phone = parts.find(p => p.includes('-'))?.trim();
-  const location = parts.find(p => p.includes(','))?.trim();
-
-  return `${name || ''}
-${[email, phone].filter(Boolean).join(' | ')}
-${location || ''}
-
-`;
 }
 
 /**
