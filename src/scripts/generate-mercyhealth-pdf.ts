@@ -110,13 +110,18 @@ async function generatePDFs() {
             color: #2c3e50;
             max-width: 8.5in;
             margin: 0 auto;
-            padding: 0.75in 1in;
+            padding: 0.5in 0.6in;
             font-size: 11pt;
+          }
+          .date {
+            text-align: center;
+            margin-bottom: 1.5em;
+            color: #34495e;
           }
           .header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 2.5em;
+            margin-bottom: 2em;
             padding-bottom: 0.5em;
             border-bottom: 1px solid #eee;
           }
@@ -126,12 +131,12 @@ async function generatePDFs() {
           }
           .sender-info {
             text-align: left;
-            padding-right: 2em;
+            padding-right: 1.5em;
             border-right: 1px solid #eee;
           }
           .recipient-info {
             text-align: right;
-            padding-left: 2em;
+            padding-left: 1.5em;
           }
           .name {
             font-size: 13pt;
@@ -145,22 +150,19 @@ async function generatePDFs() {
           .contact-line {
             margin-bottom: 0.15em;
           }
-          .date {
-            text-align: right;
-            margin: 2em 0 1.8em;
-            color: #34495e;
-          }
           .content {
             margin-top: 0;
           }
           p {
-            margin: 0 0 1.1em 0;
+            margin: 0 0 1em 0;
             text-align: justify;
             letter-spacing: 0.01em;
           }
           .skills-section {
-            margin: 1.2em 0;
-            padding: 1em 1.2em;
+            margin: 1em 0;
+            padding: 1em 1.5em;
+            margin-left: 1em;
+            margin-right: 1em;
             background: #f8f9fa;
             border-left: 2px solid #bdc3c7;
           }
@@ -170,31 +172,10 @@ async function generatePDFs() {
             font-style: italic;
           }
           .skills-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 0.6em;
-            padding-left: 0;
+            gap: 0.5em;
           }
           .skill-item {
-            position: relative;
-            padding-left: 0.8em;
-            color: #2c3e50;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 0.6em;
-          }
-          .skill-item:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-          }
-          .skill-item:before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0.5em;
-            width: 3px;
-            height: 3px;
-            background: #95a5a6;
-            border-radius: 50%;
+            padding-bottom: 0.5em;
           }
           .paragraph {
             margin-bottom: 1em;
@@ -206,8 +187,8 @@ async function generatePDFs() {
           }
           .timestamp {
             position: fixed;
-            bottom: 0.4in;
-            right: 1in;
+            bottom: 0.3in;
+            right: 0.6in;
             color: #bdc3c7;
             font-size: 7pt;
             font-family: Arial, sans-serif;
@@ -227,6 +208,7 @@ async function generatePDFs() {
         </style>
       </head>
       <body>
+        <div class="date">April 24, 2024</div>
         <div class="header">
           <div class="sender-info">
             <div class="name">Dawn Zurick Beilfuss</div>
@@ -248,7 +230,6 @@ async function generatePDFs() {
             </div>
           </div>
         </div>
-        <div class="date">April 24, 2024</div>
         <div class="content">
           ${marked(coverLetterMarkdown.split(/Dear Hiring Manager,/i)[1] || coverLetterMarkdown).toString()
             .replace(/<ul>/g, '<div class="skills-section"><div class="skills-grid">')
