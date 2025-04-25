@@ -446,23 +446,139 @@ async function extractFullDescription(document) {
             const jobData = JSON.parse(script.textContent);
             if (jobData['@type'] === 'JobPosting') {
                 console.log('Found job data in JSON-LD');
+                
+                // Extract salary information
+                let salary = null;
+                const description = jobData.description || '';
+                
+                // Extract sign-on bonus
+                const signOnBonusMatch = description.match(/\$(\d{1,3}(?:,\d{3})*)\s+Sign On Bonus/i);
+                const signOnBonus = signOnBonusMatch ? parseInt(signOnBonusMatch[1].replace(/,/g, '')) : null;
+                
+                // Extract work schedule
+                const scheduleMatch = description.match(/(\d+)\s+Hours\/(\d+)\s+Weeks/i);
+                const shiftMatch = description.match(/Shift:\s*([^\n<]+)/i);
+                
+                if (signOnBonus || scheduleMatch || shiftMatch) {
+                    salary = {
+                        signOnBonus: signOnBonus,
+                        type: jobData.employmentType,
+                        hours: scheduleMatch ? `${scheduleMatch[1]} Hours/${scheduleMatch[2]} Weeks` : null,
+                        shift: shiftMatch ? shiftMatch[1].trim() : null
+                    };
+                }
+
+                // Extract department from description
+                const departmentMatch = description.match(/Department:\s*([^\n<]+)/i);
+                const department = departmentMatch ? departmentMatch[1].trim() : 'Medical Laboratory';
+
+                // Extract hospital from description
+                const hospitalMatch = description.match(/([^,]+)\s+Hospital/i);
+                const hospital = hospitalMatch ? hospitalMatch[1].trim() : null;
+
+                // Extract responsibilities
+                const responsibilities = [];
+                const responsibilitiesMatch = description.match(/<strong>Essential Duties and Responsibilities<\/strong><\/p><ul>(.*?)<\/ul>/is);
+                if (responsibilitiesMatch) {
+                    const items = responsibilitiesMatch[1].match(/<li>(.*?)<\/li>/gis);
+                    if (items) {
+                        responsibilities.push({
+                            title: "Essential Duties and Responsibilities",
+                            items: items.map(item => item.replace(/<[^>]+>/g, '').trim())
+                        });
+                    }
+                }
+
+                // Extract qualifications
+                const qualifications = {
+                    education: [],
+                    certification: []
+                };
+                
+                // Extract education requirements
+                const educationMatch = description.match(/Education and Experience<br><br>(.*?)<br>/is);
+                if (educationMatch) {
+                    const educationText = educationMatch[1].replace(/<[^>]+>/g, '');
+                    qualifications.education = educationText.split(/<br\s*\/?>/).map(item => item.trim()).filter(Boolean);
+                }
+
+                // Extract certification requirements
+                const certificationMatch = description.match(/Certification\/Licensure<br><br>(.*?)<br>/is);
+                if (certificationMatch) {
+                    const certificationText = certificationMatch[1].replace(/<[^>]+>/g, '');
+                    qualifications.certification = certificationText.split(/<br\s*\/?>/).map(item => item.trim()).filter(Boolean);
+                }
+
+                // Extract culture of excellence
+                const cultureOfExcellence = {
+                    quality: [],
+                    service: [],
+                    partnering: [],
+                    cost: []
+                };
+
+                const cultureMatch = description.match(/Culture of Excellence Behavior Expectations<br><br>(.*?)<br>/is);
+                if (cultureMatch) {
+                    const cultureText = cultureMatch[1];
+                    const sections = cultureText.match(/<u>([^<]+)<\/u>\s*-\s*([^<]+)/g);
+                    if (sections) {
+                        sections.forEach(section => {
+                            const match = section.match(/<u>([^<]+)<\/u>\s*-\s*([^<]+)/);
+                            if (match) {
+                                const type = match[1].toLowerCase();
+                                const content = match[2].trim();
+                                if (cultureOfExcellence[type]) {
+                                    cultureOfExcellence[type] = content.split(';').map(item => item.trim());
+                                }
+                            }
+                        });
+                    }
+                }
+
+                // Extract physical demands
+                const physicalDemands = {
+                    description: '',
+                    requirements: [],
+                    visionRequirements: []
+                };
+
+                const physicalMatch = description.match(/Special Physical Demands<br><br>(.*?)<br>/is);
+                if (physicalMatch) {
+                    const physicalText = physicalMatch[1].replace(/<[^>]+>/g, '');
+                    const sentences = physicalText.split('.');
+                    
+                    physicalDemands.description = sentences[0].trim();
+                    
+                    const requirementsMatch = physicalText.match(/required to ([^.;]+)/gi);
+                    if (requirementsMatch) {
+                        physicalDemands.requirements = requirementsMatch.map(req => req.trim());
+                    }
+
+                    const visionMatch = physicalText.match(/vision abilities required by this job include ([^.;]+)/i);
+                    if (visionMatch) {
+                        physicalDemands.visionRequirements = visionMatch[1].split(',').map(item => item.trim());
+                    }
+                }
+
                 return {
+                    url: jobData.url,
                     title: jobData.title,
-                    description: jobData.description,
-                    responsibilities: jobData.responsibilities,
-                    qualifications: jobData.qualifications,
+                    company: jobData.hiringOrganization?.name || 'Mercyhealth',
+                    department: department,
                     location: jobData.jobLocation?.address ? {
                         city: jobData.jobLocation.address.addressLocality,
                         state: jobData.jobLocation.address.addressRegion,
-                        address: jobData.jobLocation.address.streetAddress,
-                        postalCode: jobData.jobLocation.address.postalCode
+                        hospital: hospital,
+                        address: jobData.jobLocation.address.streetAddress
                     } : null,
                     employmentType: jobData.employmentType,
-                    datePosted: jobData.datePosted,
-                    validThrough: jobData.validThrough,
-                    organization: jobData.hiringOrganization?.name,
-                    baseSalary: jobData.baseSalary,
-                    benefits: jobData.jobBenefits
+                    jobId: jobData.jobId,
+                    salary: salary,
+                    description: description,
+                    responsibilities: responsibilities,
+                    qualifications: qualifications,
+                    cultureOfExcellence: cultureOfExcellence,
+                    physicalDemands: physicalDemands
                 };
             }
         } catch (error) {
@@ -532,73 +648,136 @@ async function extractFullDescription(document) {
 }
 
 function generateXMLFromHTML(document) {
-    const mainContent = document.querySelector('main') || 
-                       document.querySelector('.job-description') ||
-                       document.querySelector('[class*="description" i]') ||
-                       document.querySelector('[id*="description" i]') ||
-                       document.body;
-
-    const sections = [];
-    let currentSection = null;
-
-    Array.from(mainContent.children).forEach(element => {
-        const tagName = element.tagName.toLowerCase();
-        const text = element.textContent?.trim();
-
-        if (!text) return;
-
-        if (['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
-            if (currentSection) {
-                sections.push(currentSection);
+    // Extract job data from JSON-LD first
+    const scriptTags = document.querySelectorAll('script[type="application/ld+json"]');
+    let jsonLdData = null;
+    for (const script of scriptTags) {
+        try {
+            const data = JSON.parse(script.textContent);
+            if (data['@type'] === 'JobPosting') {
+                jsonLdData = data;
+                break;
             }
-            currentSection = {
-                title: text,
-                content: []
-            };
-        } else if (currentSection) {
-            if (tagName === 'ul' || tagName === 'ol') {
-                const items = Array.from(element.querySelectorAll('li'))
-                    .map(li => li.textContent?.trim())
-                    .filter(Boolean);
-                currentSection.content.push({
-                    type: 'list',
-                    items
-                });
-            } else {
-                currentSection.content.push({
-                    type: 'text',
-                    content: text
-                });
-            }
+        } catch (error) {
+            console.error('Error parsing JSON-LD:', error);
         }
-    });
-
-    if (currentSection) {
-        sections.push(currentSection);
     }
 
-    // Generate XML
+    if (!jsonLdData) {
+        console.log('Could not find job data in JSON-LD');
+        return '<?xml version="1.0" encoding="UTF-8"?>\n<job-description></job-description>';
+    }
+
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<job-description>\n';
+
+    // Add basic job information
+    xml += `  <title>${escapeXML(jsonLdData.title)}</title>\n`;
+    xml += `  <company>${escapeXML(jsonLdData.hiringOrganization?.name || '')}</company>\n`;
     
-    sections.forEach(section => {
-        xml += `  <section title="${section.title.replace(/"/g, '&quot;')}">\n`;
-        section.content.forEach(content => {
-            if (content.type === 'list') {
-                xml += '    <list>\n';
-                content.items.forEach(item => {
-                    xml += `      <item>${item.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</item>\n`;
-                });
-                xml += '    </list>\n';
-            } else {
-                xml += `    <text>${content.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>\n`;
+    // Add location information
+    if (jsonLdData.jobLocation?.address) {
+        const address = jsonLdData.jobLocation.address;
+        xml += '  <location>\n';
+        xml += `    <city>${escapeXML(address.addressLocality || '')}</city>\n`;
+        xml += `    <state>${escapeXML(address.addressRegion || '')}</state>\n`;
+        xml += `    <address>${escapeXML(address.streetAddress || '')}</address>\n`;
+        xml += '  </location>\n';
+    }
+
+    // Add employment type
+    xml += `  <employment-type>${escapeXML(jsonLdData.employmentType || '')}</employment-type>\n`;
+
+    // Process description sections
+    const description = jsonLdData.description || '';
+    const sections = description.split(/<br>([^<]+)<br>/g)
+        .filter(Boolean)
+        .map(section => section.trim())
+        .filter(section => section.length > 0);
+
+    let currentSection = '';
+    for (const section of sections) {
+        const sectionMatch = section.match(/^([^<]+)/);
+        if (sectionMatch) {
+            currentSection = sectionMatch[1].trim();
+            xml += `  <section name="${escapeXML(currentSection)}">\n`;
+            
+            // Extract content
+            const content = section.replace(/^[^<]+/, '').trim();
+            if (content) {
+                // Handle lists
+                if (content.includes('<ul>')) {
+                    const listItems = content.match(/<li>([^<]+)<\/li>/g);
+                    if (listItems) {
+                        xml += '    <list>\n';
+                        listItems.forEach(item => {
+                            const text = item.replace(/<\/?li>/g, '').trim();
+                            xml += `      <item>${escapeXML(text)}</item>\n`;
+                        });
+                        xml += '    </list>\n';
+                    }
+                } else {
+                    // Handle paragraphs
+                    const paragraphs = content.split(/<p[^>]*>/).filter(Boolean);
+                    paragraphs.forEach(p => {
+                        const text = p.replace(/<[^>]+>/g, '').trim();
+                        if (text) {
+                            xml += `    <paragraph>${escapeXML(text)}</paragraph>\n`;
+                        }
+                    });
+                }
             }
+            xml += '  </section>\n';
+        }
+    }
+
+    // Add responsibilities section if available separately
+    if (jsonLdData.responsibilities) {
+        xml += '  <section name="Responsibilities">\n';
+        const responsibilities = jsonLdData.responsibilities
+            .replace(/<\/?p[^>]*>/g, '')
+            .replace(/<\/?strong[^>]*>/g, '')
+            .replace(/<ul>/g, '')
+            .replace(/<\/ul>/g, '')
+            .split(/<li>/)
+            .filter(Boolean)
+            .map(item => item.replace(/<\/li>/g, '').trim());
+
+        xml += '    <list>\n';
+        responsibilities.forEach(item => {
+            xml += `      <item>${escapeXML(item)}</item>\n`;
+        });
+        xml += '    </list>\n';
+        xml += '  </section>\n';
+    }
+
+    // Add qualifications section if available separately
+    if (jsonLdData.qualifications) {
+        xml += '  <section name="Qualifications">\n';
+        const qualifications = jsonLdData.qualifications
+            .replace(/<\/?p[^>]*>/g, '')
+            .split(/<br\s*\/?>/g)
+            .filter(Boolean)
+            .map(item => item.trim());
+
+        qualifications.forEach(item => {
+            xml += `    <paragraph>${escapeXML(item)}</paragraph>\n`;
         });
         xml += '  </section>\n';
-    });
-    
+    }
+
     xml += '</job-description>';
     return xml;
+}
+
+function escapeXML(str) {
+    if (!str) return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&apos;');
 }
 
 function standardizeUrl(url) {
