@@ -1,0 +1,35 @@
+John Doe
+123 Main St
+Anytown, NY 10110
+john.doe@email.com
+(555) 123-4567
+
+SUMMARY
+Results-driven Software Engineer with 9+ years experience building scalable applications for Fortune 500 companies.
+
+TECHNICAL SKILLS
+JavaScript, TypeScript, Python, Java, C#
+React, Node.js, AWS, SQL, Docker
+
+WORK EXPERIENCE
+Software Engineer, Acme Corp
+2017–2024
+- Developed SaaS platforms using Node.js and React
+- Reduced deployment time by 60% via CI/CD pipeline automation
+
+Senior Developer, BetaTech
+2013–2017
+- Led technical design for mobile app used by 2M+ users
+- Mentored 10+ junior engineers
+
+EDUCATION
+B.S. Computer Science, State University, 2013
+
+CERTIFICATIONS
+AWS Certified Solutions Architect – Associate
+
+PROJECTS
+Personal Finance Dashboard
+- Built with React, Node.js, and D3.js
+- Open sourced on GitHub, 2,000 stars
+

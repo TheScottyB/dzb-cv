@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { AcademicTemplate } from '../academic-template.js';
+import { AcademicTemplate } from '../index.js';
 import type { AcademicCVData } from '../../../../types/academic-types.js';
 
 describe('AcademicTemplate', () => {

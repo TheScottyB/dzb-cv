@@ -35,17 +35,6 @@ export enum ATSIssueType {
   FILE_SIZE_LARGE = 'FILE_SIZE_LARGE'
 }
 
-export interface ATSIssue {
-  type: ATSIssueType;
-  category: ATSIssueCategory;
-  score: number;
-  message: string;
-  fix: string;
-  examples: string[];
-  detected?: string; // The actual detected issue
-  location?: string; // Where in the document the issue was found
-}
-
 export interface ATSImprovement {
   type: string;
   score: number;
@@ -58,14 +47,7 @@ export interface ATSImprovement {
 export interface ATSAnalysisResult {
   score: number;
   issues: ATSIssue[];
-  improvements: Array<{
-    type: string;
-    score: number;
-    message: string;
-    fix: string;
-    examples: string[];
-    priority: 'critical' | 'high' | 'medium' | 'low';
-  }>;
+  improvements: ATSImprovement[];
   keywords: {
     found: string[];
     missing: string[];
@@ -73,9 +55,25 @@ export interface ATSAnalysisResult {
   };
   parseRate: number; // Percentage of content successfully parsed
   sectionScores: {
-    [key: string]: number; // Scores for individual sections
+    [key: string]: number;
   };
   recommendation: string;
+}
+
+export function analyzeATS(
+  resumeText: string,
+  fileInfo: { format: string; size: number },
+  jobDescription?: string
+): ATSAnalysisResult {
+  return {
+    score: 0,
+    issues: [],
+    improvements: [],
+    keywords: { found: [], missing: [], relevanceScore: 0 },
+    parseRate: 0,
+    sectionScores: {},
+    recommendation: "",
+  };
 }
 
 export const ATS_SCORING = {

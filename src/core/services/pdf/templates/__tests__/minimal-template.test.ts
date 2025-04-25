@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { MinimalTemplate } from '../minimal-template.js';
+import { MinimalTemplate } from '../index.js';
 import type { CVData } from '../../../../types/cv-base.js';
 
 describe('MinimalTemplate', () => {

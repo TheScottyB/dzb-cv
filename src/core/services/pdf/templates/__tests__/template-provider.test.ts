@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { TemplateProvider, BasicTemplate } from '../template-provider.js';
+import { BasicTemplate, MinimalTemplate, FederalTemplate, AcademicTemplate } from '../index.js';
+import { TemplateProvider } from '../template-provider.js';
 import type { CVData } from '../../../../types/cv-base.js';
 
 describe('TemplateProvider', () => {

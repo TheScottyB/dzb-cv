@@ -1,13 +1,60 @@
 import type { CVData } from '../../../types/cv-base.js';
 import type { TemplateOptions } from '../../../types/cv-types.js';
-import { BasicTemplate } from './template-provider.js';
+import { BasicTemplate } from './basic-template.js';
 
 /**
  * Minimal template with clean, minimalist styling
  */
-export class MinimalTemplate implements CVTemplate {
+export class MinimalTemplate extends BasicTemplate {
   id = 'minimal';
   name = 'minimal';
+
+  generateMarkdown(data: CVData, options?: TemplateOptions): string {
+    let md = '';
+    if (!options || options.includePersonalInfo !== false) {
+      md += `# ${data.personalInfo?.name?.full || ''}\n`;
+      if (data.personalInfo?.title) {
+        md += `${data.personalInfo.title}\n`;
+      }
+      if (data.personalInfo?.contact) {
+        const { email, phone, address } = data.personalInfo.contact;
+        md += `${[email, phone, address].filter(Boolean).join(' · ')}\n`;
+      }
+    }
+    // Experience
+    if (!options || options.includeExperience !== false) {
+      md += '\n## Experience\n';
+      if (data.experience && data.experience.length > 0) {
+        for (const exp of data.experience) {
+          const position = (exp as any).title || exp.position || '';
+          const employer = (exp as any).company || exp.employer || '';
+          md += `### ${position} · ${employer}\n`;
+          if (exp.responsibilities?.length) {
+            for (const r of exp.responsibilities) md += `- ${r}\n`;
+          }
+        }
+      }
+    }
+    // Skills
+    if (!options || options.includeSkills !== false) {
+      md += '\n## Skills\n<div class="skills-list">\n';
+      if (data.skills && data.skills.length > 0) {
+        for (const skill of data.skills) md += `<span class="skill-item">${skill}</span>\n`;
+      }
+      md += '</div>\n';
+    }
+    // Education
+    if (!options || options.includeEducation !== false) {
+      md += '\n## Education\n';
+      if (data.education && data.education.length > 0) {
+        for (const edu of data.education) {
+          md += `### ${edu.degree} - ${edu.institution}\n`;
+          md += `${edu.completionDate || edu.year || ''}\n`;
+        }
+      }
+    }
+    return md.trim();
+  }
 
   override getStyles(): string {
     return `

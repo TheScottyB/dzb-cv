@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { FederalTemplate } from '../federal-template.js';
+import { FederalTemplate } from '../index.js';
 import type { CVData } from '../../../../types/cv-base.js';
 
 describe('FederalTemplate', () => {

@@ -78,7 +78,8 @@ export class JobMatcher {
       (strengths as string[]).forEach((strength: string) => {
         if (this.isMatch(requirement.requirement, strength)) {
           matches.push(strength);
-          evidence.push(`Core strength in ${category}`);
+          // Use matched human-readable phrase
+          evidence.push(`Core strength in ${strength}`);
         }
       });
     });
