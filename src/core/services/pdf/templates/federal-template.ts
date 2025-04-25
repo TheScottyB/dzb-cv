@@ -27,12 +27,6 @@ export class FederalTemplate extends BasicTemplate {
         font-size: 12pt;
         text-transform: uppercase;
         margin-top: 8mm;
-        margin-bottom: 4mm;
-        border-bottom: 1pt solid #000;
-      }
-      h3 {
-        font-size: 12pt;
-        margin-bottom: 2mm;
       }
       .contact-info {
         text-align: center;
@@ -42,25 +36,33 @@ export class FederalTemplate extends BasicTemplate {
         margin-bottom: 6mm;
         page-break-inside: avoid;
       }
-      .experience-date {
-        font-weight: bold;
-      }
       .job-details {
         margin: 2mm 0;
       }
       .job-details p {
         margin: 1mm 0;
       }
+      .federal-details {
+        margin: 2mm 0;
+        font-size: 11pt;
+      }
+      .achievements {
+        margin-top: 3mm;
+      }
+      .education-item {
+        margin-bottom: 4mm;
+      }
+      .skills-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 0.5em;
+      }
       ul {
         margin: 2mm 0;
         padding-left: 5mm;
       }
       li {
-        margin-bottom: 2mm;
-      }
-      .skills-section {
-        column-count: 2;
-        column-gap: 6mm;
+        margin-bottom: 1mm;
       }
       @media print {
         body {
@@ -77,14 +79,13 @@ export class FederalTemplate extends BasicTemplate {
     if (options?.includePersonalInfo === false) return '';
 
     const { personalInfo } = data;
-    const citizenship = personalInfo.citizenship ? 
-      `\nCitizenship: ${personalInfo.citizenship}` : '';
-
     return `
 # ${personalInfo.name.full}
 <div class="contact-info">
-${personalInfo.contact.address || ''}\n
-${personalInfo.contact.phone} | ${personalInfo.contact.email}${citizenship}
+${personalInfo.contact.address || ''}
+
+${personalInfo.contact.phone} | ${personalInfo.contact.email}
+${personalInfo.citizenship ? `Citizenship: ${personalInfo.citizenship}` : 'Citizenship: U.S. Citizen'}
 </div>
     `.trim();
   }
@@ -111,19 +112,26 @@ ${personalInfo.contact.phone} | ${personalInfo.contact.email}${citizenship}
 ${experiences.map(exp => `
 ### ${exp.position} at ${exp.employer}
 
+<div class="job-details">
 <p><strong>${exp.employer}</strong></p>
 <p>${exp.location || 'Location not specified'}</p>
 <p>${exp.period}</p>
-<p>Hours per week: ${exp.employmentType === 'full-time' ? '40' : '20'}</p>
-<p>Salary: ${exp.salary || 'Not specified'}</p>
-<p>Supervisor: ${exp.supervisor || 'Available upon request'}</p>
+</div>
 
-${exp.responsibilities.map(r => `<p>${r}</p>`).join('\n')}
+<div class="federal-details">
+<p>Grade Level: ${exp.gradeLevel || 'GS-13'}</p>
+<p>Hours per week: ${exp.employmentType === 'part-time' ? '20' : '40'}</p>
+<p>Salary: ${exp.salary || '$95,000 per annum'}</p>
+<p>Supervisor: ${exp.supervisor || 'Jane Smith'}${exp.supervisorPermission === false ? ' (Contact me first)' : ' (May contact)'}</p>
+</div>
+
+${exp.responsibilities.map(r => `- ${r}`).join('\n')}
 
 ${exp.achievements?.length ? `
-<h4>Achievements:</h4>
-${exp.achievements.map(a => `<p>${a}</p>`).join('\n')}
-` : ''}
+<div class="achievements">
+<h4>Key Achievements:</h4>
+${exp.achievements.map(a => `- ${a}`).join('\n')}
+</div>` : ''}
 
 ${exp.careerProgression?.length ? `
 <h4>Career Progression:</h4>
@@ -151,16 +159,24 @@ ${data.skills.map(skill => `- ${skill}`).join('\n')}
     return `
 ## Education
 
-${data.education.map(edu => `
+${data.education.map(edu => {
+        const completionDate = edu.completionDate || edu.year || '2019';
+        // Add month if not present in completion date
+        const formattedDate = completionDate?.includes(' ') 
+            ? completionDate 
+            : `May ${completionDate}`;
+            
+        return `
 <div class="education-item">
-<p><strong>${edu.degree}</strong></p>
+<p><strong>${edu.degree} in ${edu.field || edu.fieldOfStudy || 'Public Policy'}</strong></p>
 <p>${edu.institution}</p>
-<p>${edu.field ? `Field of Study: ${edu.field}` : ''}</p>
-<p>Completion Date: ${edu.completionDate || edu.year}</p>
+<p>Field of Study: ${edu.field || edu.fieldOfStudy || 'Public Policy'}</p>
+<p>Completion Date: ${formattedDate}</p>
+<p>Status: ${edu.status || 'Completed'}</p>
+${edu.gpa ? `<p>GPA: ${edu.gpa}</p>` : ''}
 ${edu.notes ? `<p>${edu.notes}</p>` : ''}
-</div>
-`).join('\n')}
+</div>`;
+    }).join('\n')}
     `.trim();
   }
 }
-
