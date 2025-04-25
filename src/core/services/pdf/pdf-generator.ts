@@ -1,4 +1,9 @@
 import type { CVData } from '../../types/cv-base.js';
+import type { PaperFormat } from 'puppeteer';
+import puppeteer from 'puppeteer';
+import { marked } from 'marked';
+import { readFileSync } from 'fs';
+import handlebars from 'handlebars';
 
 /**
  * PDF generation options
@@ -11,13 +16,13 @@ export interface PDFGenerationOptions {
   /** Text to display in the footer */
   footerText?: string;
   /** Paper size for the PDF */
-  paperSize?: 'Letter' | 'A4' | 'Legal';
+  paperSize?: PaperFormat;
   /** Margins for the PDF in inches */
   margins?: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
+    top: string;
+    right: string;
+    bottom: string;
+    left: string;
   };
   /** Title of the PDF document */
   pdfTitle?: string;
@@ -32,40 +37,137 @@ export interface PDFGenerationOptions {
 /**
  * Interface for PDF generation
  */
-export interface PDFGenerator {
-  /**
-   * Generate a PDF from CV data
-   * @param data The CV data to generate the PDF from
-   * @param options Optional PDF generation options
-   * @returns A Promise that resolves to a Buffer containing the PDF
-   */
+export interface IPDFGenerator {
   generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer>;
-
-  /**
-   * Generate a PDF from markdown content
-   * @param markdown The markdown content to convert to PDF
-   * @param outputPath The path where the PDF should be saved
-   * @param options Optional PDF generation options
-   * @returns A Promise that resolves to the path of the generated PDF
-   */
   generateFromMarkdown(markdown: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string>;
-
-  /**
-   * Generate a PDF from HTML content
-   * @param html The HTML content to convert to PDF
-   * @param outputPath The path where the PDF should be saved
-   * @param options Optional PDF generation options
-   * @returns A Promise that resolves to the path of the generated PDF
-   */
   generateFromHTML(html: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string>;
-
-  /**
-   * Generate a PDF from a template
-   * @param templatePath The path to the template file
-   * @param data The data to use in the template
-   * @param outputPath The path where the PDF should be saved
-   * @param options Optional PDF generation options
-   * @returns A Promise that resolves to the path of the generated PDF
-   */
   generateFromTemplate(templatePath: string, data: CVData, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string>;
+}
+
+/**
+ * Concrete implementation of PDF Generator
+ */
+export class PDFGenerator implements IPDFGenerator {
+  async generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer> {
+    const browser = await puppeteer.launch();
+    try {
+      const page = await browser.newPage();
+      const html = this.generateHTML(data);
+      await page.setContent(html);
+      
+      const pdfOptions = {
+        format: (options?.paperSize || 'letter') as PaperFormat,
+        margin: options?.margins || { top: '1in', right: '1in', bottom: '1in', left: '1in' },
+        printBackground: true,
+        displayHeaderFooter: options?.includeHeaderFooter || false,
+        headerTemplate: options?.headerText || '',
+        footerTemplate: options?.footerText || '',
+        landscape: options?.orientation === 'landscape'
+      };
+      
+      const pdfBuffer = await page.pdf(pdfOptions);
+      return Buffer.from(pdfBuffer);
+    } finally {
+      await browser.close();
+    }
+  }
+
+  async generateFromMarkdown(markdown: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+    const html = await marked(markdown);
+    const result = await this.generateFromHTML(html, outputPath, options);
+    return result;
+  }
+
+  async generateFromHTML(html: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+    const browser = await puppeteer.launch();
+    try {
+      const page = await browser.newPage();
+      await page.setContent(html);
+      
+      const pdfOptions = {
+        path: outputPath,
+        format: (options?.paperSize || 'letter') as PaperFormat,
+        margin: options?.margins || { top: '1in', right: '1in', bottom: '1in', left: '1in' },
+        printBackground: true,
+        displayHeaderFooter: options?.includeHeaderFooter || false,
+        headerTemplate: options?.headerText || '',
+        footerTemplate: options?.footerText || '',
+        landscape: options?.orientation === 'landscape'
+      };
+      
+      await page.pdf(pdfOptions);
+      return outputPath;
+    } finally {
+      await browser.close();
+    }
+  }
+
+  async generateFromTemplate(templatePath: string, data: CVData, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+    const templateContent = readFileSync(templatePath, 'utf-8');
+    const template = handlebars.compile(templateContent);
+    const html = template(data);
+    const result = await this.generateFromHTML(html, outputPath, options);
+    return result;
+  }
+
+  private generateHTML(data: CVData): string {
+    // Basic HTML template
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${data.personalInfo.name.full} - CV</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            h1 { color: #333; }
+            .contact-info { margin-bottom: 20px; }
+            .section { margin-bottom: 30px; }
+          </style>
+        </head>
+        <body>
+          <h1>${data.personalInfo.name.full}</h1>
+          <div class="contact-info">
+            ${data.personalInfo.contact.email} | ${data.personalInfo.contact.phone}
+          </div>
+          
+          <div class="section">
+            <h2>Professional Experience</h2>
+            ${data.experience.map(exp => `
+              <div>
+                <h3>${exp.position} at ${exp.employer}</h3>
+                <p>${exp.startDate} - ${exp.endDate || 'Present'}</p>
+                <ul>
+                  ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
+                </ul>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="section">
+            <h2>Education</h2>
+            ${data.education.map(edu => `
+              <div>
+                <h3>${edu.degree} - ${edu.institution}</h3>
+                <p>${edu.year}</p>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="section">
+            <h2>Skills</h2>
+            <ul>
+              ${data.skills.map(skill => `<li>${skill}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div class="section">
+            <h2>Certifications</h2>
+            <ul>
+              ${data.certifications.map(cert => `<li>${cert}</li>`).join('')}
+            </ul>
+          </div>
+        </body>
+      </html>
+    `;
+  }
 } 
