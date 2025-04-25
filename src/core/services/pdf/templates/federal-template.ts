@@ -122,7 +122,7 @@ ${experiences.map(exp => `
 <p>Grade Level: ${exp.gradeLevel || 'GS-13'}</p>
 <p>Hours per week: ${exp.employmentType === 'part-time' ? '20' : '40'}</p>
 <p>Salary: ${exp.salary || '$95,000 per annum'}</p>
-<p>Supervisor: ${exp.supervisor || 'Jane Smith'}${exp.supervisorPermission === false ? ' (Contact me first)' : ' (May contact)'}</p>
+<p>Supervisor: ${exp.supervisor || 'Jane Smith'}${exp.mayContact === false ? ' (Contact me first)' : ' (May contact)'}</p>
 </div>
 
 ${exp.responsibilities.map(r => `- ${r}`).join('\n')}
@@ -168,12 +168,12 @@ ${data.education.map(edu => {
             
         return `
 <div class="education-item">
-<p><strong>${edu.degree} in ${edu.field || edu.fieldOfStudy || 'Public Policy'}</strong></p>
+<p><strong>${edu.degree} in ${edu.field || 'Public Policy'}</strong></p>
 <p>${edu.institution}</p>
-<p>Field of Study: ${edu.field || edu.fieldOfStudy || 'Public Policy'}</p>
+<p>Field of Study: ${edu.field || 'Public Policy'}</p>
 <p>Completion Date: ${formattedDate}</p>
 <p>Status: ${edu.status || 'Completed'}</p>
-${edu.gpa ? `<p>GPA: ${edu.gpa}</p>` : ''}
+${edu.notes ? `<p>${edu.notes}</p>` : ''}
 ${edu.notes ? `<p>${edu.notes}</p>` : ''}
 </div>`;
     }).join('\n')}
