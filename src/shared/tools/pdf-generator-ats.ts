@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import { optimizeForATS } from '../ats/optimizer.js';
+import { optimizeForATS } from '../../ats/optimizer.js';
 import type { PDFOptions } from '../types/cv-types.js';
 import type { ATSAnalysis } from '../types/ats-types.js';
 

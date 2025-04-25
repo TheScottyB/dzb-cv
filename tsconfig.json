@@ -11,6 +11,6 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "scripts/build-utils.js", "scripts/cv-document-manager.js"],
   "exclude": ["node_modules", "dist"]
 }

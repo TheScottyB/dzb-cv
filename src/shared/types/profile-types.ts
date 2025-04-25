@@ -17,10 +17,16 @@ export interface Profile {
 // A specific version of a profile
 export interface ProfileVersion {
   id: string;
+  profileId: string;
   versionNumber: number;
   timestamp: string;
-  data: ProfileData;
+  data: CVData;
   description?: string;
+  previousVersionId?: string;
+  changeReason?: string;
+  importSourceId?: string | null;
+  changes?: ProfileChange[];
+  createdBy?: string;
 }
 
 // The actual content of a profile version

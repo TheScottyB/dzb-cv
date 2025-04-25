@@ -1220,7 +1220,7 @@ program
       console.log(chalk.blue.bold(`📄 Parsing CV markdown for ${options.owner}...`));
       
       // Parse the markdown into structured data using the specialized parser
-      const profileData = parseCvMarkdown(markdownContent);
+      const profileData = await parseCvMarkdown(markdownContent);
       
       console.log(chalk.green('✅ Parsing complete.'));
       console.log(chalk.yellow('📊 Found:'));
@@ -1232,14 +1232,14 @@ program
       // Create a profile service instance
       const profileService = new ProfileService();
       
-      console.log(chalk.blue.bold(`💾 Creating profile for ${profileData.basicInfo.name || options.owner}...`));
+      console.log(chalk.blue.bold(`💾 Creating profile for ${profileData.personalInfo.name.full}...`));
       
       // Create a profile using the parsed data
       const profile = await profileService.createProfile(options.owner, profileData);
       
       console.log(chalk.green('✅ Profile created successfully!'));
       console.log(`   Profile ID: ${chalk.yellow(profile.id)}`);
-      console.log(`   Version ID: ${chalk.yellow(profile.currentVersionId)}`);
+      console.log(`   Version ID: ${chalk.yellow(profile.currentVersion.id)}`);
       
     } catch (error) {
       console.error(chalk.red('❌ Error processing CV:'), error);

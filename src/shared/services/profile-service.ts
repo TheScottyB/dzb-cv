@@ -26,17 +26,21 @@ export class ProfileService {
    */
   async createProfile(owner: string, data: CVData): Promise<Profile> {
     const id = uuidv4();
-    const currentVersionId = uuidv4();
-    const now = new Date();
+    const version: ProfileVersion = {
+      id: uuidv4(),
+      profileId: id,
+      versionNumber: 1,
+      timestamp: new Date().toISOString(),
+      data
+    };
     
-    // Basic implementation
     return {
       id,
-      currentVersionId,
       owner,
-      data,
-      createdAt: now,
-      updatedAt: now
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      versions: [version],
+      currentVersion: version
     };
   }
   
@@ -49,7 +53,7 @@ export class ProfileService {
     const profile = await this.getProfileById(profileId);
     if (!profile) return null;
     
-    return this.getProfileVersionById(profile.currentVersionId);
+    return this.getProfileVersionById(profile.currentVersion.id);
   }
   
   /**
@@ -62,25 +66,30 @@ export class ProfileService {
     // For now, return a mock success response for testing
     return {
       id: profileId,
-      currentVersionId: 'mock-version-id',
-      createdAt: new Date(),
-      updatedAt: new Date(),
       owner: 'Dawn Zurick Beilfuss',
-      data: {
-        basicInfo: {
-          name: 'Dawn Zurick Beilfuss',
-          email: 'dawn.beilfuss@example.com',
-          phone: '555-1234',
-          location: 'New York, NY',
-          title: 'Software Engineer',
-          summary: 'Experienced software engineer with a passion for innovation.',
-          links: {}
-        },
-        experience: [],
-        education: [],
-        skills: [],
-        certifications: [],
-        projects: []
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      versions: [],
+      currentVersion: {
+        id: 'mock-version-id',
+        profileId: profileId,
+        versionNumber: 1,
+        timestamp: new Date().toISOString(),
+        data: {
+          personalInfo: {
+            name: {
+              full: 'Dawn Zurick Beilfuss'
+            },
+            contact: {
+              email: 'dawn.beilfuss@example.com',
+              phone: '555-1234'
+            }
+          },
+          experience: [],
+          education: [],
+          skills: [],
+          certifications: []
+        }
       }
     };
   }
@@ -137,9 +146,9 @@ export class ProfileService {
       throw new Error(`Profile with ID ${profileId} not found`);
     }
     
-    const currentVersion = await this.getProfileVersionById(profile.currentVersionId);
+    const currentVersion = await this.getProfileVersionById(profile.currentVersion.id);
     if (!currentVersion) {
-      throw new Error(`Current version ${profile.currentVersionId} not found`);
+      throw new Error(`Current version ${profile.currentVersion.id} not found`);
     }
     
     // Calculate changes
@@ -150,7 +159,7 @@ export class ProfileService {
       id: uuidv4(),
       profileId,
       versionNumber: currentVersion.versionNumber + 1,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       createdBy,
       previousVersionId: currentVersion.id,
       changeReason,
@@ -160,10 +169,10 @@ export class ProfileService {
     };
     
     // Update profile
-    profile.currentVersionId = newVersion.id;
+    profile.currentVersion = newVersion;
     profile.updatedAt = newVersion.timestamp;
     
-    // Save to database (implementation details omitted)
+    // Save to database
     await this.saveProfile(profile);
     await this.saveProfileVersion(newVersion);
     
@@ -176,25 +185,10 @@ export class ProfileService {
    * @param newData The new profile data
    * @returns Array of detected changes
    */
-  private calculateChanges(oldData: ProfileData, newData: ProfileData): ProfileChange[] {
+  private calculateChanges(oldData: CVData, newData: CVData): ProfileChange[] {
     const changes: ProfileChange[] = [];
     
-    // This is a simplified implementation that can be expanded to do deeper comparison
-    
-    // Basic info changes
-    Object.keys(newData.basicInfo).forEach(key => {
-      const typedKey = key as keyof typeof newData.basicInfo;
-      if (JSON.stringify(oldData.basicInfo[typedKey]) !== JSON.stringify(newData.basicInfo[typedKey])) {
-        changes.push({
-          field: `basicInfo.${key}`,
-          oldValue: oldData.basicInfo[typedKey],
-          newValue: newData.basicInfo[typedKey],
-          resolutionNote: `Updated ${key}`
-        });
-      }
-    });
-    
-    // Experience changes
+    // Compare experience entries
     if (oldData.experience.length !== newData.experience.length) {
       changes.push({
         field: 'experience.length',
@@ -204,13 +198,14 @@ export class ProfileService {
       });
     }
     
-    // Compare individual experience entries by ID
-    const oldExperienceMap = new Map(oldData.experience.map((exp: ExperienceEntry) => [exp.id, exp]));
-    const newExperienceMap = new Map(newData.experience.map((exp: ExperienceEntry) => [exp.id, exp]));
+    // Compare individual experience entries
+    const oldExperienceMap = new Map(oldData.experience.map(exp => [exp.title + exp.company, exp]));
+    const newExperienceMap = new Map(newData.experience.map(exp => [exp.title + exp.company, exp]));
     
     // Find added experiences
-    newData.experience.forEach((newExp: ExperienceEntry) => {
-      if (!oldExperienceMap.has(newExp.id)) {
+    newData.experience.forEach(newExp => {
+      const key = newExp.title + newExp.company;
+      if (!oldExperienceMap.has(key)) {
         changes.push({
           field: `experience.add`,
           oldValue: null,
@@ -221,8 +216,9 @@ export class ProfileService {
     });
     
     // Find removed experiences
-    oldData.experience.forEach((oldExp: ExperienceEntry) => {
-      if (!newExperienceMap.has(oldExp.id)) {
+    oldData.experience.forEach(oldExp => {
+      const key = oldExp.title + oldExp.company;
+      if (!newExperienceMap.has(key)) {
         changes.push({
           field: `experience.remove`,
           oldValue: oldExp,
@@ -232,294 +228,16 @@ export class ProfileService {
       }
     });
     
-    // Find modified experiences
-    oldData.experience.forEach((oldExp: ExperienceEntry) => {
-      const newExp = newExperienceMap.get(oldExp.id) as ExperienceEntry | undefined;
-      if (newExp && JSON.stringify(oldExp) !== JSON.stringify(newExp)) {
-        // Find which fields changed
-        const expFields = ['company', 'title', 'startDate', 'endDate', 'location', 'description'];
-        
-        expFields.forEach(field => {
-          const typedField = field as keyof typeof oldExp;
-          if (JSON.stringify(oldExp[typedField]) !== JSON.stringify(newExp[typedField])) {
-            changes.push({
-              field: `experience.${oldExp.id}.${field}`,
-              oldValue: oldExp[typedField],
-              newValue: newExp[typedField],
-              resolutionNote: `Updated ${field} for ${oldExp.title} at ${oldExp.company}`
-            });
-          }
-        });
-        
-        // Check achievements
-        if (JSON.stringify(oldExp.achievements) !== JSON.stringify(newExp.achievements)) {
-          changes.push({
-            field: `experience.${oldExp.id}.achievements`,
-            oldValue: oldExp.achievements,
-            newValue: newExp.achievements,
-            resolutionNote: `Updated achievements for ${oldExp.title} at ${oldExp.company}`
-          });
-        }
-        
-        // Check technologies
-        if (JSON.stringify(oldExp.technologies) !== JSON.stringify(newExp.technologies)) {
-          changes.push({
-            field: `experience.${oldExp.id}.technologies`,
-            oldValue: oldExp.technologies,
-            newValue: newExp.technologies,
-            resolutionNote: `Updated technologies for ${oldExp.title} at ${oldExp.company}`
-          });
-        }
-      }
-    });
-    
-    // Education changes
-    if (oldData.education.length !== newData.education.length) {
+    // Compare personal info
+    if (JSON.stringify(oldData.personalInfo) !== JSON.stringify(newData.personalInfo)) {
       changes.push({
-        field: 'education.length',
-        oldValue: oldData.education.length,
-        newValue: newData.education.length,
-        resolutionNote: `Changed number of education entries from ${oldData.education.length} to ${newData.education.length}`
+        field: 'personalInfo',
+        oldValue: oldData.personalInfo,
+        newValue: newData.personalInfo,
+        resolutionNote: 'Updated personal information'
       });
     }
-    
-    // Compare individual education entries (similar approach as for experience)
-    const oldEducationMap = new Map(oldData.education.map((edu: EducationEntry) => [edu.id, edu]));
-    const newEducationMap = new Map(newData.education.map((edu: EducationEntry) => [edu.id, edu]));
-    
-    // Find added education entries
-    newData.education.forEach((newEdu: EducationEntry) => {
-      if (!oldEducationMap.has(newEdu.id)) {
-        changes.push({
-          field: `education.add`,
-          oldValue: null,
-          newValue: newEdu,
-          resolutionNote: `Added new education: ${newEdu.degree} in ${newEdu.fieldOfStudy}`
-        });
-      }
-    });
-    
-    // Find removed education entries
-    oldData.education.forEach((oldEdu: EducationEntry) => {
-      if (!newEducationMap.has(oldEdu.id)) {
-        changes.push({
-          field: `education.remove`,
-          oldValue: oldEdu,
-          newValue: null,
-          resolutionNote: `Removed education: ${oldEdu.degree} in ${oldEdu.fieldOfStudy}`
-        });
-      }
-    });
-    
-    // Skills changes
-    if (oldData.skills.length !== newData.skills.length) {
-      changes.push({
-        field: 'skills.length',
-        oldValue: oldData.skills.length,
-        newValue: newData.skills.length,
-        resolutionNote: `Changed number of skills from ${oldData.skills.length} to ${newData.skills.length}`
-      });
-    }
-    
-    // Compare individual skills (by ID)
-    const oldSkillsMap = new Map(oldData.skills.map((skill: SkillEntry) => [skill.id, skill]));
-    const newSkillsMap = new Map(newData.skills.map((skill: SkillEntry) => [skill.id, skill]));
-    
-    // Find added skills
-    newData.skills.forEach((newSkill: SkillEntry) => {
-      if (!oldSkillsMap.has(newSkill.id)) {
-        changes.push({
-          field: `skills.add`,
-          oldValue: null,
-          newValue: newSkill,
-          resolutionNote: `Added new skill: ${newSkill.name} (${newSkill.category})`
-        });
-      }
-    });
-    
-    // Find removed skills
-    oldData.skills.forEach((oldSkill: SkillEntry) => {
-      if (!newSkillsMap.has(oldSkill.id)) {
-        changes.push({
-          field: `skills.remove`,
-          oldValue: oldSkill,
-          newValue: null,
-          resolutionNote: `Removed skill: ${oldSkill.name} (${oldSkill.category})`
-        });
-      }
-    });
-    
-    // Certifications changes
-    if (oldData.certifications.length !== newData.certifications.length) {
-      changes.push({
-        field: 'certifications.length',
-        oldValue: oldData.certifications.length,
-        newValue: newData.certifications.length,
-        resolutionNote: `Changed number of certifications from ${oldData.certifications.length} to ${newData.certifications.length}`
-      });
-    }
-    
-    // Compare individual certifications (by ID)
-    const oldCertMap = new Map(oldData.certifications.map((cert: CertificationEntry) => [cert.id, cert]));
-    const newCertMap = new Map(newData.certifications.map((cert: CertificationEntry) => [cert.id, cert]));
-    
-    // Find added certifications
-    newData.certifications.forEach((newCert: CertificationEntry) => {
-      if (!oldCertMap.has(newCert.id)) {
-        changes.push({
-          field: `certifications.add`,
-          oldValue: null,
-          newValue: newCert,
-          resolutionNote: `Added new certification: ${newCert.name}`
-        });
-      }
-    });
-    
-    // Find removed certifications
-    oldData.certifications.forEach((oldCert: CertificationEntry) => {
-      if (!newCertMap.has(oldCert.id)) {
-        changes.push({
-          field: `certifications.remove`,
-          oldValue: oldCert,
-          newValue: null,
-          resolutionNote: `Removed certification: ${oldCert.name}`
-        });
-      }
-    });
-    
-    // Find modified certifications
-    oldData.certifications.forEach((oldCert: CertificationEntry) => {
-      const newCert = newCertMap.get(oldCert.id) as CertificationEntry | undefined;
-      if (newCert && JSON.stringify(oldCert) !== JSON.stringify(newCert)) {
-        // Find which fields changed
-        const certFields = ['name', 'issuer', 'dateObtained', 'expirationDate', 'credentialId', 'credentialURL'];
-        
-        certFields.forEach(field => {
-          const typedField = field as keyof typeof oldCert;
-          if (JSON.stringify(oldCert[typedField]) !== JSON.stringify(newCert[typedField])) {
-            changes.push({
-              field: `certifications.${oldCert.id}.${field}`,
-              oldValue: oldCert[typedField],
-              newValue: newCert[typedField],
-              resolutionNote: `Updated ${field} for certification: ${oldCert.name}`
-            });
-          }
-        });
-      }
-    });
-    
-    // Projects changes
-    if (oldData.projects.length !== newData.projects.length) {
-      changes.push({
-        field: 'projects.length',
-        oldValue: oldData.projects.length,
-        newValue: newData.projects.length,
-        resolutionNote: `Changed number of projects from ${oldData.projects.length} to ${newData.projects.length}`
-      });
-    }
-    
-    // Compare individual projects (by ID)
-    const oldProjMap = new Map(oldData.projects.map((proj: ProjectEntry) => [proj.id, proj]));
-    const newProjMap = new Map(newData.projects.map((proj: ProjectEntry) => [proj.id, proj]));
-    
-    // Find added projects
-    newData.projects.forEach((newProj: ProjectEntry) => {
-      if (!oldProjMap.has(newProj.id)) {
-        changes.push({
-          field: `projects.add`,
-          oldValue: null,
-          newValue: newProj,
-          resolutionNote: `Added new project: ${newProj.name}`
-        });
-      }
-    });
-    
-    // Find removed projects
-    oldData.projects.forEach((oldProj: ProjectEntry) => {
-      if (!newProjMap.has(oldProj.id)) {
-        changes.push({
-          field: `projects.remove`,
-          oldValue: oldProj,
-          newValue: null,
-          resolutionNote: `Removed project: ${oldProj.name}`
-        });
-      }
-    });
-    
-    // Find modified projects
-    oldData.projects.forEach((oldProj: ProjectEntry) => {
-      const newProj = newProjMap.get(oldProj.id) as ProjectEntry | undefined;
-      if (newProj && JSON.stringify(oldProj) !== JSON.stringify(newProj)) {
-        // Find which fields changed
-        const projFields = ['name', 'description', 'startDate', 'endDate', 'url'];
-        
-        projFields.forEach(field => {
-          const typedField = field as keyof typeof oldProj;
-          if (JSON.stringify(oldProj[typedField]) !== JSON.stringify(newProj[typedField])) {
-            changes.push({
-              field: `projects.${oldProj.id}.${field}`,
-              oldValue: oldProj[typedField],
-              newValue: newProj[typedField],
-              resolutionNote: `Updated ${field} for project: ${oldProj.name}`
-            });
-          }
-        });
-        
-        // Check technologies
-        if (JSON.stringify(oldProj.technologies) !== JSON.stringify(newProj.technologies)) {
-          changes.push({
-            field: `projects.${oldProj.id}.technologies`,
-            oldValue: oldProj.technologies,
-            newValue: newProj.technologies,
-            resolutionNote: `Updated technologies for project: ${oldProj.name}`
-          });
-        }
-        
-        // Check highlights
-        if (JSON.stringify(oldProj.highlights) !== JSON.stringify(newProj.highlights)) {
-          changes.push({
-            field: `projects.${oldProj.id}.highlights`,
-            oldValue: oldProj.highlights,
-            newValue: newProj.highlights,
-            resolutionNote: `Updated highlights for project: ${oldProj.name}`
-          });
-        }
-      }
-    });
     
     return changes;
-  }
-  
-  /**
-   * Import a profile from an external source
-   * This is a placeholder for future implementation
-   */
-  async importProfile(importSource: ImportSource, mergeConfig: MergeConfig): Promise<Profile> {
-    // Placeholder implementation
-    console.log(`Importing profile from ${importSource.filename} using ${mergeConfig.strategy} strategy`);
-    
-    // TODO: Implement actual import logic
-    // 1. Parse import source based on file type
-    // 2. Match with existing profile if any
-    // 3. Apply merge strategy
-    // 4. Create new version
-    
-    // For now, just create a new empty profile
-    return this.createProfile('Imported Profile', {
-      basicInfo: {
-        name: 'Imported Profile',
-        email: '',
-        phone: '',
-        location: '',
-        title: '',
-        summary: `Imported from ${importSource.filename}`,
-        links: {}
-      },
-      experience: [],
-      education: [],
-      skills: [],
-      certifications: [],
-      projects: []
-    });
   }
 }

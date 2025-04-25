@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { Command } from 'commander';
 import { parseCvMarkdown } from './tools/cv-parser.js';
-import { ProfileService } from './services/profile-service.js';
+import { ProfileService } from './shared/services/profile-service.js';
 
 // Set up the command line interface
 const program = new Command();
@@ -52,7 +52,7 @@ program
       
       console.log(`✅ Profile created successfully!`);
       console.log(`   Profile ID: ${profile.id}`);
-      console.log(`   Version ID: ${profile.currentVersionId}`);
+      console.log(`   Version ID: ${profile.currentVersion.id}`);
       
     } catch (error) {
       console.error('❌ Error processing CV:', error);

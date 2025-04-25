@@ -1,5 +1,6 @@
 import { ProfileData } from '../types/profile-types.js';
-import { createProfileFromMarkdown } from './markdown-profile-parser.js';
+import { parseMarkdownProfile } from './markdown-profile-parser.js';
+import type { CVData } from '../types/cv-types.js';
 
 /**
  * Parses markdown content of a CV and converts it to structured ProfileData
@@ -8,6 +9,6 @@ import { createProfileFromMarkdown } from './markdown-profile-parser.js';
  * @param markdownContent The markdown content of the CV
  * @returns Structured ProfileData object
  */
-export function parseCvMarkdown(markdownContent: string): ProfileData {
-  return createProfileFromMarkdown(markdownContent);
+export async function parseCvMarkdown(markdownContent: string): Promise<CVData> {
+  return parseMarkdownProfile(markdownContent);
 }

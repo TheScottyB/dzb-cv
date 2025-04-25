@@ -1,4 +1,4 @@
-import { ATS_ISSUES } from './constants';
+import { ATS_ISSUES } from './constants.js';
 
 /**
  * Common ATS parsing issues and their impact scores
