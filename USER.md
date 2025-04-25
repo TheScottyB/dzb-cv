@@ -8,8 +8,8 @@ DZB-CV is a specialized tool for generating tailored CVs for different job secto
 
 ### Prerequisites
 
-- Node.js 18 or later
-- pnpm package manager
+- Node.js 20.10.0 or higher
+- pnpm 8.12.1 or higher
 
 ### Installation
 
@@ -37,12 +37,18 @@ This tool generates three types of CVs:
 
 ```bash
 # Generate a specific CV format
-pnpm start -- --sector=federal
-pnpm start -- --sector=state
-pnpm start -- --sector=private
+dzb-cv generate federal
+dzb-cv generate state
+dzb-cv generate private
+
+# Generate with additional options
+dzb-cv generate federal --format markdown --output ./my-output --filename my-cv
 
 # Analyze a job posting and create tailored CV
-pnpm analyze-job <job-posting-url>
+dzb-cv analyze <job-posting-url>
+
+# Analyze with additional options
+dzb-cv analyze <job-posting-url> --output ./analysis.json --format json
 ```
 
 ### Output Location
@@ -64,7 +70,7 @@ Edit `src/data/base-info.json` to update:
 
 ### Customizing Templates
 
-Each sector has its own template file in `src/templates/{sector}/{sector}-template.md`
+Each sector has its own template file in `src/shared/templates/{sector}/{sector}-template.md`
 
 Templates use Handlebars syntax:
 - Variable substitution: `{{variable}}`
@@ -75,12 +81,12 @@ Templates use Handlebars syntax:
 
 1. Analyze a job posting:
    ```bash
-   pnpm analyze-job <job-posting-url> --output=job-analysis.json
+   dzb-cv analyze <job-posting-url> --output ./job-analysis.json --format json
    ```
 
-2. Use the generated job analysis to create a tailored CV:
+2. Generate a tailored CV with ATS optimization:
    ```bash
-   node generate-pdf.js
+   dzb-cv generate private --ats-optimize
    ```
 
 ## CV Format Details
@@ -104,7 +110,8 @@ Templates use Handlebars syntax:
 
 - **Template Errors**: Check Handlebars syntax if CV generation fails
 - **Missing Information**: Ensure all required fields exist in base-info.json
-- **PDF Generation**: Run `npx puppeteer browsers install chrome` if PDF generation fails
+- **PDF Generation**: If PDF generation fails, try rebuilding the project with `pnpm build`
+- **Command Not Found**: If `dzb-cv` command is not found, link the CLI globally with `pnpm link-cli`
 
 ## Support
 

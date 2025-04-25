@@ -19,7 +19,7 @@ A modular CV management system with job analysis capabilities. This tool helps c
 
 - [Node.js](https://nodejs.org/) 20.10.0 or higher
 - [Volta](https://volta.sh/) (recommended for managing Node.js and pnpm versions)
-- [pnpm](https://pnpm.io/) 10.9.0 or higher (8.12.1 minimum)
+- [pnpm](https://pnpm.io/) 8.12.1 or higher
 - Git for version control
 
 ### Quick Start
@@ -38,7 +38,7 @@ A modular CV management system with job analysis capabilities. This tool helps c
    ```bash
    # Volta will automatically use versions from package.json
    volta install node@20.10.0
-   volta install pnpm@10.9.0
+   volta install pnpm@8.12.1
    ```
 
 4. Run the setup script:
@@ -60,7 +60,6 @@ A modular CV management system with job analysis capabilities. This tool helps c
 The setup script will:
 - Install dependencies
 - Set up TypeScript configurations
-- Configure Git hooks for code quality
 - Configure Git hooks for code quality
 
 ## Command Documentation
@@ -377,7 +376,7 @@ pnpm install
 pnpm dev
 
 # Run the CLI in development mode
-pnpm cli [commands...]
+dzb-cv [commands...]
 
 # Debug the CLI
 pnpm dev:debug
@@ -524,7 +523,7 @@ Please use conventional commit messages:
 The system includes robust PDF generation capabilities with multiple templates:
 
 ```bash
-dzb-cv pdf generate <input> <output> --template <template-name>
+dzb-cv generate pdf <input> <output> --template <template-name>
 ```
 
 Options:
