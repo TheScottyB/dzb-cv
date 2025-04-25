@@ -8,8 +8,8 @@ import { convertMarkdownToPdf } from './pdf-generator.js';
 const JOB_TITLE = "Medical Laboratory Scientist/Medical Laboratory Technician";
 const JOB_DEPARTMENT = "Mercyhealth";
 const JOB_ID = "39454";
-const _OUTPUT_SUBDIR
-const _SECTOR
+const _OUTPUT_SUBDIR = "mercyhealth";
+const _SECTOR = "healthcare";
 const PRIMARY_COLOR = "#005A9C";  // Mercyhealth blue
 const SECONDARY_COLOR = "#2E7D32";
 const ACCENT_COLOR = "#1B5E20";
@@ -144,4 +144,4 @@ Dawn Zurick Beilfuss`;
   }
 }
 
-main(); 
+main();

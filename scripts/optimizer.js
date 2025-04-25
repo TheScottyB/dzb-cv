@@ -18,12 +18,11 @@ import { convertMarkdownToPdf } from './pdf-generator.js';
 /**
  * Optimizes content for ATS compatibility
  */
-export function optimizeMarkdown(markdown, _options = {}) {
+export async function optimizeMarkdown(markdown, _options = {}) {
     // First analyze current content
-    const initialAnalysis = await analyzeATSCompatibility(content);
-    let optimizedContent = content;
+    const initialAnalysis = await analyzeATSCompatibility(markdown);
+    let optimizedContent = markdown;
     const appliedOptimizations = [];
-    // Apply optimizations based on issues
     initialAnalysis.issues.forEach(issue => {
         const optimization = getOptimizationForIssue(issue);
         if (optimization) {
@@ -133,7 +132,7 @@ ${location || ''}
  */
 export async function createATSOptimizedPDF(content, outputPath, options) {
     // Optimize content
-    const { content: optimizedContent, analysis, appliedOptimizations } = await optimizeForATS(content, options);
+    const { content: optimizedContent, analysis, appliedOptimizations } = await optimizeMarkdown(content, options);
     // Add ATS optimization meta information
     const contentWithMeta = `${optimizedContent}
 

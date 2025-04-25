@@ -270,51 +270,6 @@ describe('AcademicCVValidator', () => {
       const message = validator.getFirstErrorMessage(validData);
       expect(message).toBeNull();
     });
-  });
-});
-
-import { describe, it, expect } from 'vitest';
-import { AcademicCVValidator } from '../academic-cv-validator.js';
-import type { AcademicCVData } from '../../../types/academic-types.js';
-
-describe('AcademicCVValidator', () => {
-  const validator = new AcademicCVValidator();
-
-  const validData: AcademicCVData = {
-    personalInfo: {
-      name: { full: 'Dr. Test User' },
-      contact: {
-        email: 'test@university.edu',
-        phone: '555-123-4567'
-      }
-    },
-    experience: [],
-    education: [],
-    skills: [],
-    certifications: [],
-    publications: [
-      {
-        authors: 'Test, A., User, B.',
-        title: 'Test Publication',
-        journal: 'Test Journal',
-        year: '2023',
-        volume: '10',
-        issue: '2',
-        pages: '100-120'
-      }
-    ],
-    conferences: [
-      {
-        title: 'Test Conference Presentation',
-        authors: 'Test, A.',
-        year: '2023',
-        conferenceName: 'Test Conference',
-        location: 'Test City, Country'
-      }
-    ],
-    grants: [
-      {
-        title: 'Test Grant',
-        year: '2022',
-        amount: '$
-
+            });
+          });
+        });

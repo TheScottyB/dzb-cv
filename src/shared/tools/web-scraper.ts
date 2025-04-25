@@ -666,7 +666,7 @@ export async function scrapeGenericJob(
       
       // Look for lists after each heading
       let sibling = heading.nextElementSibling;
-      let items: string[] = [];
+      const items: string[] = [];
       
       // Collect list items until next heading
       while (sibling && !['H1', 'H2', 'H3', 'H4', 'H5', 'H6'].includes(sibling.tagName)) {
