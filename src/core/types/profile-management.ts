@@ -19,18 +19,18 @@ export interface ProfileVersion {
   versionNumber: number;
   timestamp: string;
   data: CVData;
-  description?: string;
-  previousVersionId?: string;
-  changeReason?: string;
-  importSourceId?: string | null;
-  changes?: ProfileChange[];
-  createdBy?: string;
+  description?: string | undefined;
+  previousVersionId?: string | undefined;
+  changeReason?: string | undefined;
+  importSourceId?: string | null | undefined;
+  changes?: ProfileChange[] | undefined;
+  createdBy?: string | undefined;
 }
 
 export interface ProfileChange {
   field: string;
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   resolutionNote: string;
 }
 
@@ -40,10 +40,10 @@ export interface ImportSource {
   fileType: "pdf" | "docx" | "json" | "linkedin" | "other";
   importDate: Date;
   rawContent: string;
-  parsedData: any;
+  parsedData: Record<string, unknown>;
   status: "pending" | "processed" | "failed";
   processingErrors: string[];
-  resultingVersionId: string | null;
+  resultingVersionId: string | null | undefined;
 }
 
 export type MergeStrategy = 

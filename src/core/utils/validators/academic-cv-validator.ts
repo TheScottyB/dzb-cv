@@ -17,10 +17,14 @@ interface ValidationError {
 export class AcademicCVValidator {
   validate(data: Partial<AcademicCVData>): ValidationError[] {
     const errors: ValidationError[] = [];
-
+    
+    // Validate required fields
     this.validateRequiredFields(data, errors);
+    
+    // Validate format fields
     this.validateFormatFields(data, errors);
     
+    // Validate arrays if they exist
     if (data.publications) {
       this.validatePublications(data.publications, errors);
     }
@@ -36,29 +40,23 @@ export class AcademicCVValidator {
     if (data.awards) {
       this.validateAwards(data.awards, errors);
     }
-
+    
     return errors;
   }
 
   private validateRequiredFields(data: Partial<AcademicCVData>, errors: ValidationError[]): void {
-    if (!data.personalInfo?.name?.full) {
+    // Validate personal info
+    if (!data.personalInfo?.name) {
       errors.push({
-        field: 'personalInfo.name.full',
-        message: 'Full name is required'
+        field: 'personalInfo.name',
+        message: 'Name is required'
       });
     }
-
+    
     if (!data.personalInfo?.contact?.email) {
       errors.push({
         field: 'personalInfo.contact.email',
         message: 'Email is required'
-      });
-    }
-
-    if (!data.personalInfo?.contact?.phone) {
-      errors.push({
-        field: 'personalInfo.contact.phone',
-        message: 'Phone number is required'
       });
     }
   }
@@ -125,8 +123,7 @@ export class AcademicCVValidator {
   }
   
   private isValidYear(year: string): boolean {
-    // Accept YYYY format
-    const yearRegex = /^(19|20)\d{2}$/;
+    const yearRegex = /^\d{4}$/;
     return yearRegex.test(year);
   }
 
@@ -260,6 +257,13 @@ export class AcademicCVValidator {
         errors.push({
           field: `awards[${index}].year`,
           message: 'Award year is required'
+        });
+      }
+
+      if (!award.organization) {
+        errors.push({
+          field: `awards[${index}].organization`,
+          message: 'Awarding organization is required'
         });
       }
     });

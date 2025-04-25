@@ -15,9 +15,9 @@
  */
 
 import { analyzeForATS } from './analyzer.js';
-import { convertMarkdownToPdf } from '../shared/utils/pdf-generator.js';
 import type { ATSAnalysis, ATSImprovement } from '../shared/types/ats-types.js';
 import type { PDFOptions } from '../shared/types/cv-types.js';
+import { convertMarkdownToPdf } from '../shared/utils/pdf-generator.js';
 
 /**
  * Represents the result of ATS optimization
@@ -44,7 +44,7 @@ export async function optimizeForATS(markdown: string): Promise<OptimizationResu
   let optimizedMarkdown = markdown;
   
   // Apply recommendations from analysis
-  analysis.recommendations.forEach((recommendation: string) => {
+  analysis.suggestions.forEach(() => {
     // TODO: Implement specific optimization logic for each recommendation
     // This could include:
     // - Standardizing headings
@@ -54,7 +54,7 @@ export async function optimizeForATS(markdown: string): Promise<OptimizationResu
   });
   
   // Fix identified issues
-  analysis.issues.forEach((issue) => {
+  analysis.formattingIssues.forEach(() => {
     // TODO: Implement specific fixes for each issue type
     // This could include:
     // - Removing complex formatting
@@ -71,77 +71,8 @@ export async function optimizeForATS(markdown: string): Promise<OptimizationResu
       suggestions: [],
       formattingIssues: []
     },
-    appliedOptimizations: analysis.recommendations
+    appliedOptimizations: analysis.suggestions
   };
-}
-
-/**
- * Gets optimization strategy for a specific issue
- */
-function getOptimizationForIssue(issue: ATSImprovement) {
-  const optimizations: Record<string, {
-    apply: (content: string) => string;
-    description: string;
-  }> = {
-    COMPLEX_FORMATTING: {
-      apply: (content: string) => {
-        return content
-          .replace(/[•◦‣⁃]/g, '-')  // Replace special bullets
-          .replace(/[""]/g, '"')    // Replace smart quotes
-          .replace(/['']/g, "'")    // Replace smart apostrophes
-          .replace(/\t/g, '    ');  // Replace tabs with spaces
-      },
-      description: 'Simplified special characters and formatting'
-    },
-    UNUSUAL_HEADINGS: {
-      apply: (content: string) => {
-        const headingMap: Record<string, string> = {
-          'my amazing journey': 'Professional Experience',
-          'cool stuff i did': 'Achievements',
-          'about me': 'Professional Summary',
-          // Add more mappings as needed
-        };
-
-        return content.replace(
-          /^#+\s*(.*?)$/gim,
-          (match, heading) => {
-            const normalized = heading.toLowerCase().trim();
-            return match.replace(heading, headingMap[normalized] || heading);
-          }
-        );
-      },
-      description: 'Standardized section headings'
-    },
-    MISSING_DATES: {
-      apply: (content: string) => {
-        // Look for experience entries without dates
-        return content.replace(
-          /^([A-Za-z\s]+)\n([A-Za-z\s]+)\n/gm,
-          (match, company, role) => {
-            if (!/\d{4}/.test(match)) {
-              return `${company} | Present\n${role}\n`;
-            }
-            return match;
-          }
-        );
-      },
-      description: 'Added missing dates to experience entries'
-    },
-    CONTACT_INFO: {
-      apply: (content: string) => {
-        // Ensure contact info is properly formatted at the top
-        const contactInfo = extractContactInfo(content);
-        if (contactInfo) {
-          const formattedContact = formatContactInfo(contactInfo);
-          return formattedContact + content.replace(contactInfo, '');
-        }
-        return content;
-      },
-      description: 'Reformatted contact information'
-    }
-  };
-
-  return optimizations[issue.type];
 }
 
 /**
@@ -153,12 +84,13 @@ function extractContactInfo(content: string): string | null {
   let i = 0;
 
   while (i < lines.length && i < 5) {
-    if (
-      lines[i].includes('@') ||
-      lines[i].match(/\d{3}[.-]\d{3}[.-]\d{4}/) ||
-      lines[i].match(/[A-Za-z]+,\s*[A-Za-z]+/)
-    ) {
-      contactSection += lines[i] + '\n';
+    const line = lines[i];
+    if (line && (
+      line.includes('@') ||
+      line.match(/\d{3}[.-]\d{3}[.-]\d{4}/) ||
+      line.match(/[A-Za-z]+,\s*[A-Za-z]+/)
+    )) {
+      contactSection += line + '\n';
     }
     i++;
   }

@@ -2,8 +2,11 @@
   "name": "dzb-cv",
   "version": "1.0.0",
   "description": "Profile management system for Dawn",
-  "main": "dist/index.js",
+  "main": "dist/cli/index.js",
   "type": "module",
+  "bin": {
+    "dzb-cv": "dist/cli/index.js"
+  },
   "volta": {
     "node": "20.10.0",
     "pnpm": "8.12.1"
@@ -15,18 +18,25 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js",
+    "postbuild": "chmod +x dist/cli/index.js",
+    "start": "node dist/cli/index.js",
     "dev": "tsx watch src/cli/index.ts",
+    "dev:debug": "tsx --inspect-brk watch src/cli/index.ts",
+    "cli": "tsx src/cli/index.ts",
     "test": "vitest run",
-    "test:ts": "vitest run typescript/src",
-    "test:utils": "vitest run scripts",
+    "test:cli": "vitest run src/cli",
+    "test:commands": "vitest run src/cli/commands",
+    "test:tools": "vitest run src/tools",
     "test:coverage": "vitest run --coverage",
     "test:ui": "vitest --ui",
     "test:watch": "vitest watch",
-    "typecheck": "tsc --noEmit -p typescript/tsconfig.json",
-    "lint": "eslint typescript/src/**/*.ts scripts/**/*.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/**/*.ts scripts/**/*.js",
+    "lint:fix": "eslint src/**/*.ts scripts/**/*.js --fix",
+    "format": "prettier --write src/**/*.ts",
     "prepare": "husky install",
-    "setup": "chmod +x setup.sh && ./setup.sh"
+    "setup": "chmod +x setup.sh && ./setup.sh",
+    "link-cli": "pnpm link --global"
   },
   "dependencies": {
     "@types/handlebars": "^4.1.0",
@@ -61,7 +71,7 @@
     "vitest": "^1.0.0"
   },
   "lint-staged": {
-    "typescript/src/**/*.ts": [
+    "src/**/*.ts": [
       "eslint --fix",
       "prettier --write"
     ],

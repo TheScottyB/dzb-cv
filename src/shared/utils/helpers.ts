@@ -2,6 +2,18 @@ import Handlebars from 'handlebars';
 import { promises as fs } from 'fs';
 import type { CVData } from '../types/cv-types.js';
 
+interface Experience {
+  date?: string;
+  startDate: string;
+  endDate?: string;
+  [key: string]: unknown;
+}
+
+interface SortableItem {
+  date: string;
+  [key: string]: unknown;
+}
+
 export function registerHelpers() {
   // Register all helpers
   Handlebars.registerHelper('sortByDate', sortByDate);
@@ -14,7 +26,7 @@ export function registerHelpers() {
   Handlebars.registerHelper('formatWithPrefix', formatWithPrefix);
 }
 
-export function sortByDate(items: any[]): any[] {
+export function sortByDate(items: SortableItem[]): SortableItem[] {
   return items.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
@@ -35,7 +47,7 @@ export function calculateGradeLevel(experience: number): string {
   return `GS-${Math.min(Math.floor(experience / 2) + 7, 15)}`;
 }
 
-export function calculateTotalYears(experience: any[]): number {
+export function calculateTotalYears(experience: Experience[]): number {
   return experience.reduce((total, exp) => {
     const start = new Date(exp.startDate);
     const end = exp.endDate ? new Date(exp.endDate) : new Date();
@@ -51,8 +63,8 @@ export function formatSalary(amount: number): string {
   }).format(amount);
 }
 
-export function defaultValue(value: any, defaultVal: any): any {
-  return value || defaultVal;
+export function defaultValue<T>(value: T | undefined | null, defaultVal: T): T {
+  return value ?? defaultVal;
 }
 
 export function formatWithPrefix(prefix: string, value: string): string {

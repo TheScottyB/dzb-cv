@@ -21,12 +21,12 @@ export interface ProfileVersion {
   versionNumber: number;
   timestamp: string;
   data: CVData;
-  description?: string;
-  previousVersionId?: string;
-  changeReason?: string;
-  importSourceId?: string | null;
-  changes?: ProfileChange[];
-  createdBy?: string;
+  description?: string | undefined;
+  previousVersionId?: string | undefined;
+  changeReason?: string | undefined;
+  importSourceId?: string | null | undefined;
+  changes?: ProfileChange[] | undefined;
+  createdBy?: string | undefined;
 }
 
 // The actual content of a profile version
@@ -96,9 +96,9 @@ export interface CertificationEntry {
   name: string;
   issuer: string;
   dateObtained: Date;
-  expirationDate: Date | null;
-  credentialId: string | null;
-  credentialURL: string | null;
+  expirationDate: Date | null | undefined;
+  credentialId: string | null | undefined;
+  credentialURL: string | null | undefined;
 }
 
 // Project entry
@@ -116,8 +116,8 @@ export interface ProjectEntry {
 // Record of a change to a profile
 export interface ProfileChange {
   field: string;
-  oldValue: any;
-  newValue: any;
+  oldValue: unknown;
+  newValue: unknown;
   resolutionNote: string;
 }
 
@@ -128,10 +128,10 @@ export interface ImportSource {
   fileType: "pdf" | "docx" | "json" | "linkedin" | "other";
   importDate: Date;
   rawContent: string;
-  parsedData: any;
+  parsedData: Record<string, unknown>;
   status: "pending" | "processed" | "failed";
   processingErrors: string[];
-  resultingVersionId: string | null;
+  resultingVersionId: string | null | undefined;
 }
 
 // Type for merge strategies

@@ -9,27 +9,24 @@ export interface ConfigOptions {
 }
 
 export interface ScraperResult {
-  success: boolean;
-  data?: {
-    title: string;
-    company: string;
-    location: string;
-    description: string;
-    responsibilities?: string[];
-    qualifications?: string[];
-    skills?: string[];
-    education?: string[];
-    experience?: string[];
-    metadata?: {
-      postedDate?: string;
-      closingDate?: string;
-      salary?: string;
-      employmentType?: string;
-    };
-  };
-  error?: string;
-  metadata: {
-    duration: number;
-    timestamp: string;
-  };
+  title: string;
+  company: string;
+  location: string;
+  description: string;
+  requirements: string[];
+  qualifications: string[] | null;
+  responsibilities: string[] | null;
+  salary: string | null;
+  employmentType: string | null;
+  experienceLevel: string | null;
+  education: string | null;
+  skills: string[] | null;
+  benefits: string[] | null;
+  postedDate: string | null;
+  closingDate: string | null;
+  applicationUrl: string | null;
+  sourceUrl: string;
+  htmlPath: string | null;
+  screenshotPath: string | null;
+  metadata: Record<string, unknown>;
 } 

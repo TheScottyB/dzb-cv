@@ -90,8 +90,7 @@ export interface Experience {
   location?: string;
   duties?: string[];
   hours?: string;
-  employment_type?: string;
-  employmentType?: string;
+  employmentType: string;
   supervisor?: string;
   mayContact?: boolean;
   achievements?: string[];
@@ -152,19 +151,19 @@ export interface JobPosting {
 export interface JobPostingAnalysis {
   title: string;
   company: string;
-  location?: string;
-  description?: string;
+  location?: string | undefined;
+  description?: string | undefined;
   responsibilities: string[];
   qualifications: string[];
   keyTerms: string[];
-  jobType?: string;
-  experienceLevel?: string;
+  jobType?: string | undefined;
+  experienceLevel?: string | undefined;
   salaryRange?: {
-    min?: number;
-    max?: number;
-    period?: string;
-  };
-  educationRequirements?: string[];
+    min?: number | undefined;
+    max?: number | undefined;
+    period?: string | undefined;
+  } | undefined;
+  educationRequirements?: string[] | undefined;
   source: {
     url: string;
     site: string;

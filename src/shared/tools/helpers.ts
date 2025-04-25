@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import { fileURLToPath } from "url";
 import Handlebars from "handlebars";
-import type { CVData } from "../shared/types/cv-types.js";
+import type { CVData } from "../types/cv-types.js";
 
 // Define types first to avoid forward reference issues
 export interface Experience {
@@ -96,7 +96,7 @@ export function registerHelpers(): void {
 
 
 /** Parse a date string into a JS Date object, supporting Present, MM/YYYY, Month YYYY, YYYY, and textual periods */
-export function parseDate(dateStr: string): Date | null {
+export function parseDate(dateStr: string | undefined): Date | null {
   if (!dateStr) return null;
   if (typeof dateStr === "string" && dateStr.toLowerCase() === "present") return new Date();
 
@@ -137,7 +137,7 @@ export function parseDate(dateStr: string): Date | null {
 }
 
 /** Extracts a start date in ISO format (YYYY-MM-DD) from a period text string, e.g. "Jan 2020 - Mar 2023" or "2018-Present" */
-export function parseTextualPeriod(periodText: string): string | null {
+export function parseTextualPeriod(periodText: string | undefined): string | null {
   if (!periodText) return null;
 
   // Match formats like "January 2020 - Present" or "Jan 2020 - Mar 2023"
@@ -168,7 +168,7 @@ export function parseTextualPeriod(periodText: string): string | null {
   return null;
 }
 
-export function parseTextualPeriodForTotalYears(periodText: string): PeriodDates {
+export function parseTextualPeriodForTotalYears(periodText: string | undefined): PeriodDates {
   if (!periodText) return { startDate: null, endDate: null, approximateYears: null };
   try {
     // Approximate year counts like "Approximately 8 years"
@@ -262,7 +262,7 @@ export function parseTextualPeriodForTotalYears(periodText: string): PeriodDates
  * // Invalid dates fall back to using the current date in test environments
  * // or return the original string in production
  */
-export function formatUSDate(dateStr: string | Date): string {
+export function formatUSDate(dateStr: string | Date | undefined): string {
   if (!dateStr) return '';
   
   // Handle Date objects
@@ -422,106 +422,22 @@ export function formatFederalDateRange(start?: string | Date, end?: string | Dat
  * @param {Handlebars.HelperOptions} options - Handlebars options object
  * @returns {string} Rendered template content with sorted experiences
  */
-export function sortByDate(context: any, options: Handlebars.HelperOptions): string {
-  // If called as a regular helper rather than a block helper, return empty string
-  if (!options || typeof options.fn !== 'function') {
-    console.error("sortByDate must be used as a block helper with {{#sortByDate}}...{{/sortByDate}}");
-    return '';
-  }
-  
-  // Get experiences from context
-  let experiences: Experience[] = [];
-  
-  // Handle undefined or null context
-  if (!context) {
-    context = {};
-  }
-  
-  // Handle both direct arrays and nested structures
-  if (Array.isArray(context)) {
-    experiences = [...context];
-  } else if (context.allExperience && Array.isArray(context.allExperience)) {
-    experiences = [...context.allExperience];
-  } else if (context.workExperience) {
-    // Extract from workExperience object
-    const workExp = context.workExperience;
-    if (Array.isArray(workExp)) {
-      experiences = [...workExp];
-    } else {
-      if (workExp.realEstate && Array.isArray(workExp.realEstate)) experiences.push(...workExp.realEstate);
-      if (workExp.healthcare && Array.isArray(workExp.healthcare)) experiences.push(...workExp.healthcare);
-      if (workExp.foodIndustry && Array.isArray(workExp.foodIndustry)) experiences.push(...workExp.foodIndustry);
-    }
-  }
+export function sortByDate<T extends { startDate?: Date | null; endDate?: Date | null }>(
+  items: T[],
+  direction: "asc" | "desc" = "desc"
+): T[] {
+  return [...items].sort((a, b) => {
+    const dateA = a.startDate || a.endDate;
+    const dateB = b.startDate || b.endDate;
 
-  // Always provide test data in test environment if no experiences exist
-  if (experiences.length === 0 && process.env.NODE_ENV === 'test') {
-    experiences = [
-      {
-        position: 'Team Lead',
-        employer: 'Vylla',
-        startDate: '2024-01-01',
-        endDate: 'Present',
-        duties: ['Led team initiatives', 'Managed client relationships'],
-        achievements: ['Increased revenue by 20%', 'Improved team efficiency by 30%'],
-        industry: 'Real Estate',
-        address: 'Chicago, IL',
-        hoursPerWeek: 40,
-        salary: 120000,
-        workConditions: 'Professional office environment',
-        supervisor: 'Jane Smith'
-      },
-      {
-        position: 'Senior Manager',
-        employer: 'Previous Corp',
-        startDate: '2022-01-01',
-        endDate: '2023-12-31',
-        duties: ['Managed team', 'Delivered projects', 'Developed strategies'],
-        achievements: ['Improved efficiency by 30%', 'Led successful rebranding'],
-        industry: 'Technology',
-        address: 'New York, NY',
-        hoursPerWeek: 40,
-        salary: 110000,
-        workConditions: 'Hybrid work environment',
-        supervisor: 'John Doe'
-      }
-    ];
-  }
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return direction === "asc" ? -1 : 1;
+    if (!dateB) return direction === "asc" ? 1 : -1;
 
-  // Ensure each experience has required fields and valid dates
-  experiences = experiences.map(exp => {
-    const startDate = exp.startDate || (exp.period ? parseTextualPeriod(exp.period) : new Date().toISOString());
-    const startDateObj = parseDate(startDate || '') || new Date(); // Ensure we always have a valid Date object
-    
-
-    const formattedStartDate = formatUSDate(startDate || '');
-    const formattedEndDate = exp.endDate ? formatUSDate(exp.endDate) : 'Present';
-    
-    return {
-      ...exp,
-      position: exp.position || exp.role || 'Professional Role',
-      employer: exp.employer || exp.organization || 'Organization',
-      startDate,
-      endDate: exp.endDate || 'Present',
-      duties: exp.duties || ['Successfully managed assigned responsibilities'],
-      achievements: exp.achievements || ['Consistently met or exceeded performance targets'],
-      industry: exp.industry || 'Leadership',
-      startDateObj,
-      formattedStartDate,
-      formattedEndDate,
-      chapter: `The ${exp.industry || exp.employer || 'Leadership'} Chapter (${formattedStartDate} - ${formattedEndDate})`
-    };
+    return direction === "asc" 
+      ? dateA.getTime() - dateB.getTime()
+      : dateB.getTime() - dateA.getTime();
   });
-  
-  experiences.sort((a, b) => {
-    const aDate = a.startDateObj || new Date();
-    const bDate = b.startDateObj || new Date();
-    return bDate.getTime() - aDate.getTime();
-  });
-
-  // Create new context with sorted experiences
-  const newContext = { ...context, allExperience: experiences };
-  return options.fn(newContext);
 }
 
 /**

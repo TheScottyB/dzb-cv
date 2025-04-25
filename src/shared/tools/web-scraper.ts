@@ -68,14 +68,24 @@ export interface ScraperResult {
  */
 export interface ScrapedJobPosting {
   url: string;
-  title: string;
-  company: string;
-  location?: string;
+  position: string;
+  employer: string;
   description: string;
-  qualifications?: string[];
-  responsibilities?: string[];
-  htmlPath?: string;
-  screenshotPath?: string;
+  location?: string | undefined;
+  qualifications?: string[] | undefined;
+  responsibilities?: string[] | undefined;
+  skills?: string[] | undefined;
+  education?: string[] | undefined;
+  experience?: string[] | undefined;
+  metadata?: {
+    postedDate?: string | undefined;
+    closingDate?: string | undefined;
+    salary?: string | undefined;
+    employmentType?: string | undefined;
+  } | undefined;
+  htmlPath?: string | undefined;
+  screenshotPath?: string | undefined;
+  pdfPath?: string | undefined;
 }
 
 /**
@@ -89,235 +99,164 @@ export async function scrapeJobPosting(
   url: string, 
   options: ScraperOptions = {}
 ): Promise<ScrapedJobPosting> {
-  // Merge options with defaults
   const mergedOptions = { ...DEFAULT_SCRAPER_OPTIONS, ...options };
-  
-  // Create output directory if it doesn't exist
-  if (mergedOptions.outputDir) {
-    await fs.mkdir(mergedOptions.outputDir, { recursive: true });
-  }
-  
-  // Generate a filename based on the URL
-  const filename = generateFilename(url);
-  
-  // Initialize browser - either connect to existing instance or launch new one
-  let browser;
-  
-  if (mergedOptions.useExistingBrowser) {
-    try {
-      console.log(`Connecting to existing Chrome instance at ${mergedOptions.cdpUrl}...`);
-      
-      // Connect to the browser instance
-      browser = await puppeteer.connect({
-        browserURL: mergedOptions.cdpUrl,
-        defaultViewport: mergedOptions.viewport
-      });
-      
-      console.log('Successfully connected to existing Chrome instance.');
-    } catch (error) {
-      throw new Error(`Failed to connect to existing Chrome instance: ${error instanceof Error ? error.message : String(error)}\n` + 
-        `Make sure Chrome is running with the remote debugging port enabled.\n` +
-        `You can start Chrome with: chrome --remote-debugging-port=9222`);
-    }
+  const { outputDir, saveHtml, saveScreenshot, savePdf, useExistingBrowser, cdpUrl } = mergedOptions;
+
+  let browser: puppeteer.Browser;
+  if (useExistingBrowser && cdpUrl) {
+    browser = await puppeteer.connect({ browserURL: cdpUrl });
   } else {
-    // Launch a new browser
-    browser = await puppeteer.launch({
-      headless: mergedOptions.headless,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-web-security',
-        '--disable-features=IsolateOrigins,site-per-process'
-      ]
+    browser = await puppeteer.launch({ 
+      headless: mergedOptions.headless ?? true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
   }
-  
+
   try {
     const page = await browser.newPage();
-    
-    // Set viewport
-    if (mergedOptions.viewport) {
-      await page.setViewport(mergedOptions.viewport);
-    }
-    
-    // Set user agent
-    if (mergedOptions.customUserAgent) {
-      await page.setUserAgent(mergedOptions.customUserAgent);
-    }
-    
-    // Set cookies if provided
-    if (mergedOptions.cookies && mergedOptions.cookies.length > 0) {
+    await page.setViewport(mergedOptions.viewport ?? DEFAULT_SCRAPER_OPTIONS.viewport!);
+    await page.setUserAgent(mergedOptions.customUserAgent ?? DEFAULT_SCRAPER_OPTIONS.customUserAgent!);
+
+    if (mergedOptions.cookies) {
       await page.setCookie(...mergedOptions.cookies);
     }
-    
-    // Navigate to the URL
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
-    
-    // Wait for content to load
-    await new Promise(resolve => setTimeout(resolve, mergedOptions.waitTime || 5000));
-    
-    // Get page title
-    const title = await page.title();
-    
-    // Save HTML if requested
-    let htmlPath: string | undefined;
-    if (mergedOptions.saveHtml && mergedOptions.outputDir) {
-      const html = await page.content();
-      htmlPath = path.join(mergedOptions.outputDir, `${filename}.html`);
-      await fs.writeFile(htmlPath, html, 'utf-8');
+
+    await page.goto(url, { waitUntil: 'networkidle0' });
+    await page.waitForTimeout(mergedOptions.waitTime ?? DEFAULT_SCRAPER_OPTIONS.waitTime!);
+
+    // Check for CAPTCHA
+    if (await detectCaptcha(page)) {
+      throw new Error('CAPTCHA detected on the page');
     }
-    
-    // Save screenshot if requested
-    let screenshotPath: string | undefined;
-    if (mergedOptions.saveScreenshot && mergedOptions.outputDir) {
-      screenshotPath = path.join(mergedOptions.outputDir, `${filename}.png`);
-      await page.screenshot({ path: screenshotPath, fullPage: true });
+
+    const html = await page.content();
+    const text = await page.evaluate(() => document.body.innerText);
+
+    // Generate filenames
+    const baseFilename = generateFilename(url);
+    const htmlPath = saveHtml && outputDir ? path.join(outputDir, `${baseFilename}.html`) : undefined;
+    const screenshotPath = saveScreenshot && outputDir ? path.join(outputDir, `${baseFilename}.png`) : undefined;
+    const pdfPath = savePdf && outputDir ? path.join(outputDir, `${baseFilename}.pdf`) : undefined;
+
+    // Save files
+    if (htmlPath) await fs.writeFile(htmlPath, html, 'utf-8');
+    if (screenshotPath) await page.screenshot({ path: screenshotPath, fullPage: true });
+    if (pdfPath) await page.pdf({ path: pdfPath, format: 'A4' });
+
+    // Extract job data
+    const jobData = await extractJobData(page, htmlPath, screenshotPath);
+
+    return jobData;
+  } finally {
+    if (!useExistingBrowser) {
+      await browser.close();
     }
-    
-    // Save PDF if requested
-    let pdfPath: string | undefined;
-    if (mergedOptions.savePdf && mergedOptions.outputDir) {
-      pdfPath = path.join(mergedOptions.outputDir, `${filename}.pdf`);
-      await page.pdf({ path: pdfPath, format: 'A4' });
-    }
-    
-    // Check for CAPTCHA or verification page
-    const hasCaptcha = await detectCaptcha(page);
-    
-    // If CAPTCHA is detected and we're in headless mode, we need to handle it
-    if (hasCaptcha && mergedOptions.headless) {
-      console.log('\nCAPTCHA or verification page detected!');
-      
-      // Create a screenshot of the CAPTCHA page
-      if (mergedOptions.outputDir) {
-        const captchaScreenshotPath = path.join(mergedOptions.outputDir, `captcha-${filename}.png`);
-        await page.screenshot({ path: captchaScreenshotPath, fullPage: true });
-        console.log(`CAPTCHA screenshot saved to: ${captchaScreenshotPath}`);
-      }
-      
-      // Close the headless browser or disconnect if using existing browser
-      if (mergedOptions.useExistingBrowser) {
-        await browser.disconnect();
-      } else {
-        await browser.close();
-      }
-      
-      // Notify about switching to visible mode for manual CAPTCHA solving
-      console.log('Switching to visible browser mode for manual CAPTCHA solving...');
-      
-      // Relaunch with visible browser
-      const visibleBrowser = await puppeteer.launch({
-        headless: false, // Show the browser
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-web-security',
-          '--disable-features=IsolateOrigins,site-per-process',
-          '--window-size=1280,960'
-        ]
-      });
-      
-      // Create a new page
-      const visiblePage = await visibleBrowser.newPage();
-      
-      // Set the same user agent and viewport
-      if (mergedOptions.customUserAgent) {
-        await visiblePage.setUserAgent(mergedOptions.customUserAgent);
-      }
-      
-      if (mergedOptions.viewport) {
-        await visiblePage.setViewport(mergedOptions.viewport);
-      }
-      
-      // Navigate to the URL
-      await visiblePage.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
-      
-      // Prompt the user to solve the CAPTCHA
-      console.log('\nPlease solve the CAPTCHA in the browser window.');
-      console.log('Once you have solved the CAPTCHA and can see the job details, press Enter to continue...');
-      
-      // Wait for user to press Enter (this requires user interaction)
-      // Using process.stdin here as a quick solution
-      // For a real CLI tool, we would use inquirer or similar
-      await new Promise<void>(resolve => {
-        process.stdin.once('data', () => {
-          resolve();
-        });
-      });
-      
-      console.log('Continuing with scraping after CAPTCHA resolution...');
-      
-      // Wait for content to fully load
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Save updated HTML if requested
-      if (mergedOptions.saveHtml && mergedOptions.outputDir) {
-        const html = await visiblePage.content();
-        htmlPath = path.join(mergedOptions.outputDir, `${filename}.html`);
-        await fs.writeFile(htmlPath, html, 'utf-8');
-      }
-      
-      // Save updated screenshot if requested
-      if (mergedOptions.saveScreenshot && mergedOptions.outputDir) {
-        screenshotPath = path.join(mergedOptions.outputDir, `${filename}.png`);
-        await visiblePage.screenshot({ path: screenshotPath, fullPage: true });
-      }
-      
-      // Extract job data based on the site
-      let jobData: ScrapedJobPosting;
-      
-      if (url.includes('indeed.com')) {
-        jobData = await scrapeIndeedJob(visiblePage, url, htmlPath, screenshotPath);
-      } else if (url.includes('linkedin.com')) {
-        jobData = await scrapeLinkedInJob(visiblePage, url, htmlPath, screenshotPath);
-      } else {
-        // Generic job scraping
-        jobData = await scrapeGenericJob(visiblePage, url, htmlPath, screenshotPath);
-      }
-      
-      // Close browser
-      await visibleBrowser.close();
-      
-      return jobData;
-    } else {
-      // No CAPTCHA or already in visible mode, proceed normally
-      // Extract job data based on the site
-      let jobData: ScrapedJobPosting;
-      
-      if (url.includes('indeed.com')) {
-        jobData = await scrapeIndeedJob(page, url, htmlPath, screenshotPath);
-      } else if (url.includes('linkedin.com')) {
-        jobData = await scrapeLinkedInJob(page, url, htmlPath, screenshotPath);
-      } else {
-        // Generic job scraping
-        jobData = await scrapeGenericJob(page, url, htmlPath, screenshotPath);
-      }
-      
-      // Close browser or disconnect if using existing browser
-      if (mergedOptions.useExistingBrowser) {
-        await browser.disconnect();
-      } else {
-        await browser.close();
-      }
-      
-      return jobData;
-    }
-    
-  } catch (error) {
-    // Close browser or disconnect if using existing browser
-    try {
-      if (mergedOptions.useExistingBrowser) {
-        await browser.disconnect();
-      } else {
-        await browser.close();
-      }
-    } catch (closeError) {
-      // Ignore any errors during browser closing/disconnection
-      console.error('Error during browser cleanup:', closeError);
-    }
-    
-    throw new Error(`Failed to scrape job posting: ${error instanceof Error ? error.message : String(error)}`);
   }
+}
+
+async function extractJobData(
+  page: puppeteer.Page,
+  htmlPath?: string,
+  screenshotPath?: string
+): Promise<ScrapedJobPosting> {
+  const url = page.url();
+  
+  // Extract position
+  const position = await page.evaluate(() => {
+    const title = document.querySelector('h1')?.textContent?.trim();
+    return title || 'Unknown Position';
+  });
+
+  // Extract employer
+  const employer = await page.evaluate(() => {
+    const company = document.querySelector('.company-name')?.textContent?.trim() ||
+                   document.querySelector('.employer')?.textContent?.trim() ||
+                   'Unknown Employer';
+    return company;
+  });
+
+  // Extract location
+  const location = await page.evaluate(() => {
+    const loc = document.querySelector('.location')?.textContent?.trim();
+    return loc || undefined;
+  });
+
+  // Extract description
+  const description = await page.evaluate(() => {
+    const desc = document.querySelector('.job-description')?.textContent?.trim() ||
+                document.querySelector('.description')?.textContent?.trim() ||
+                'No description available';
+    return desc;
+  });
+
+  // Extract responsibilities and qualifications
+  const responsibilities = await page.evaluate(() => {
+    const items = Array.from(document.querySelectorAll('.responsibilities li, .duties li'));
+    return items.map(item => item.textContent?.trim() || '').filter(Boolean);
+  });
+
+  const qualifications = await page.evaluate(() => {
+    const items = Array.from(document.querySelectorAll('.qualifications li, .requirements li'));
+    return items.map(item => item.textContent?.trim() || '').filter(Boolean);
+  });
+
+  // Extract skills, education, and experience
+  const skills = await page.evaluate(() => {
+    const items = Array.from(document.querySelectorAll('.skills li, .competencies li'));
+    return items.map(item => item.textContent?.trim() || '').filter(Boolean);
+  });
+
+  const education = await page.evaluate(() => {
+    const items = Array.from(document.querySelectorAll('.education li, .requirements li'));
+    return items.map(item => item.textContent?.trim() || '').filter(Boolean);
+  });
+
+  const experience = await page.evaluate(() => {
+    const items = Array.from(document.querySelectorAll('.experience li, .requirements li'));
+    return items.map(item => item.textContent?.trim() || '').filter(Boolean);
+  });
+
+  // Extract metadata
+  const metadata = await page.evaluate(() => {
+    const getText = (selector: string) => {
+      const element = document.querySelector(selector);
+      return element ? element.textContent?.trim() : undefined;
+    };
+
+    const postedDate = getText('.posted-date, [itemprop="datePosted"]');
+    const closingDate = getText('.closing-date, .application-deadline');
+    const salary = getText('.salary, [itemprop="baseSalary"]');
+    const employmentType = getText('.employment-type, [itemprop="employmentType"]');
+
+    if (postedDate || closingDate || salary || employmentType) {
+      return {
+        postedDate,
+        closingDate,
+        salary,
+        employmentType
+      };
+    }
+    return undefined;
+  });
+
+  const result: ScrapedJobPosting = {
+    url,
+    position,
+    employer,
+    description,
+    htmlPath,
+    screenshotPath
+  };
+
+  if (location) result.location = location;
+  if (responsibilities.length > 0) result.responsibilities = responsibilities;
+  if (qualifications.length > 0) result.qualifications = qualifications;
+  if (skills.length > 0) result.skills = skills;
+  if (education.length > 0) result.education = education;
+  if (experience.length > 0) result.experience = experience;
+  if (metadata) result.metadata = metadata;
+
+  return result;
 }
 
 /**
@@ -370,8 +309,9 @@ async function scrapeIndeedJob(
   // --- Post-process company string for edge cases ---
   if (company.includes('|')) {
     const parts = company.split('|').map(s => s.trim());
-    if (parts[parts.length - 1] && parts[parts.length - 1].length > 1) {
-      company = parts[parts.length - 1];
+    const lastPart = parts[parts.length - 1];
+    if (lastPart && lastPart.length > 1) {
+      company = lastPart;
     }
   }
   if (company.toLowerCase().includes(' at ')) {
@@ -484,17 +424,20 @@ async function scrapeIndeedJob(
     return items;
   });
   
-  return {
+  const result: Partial<ScrapedJobPosting> = {
     url,
-    title,
-    company,
-    location,
-    description,
-    responsibilities,
-    qualifications,
-    htmlPath,
-    screenshotPath
+    position: title,
+    employer: company,
+    description
   };
+
+  if (location) result.location = location;
+  if (responsibilities.length > 0) result.responsibilities = responsibilities;
+  if (qualifications.length > 0) result.qualifications = qualifications;
+  if (htmlPath) result.htmlPath = htmlPath;
+  if (screenshotPath) result.screenshotPath = screenshotPath;
+
+  return result as ScrapedJobPosting;
 }
 
 /**
@@ -590,17 +533,20 @@ async function scrapeLinkedInJob(
     };
   });
   
-  return {
+  const result: Partial<ScrapedJobPosting> = {
     url,
-    title,
-    company,
-    location,
-    description,
-    responsibilities,
-    qualifications,
-    htmlPath,
-    screenshotPath
+    position: title,
+    employer: company,
+    description
   };
+
+  if (location) result.location = location;
+  if (responsibilities.length > 0) result.responsibilities = responsibilities;
+  if (qualifications.length > 0) result.qualifications = qualifications;
+  if (htmlPath) result.htmlPath = htmlPath;
+  if (screenshotPath) result.screenshotPath = screenshotPath;
+
+  return result as ScrapedJobPosting;
 }
 
 /**
@@ -758,17 +704,20 @@ async function scrapeGenericJob(
     };
   });
   
-  return {
+  const result: Partial<ScrapedJobPosting> = {
     url,
-    title,
-    company,
-    location,
-    description,
-    responsibilities,
-    qualifications,
-    htmlPath,
-    screenshotPath
+    position: title,
+    employer: company,
+    description
   };
+
+  if (location) result.location = location;
+  if (responsibilities.length > 0) result.responsibilities = responsibilities;
+  if (qualifications.length > 0) result.qualifications = qualifications;
+  if (htmlPath) result.htmlPath = htmlPath;
+  if (screenshotPath) result.screenshotPath = screenshotPath;
+
+  return result as ScrapedJobPosting;
 }
 
 /**

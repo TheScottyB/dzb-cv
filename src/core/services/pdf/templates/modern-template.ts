@@ -1,14 +1,14 @@
 import { BasicTemplate } from './template-provider.js';
 import type { CVData } from '../../../types/cv-base.js';
-import type { TemplateOptions } from '../../../types/cv-generation.js';
+import type { TemplateOptions } from '../../../types/cv-types.js';
 
 /**
  * Modern template with clean, contemporary styling
  */
 export class ModernTemplate extends BasicTemplate {
-  name = 'modern';
+  override name = 'modern';
 
-  getStyles(): string {
+  override getStyles(): string {
     return `
       body {
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -49,11 +49,28 @@ export class ModernTemplate extends BasicTemplate {
         padding-left: 10px;
         border-left: 2px solid #e1e4e8;
       }
-      .experience-date {
+      .date {
         color: #666;
-        font-style: italic;
         font-size: 14px;
-        margin-bottom: 10px;
+        margin-bottom: 4px;
+      }
+      .location {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 8px;
+      }
+      .responsibilities {
+        margin-left: 20px;
+      }
+      .responsibilities li {
+        margin-bottom: 4px;
+      }
+      .achievements {
+        margin-top: 8px;
+        margin-left: 20px;
+      }
+      .achievements li {
+        margin-bottom: 4px;
       }
       .skills-list {
         display: flex;
@@ -82,7 +99,7 @@ export class ModernTemplate extends BasicTemplate {
     `;
   }
 
-  protected generateHeader(data: CVData, options?: TemplateOptions): string {
+  protected override generateHeader(data: CVData, options?: TemplateOptions): string {
     if (options?.includePersonalInfo === false) return '';
 
     const { personalInfo } = data;

@@ -1,15 +1,13 @@
-//@ts-nocheck
-
 // Generic work experience
 export interface WorkExperience {
   employer: string;
   position: string;
   period: string;
-  duties: string[];
-  address?: string;
-  hours?: string;
-  supervisor?: string;
-  mayContact?: boolean;
+  responsibilities: string[];
+  address?: string | undefined;
+  hours?: string | undefined;
+  supervisor?: string | undefined;
+  mayContact?: boolean | undefined;
 }
 
 // Skills breakdown by category
@@ -56,8 +54,8 @@ export interface BaseInfo {
 
 // Parsed job data for tailoring purposes
 export interface JobData {
-  title: string;
-  company: string;
+  position: string;
+  employer: string;
   location: string;
   education: string[];
   experience: string[];
@@ -86,11 +84,18 @@ export interface ATSContent {
   realExperience: WorkExperience[];
 }
 
+interface ATSIssue {
+  type: 'missing' | 'mismatch' | 'format' | 'other';
+  description: string;
+  severity: 'low' | 'medium' | 'high';
+  suggestion?: string | undefined;
+}
+
 // Output from ATS compatibility analysis
 export interface ATSAnalysis {
   score: number;
   improvements: string[];
-  issues: any[];
+  issues: ATSIssue[];
   warnings: string[];
 }
 
@@ -122,7 +127,7 @@ function generateCVMarkdown(atsContent: ATSContent): string {
     if (exp.supervisor) markdown += `Supervisor: ${exp.supervisor}${exp.mayContact === false ? ' (Do Not Contact)' : ''}\n`;
     if (exp.hours) markdown += `Hours/Week: ${exp.hours}\n`;
     markdown += '\n';
-    exp.duties.forEach(duty => {
+    exp.responsibilities.forEach(duty => {
       markdown += `- ${duty}\n`;
     });
     markdown += '\n';

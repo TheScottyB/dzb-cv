@@ -1,14 +1,14 @@
+import type { CVData, Experience } from '../../../types/cv-base.js';
+import type { TemplateOptions } from '../../../types/cv-types.js';
 import { BasicTemplate } from './template-provider.js';
-import type { CVData } from '../../../types/cv-base.js';
-import type { TemplateOptions } from '../../../types/cv-generation.js';
 
 /**
  * Minimal template with clean, minimalist styling
  */
 export class MinimalTemplate extends BasicTemplate {
-  name = 'minimal';
+  override name = 'minimal';
 
-  getStyles(): string {
+  override getStyles(): string {
     return `
       body {
         font-family: -apple-system, system-ui, BlinkMacSystemFont, sans-serif;
@@ -87,7 +87,7 @@ export class MinimalTemplate extends BasicTemplate {
     `;
   }
 
-  protected generateHeader(data: CVData, options?: TemplateOptions): string {
+  protected override generateHeader(data: CVData, options?: TemplateOptions): string {
     if (options?.includePersonalInfo === false) return '';
 
     const { personalInfo } = data;
@@ -105,15 +105,12 @@ ${[
     `.trim();
   }
 
-  protected generateExperience(data: CVData, options?: TemplateOptions): string {
+  protected override generateExperience(data: CVData, options?: TemplateOptions): string {
     if (options?.includeExperience === false || !data.experience.length) return '';
 
     let experience = data.experience;
-    if (options?.experienceFilter) {
-      experience = experience.filter(options.experienceFilter);
-    }
     if (options?.experienceOrder) {
-      experience = this.orderExperience(experience, options.experienceOrder);
+      experience = this.orderExperienceEntries(experience, options.experienceOrder);
     }
 
     return `
@@ -121,25 +118,44 @@ ${[
 
 ${experience.map(exp => `
 <div class="experience-item">
-### ${exp.title} · ${exp.company}
-<div class="experience-date">${exp.startDate} - ${exp.endDate || 'Present'}</div>
+<h3>${exp.position} at ${exp.employer}</h3>
+<div class="job-details">
+<p class="date">${exp.startDate} - ${exp.endDate || 'Present'}</p>
+<p class="location">${exp.location || 'Location not specified'}</p>
+</div>
 
-${exp.responsibilities.map(r => `- ${r}`).join('\n')}
+${exp.responsibilities.map(r => `<p>${r}</p>`).join('\n')}
+
+${exp.achievements?.length ? `
+<h4>Achievements:</h4>
+${exp.achievements.map(a => `<p>${a}</p>`).join('\n')}
+` : ''}
 </div>
 `).join('\n')}
     `.trim();
   }
 
-  protected generateSkills(data: CVData, options?: TemplateOptions): string {
+  protected override generateSkills(data: CVData, options?: TemplateOptions): string {
     if (options?.includeSkills === false || !data.skills.length) return '';
 
     return `
-## Skills
+      <div class="skills-section">
+        <h2>Skills</h2>
+        <ul>
+          ${data.skills.map(skill => `<li>${skill}</li>`).join('\n')}
+        </ul>
+      </div>
+    `;
+  }
 
-<div class="skills-list">
-${data.skills.map(skill => `<span class="skill-item">${skill}</span>`).join('\n')}
-</div>
-    `.trim();
+  private orderExperienceEntries(experience: CVData['experience'], order: string[]): CVData['experience'] {
+    return experience.sort((a, b) => {
+      const aIndex = order.indexOf(a.position);
+      const bIndex = order.indexOf(b.position);
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
   }
 }
 

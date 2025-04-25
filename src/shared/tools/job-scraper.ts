@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { URL } from 'url';
-import { fileURLToPath } from 'url';
 
 interface JobScraperOptions {
   outputBaseDir?: string;
@@ -34,26 +33,26 @@ function validateUrl(url: string): void {
 }
 
 /**
- * Extracts company name and job ID from URL
+ * Extracts employer name and job ID from URL
  */
-function extractJobInfo(url: string): { company: string; jobId: string } {
+function extractJobInfo(url: string): { employer: string; jobId: string } {
   try {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
     const pathname = urlObj.pathname;
     
-    // Extract company name from hostname
-    let company = hostname.split('.')[1] || hostname.split('.')[0];
-    company = company.replace(/^www\./, '');
+    // Extract employer name from hostname
+    const domainParts = hostname.split('.');
+    const employer: string = (domainParts[1] ?? domainParts[0] ?? 'unknown').replace(/^www\./, '');
     
     // Extract job ID from pathname
     const jobIdMatch = pathname.match(/\/(\d+)(?:[/?]|$)/);
-    const jobId = jobIdMatch ? jobIdMatch[1] : Date.now().toString();
+    const jobId = jobIdMatch?.[1] ?? Date.now().toString();
     
-    return { company, jobId };
+    return { employer, jobId };
   } catch (error) {
     console.warn('Failed to parse URL, using fallback values:', error);
-    return { company: 'unknown', jobId: Date.now().toString() };
+    return { employer: 'unknown', jobId: Date.now().toString() };
   }
 }
 
@@ -61,11 +60,12 @@ function extractJobInfo(url: string): { company: string; jobId: string } {
  * Creates output directory path
  */
 function createOutputPath(url: string, options: JobScraperOptions): string {
-  const { company, jobId } = extractJobInfo(url);
+  const { employer, jobId } = extractJobInfo(url);
   const baseDir = options.outputBaseDir || 'job-postings';
   const timestamp = options.createTimestamp ? `-${Date.now()}` : '';
+  const safeEmployer = employer || 'unknown';
   
-  return path.join(baseDir, `${company}-${jobId}${timestamp}`);
+  return path.join(baseDir, `${safeEmployer}-${jobId}${timestamp}`);
 }
 
 /**
@@ -93,8 +93,8 @@ function requiresAuthentication(html: string): boolean {
  * Extracts basic job information from HTML content
  */
 function extractJobInfoFromHtml(html: string): {
-  title: string;
-  company: string;
+  position: string;
+  employer: string;
   location?: string;
   description: string;
 } {
@@ -115,27 +115,27 @@ function extractJobInfoFromHtml(html: string): {
       .trim();
   };
 
-  // Extract title - try multiple common patterns
-  let title = '';
-  const titlePatterns = [
+  // Extract position - try multiple common patterns
+  let position = '';
+  const positionPatterns = [
     /<title>(.*?)<\/title>/i,
     /<h1[^>]*>(.*?)<\/h1>/i,
     /<div[^>]*class="[^"]*job-title[^"]*"[^>]*>(.*?)<\/div>/i,
     /<div[^>]*class="[^"]*position[^"]*"[^>]*>(.*?)<\/div>/i
   ];
   
-  for (const pattern of titlePatterns) {
+  for (const pattern of positionPatterns) {
     const match = html.match(pattern);
     if (match && match[1]) {
-      title = cleanHtml(match[1]);
+      position = cleanHtml(match[1]);
       break;
     }
   }
-  title = title || 'Unknown Position';
+  position = position || 'Unknown Position';
 
-  // Extract company name
-  let company = '';
-  const companyPatterns = [
+  // Extract employer name
+  let employer = '';
+  const employerPatterns = [
     /<meta[^>]*property="og:site_name"[^>]*content="([^"]*)"/i,
     /<meta[^>]*name="author"[^>]*content="([^"]*)"/i,
     /<div[^>]*class="[^"]*company[^"]*"[^>]*>(.*?)<\/div>/i,
@@ -143,21 +143,21 @@ function extractJobInfoFromHtml(html: string): {
     /<div[^>]*class="[^"]*employer[^"]*"[^>]*>(.*?)<\/div>/i
   ];
   
-  for (const pattern of companyPatterns) {
+  for (const pattern of employerPatterns) {
     const match = html.match(pattern);
     if (match && match[1]) {
-      company = cleanHtml(match[1]);
+      employer = cleanHtml(match[1]);
       break;
     }
   }
-  company = company || 'Unknown Company';
+  employer = employer || 'Unknown Employer';
 
   // Extract location
   let location: string | undefined;
   const locationPatterns = [
     /<div[^>]*class="[^"]*location[^"]*"[^>]*>(.*?)<\/div>/i,
     /<span[^>]*class="[^"]*location[^"]*"[^>]*>(.*?)<\/span>/i,
-    /<meta[^>]*name="job-location"[^>]*content="([^"]*)"/i
+    /<meta[^>]*property="og:locality"[^>]*content="([^"]*)"/i
   ];
   
   for (const pattern of locationPatterns) {
@@ -168,41 +168,34 @@ function extractJobInfoFromHtml(html: string): {
     }
   }
 
-  // Extract description - look for common job description containers
+  // Extract description
   let description = '';
   const descriptionPatterns = [
-    /<div[^>]*class="[^"]*job-description[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
-    /<div[^>]*class="[^"]*description[^"]*"[^>]*>([\s\S]*?)<\/div>/i,
-    /<div[^>]*id="job-description"[^>]*>([\s\S]*?)<\/div>/i,
-    /<div[^>]*class="[^"]*content[^"]*"[^>]*>([\s\S]*?)<\/div>/i
+    /<div[^>]*class="[^"]*description[^"]*"[^>]*>(.*?)<\/div>/i,
+    /<div[^>]*class="[^"]*job-description[^"]*"[^>]*>(.*?)<\/div>/i,
+    /<div[^>]*class="[^"]*job-details[^"]*"[^>]*>(.*?)<\/div>/i
   ];
   
   for (const pattern of descriptionPatterns) {
     const match = html.match(pattern);
     if (match && match[1]) {
       description = cleanHtml(match[1]);
-      if (description.length > 100) { // Only use if we got substantial content
-        break;
-      }
+      break;
     }
   }
-  
-  // If we couldn't find a good description container, fall back to a more general approach
-  if (!description) {
-    const bodyMatch = html.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
-    if (bodyMatch) {
-      description = cleanHtml(bodyMatch[1]);
-    } else {
-      description = cleanHtml(html);
-    }
-  }
+  description = description || 'No description available';
 
-  return {
-    title,
-    company,
-    location,
+  const result = {
+    position,
+    employer,
     description
   };
+
+  if (location) {
+    return { ...result, location };
+  }
+
+  return result;
 }
 
 /**
@@ -253,8 +246,8 @@ async function scrapeJob(url: string, options: Partial<JobScraperOptions> = {}) 
       await fs.writeFile(jsonPath, JSON.stringify(jobData, null, 2), 'utf-8');
       
       console.log('Job posting scraped successfully');
-      console.log(`Job Title: ${jobData.title}`);
-      console.log(`Company: ${jobData.company}`);
+      console.log(`Position: ${jobData.position}`);
+      console.log(`Employer: ${jobData.employer}`);
       console.log(`Location: ${jobData.location || 'Not specified'}`);
       console.log(`Data saved to: ${jsonPath}`);
       

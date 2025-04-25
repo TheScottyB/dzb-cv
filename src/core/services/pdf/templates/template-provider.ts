@@ -1,5 +1,5 @@
 import type { CVData } from '../../../types/cv-base.js';
-import type { TemplateOptions } from '../../../types/cv-generation.js';
+import type { TemplateOptions } from '../../../types/cv-types.js';
 
 /**
  * Interface for CV template implementations
@@ -125,31 +125,43 @@ ${data.professionalSummary}
   protected generateExperience(data: CVData, options?: TemplateOptions): string {
     if (options?.includeExperience === false || !data.experience.length) return '';
 
-    let experience = data.experience;
-    if (options?.experienceFilter) {
-      experience = experience.filter(exp => options.experienceFilter?.({
-        employer: exp.company,
-        position: exp.title,
-        period: `${exp.startDate} - ${exp.endDate || 'Present'}`,
-        duties: exp.responsibilities
-      }));
-    }
+    const experiences = data.experience.map(exp => ({
+      ...exp,
+      period: `${exp.startDate} - ${exp.endDate || 'Present'}`
+    }));
+
     if (options?.experienceOrder) {
-      experience = this.orderExperience(experience, options.experienceOrder);
+      experiences.sort((a, b) => {
+        const aIndex = options.experienceOrder!.indexOf(a.position);
+        const bIndex = options.experienceOrder!.indexOf(b.position);
+        return aIndex - bIndex;
+      });
     }
 
     return `
-## Professional Experience
+## Experience
 
-${experience.map(exp => `
-<div class="experience-item">
+${experiences.map(exp => `
+### ${exp.position} at ${exp.employer}
 
-### ${exp.title} at ${exp.company}
-<div class="experience-date">${exp.startDate} - ${exp.endDate || 'Present'}</div>
+<p><strong>${exp.employer}</strong></p>
+<p>${exp.location || 'Location not specified'}</p>
+<p>${exp.period}</p>
+<p>Hours per week: ${exp.employmentType === 'full-time' ? '40' : '20'}</p>
+<p>Salary: ${exp.salary || 'Not specified'}</p>
+<p>Supervisor: ${exp.supervisor || 'Available upon request'}</p>
 
-${exp.responsibilities.map(r => `- ${r}`).join('\n')}
+${exp.responsibilities.map(r => `<p>${r}</p>`).join('\n')}
 
-</div>
+${exp.achievements?.length ? `
+<h4>Achievements:</h4>
+${exp.achievements.map(a => `<p>${a}</p>`).join('\n')}
+` : ''}
+
+${exp.careerProgression?.length ? `
+<h4>Career Progression:</h4>
+${exp.careerProgression.map(p => `<p>${p}</p>`).join('\n')}
+` : ''}
 `).join('\n')}
     `.trim();
   }
@@ -188,17 +200,6 @@ ${data.skills.map(skill => `<span class="skill-item">${skill}</span>`).join('\n'
 
 ${data.certifications.map(cert => `- ${cert}`).join('\n')}
     `.trim();
-  }
-
-  private orderExperience(experience: any[], order: string[]): any[] {
-    return [...experience].sort((a, b) => {
-      const aIndex = order.indexOf(a.company);
-      const bIndex = order.indexOf(b.company);
-      if (aIndex === -1 && bIndex === -1) return 0;
-      if (aIndex === -1) return 1;
-      if (bIndex === -1) return -1;
-      return aIndex - bIndex;
-    });
   }
 }
 

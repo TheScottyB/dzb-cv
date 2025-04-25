@@ -1,5 +1,6 @@
 import type { CVData } from '../../../types/cv-base.js';
-import type { PDFOptions, TemplateOptions } from '../../../types/cv-generation.js';
+import type { TemplateOptions } from '../../../types/cv-types.js';
+import type { PDFOptions } from '../../../types/cv-generation.js';
 import { TemplateProvider } from './template-provider.js';
 import { BasicTemplate } from './template-provider.js';
 import { MinimalTemplate } from './minimal-template.js';
@@ -50,8 +51,8 @@ export class TemplateSelector {
     this.registerTemplate(new AcademicTemplate(), {
       id: 'academic',
       name: 'Academic CV',
-      description: 'Comprehensive academic curriculum vitae',
-      suitableFor: ['Academia', 'Research', 'Higher Education']
+      description: 'Comprehensive format for academic and research positions',
+      suitableFor: ['Academia', 'Research', 'Education']
     });
   }
 
@@ -86,11 +87,10 @@ export class TemplateSelector {
     options?: PDFOptions & { templateOptions?: TemplateOptions }
   ): Promise<Buffer> {
     const template = this.provider.getTemplate(templateId);
-    const content = template.generateMarkdown(data, options?.templateOptions);
+    const markdown = template.generateMarkdown(data, options?.templateOptions);
     const styles = template.getStyles();
-
-    // Implementation would continue with PDF generation...
-    return Buffer.from(''); // Placeholder
+    // TODO: Implement PDF generation
+    return Buffer.from('');
   }
 
   /**
@@ -99,17 +99,17 @@ export class TemplateSelector {
   suggestTemplates(data: CVData): TemplateMetadata[] {
     const suggestions: TemplateMetadata[] = [];
 
-    // Check for academic indicators
+    // Check for academic experience
     const hasAcademicExperience = data.experience.some(exp => 
-      exp.employment_type === 'academic' || 
-      exp.employment_type === 'research' ||
-      exp.employment_type === 'teaching'
+      exp.employmentType === 'academic' || 
+      exp.employmentType === 'research' || 
+      exp.employmentType === 'teaching'
     );
 
     // Check for government experience
-    const hasGovernmentExperience = data.experience.some(exp =>
-      exp.employment_type === 'government' ||
-      exp.grade_level
+    const hasGovernmentExperience = data.experience.some(exp => 
+      exp.employmentType === 'government' || 
+      exp.gradeLevel
     );
 
     if (hasAcademicExperience) {
@@ -122,11 +122,11 @@ export class TemplateSelector {
       if (federal) suggestions.push(federal);
     }
 
-    // Always include basic template as fallback
+    // Always suggest basic and minimal templates
     const basic = this.templates.get('basic');
-    if (basic && !suggestions.includes(basic)) {
-      suggestions.push(basic);
-    }
+    const minimal = this.templates.get('minimal');
+    if (basic) suggestions.push(basic);
+    if (minimal) suggestions.push(minimal);
 
     return suggestions;
   }

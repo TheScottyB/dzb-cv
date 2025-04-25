@@ -1,7 +1,31 @@
 import { v4 as uuidv4 } from 'uuid';
 import type { CVData } from '../types/cv-base.js';
-import type { PDFOptions, CVGenerationOptions } from '../types/cv-generation.js';
+import type { CVGenerationOptions } from '../types/cv-generation.js';
 import type { Profile, ProfileVersion, ProfileChange } from '../types/profile-management.js';
+import type { PDFGenerationOptions } from './pdf/pdf-generator.js';
+
+interface ExperienceEntry {
+  employer: string;
+  position: string;
+  startDate: string;
+  endDate?: string;
+  location?: string;
+  responsibilities: string[];
+  employmentType: string;
+  supervisor?: string;
+  achievements?: string[];
+  gradeLevel?: string;
+  salary?: string;
+  careerProgression?: string[];
+  technologies?: string[];
+  isCurrent?: boolean;
+  keywords?: string[];
+  period?: string;
+  duties?: string[];
+  address?: string;
+  hours?: string;
+  mayContact?: boolean;
+}
 
 /**
  * Service for managing CV data and operations
@@ -91,7 +115,7 @@ export class CVService {
       timestamp: new Date().toISOString(),
       data: newData,
       changes,
-      changeReason: reason
+      ...(reason ? { changeReason: reason } : {})
     };
 
     profile.versions.push(version);
@@ -133,11 +157,11 @@ export class CVService {
     }
     
     // Compare individual experience entries
-    const oldExperienceMap = new Map(
-      oldData.experience.map(exp => [exp.title + exp.company, exp])
+    const oldExperienceMap = new Map<string, ExperienceEntry>(
+      oldData.experience.map(exp => [exp.position + exp.employer, exp])
     );
-    const newExperienceMap = new Map(
-      newData.experience.map(exp => [exp.title + exp.company, exp])
+    const newExperienceMap = new Map<string, ExperienceEntry>(
+      newData.experience.map(exp => [exp.position + exp.employer, exp])
     );
     
     this.detectExperienceChanges(oldExperienceMap, newExperienceMap, changes);
@@ -156,33 +180,33 @@ export class CVService {
   }
 
   private detectExperienceChanges(
-    oldMap: Map<string, any>,
-    newMap: Map<string, any>,
+    oldMap: Map<string, ExperienceEntry>,
+    newMap: Map<string, ExperienceEntry>,
     changes: ProfileChange[]
   ): void {
-    // Find added experiences
-    newMap.forEach((newExp, key) => {
-      if (!oldMap.has(key)) {
-        changes.push({
-          field: `experience.add`,
-          oldValue: null,
-          newValue: newExp,
-          resolutionNote: `Added new experience: ${newExp.title} at ${newExp.company}`
-        });
-      }
-    });
-    
-    // Find removed experiences
-    oldMap.forEach((oldExp, key) => {
+    // Check for removed experiences
+    for (const [key, oldExp] of oldMap) {
       if (!newMap.has(key)) {
         changes.push({
-          field: `experience.remove`,
+          field: 'experience',
           oldValue: oldExp,
           newValue: null,
-          resolutionNote: `Removed experience: ${oldExp.title} at ${oldExp.company}`
+          resolutionNote: `Removed experience: ${oldExp.position} at ${oldExp.employer}`
         });
       }
-    });
+    }
+
+    // Check for added experiences
+    for (const [key, newExp] of newMap) {
+      if (!oldMap.has(key)) {
+        changes.push({
+          field: 'experience',
+          oldValue: null,
+          newValue: newExp,
+          resolutionNote: `Added experience: ${newExp.position} at ${newExp.employer}`
+        });
+      }
+    }
   }
 }
 
@@ -200,6 +224,6 @@ export interface CVStorageProvider {
  * Interface for PDF generation implementations
  */
 export interface PDFGenerationProvider {
-  generate(data: CVData, options?: PDFOptions): Promise<Buffer>;
+  generate(data: CVData, options?: PDFGenerationOptions): Promise<Buffer>;
 }
 

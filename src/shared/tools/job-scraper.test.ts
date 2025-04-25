@@ -71,8 +71,8 @@ describe('Job Scraper', () => {
     expect(jsonExists).toBe(true);
 
     // Check if job data has required fields
-    expect(result.jobData).toHaveProperty('title', 'Mock Job Title');
-    expect(result.jobData).toHaveProperty('company', 'Mock Company');
+    expect(result.jobData).toHaveProperty('position', 'Mock Job Title');
+    expect(result.jobData).toHaveProperty('employer', 'Mock Company');
     expect(result.jobData).toHaveProperty('location', 'Mock Location');
     expect(result.jobData).toHaveProperty('description');
     expect(result.jobData).toHaveProperty('htmlPath');
@@ -132,8 +132,8 @@ describe('Job Scraper', () => {
     });
 
     // Verify that CSS is removed and content is clean
-    expect(result.jobData.title).toBe('Senior Developer');
-    expect(result.jobData.company).toBe('Tech Corp');
+    expect(result.jobData.position).toBe('Senior Developer');
+    expect(result.jobData.employer).toBe('Tech Corp');
     expect(result.jobData.location).toBe('San Francisco, CA');
     
     // Check that the description contains the content without CSS

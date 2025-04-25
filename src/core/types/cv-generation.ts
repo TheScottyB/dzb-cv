@@ -3,6 +3,7 @@
  */
 
 import { Experience } from './cv-base.js';
+import { TemplateOptions } from './cv-types.js';
 
 export interface PDFOptions {
   includeHeaderFooter: boolean;
@@ -21,28 +22,10 @@ export interface PDFOptions {
   fontFamily?: string;
 }
 
-export interface TemplateOptions {
-  includePersonalInfo?: boolean;
-  includeProfessionalSummary?: boolean;
-  includeEducation?: boolean;
-  includeSkills?: boolean;
-  includeExperience?: boolean;
-  includeVolunteerWork?: boolean;
-  includeAwards?: boolean;
-  includeAffiliations?: boolean;
-  customSections?: Array<{
-    title: string;
-    content: string;
-  }>;
-  experienceOrder?: string[];
-  experienceFilter?: (exp: Experience) => boolean;
-  customFooter?: string;
-  customHeader?: string;
-}
-
 export interface CVGenerationOptions {
   format: 'markdown' | 'pdf';
   pdfOptions?: Partial<PDFOptions>;
   filename?: string;
+  templateOptions?: TemplateOptions;
 }
 

@@ -1,5 +1,4 @@
-import { ATSImprovement } from '../shared/types/ats-types.js';
-import { ATS_ISSUES } from './constants.js';
+import { ATSImprovement, ATSAnalysis } from '../shared/types/ats-types.js';
 
 /**
  * Common ATS parsing issues and their impact scores
@@ -44,78 +43,77 @@ export async function analyzeATSCompatibility(content: string): Promise<ATSAnaly
       content.includes('Education')) {
     return {
       score: 100,
-      issues: [],
-      recommendations: [],
-      keywordMatches: {
-        found: [],
-        missing: []
-      }
+      keywordMatches: [],
+      missingKeywords: [],
+      suggestions: [],
+      formattingIssues: []
     };
   }
-  const issues: ATSImprovement[] = [];
+
+  const improvements: ATSImprovement[] = [];
   let totalScore = 100;
 
   // Check for complex formatting
   if (hasComplexFormatting(content)) {
-    issues.push({
+    improvements.push({
       type: 'COMPLEX_FORMATTING',
-      ...ATS_ISSUE_SCORES.COMPLEX_FORMATTING
+      score: ATS_ISSUE_SCORES.COMPLEX_FORMATTING.score,
+      message: ATS_ISSUE_SCORES.COMPLEX_FORMATTING.message,
+      fix: ATS_ISSUE_SCORES.COMPLEX_FORMATTING.fix
     });
     totalScore += ATS_ISSUE_SCORES.COMPLEX_FORMATTING.score;
   }
 
   // Check section headings
   if (hasUnusualHeadings(content)) {
-    issues.push({
+    improvements.push({
       type: 'UNUSUAL_HEADINGS',
-      ...ATS_ISSUE_SCORES.UNUSUAL_HEADINGS
+      score: ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.score,
+      message: ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.message,
+      fix: ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.fix
     });
     totalScore += ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.score;
   }
 
   // Check date formats
   if (hasMissingDates(content)) {
-    issues.push({
+    improvements.push({
       type: 'MISSING_DATES',
-      ...ATS_ISSUE_SCORES.MISSING_DATES
+      score: ATS_ISSUE_SCORES.MISSING_DATES.score,
+      message: ATS_ISSUE_SCORES.MISSING_DATES.message,
+      fix: ATS_ISSUE_SCORES.MISSING_DATES.fix
     });
     totalScore += ATS_ISSUE_SCORES.MISSING_DATES.score;
   }
 
   // Check for graphics
   if (hasGraphics(content)) {
-    issues.push({
+    improvements.push({
       type: 'GRAPHICS',
-      ...ATS_ISSUE_SCORES.GRAPHICS
+      score: ATS_ISSUE_SCORES.GRAPHICS.score,
+      message: ATS_ISSUE_SCORES.GRAPHICS.message,
+      fix: ATS_ISSUE_SCORES.GRAPHICS.fix
     });
     totalScore += ATS_ISSUE_SCORES.GRAPHICS.score;
   }
 
   // Check contact information
   if (!hasProperContactInfo(content)) {
-    issues.push({
+    improvements.push({
       type: 'CONTACT_INFO',
-      ...ATS_ISSUE_SCORES.CONTACT_INFO
+      score: ATS_ISSUE_SCORES.CONTACT_INFO.score,
+      message: ATS_ISSUE_SCORES.CONTACT_INFO.message,
+      fix: ATS_ISSUE_SCORES.CONTACT_INFO.fix
     });
     totalScore += ATS_ISSUE_SCORES.CONTACT_INFO.score;
   }
 
-  // Generate improvement suggestions
-  const improvements = generateImprovements(issues);
-
   return {
     score: Math.max(0, totalScore),
-    issues: issues.map(issue => ({
-      type: issue.type,
-      message: issue.message,
-      severity: 'medium' as const,
-      section: undefined
-    })),
-    recommendations: [],
-    keywordMatches: {
-      found: [],
-      missing: []
-    }
+    keywordMatches: [],
+    missingKeywords: [],
+    suggestions: improvements.map(imp => imp.fix),
+    formattingIssues: improvements.map(imp => imp.message)
   };
 }
 
@@ -229,42 +227,28 @@ function hasProperContactInfo(content: string): boolean {
   return contactPatterns.every(pattern => pattern.test(firstFewLines));
 }
 
-function generateImprovements(issues: ATSImprovement[]): string[] {
-  return issues.map(issue => {
-    return `${issue.message}. Suggestion: ${issue.fix}`;
-  });
-}
-
 export { ATS_ISSUE_SCORES };
 
 export async function analyzeForATS(markdown: string): Promise<ATSAnalysis> {
-  return {
-    score: 0,
-    keywordMatches: {
-      found: [],
-      missing: []
-    },
-    issues: [],
-    recommendations: []
-  };
-}
-
-export interface ATSAnalysis {
-  score: number;
-  issues: Array<{
-    type: string;
-    message: string;
-    severity: 'low' | 'medium' | 'high';
-    section?: string;
-  }>;
-  recommendations: string[];
-  keywordMatches: {
-    found: string[];
-    missing: string[];
-  };
+  const analyzer = new ATSAnalyzer();
+  return analyzer.analyzeSection('full', markdown);
 }
 
 export class ATSAnalyzer {
+  public analyzeSection(_section: string, content: string): ATSAnalysis {
+    const score = this.calculateSectionScore(content);
+    const improvements = this.findIssues(content);
+    const keywordMatches = this.findKeywordMatches(content);
+    
+    return {
+      score,
+      keywordMatches: keywordMatches.found,
+      missingKeywords: keywordMatches.missing,
+      suggestions: improvements.map(imp => imp.fix),
+      formattingIssues: improvements.map(imp => imp.message)
+    };
+  }
+
   private calculateSectionScore(content: string): number {
     // Basic scoring logic - can be enhanced
     let score = 100;
@@ -275,60 +259,44 @@ export class ATSAnalyzer {
     return Math.max(0, score);
   }
 
-  private findIssues(content: string): ATSAnalysis['issues'] {
-    const issues: ATSAnalysis['issues'] = [];
+  private findIssues(content: string): ATSImprovement[] {
+    const improvements: ATSImprovement[] = [];
+    
     if (hasComplexFormatting(content)) {
-      issues.push({
+      improvements.push({
         type: 'FORMATTING',
+        score: ATS_ISSUE_SCORES.COMPLEX_FORMATTING.score,
         message: ATS_ISSUE_SCORES.COMPLEX_FORMATTING.message,
-        severity: 'medium'
+        fix: ATS_ISSUE_SCORES.COMPLEX_FORMATTING.fix
       });
     }
+    
     if (hasUnusualHeadings(content)) {
-      issues.push({
+      improvements.push({
         type: 'HEADINGS',
+        score: ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.score,
         message: ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.message,
-        severity: 'low'
+        fix: ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.fix
       });
     }
+    
     if (hasMissingDates(content)) {
-      issues.push({
+      improvements.push({
         type: 'DATES',
+        score: ATS_ISSUE_SCORES.MISSING_DATES.score,
         message: ATS_ISSUE_SCORES.MISSING_DATES.message,
-        severity: 'high'
+        fix: ATS_ISSUE_SCORES.MISSING_DATES.fix
       });
     }
-    return issues;
+    
+    return improvements;
   }
 
-  private generateRecommendations(content: string): string[] {
-    const recommendations = [];
-    if (hasComplexFormatting(content)) {
-      recommendations.push(ATS_ISSUE_SCORES.COMPLEX_FORMATTING.fix);
-    }
-    if (hasUnusualHeadings(content)) {
-      recommendations.push(ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.fix);
-    }
-    if (hasMissingDates(content)) {
-      recommendations.push(ATS_ISSUE_SCORES.MISSING_DATES.fix);
-    }
-    return recommendations;
-  }
-
-  private findKeywordMatches(content: string): ATSAnalysis['keywordMatches'] {
+  private findKeywordMatches(_content: string): { found: string[]; missing: string[] } {
     // Basic implementation - can be enhanced with actual keyword matching logic
     return {
       found: [],
       missing: []
-    };
-  }
-
-  private analyzeSection(section: string, content: string): Partial<ATSAnalysis> {
-    return {
-      score: this.calculateSectionScore(content),
-      issues: this.findIssues(content),
-      recommendations: this.generateRecommendations(content),
-      keywordMatches: this.findKeywordMatches(content)
     };
   }
 }

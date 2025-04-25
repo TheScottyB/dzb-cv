@@ -1,15 +1,15 @@
 import { BasicTemplate } from './template-provider.js';
 import type { CVData } from '../../../types/cv-base.js';
-import type { TemplateOptions } from '../../../types/cv-generation.js';
+import type { TemplateOptions } from '../../../types/cv-types.js';
 import type { Experience } from '../../../types/cv-base.js';
 
 /**
  * Federal template following USA government resume guidelines
  */
 export class FederalTemplate extends BasicTemplate {
-  name = 'federal';
+  override name = 'federal';
 
-  getStyles(): string {
+  override getStyles(): string {
     return `
       body {
         font-family: 'Times New Roman', Times, serif;
@@ -74,7 +74,7 @@ export class FederalTemplate extends BasicTemplate {
     `;
   }
 
-  protected generateHeader(data: CVData, options?: TemplateOptions): string {
+  protected override generateHeader(data: CVData, options?: TemplateOptions): string {
     if (options?.includePersonalInfo === false) return '';
 
     const { personalInfo } = data;
@@ -90,47 +90,51 @@ ${personalInfo.contact.phone} | ${personalInfo.contact.email}${citizenship}
     `.trim();
   }
 
-  protected generateExperience(data: CVData, options?: TemplateOptions): string {
+  protected override generateExperience(data: CVData, options?: TemplateOptions): string {
     if (options?.includeExperience === false || !data.experience.length) return '';
 
-    let experience = data.experience;
-    if (options?.experienceFilter) {
-      experience = experience.filter(exp => options.experienceFilter?.({
-        employer: exp.company,
-        position: exp.title,
-        period: `${exp.startDate} - ${exp.endDate || 'Present'}`,
-        duties: exp.responsibilities
-      }));
-    }
+    const experiences = data.experience.map(exp => ({
+      ...exp,
+      period: `${exp.startDate} - ${exp.endDate || 'Present'}`
+    }));
+
     if (options?.experienceOrder) {
-      experience = experience.sort((a, b) => {
-        const aIndex = options.experienceOrder!.indexOf(a.title);
-        const bIndex = options.experienceOrder!.indexOf(b.title);
-        if (aIndex === -1) return 1;
-        if (bIndex === -1) return -1;
+      experiences.sort((a, b) => {
+        const aIndex = options.experienceOrder!.indexOf(a.position);
+        const bIndex = options.experienceOrder!.indexOf(b.position);
         return aIndex - bIndex;
       });
     }
 
     return `
-## Work Experience
+## Professional Experience
 
-${experience.map(exp => `
-<div class="experience-item">
-### ${exp.title}
-<div class="job-details">
-<p><strong>${exp.company}</strong></p>
-<p class="experience-date">${exp.startDate} - ${exp.endDate || 'Present'}</p>
-</div>
+${experiences.map(exp => `
+### ${exp.position} at ${exp.employer}
 
-Duties and Accomplishments:
-${exp.responsibilities.map(r => `- ${r}`).join('\n')}
-</div>
-`).join('\n\n')}
+<p><strong>${exp.employer}</strong></p>
+<p>${exp.location || 'Location not specified'}</p>
+<p>${exp.period}</p>
+<p>Hours per week: ${exp.employmentType === 'full-time' ? '40' : '20'}</p>
+<p>Salary: ${exp.salary || 'Not specified'}</p>
+<p>Supervisor: ${exp.supervisor || 'Available upon request'}</p>
+
+${exp.responsibilities.map(r => `<p>${r}</p>`).join('\n')}
+
+${exp.achievements?.length ? `
+<h4>Achievements:</h4>
+${exp.achievements.map(a => `<p>${a}</p>`).join('\n')}
+` : ''}
+
+${exp.careerProgression?.length ? `
+<h4>Career Progression:</h4>
+${exp.careerProgression.map(p => `<p>${p}</p>`).join('\n')}
+` : ''}
+`).join('\n')}
     `.trim();
   }
 
-  protected generateSkills(data: CVData, options?: TemplateOptions): string {
+  protected override generateSkills(data: CVData, options?: TemplateOptions): string {
     if (options?.includeSkills === false || !data.skills.length) return '';
 
     return `
@@ -142,18 +146,18 @@ ${data.skills.map(skill => `- ${skill}`).join('\n')}
     `.trim();
   }
 
-  protected generateEducation(data: CVData, options?: TemplateOptions): string {
+  protected override generateEducation(data: CVData, options?: TemplateOptions): string {
     if (options?.includeEducation === false || !data.education.length) return '';
 
     return `
 ## Education
 
 ${data.education.map(edu => `
-### ${edu.institution}
-<div class="job-details">
-<p>${edu.degree}${edu.field ? ` in ${edu.field}` : ''}</p>
-<p>Completion Date: ${edu.completion_date || edu.year}</p>
-${edu.status ? `<p>Status: ${edu.status}</p>` : ''}
+<div class="education-item">
+<p><strong>${edu.degree}</strong></p>
+<p>${edu.institution}</p>
+<p>${edu.field ? `Field of Study: ${edu.field}` : ''}</p>
+<p>Completion Date: ${edu.completionDate || edu.year}</p>
 ${edu.notes ? `<p>${edu.notes}</p>` : ''}
 </div>
 `).join('\n')}
