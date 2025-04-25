@@ -135,9 +135,6 @@ async function fetchJobPostingHtml(url, options = {}) {
  * Escapes special characters in a string for use in a regular expression
  */
 function _extractBenefitsSection(document) {
-on(document) {
-(text) {
-ntainer) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 /**
@@ -282,7 +279,7 @@ function extractKeyTerms(text, additionalTerms = []) {
 /**
  * Gets all text content from elements matching a selector
  */
-function _getTextFromElements(elements) {
+function _getTextFromElements(selector) {
     const elements = document.querySelectorAll(selector);
     return Array.from(elements).map(el => el.textContent?.trim()).filter(Boolean);
 }

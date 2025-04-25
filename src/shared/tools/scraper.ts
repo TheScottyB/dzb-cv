@@ -92,7 +92,7 @@ export class JobScraper {
 
     try {
       this.browser = await puppeteer.launch({
-        headless: this.options.headless as boolean | "new",
+        headless: this.options.headless ? "new" : false,
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
 
@@ -102,7 +102,8 @@ export class JobScraper {
       }
 
       await page.goto(url, { waitUntil: 'networkidle0' });
-      await page.waitForTimeout(this.options.waitTime);
+      // Use setTimeout instead of deprecated waitForTimeout
+      await new Promise(resolve => setTimeout(resolve, this.options.waitTime));
 
       const outputDir = await this.ensureOutputDir();
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');

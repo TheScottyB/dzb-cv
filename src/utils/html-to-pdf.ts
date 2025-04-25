@@ -66,7 +66,7 @@ export class HTMLToPDFConverter {
       });
 
       // Wait a bit to ensure all content is rendered
-      await page.waitForTimeout(1000);
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Generate PDF with merged options
       const pdfOptions = {
@@ -87,7 +87,7 @@ export class HTMLToPDFConverter {
         pageRanges: pdfOptions.pageRanges
       });
 
-      return pdf;
+      return pdf as Buffer;
 
     } catch (error) {
       console.error('Error converting HTML to PDF:', error);

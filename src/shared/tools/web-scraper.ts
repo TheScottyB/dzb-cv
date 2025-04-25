@@ -122,7 +122,8 @@ export async function scrapeJobPosting(
     }
 
     await page.goto(url, { waitUntil: 'networkidle0' });
-    await page.waitForTimeout(mergedOptions.waitTime ?? DEFAULT_SCRAPER_OPTIONS.waitTime!);
+    // Use setTimeout instead of deprecated waitForTimeout
+    await new Promise(resolve => setTimeout(resolve, mergedOptions.waitTime ?? DEFAULT_SCRAPER_OPTIONS.waitTime!));
 
     // Check for CAPTCHA
     if (await detectCaptcha(page)) {
