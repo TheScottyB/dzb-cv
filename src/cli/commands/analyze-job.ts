@@ -60,7 +60,7 @@ export class AnalyzeJobCommand extends BaseCommand {
    */
   configure(): void {
     this.program
-      .name(this.name)
+      .command('analyze')
       .description(this.description)
       .argument('<source>', 'URL of the job posting or path to a file containing the job description')
       .option('-o, --output <path>', 'Path to save the analysis output')
@@ -69,7 +69,9 @@ export class AnalyzeJobCommand extends BaseCommand {
       .option('--force-generic', 'Force using the generic parser for any site', false)
       .option('--no-rate-limit', 'Disable rate limiting (use with caution)', false)
       .option('--save-raw-content', 'Save raw content from URL analysis', false)
-      .action(this.execute.bind(this));
+      .action(async (source: string, options: AnalyzeJobCommandOptions) => {
+        await this.execute(source, options);
+      });
   }
 
   /**
@@ -178,7 +180,12 @@ export class AnalyzeJobCommand extends BaseCommand {
         };
       } else {
         // URL-based analysis
-        jobAnalysis = await analyzeJobPosting(source);
+        try {
+          jobAnalysis = await analyzeJobPosting(source);
+        } catch (error) {
+          this.logError(`Error analyzing job posting: ${error instanceof Error ? error.message : String(error)}`, true);
+          return;
+        }
         
         // For URL-based analysis, try to fetch the raw content if needed for record-keeping
         if (options.saveRawContent) {

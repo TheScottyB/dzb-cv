@@ -32,6 +32,11 @@ var/
 dist/
 build/
 coverage/
+output/
+# Ignore JS files when TS source exists (compiled output)
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts
 
 # Environment
 .env
@@ -54,3 +59,8 @@ coverage/
 
 # Volta
 .volta/
+
+# Project-specific files
+job-posting.txt
+*-cv.pdf
+*-cv.html
