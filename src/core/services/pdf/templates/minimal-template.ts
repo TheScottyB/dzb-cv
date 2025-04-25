@@ -11,55 +11,48 @@ export class MinimalTemplate extends BasicTemplate {
   override getStyles(): string {
     return `
       body {
-        font-family: -apple-system, system-ui, BlinkMacSystemFont, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         line-height: 1.5;
-        margin: 0;
-        padding: 25px;
-        color: #24292e;
         max-width: 800px;
         margin: 0 auto;
+        padding: 2rem;
       }
-      h1 {
-        font-size: 24px;
-        font-weight: 600;
-        margin-bottom: 4px;
-        letter-spacing: -0.2px;
-      }
-      h2 {
-        font-size: 16px;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: #586069;
-        border-bottom: none;
-        margin-top: 30px;
-        margin-bottom: 12px;
-      }
+      
       h3 {
         font-size: 15px;
         font-weight: 600;
         margin-bottom: 2px;
       }
+      
       .contact-info {
         color: #586069;
         font-size: 14px;
         margin-bottom: 20px;
       }
+      
       .experience-item {
         margin-bottom: 20px;
         page-break-inside: avoid;
       }
-      .experience-date {
+      
+      .job-details {
         color: #586069;
         font-size: 13px;
-        margin-bottom: 8px;
+        margin: 0.5rem 0;
       }
+      
+      .date, .location {
+        display: inline-block;
+        margin-right: 1rem;
+      }
+      
       .skills-list {
         display: flex;
         flex-wrap: wrap;
         gap: 6px;
         margin-top: 10px;
       }
+      
       .skill-item {
         color: #24292e;
         font-size: 13px;
@@ -67,14 +60,17 @@ export class MinimalTemplate extends BasicTemplate {
         border: 1px solid #e1e4e8;
         border-radius: 12px;
       }
+      
       ul {
         padding-left: 18px;
         margin: 8px 0;
       }
+      
       li {
         margin-bottom: 4px;
         font-size: 14px;
       }
+      
       @media print {
         body {
           padding: 20px;
@@ -93,14 +89,10 @@ export class MinimalTemplate extends BasicTemplate {
     const { personalInfo } = data;
     return `
 # ${personalInfo.name.full}
-${personalInfo.title ? `<div style="color:#586069;font-size:15px;margin-bottom:8px;">${personalInfo.title}</div>` : ''}
+<div style="color:#586069;font-size:15px;margin-bottom:8px;">${personalInfo.title || ''}</div>
 
 <div class="contact-info">
-${[
-  personalInfo.contact.email,
-  personalInfo.contact.phone,
-  personalInfo.contact.address
-].filter(Boolean).join(' · ')}
+${[personalInfo.contact.email, personalInfo.contact.phone, personalInfo.contact.address].filter(Boolean).join(' · ')}
 </div>
     `.trim();
   }
@@ -116,22 +108,28 @@ ${[
     return `
 ## Experience
 
-${experience.map(exp => `
-<div class="experience-item">
-<h3>${exp.position} at ${exp.employer}</h3>
+${experience.map(exp => {
+      // Handle both data structures (title/company and position/employer)
+      const position = exp.title || exp.position || '';
+      const employer = exp.company || exp.employer || '';
+      const location = exp.location || '';
+      const dateRange = `${exp.startDate}${exp.endDate ? ` - ${exp.endDate}` : ''}`;
+
+      return `
+### ${position} · ${employer}
+
 <div class="job-details">
-<p class="date">${exp.startDate} - ${exp.endDate || 'Present'}</p>
-<p class="location">${exp.location || 'Location not specified'}</p>
+<span class="date">${dateRange}</span>
+${location ? `<span class="location">${location}</span>` : ''}
 </div>
 
-${exp.responsibilities.map(r => `<p>${r}</p>`).join('\n')}
+${exp.responsibilities?.map(r => `- ${r}`).join('\n') || ''}
 
 ${exp.achievements?.length ? `
-<h4>Achievements:</h4>
-${exp.achievements.map(a => `<p>${a}</p>`).join('\n')}
-` : ''}
-</div>
-`).join('\n')}
+<div class="achievements">
+${exp.achievements.map(a => `- ${a}`).join('\n')}
+</div>` : ''}`;
+    }).join('\n')}
     `.trim();
   }
 
@@ -139,13 +137,25 @@ ${exp.achievements.map(a => `<p>${a}</p>`).join('\n')}
     if (options?.includeSkills === false || !data.skills.length) return '';
 
     return `
-      <div class="skills-section">
-        <h2>Skills</h2>
-        <ul>
-          ${data.skills.map(skill => `<li>${skill}</li>`).join('\n')}
-        </ul>
-      </div>
-    `;
+## Skills
+
+<div class="skills-list">
+${data.skills.map(skill => `<span class="skill-item">${skill}</span>`).join('\n')}
+</div>
+    `.trim();
+  }
+
+  protected override generateEducation(data: CVData, options?: TemplateOptions): string {
+    if (options?.includeEducation === false || !data.education?.length) return '';
+
+    return `
+## Education
+
+${data.education.map(edu => `
+### ${edu.degree} - ${edu.institution}
+${edu.completionDate || edu.year}
+`).join('\n')}
+    `.trim();
   }
 
   private orderExperienceEntries(experience: CVData['experience'], order: string[]): CVData['experience'] {
@@ -158,4 +168,3 @@ ${exp.achievements.map(a => `<p>${a}</p>`).join('\n')}
     });
   }
 }
-
