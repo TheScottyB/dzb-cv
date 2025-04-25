@@ -19,7 +19,7 @@ const defaultOptions = {
     left: '0.5in'
   },
   printBackground: true,
-  scale: 1,
+  scale: 1.0,
   pageRanges: '' // Empty string means all pages
 } satisfies PDFOptions;
 

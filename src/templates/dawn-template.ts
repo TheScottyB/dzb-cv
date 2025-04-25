@@ -8,7 +8,9 @@ export const dawnTemplate = {
       "Insurance Verification",
       "Medical Records Management",
       "Multi-line Phone Systems",
-      "Patient Flow Management"
+      "Patient Flow Management",
+      "Farm Tax Certification",
+      "Revenue Cycle Operations"
     ],
     supervision: [
       "Team Leadership",
@@ -17,7 +19,20 @@ export const dawnTemplate = {
       "Performance Evaluation",
       "Staff Development",
       "Policy Implementation",
-      "Mentorship & Coaching"
+      "Mentorship & Coaching",
+      "Cross-functional Coordination",
+      "Operational Oversight"
+    ],
+    customerService: [
+      "Client Relationship Management",
+      "Conflict Resolution",
+      "High-Volume Customer Interactions",
+      "Stakeholder Communication",
+      "Customer Satisfaction",
+      "Professional Communication",
+      "Multi-line Phone Systems",
+      "Appointment Scheduling",
+      "Customer Education"
     ],
     realEstate: [
       "Property Management",
@@ -25,7 +40,10 @@ export const dawnTemplate = {
       "Market Analysis",
       "Transaction Coordination",
       "Team Leadership",
-      "Business Development"
+      "Business Development",
+      "Customer Service Excellence",
+      "Stakeholder Management",
+      "Professional Communication"
     ],
     systems: [
       "Healthcare Scheduling Software",
@@ -33,7 +51,9 @@ export const dawnTemplate = {
       "Records Management Systems",
       "Multi-line Phone Systems",
       "Customer Service Platforms",
-      "Real Estate CRM Systems"
+      "Real Estate CRM Systems",
+      "EPIC Systems",
+      "Revenue Cycle Management Tools"
     ]
   },
 
@@ -48,12 +68,15 @@ export const dawnTemplate = {
         "Process new patient paperwork",
         "Charting and filing",
         "Insurance verification",
-        "Multi-location support"
+        "Multi-location support",
+        "Customer service and education",
+        "Phone system management"
       ],
       relevance: {
         patientAccess: "high",
         supervision: "medium",
-        systems: "high"
+        systems: "high",
+        customerService: "high"
       }
     },
     realEstate: {
@@ -65,29 +88,35 @@ export const dawnTemplate = {
         "Managed client relationships",
         "Oversaw property transactions",
         "Implemented business strategies",
-        "Coached team members"
+        "Coached team members",
+        "Handled customer inquiries and concerns",
+        "Managed high-volume client interactions",
+        "Provided professional communication"
       ],
       relevance: {
         realEstate: "high",
         supervision: "high",
-        systems: "medium"
+        systems: "medium",
+        customerService: "high"
       }
     },
-    scienceFan: {
-      title: "Science Fan Experience",
-      period: "2002-2015",
+    vyllaAdmin: {
+      title: "Admin for Central & Eastern Coast AVPs",
+      period: "February 2024 - Present",
       keyDuties: [
-        "Team leadership and coordination",
-        "Event planning and management",
-        "Community engagement",
-        "Content development",
-        "Volunteer coordination",
-        "Project management"
+        "Provide administrative support for 3 AVPs covering 14 states",
+        "Manage agent support systems",
+        "Coordinate onboarding and training",
+        "Handle high-volume phone communications",
+        "Implement retention initiatives",
+        "Manage customer service operations",
+        "Coordinate cross-functional activities"
       ],
       relevance: {
         supervision: "high",
-        systems: "medium",
-        realEstate: "low"
+        customerService: "high",
+        systems: "high",
+        realEstate: "medium"
       }
     },
     midwestSports: {
@@ -99,12 +128,15 @@ export const dawnTemplate = {
         "Scheduled appointments",
         "Supervised staff",
         "Process improvement",
-        "Cross-department coordination"
+        "Cross-department coordination",
+        "Customer service management",
+        "Phone system operations"
       ],
       relevance: {
         patientAccess: "high",
         supervision: "high",
-        systems: "high"
+        systems: "high",
+        customerService: "high"
       }
     },
     familyMedicine: {
@@ -115,12 +147,15 @@ export const dawnTemplate = {
         "Insurance reconciliation",
         "Chart analysis",
         "Referral processing",
-        "Prescription management"
+        "Prescription management",
+        "Patient communication",
+        "Phone system management"
       ],
       relevance: {
         patientAccess: "high",
         supervision: "medium",
-        systems: "high"
+        systems: "high",
+        customerService: "high"
       }
     }
   },
@@ -128,18 +163,18 @@ export const dawnTemplate = {
   // How to present her experience
   presentationRules: {
     summary: {
-      leadWith: "healthcare experience",
-      emphasize: ["supervision", "patient access", "systems knowledge", "real estate leadership"],
+      leadWith: "healthcare and customer service experience",
+      emphasize: ["supervision", "patient access", "customer service", "systems knowledge", "real estate leadership"],
       years: "over 40 years"
     },
     experience: {
-      order: ["recent", "relevant", "supervisory"],
+      order: ["recent", "relevant", "supervisory", "customer-facing"],
       maxEntries: 4,
-      focusOn: ["achievements", "responsibilities", "systems used", "leadership impact"]
+      focusOn: ["achievements", "responsibilities", "customer service", "systems used", "leadership impact"]
     },
     skills: {
-      prioritize: ["healthcare systems", "supervision", "patient access", "real estate operations"],
-      groupBy: ["technical", "administrative", "leadership", "industry-specific"]
+      prioritize: ["healthcare systems", "customer service", "supervision", "patient access", "real estate operations"],
+      groupBy: ["technical", "administrative", "leadership", "customer service", "industry-specific"]
     }
   },
 
@@ -152,7 +187,10 @@ export const dawnTemplate = {
         "healthcare systems",
         "insurance verification",
         "scheduling",
-        "compliance"
+        "compliance",
+        "customer service",
+        "phone systems",
+        "farm tax certification"
       ],
       experienceWeight: {
         foxLake: 0.3,
@@ -167,13 +205,115 @@ export const dawnTemplate = {
         "client relations",
         "business development",
         "training",
-        "mentorship"
+        "mentorship",
+        "customer service",
+        "professional communication"
       ],
       experienceWeight: {
         realEstate: 0.5,
-        scienceFan: 0.3,
+        vyllaAdmin: 0.3,
         midwestSports: 0.2
       }
+    }
+  },
+
+  // Cover letter generation rules
+  coverLetterRules: {
+    structure: {
+      header: {
+        name: true,
+        address: true,
+        contact: true,
+        date: true
+      },
+      salutation: "Dear Hiring Manager,",
+      paragraphs: {
+        count: 5,
+        focus: [
+          "introduction",
+          "currentRole",
+          "experience",
+          "transferableSkills",
+          "companyAlignment"
+        ]
+      },
+      closing: "Sincerely,",
+      signature: true
+    },
+    contentMapping: {
+      introduction: {
+        position: "Patient Access Supervisor",
+        company: "Mercyhealth",
+        location: "Crystal Lake Hospital",
+        experience: "15+ years",
+        fields: ["healthcare administration", "team leadership", "revenue cycle operations"]
+      },
+      currentRole: {
+        title: "Front Desk/Veterinary Assistant",
+        company: "Fox Lake Animal Hospital",
+        keyMetrics: {
+          patientFlow: "60-80 patients daily",
+          systems: ["triage protocols", "scheduling systems"]
+        },
+        alignment: [
+          "patient flow management",
+          "clinical staff coordination",
+          "healthcare regulations compliance"
+        ]
+      },
+      experience: {
+        supervision: {
+          activities: [
+            "conducting performance reviews",
+            "providing coaching",
+            "implementing training programs"
+          ]
+        },
+        systems: {
+          focus: ["accuracy", "efficiency"],
+          standards: ["HIPAA", "CMS"]
+        },
+        coordination: {
+          scope: "cross-departmental",
+          focus: ["patient care", "workflow optimization"]
+        },
+        financial: {
+          activities: [
+            "insurance verification",
+            "claims processing",
+            "maximizing reimbursement"
+          ]
+        },
+        process: {
+          focus: ["workflow efficiency", "continuous improvement"]
+        }
+      },
+      transferableSkills: {
+        leadership: {
+          teamSize: "4 professionals",
+          scope: "Illinois & Wisconsin",
+          activities: [
+            "training program development",
+            "performance management",
+            "policy implementation"
+          ]
+        }
+      },
+      companyAlignment: {
+        mission: "excellence in patient care",
+        values: [
+          "high standards in healthcare operations",
+          "efficient workflows",
+          "regulatory compliance"
+        ],
+        confidence: "ideal candidate based on healthcare administration and team leadership"
+      }
+    },
+    tone: {
+      style: "professional",
+      confidence: "high",
+      specificity: "healthcare-focused",
+      personalization: "company-specific"
     }
   }
 }; 
