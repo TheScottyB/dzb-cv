@@ -11,8 +11,8 @@ async function generatePDFs() {
   // Configure PDF options
   const pdfOptions: Partial<PDFGenerationOptions> = {
     includeHeaderFooter: true,
-    headerText: 'Dawn Zurick Beilfuss - Patient Access Supervisor',
-    footerText: `Application for Mercyhealth Position - Job ID: 37949 | Generated: ${timestamp}`,
+    headerText: 'Dawn Zurick Beilfuss - Patient Registrar',
+    footerText: `Application for Mercyhealth Position - Job ID: 39369 | Generated: ${timestamp}`,
     paperSize: 'Letter',
     margins: {
       top: 0.75,
@@ -21,18 +21,18 @@ async function generatePDFs() {
       left: 0.75
     },
     fontFamily: 'Arial, Helvetica, sans-serif',
-    pdfTitle: 'Dawn Zurick Beilfuss - Patient Access Supervisor Application',
+    pdfTitle: 'Dawn Zurick Beilfuss - Patient Registrar Application',
     pdfAuthor: 'Dawn Zurick Beilfuss',
     orientation: 'portrait'
   };
 
   // Read markdown files
   const cvMarkdown = await fs.readFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-37949/cv-draft.md'),
+    path.join(process.cwd(), 'job-postings/mercy-health-39369/cv-draft.md'),
     'utf-8'
   );
   const coverLetterMarkdown = await fs.readFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-37949/cover-letter.md'),
+    path.join(process.cwd(), 'job-postings/mercy-health-39369/cover-letter.md'),
     'utf-8'
   );
 
@@ -246,13 +246,13 @@ async function generatePDFs() {
 
   // Generate CV PDF
   console.log('Generating CV PDF...');
-  const cvOutputPath = path.join(process.cwd(), 'job-postings/mercy-health-37949/Dawn_Zurick_Beilfuss_CV.pdf');
+  const cvOutputPath = path.join(process.cwd(), 'job-postings/mercy-health-39369/Dawn_Zurick_Beilfuss_CV.pdf');
   await generator.generateFromHTML(cvHtml, cvOutputPath, pdfOptions);
   console.log(`Successfully created CV PDF at: ${cvOutputPath}`);
 
   // Generate Cover Letter PDF
   console.log('Generating Cover Letter PDF...');
-  const coverOutputPath = path.join(process.cwd(), 'job-postings/mercy-health-37949/Dawn_Zurick_Beilfuss_Cover_Letter.pdf');
+  const coverOutputPath = path.join(process.cwd(), 'job-postings/mercy-health-39369/Dawn_Zurick_Beilfuss_Cover_Letter.pdf');
   await generator.generateFromHTML(coverLetterHtml, coverOutputPath, pdfOptions);
   console.log(`Successfully created Cover Letter PDF at: ${coverOutputPath}`);
 }

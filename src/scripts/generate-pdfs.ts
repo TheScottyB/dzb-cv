@@ -16,11 +16,11 @@ async function generatePDFs() {
 
   // Read markdown files
   const cvMarkdown = await fs.readFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-37949/cv-draft.md'),
+    path.join(process.cwd(), 'job-postings/mercy-health-39369/cv-draft.md'),
     'utf-8'
   );
   const coverLetterMarkdown = await fs.readFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-37949/cover-letter.md'),
+    path.join(process.cwd(), 'job-postings/mercy-health-39369/cover-letter.md'),
     'utf-8'
   );
 
@@ -30,7 +30,7 @@ async function generatePDFs() {
     '',
     {
       title: 'Dawn Zurick Beilfuss',
-      subtitle: 'Patient Access Supervisor | Healthcare Administration & Revenue Cycle Management',
+      subtitle: 'Patient Registrar | Healthcare Administration & Customer Service',
       theme: {
         primaryColor: [0, 0.3, 0.6],
         secondaryColor: [0.2, 0.2, 0.2],
@@ -47,7 +47,7 @@ async function generatePDFs() {
     '',
     {
       title: 'Cover Letter',
-      subtitle: 'Patient Access Supervisor Position',
+      subtitle: 'Patient Registrar Position',
       theme: {
         primaryColor: [0, 0.3, 0.6],
         secondaryColor: [0.2, 0.2, 0.2],
@@ -60,11 +60,11 @@ async function generatePDFs() {
 
   // Save PDFs
   await fs.writeFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-37949/cv.pdf'),
+    path.join(process.cwd(), 'job-postings/mercy-health-39369/cv.pdf'),
     cvPdfBytes
   );
   await fs.writeFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-37949/cover-letter.pdf'),
+    path.join(process.cwd(), 'job-postings/mercy-health-39369/cover-letter.pdf'),
     coverLetterPdfBytes
   );
 
