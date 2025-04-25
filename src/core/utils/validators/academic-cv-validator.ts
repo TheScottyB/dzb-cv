@@ -60,11 +60,24 @@ export class AcademicCVValidator {
         message: 'Name is required'
       });
     }
+    // Check if full name is present and non-empty
+    if (data.personalInfo?.name && typeof data.personalInfo.name.full === 'string' && !data.personalInfo.name.full.trim()) {
+      errors.push({
+        field: 'personalInfo.name.full',
+        message: 'Full name is required'
+      });
+    }
     
     if (!data.personalInfo?.contact?.email) {
       errors.push({
         field: 'personalInfo.contact.email',
         message: 'Email is required'
+      });
+    }
+    if (!data.personalInfo?.contact?.phone) {
+      errors.push({
+        field: 'personalInfo.contact.phone',
+        message: 'Phone number is required'
       });
     }
   }
@@ -256,13 +269,7 @@ export class AcademicCVValidator {
           message: 'Award year is required'
         });
       }
-
-      if (!award.organization) {
-        errors.push({
-          field: `awards[${index}].organization`,
-          message: 'Awarding organization is required'
-        });
-      }
+      // organization and all other fields are optional
     });
   }
 
