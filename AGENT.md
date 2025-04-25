@@ -3,18 +3,19 @@
 ## Core Principles
 
 1. **Data Verification**
-   - All content MUST be verified against `src/data/base-info.json`
+   - All content MUST be verified against source data
    - No unverified claims or interpolation
    - Document all verification steps
 
-2. **PDF Generation Hierarchy**
+2. **Document Generation Flow**
    ```mermaid
    graph TD
-      A[Input] --> B{Format Type}
-      B -->|Standard| C[site-cv Command]
-      B -->|Custom| D[pdf-generator.ts]
-      C --> E[ATS Friendly]
-      D --> F[Custom Format]
+      A[Input] --> B{Document Type}
+      B -->|CV| C[cv-parser.ts]
+      B -->|Job Analysis| D[job-analyzer.ts]
+      C --> E[Generator]
+      D --> E
+      E --> F[Output]
    ```
 
 3. **Run Configuration Requirements**
@@ -36,14 +37,16 @@ interface VerifiedClaim {
 }
 ```
 
-### PDF Generation Decision Tree
-1. ATS Requirements?
-   - Yes → Use `site-cv` command
-   - No → Check custom requirements
+### Document Generation Process
+1. Input Analysis
+   - Parse CV using `cv-parser.ts`
+   - Analyze job using `job-analyzer.ts`
+   - Generate unified output using `generator.ts`
 
-2. Custom Formatting?
-   - Yes → Use `pdf-generator.ts`
-   - No → Default to ATS-friendly
+2. Output Formatting
+   - Support for multiple formats
+   - Customizable templates
+   - ATS-friendly options
 
 ### Run Configuration Schema
 ```typescript
@@ -60,22 +63,23 @@ interface RunConfiguration {
   outputs: {
     cv: string;
     coverLetter: string;
-    format: 'ATS' | 'Custom';
+    format: string;
   };
 }
 ```
 
 ## Tooling
 
-### PDF Generation
-- `src/utils/pdf-generator.ts`: Core implementation
-- `cli/commands/site-cv.ts`: ATS-friendly wrapper
-- `utils/generate-*.js`: Custom generators
+### Core Tools
+- `src/tools/cv-parser.ts`: CV parsing and analysis
+- `src/tools/job-analyzer.ts`: Job posting analysis
+- `src/tools/generator.ts`: Document generation
 
-### Verification Tools
-- `src/utils/verify-claims.ts`: Claim verification
-- `src/utils/source-validator.ts`: Source data validation
-- `src/utils/run-logger.ts`: Run configuration logging
+### CLI Integration
+- `src/cli.ts`: Main CLI entry point
+- `src/cli-unified.ts`: Unified command handling
+- `src/cli-job-analyzer.ts`: Job analysis commands
+- `src/cli-profile-importer.ts`: Profile import functionality
 
 ## Best Practices
 
@@ -90,6 +94,6 @@ interface RunConfiguration {
    - Document format decisions
 
 3. **Format Selection**
-   - Default to ATS-friendly
+   - Support multiple output formats
    - Document custom format requirements
    - Validate accessibility
