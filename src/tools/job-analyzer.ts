@@ -1,6 +1,6 @@
 import type { JobPostingAnalysis } from '../shared/types/cv-types.js';
 
-export async function analyzeJobPosting(url: string, options: any = {}): Promise<JobPostingAnalysis> {
+export async function analyzeJobPosting(url: string): Promise<JobPostingAnalysis> {
   const domain = new URL(url).hostname;
   
   return {

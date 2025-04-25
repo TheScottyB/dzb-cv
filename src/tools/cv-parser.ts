@@ -69,21 +69,42 @@ export function parseCvMarkdown(markdown: string): ParsedCV {
 }
 
 function parseExperienceSection(section: string): ParsedCV['experience'] {
+  const items = section.split('\n').filter(line => line.trim().startsWith('-'));
+  return items.map(item => {
+    const match = item.match(/^-\s*(.+?)\s+at\s+(.+?)\s+\((.+?)(?:\s*-\s*(.+))?\)$/);
+    if (match?.[1] && match?.[2] && match?.[3]) {
+      const exp = {
+        title: match[1].trim(),
+        company: match[2].trim(),
+        startDate: match[3].trim(),
+        responsibilities: [] as string[]
+      } as const;
+      const endDate = match[4]?.trim();
+      if (endDate) {
+        return { ...exp, endDate };
+      }
+      return exp;
+    }
+    return {
+      title: item.substring(1).trim(),
+      company: 'Unknown',
+      startDate: 'Unknown',
+      responsibilities: [] as string[]
+    };
+  }) as ParsedCV['experience'];
+}
+
+function parseEducationSection(_section: string): ParsedCV['education'] {
   // Basic implementation
   return [];
 }
 
-function parseEducationSection(section: string): ParsedCV['education'] {
+function parseSkillsSection(_section: string): string[] {
   // Basic implementation
   return [];
 }
 
-function parseSkillsSection(section: string): string[] {
-  // Basic implementation
-  return [];
-}
-
-function parseCertificationsSection(section: string): string[] {
+function parseCertificationsSection(_section: string): string[] {
   // Basic implementation
   return [];
 } 

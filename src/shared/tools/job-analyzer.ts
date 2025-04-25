@@ -1,12 +1,6 @@
 import type { JobPostingAnalysis } from '../types/cv-types.js';
 
-interface JobAnalyzerOptions {
-  maxKeyTerms?: number;
-  minTermLength?: number;
-  [key: string]: unknown;
-}
-
-export async function analyzeJobPosting(url: string, options: JobAnalyzerOptions = {}): Promise<JobPostingAnalysis> {
+export async function analyzeJobPosting(url: string): Promise<JobPostingAnalysis> {
   const domain = new URL(url).hostname;
   
   return {

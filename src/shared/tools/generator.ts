@@ -3,7 +3,6 @@ import { join } from 'path';
 import Handlebars from 'handlebars';
 import { 
   loadTemplate, 
-  loadCVData,
   registerHelpers,
   sortByDate,
   formatUSDate,
@@ -15,9 +14,7 @@ import {
   formatWithPrefix
 } from "../utils/helpers.js";
 import { 
-  resolveOutputPath, 
-  resolveDataPath, 
-  ensureProjectDirectories 
+  resolveDataPath
 } from "../utils/path-resolver.js";
 import { convertMarkdownToPdf, DEFAULT_PDF_OPTIONS } from '../utils/pdf-generator.js';
 import type { CVData, PDFOptions } from "../types/cv-types.js";

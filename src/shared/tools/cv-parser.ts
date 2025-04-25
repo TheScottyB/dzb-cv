@@ -1,4 +1,3 @@
-import { ProfileData } from '../types/profile-types.js';
 import { parseMarkdownProfile } from './markdown-profile-parser.js';
 import type { CVData } from '../types/cv-types.js';
 

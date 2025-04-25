@@ -6,10 +6,7 @@ export interface CVGenerationOptions {
 }
 
 export async function generateCV(
-  sector: string,
-  data: any,
-  outputPath: string,
-  options: Partial<CVGenerationOptions>
+  sector: 'federal' | 'state' | 'private'
 ): Promise<string> {
   // Basic implementation
   return `Generated CV for ${sector} sector`;

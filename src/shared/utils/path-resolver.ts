@@ -1,4 +1,4 @@
-import { join, resolve } from 'path';
+import { resolve } from 'path';
 
 export function resolveOutputPath(path: string): string {
   return resolve(process.cwd(), 'output', path);

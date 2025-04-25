@@ -130,7 +130,6 @@ export async function scrapeJobPosting(
     }
 
     const html = await page.content();
-    const text = await page.evaluate(() => document.body.innerText);
 
     // Generate filenames
     const baseFilename = generateFilename(url);
@@ -262,7 +261,7 @@ async function extractJobData(
 /**
  * Scrape job posting data from Indeed
  */
-async function scrapeIndeedJob(
+export async function scrapeIndeedJob(
   page: puppeteer.Page, 
   url: string,
   htmlPath?: string,
@@ -443,7 +442,7 @@ async function scrapeIndeedJob(
 /**
  * Scrape job posting data from LinkedIn
  */
-async function scrapeLinkedInJob(
+export async function scrapeLinkedInJob(
   page: puppeteer.Page, 
   url: string,
   htmlPath?: string,
@@ -552,7 +551,7 @@ async function scrapeLinkedInJob(
 /**
  * Scrape job posting data from a generic job site
  */
-async function scrapeGenericJob(
+export async function scrapeGenericJob(
   page: puppeteer.Page, 
   url: string,
   htmlPath?: string,

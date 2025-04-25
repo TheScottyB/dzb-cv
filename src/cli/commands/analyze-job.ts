@@ -6,7 +6,7 @@
  */
 
 import path from 'path';
-import fs from 'fs/promises';
+import { promises as fs } from 'fs';
 import { existsSync } from 'fs';
 import { BaseCommand, RunConfiguration } from './base-command.js';
 import { analyzeJobPosting } from '../../tools/job-analyzer.js';
@@ -44,6 +44,7 @@ interface AnalyzeJobCommandOptions {
   file?: boolean;
   forceGeneric?: boolean;
   noRateLimit?: boolean;
+  saveRawContent?: boolean;
 }
 
 /**
@@ -67,6 +68,7 @@ export class AnalyzeJobCommand extends BaseCommand {
       .option('--file', 'Treat the source as a local file path instead of URL', false)
       .option('--force-generic', 'Force using the generic parser for any site', false)
       .option('--no-rate-limit', 'Disable rate limiting (use with caution)', false)
+      .option('--save-raw-content', 'Save raw content from URL analysis', false)
       .action(this.execute.bind(this));
   }
 
@@ -176,18 +178,18 @@ export class AnalyzeJobCommand extends BaseCommand {
         };
       } else {
         // URL-based analysis
-        jobAnalysis = await analyzeJobPosting(source, {
-          skipRateLimiting: options.noRateLimit,
-          forceGenericParser: options.forceGeneric
-        });
+        jobAnalysis = await analyzeJobPosting(source);
         
         // For URL-based analysis, try to fetch the raw content if needed for record-keeping
-        try {
-          // This would typically be done by the analyzeJobPosting function
-          // but we'll keep a placeholder here for the RunConfiguration
-          rawContent = `Content fetched from ${source} on ${new Date().toISOString()}`;
-        } catch (error) {
-          this.logWarning(`Could not fetch raw content from URL: ${error}`);
+        if (options.saveRawContent) {
+          try {
+            const rawContent = await this.fetchRawContent(source);
+            if (rawContent) {
+              await this.saveRawContent(source, rawContent);
+            }
+          } catch (error) {
+            console.warn('Failed to save raw content:', error);
+          }
         }
       }
 
@@ -316,13 +318,14 @@ export class AnalyzeJobCommand extends BaseCommand {
     if (analysis.jobType) content += `**Job Type:** ${analysis.jobType}\n`;
     if (analysis.experienceLevel) content += `**Experience Level:** ${analysis.experienceLevel}\n`;
     
-    content += `\n## Key Terms for CV Tailoring\n\n${analysis.keyTerms.join(', ')}\n`;
+    content += `\n## Key Terms for CV Tailoring\n\n`;
+    content += analysis.keyTerms.join(', ') + '\n';
     
     if (analysis.salaryRange) {
       const min = analysis.salaryRange.min ? `$${analysis.salaryRange.min.toLocaleString()}` : '?';
       const max = analysis.salaryRange.max ? `$${analysis.salaryRange.max.toLocaleString()}` : '?';
       const period = analysis.salaryRange.period || 'yearly';
-      content += `\n## Salary Range\n\n${min} - ${max} (${period})\n`;
+      content += `\n**Salary Range:** ${min} - ${max} (${period})\n`;
     }
     
     content += `\n## Responsibilities\n\n`;
@@ -398,5 +401,38 @@ export class AnalyzeJobCommand extends BaseCommand {
     
     return content;
   }
-}
 
+  /**
+   * Fetch raw content from a URL
+   * @param url The URL to fetch from
+   * @returns The raw content as a string
+   */
+  private async fetchRawContent(url: string): Promise<string | null> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.text();
+    } catch (error) {
+      console.warn(`Failed to fetch raw content from ${url}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Save raw content to a file
+   * @param url The source URL
+   * @param content The content to save
+   */
+  private async saveRawContent(url: string, content: string): Promise<void> {
+    try {
+      const filename = `${new URL(url).hostname}-${Date.now()}.html`;
+      const outputPath = path.join(process.cwd(), 'output', 'raw', filename);
+      await fs.mkdir(path.dirname(outputPath), { recursive: true });
+      await fs.writeFile(outputPath, content, 'utf-8');
+    } catch (error) {
+      console.warn(`Failed to save raw content:`, error);
+    }
+  }
+}

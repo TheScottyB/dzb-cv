@@ -3,8 +3,18 @@ import fs from 'fs/promises';
 import path from 'path';
 import { JobPosting, ScraperOptions, ScraperResult } from '../types/job-posting.js';
 
+type RequiredScraperOptions = {
+  headless: boolean;
+  waitTime: number;
+  outputDir: string;
+  saveHtml: boolean;
+  saveScreenshot: boolean;
+  savePdf: boolean;
+  customUserAgent?: string;
+};
+
 export class JobScraper {
-  private options: ScraperOptions;
+  private options: RequiredScraperOptions;
   private browser: puppeteer.Browser | null = null;
 
   constructor(options: ScraperOptions = {}) {
@@ -20,22 +30,22 @@ export class JobScraper {
   }
 
   private async ensureOutputDir(): Promise<string> {
-    const outputDir = this.options.outputDir!;
+    const outputDir = this.options.outputDir;
     await fs.mkdir(outputDir, { recursive: true });
     return outputDir;
   }
 
-  private async extractJobInfo(page: puppeteer.Page): Promise<Partial<JobPosting>> {
-    return await page.evaluate(() => {
-      const getText = (selector: string) => {
+  private async extractJobInfo(page: puppeteer.Page): Promise<JobPosting> {
+    const jobData = await page.evaluate(() => {
+      const getText = (selector: string): string => {
         const element = document.querySelector(selector);
-        return element ? element.textContent?.trim() : '';
+        return element?.textContent?.trim() || '';
       };
 
-      const getList = (selector: string) => {
+      const getList = (selector: string): string[] => {
         return Array.from(document.querySelectorAll(selector))
           .map(el => el.textContent?.trim())
-          .filter(Boolean) as string[];
+          .filter((text): text is string => text !== undefined && text !== null) as string[];
       };
 
       return {
@@ -56,6 +66,17 @@ export class JobScraper {
         }
       };
     });
+
+    return {
+      url: page.url(),
+      ...jobData,
+      responsibilities: jobData.responsibilities,
+      qualifications: jobData.qualifications,
+      skills: jobData.skills,
+      education: jobData.education,
+      experience: jobData.experience,
+      metadata: jobData.metadata
+    };
   }
 
   async scrape(url: string): Promise<ScraperResult> {
@@ -71,7 +92,7 @@ export class JobScraper {
 
     try {
       this.browser = await puppeteer.launch({
-        headless: this.options.headless,
+        headless: this.options.headless as boolean | "new",
         args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
 
@@ -81,23 +102,13 @@ export class JobScraper {
       }
 
       await page.goto(url, { waitUntil: 'networkidle0' });
-      await page.waitForTimeout(this.options.waitTime!);
+      await page.waitForTimeout(this.options.waitTime);
 
       const outputDir = await this.ensureOutputDir();
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
       const baseFilename = `${url.split('/').pop()}-${timestamp}`;
 
-      const jobData = await this.extractJobInfo(page);
-      const jobPosting: JobPosting = {
-        url,
-        ...jobData,
-        responsibilities: jobData.responsibilities || [],
-        qualifications: jobData.qualifications || [],
-        skills: jobData.skills || [],
-        education: jobData.education || [],
-        experience: jobData.experience || [],
-        metadata: jobData.metadata || {}
-      };
+      const jobPosting = await this.extractJobInfo(page);
 
       if (this.options.saveHtml) {
         const htmlPath = path.join(outputDir, `${baseFilename}.html`);
