@@ -43,3 +43,48 @@ Both CV versions effectively address the critical requirements for the Patient A
 
 The CVs have been tailored to emphasize Dawn's qualifications that directly align with Mercyhealth's specific requirements for the position.
 
+# Mercy Health Job Posting Analysis
+
+## Data Preservation Strategy
+
+This directory follows a versioned approach to job posting analysis, where each analysis iteration is preserved as a separate file. This allows for:
+
+1. **Historical Tracking**: Maintain a complete history of all analyses
+2. **Version Comparison**: Easily compare different versions of the analysis
+3. **Data Integrity**: No data is ever overwritten or lost
+4. **Audit Trail**: Clear documentation of when each analysis was performed
+
+## File Structure
+
+- `job-data.json`: Original job posting data
+- `job-data-20240425.json`: Structured analysis with detailed sections
+- `enhanced-job-data.json`: Previous enhanced analysis
+- `careers.mercyhealthsystem.org-jobs-37949-2025-04-24.html`: Original job posting HTML
+- `careers.mercyhealthsystem.org-jobs-37949-2025-04-24.png`: Screenshot of job posting
+- `careers.mercyhealthsystem.org-jobs-37949-2025-04-24.pdf`: PDF version of job posting
+
+## Analysis Versions
+
+### Version 20240425
+- Added structured sections for:
+  - Culture of Excellence
+  - Education and Experience
+  - Certification and Licensure
+  - Skills and Abilities
+  - Physical Demands
+  - Supervision
+  - Benefits (detailed breakdown)
+- Improved organization of responsibilities
+- Added metadata tracking
+
+## Next Steps
+1. Compare with base CV data
+2. Generate tailored CV content
+3. Create cover letter based on analysis
+4. Track application progress
+
+## Notes
+- Each new analysis should be saved with a new timestamp
+- Keep original files intact
+- Document major changes in this README
+
