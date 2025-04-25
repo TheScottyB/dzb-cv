@@ -1,9 +1,10 @@
+import { ATSImprovement } from '../shared/types/ats-types.js';
 import { ATS_ISSUES } from './constants.js';
 
 /**
  * Common ATS parsing issues and their impact scores
  */
-const ATS_ISSUES = {
+const ATS_ISSUE_SCORES = {
   COMPLEX_FORMATTING: {
     score: -3,  // Reduced impact since some formatting is necessary
     message: 'Complex formatting may prevent proper parsing',
@@ -44,11 +45,13 @@ export async function analyzeATSCompatibility(content: string): Promise<ATSAnaly
     return {
       score: 100,
       issues: [],
-      improvements: [],
-      warnings: []
+      recommendations: [],
+      keywordMatches: {
+        found: [],
+        missing: []
+      }
     };
   }
-  
   const issues: ATSImprovement[] = [];
   let totalScore = 100;
 
@@ -56,45 +59,45 @@ export async function analyzeATSCompatibility(content: string): Promise<ATSAnaly
   if (hasComplexFormatting(content)) {
     issues.push({
       type: 'COMPLEX_FORMATTING',
-      ...ATS_ISSUES.COMPLEX_FORMATTING
+      ...ATS_ISSUE_SCORES.COMPLEX_FORMATTING
     });
-    totalScore += ATS_ISSUES.COMPLEX_FORMATTING.score;
+    totalScore += ATS_ISSUE_SCORES.COMPLEX_FORMATTING.score;
   }
 
   // Check section headings
   if (hasUnusualHeadings(content)) {
     issues.push({
       type: 'UNUSUAL_HEADINGS',
-      ...ATS_ISSUES.UNUSUAL_HEADINGS
+      ...ATS_ISSUE_SCORES.UNUSUAL_HEADINGS
     });
-    totalScore += ATS_ISSUES.UNUSUAL_HEADINGS.score;
+    totalScore += ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.score;
   }
 
   // Check date formats
   if (hasMissingDates(content)) {
     issues.push({
       type: 'MISSING_DATES',
-      ...ATS_ISSUES.MISSING_DATES
+      ...ATS_ISSUE_SCORES.MISSING_DATES
     });
-    totalScore += ATS_ISSUES.MISSING_DATES.score;
+    totalScore += ATS_ISSUE_SCORES.MISSING_DATES.score;
   }
 
   // Check for graphics
   if (hasGraphics(content)) {
     issues.push({
       type: 'GRAPHICS',
-      ...ATS_ISSUES.GRAPHICS
+      ...ATS_ISSUE_SCORES.GRAPHICS
     });
-    totalScore += ATS_ISSUES.GRAPHICS.score;
+    totalScore += ATS_ISSUE_SCORES.GRAPHICS.score;
   }
 
   // Check contact information
   if (!hasProperContactInfo(content)) {
     issues.push({
       type: 'CONTACT_INFO',
-      ...ATS_ISSUES.CONTACT_INFO
+      ...ATS_ISSUE_SCORES.CONTACT_INFO
     });
-    totalScore += ATS_ISSUES.CONTACT_INFO.score;
+    totalScore += ATS_ISSUE_SCORES.CONTACT_INFO.score;
   }
 
   // Generate improvement suggestions
@@ -102,9 +105,17 @@ export async function analyzeATSCompatibility(content: string): Promise<ATSAnaly
 
   return {
     score: Math.max(0, totalScore),
-    issues,
-    improvements,
-    warnings: issues.length > 0 ? ['Some ATS compatibility issues found'] : []
+    issues: issues.map(issue => ({
+      type: issue.type,
+      message: issue.message,
+      severity: 'medium' as const,
+      section: undefined
+    })),
+    recommendations: [],
+    keywordMatches: {
+      found: [],
+      missing: []
+    }
   };
 }
 
@@ -224,15 +235,17 @@ function generateImprovements(issues: ATSImprovement[]): string[] {
   });
 }
 
-export { ATS_ISSUES };
+export { ATS_ISSUE_SCORES };
 
 export async function analyzeForATS(markdown: string): Promise<ATSAnalysis> {
   return {
     score: 0,
-    keywordMatches: [],
-    missingKeywords: [],
-    suggestions: [],
-    formattingIssues: []
+    keywordMatches: {
+      found: [],
+      missing: []
+    },
+    issues: [],
+    recommendations: []
   };
 }
 
@@ -267,21 +280,21 @@ export class ATSAnalyzer {
     if (hasComplexFormatting(content)) {
       issues.push({
         type: 'FORMATTING',
-        message: ATS_ISSUES.COMPLEX_FORMATTING.message,
+        message: ATS_ISSUE_SCORES.COMPLEX_FORMATTING.message,
         severity: 'medium'
       });
     }
     if (hasUnusualHeadings(content)) {
       issues.push({
         type: 'HEADINGS',
-        message: ATS_ISSUES.UNUSUAL_HEADINGS.message,
+        message: ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.message,
         severity: 'low'
       });
     }
     if (hasMissingDates(content)) {
       issues.push({
         type: 'DATES',
-        message: ATS_ISSUES.MISSING_DATES.message,
+        message: ATS_ISSUE_SCORES.MISSING_DATES.message,
         severity: 'high'
       });
     }
@@ -291,13 +304,13 @@ export class ATSAnalyzer {
   private generateRecommendations(content: string): string[] {
     const recommendations = [];
     if (hasComplexFormatting(content)) {
-      recommendations.push(ATS_ISSUES.COMPLEX_FORMATTING.fix);
+      recommendations.push(ATS_ISSUE_SCORES.COMPLEX_FORMATTING.fix);
     }
     if (hasUnusualHeadings(content)) {
-      recommendations.push(ATS_ISSUES.UNUSUAL_HEADINGS.fix);
+      recommendations.push(ATS_ISSUE_SCORES.UNUSUAL_HEADINGS.fix);
     }
     if (hasMissingDates(content)) {
-      recommendations.push(ATS_ISSUES.MISSING_DATES.fix);
+      recommendations.push(ATS_ISSUE_SCORES.MISSING_DATES.fix);
     }
     return recommendations;
   }

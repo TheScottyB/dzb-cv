@@ -15,37 +15,64 @@
  */
 
 import { analyzeForATS } from './analyzer.js';
-import { convertMarkdownToPdf } from '../pdf-generator.js';
-import type { ATSAnalysis, ATSImprovement } from '../types/ats-types.js';
-import type { PDFOptions } from '../types/cv-types.js';
+import { convertMarkdownToPdf } from '../shared/utils/pdf-generator.js';
+import type { ATSAnalysis, ATSImprovement } from '../shared/types/ats-types.js';
+import type { PDFOptions } from '../shared/types/cv-types.js';
 
+/**
+ * Represents the result of ATS optimization
+ */
 interface OptimizationResult {
-  content: string;           // Make sure this is preserved
+  /** The optimized markdown content */
+  content: string;
+  /** The ATS analysis results */
   analysis: ATSAnalysis;
+  /** List of optimizations that were applied */
   appliedOptimizations: string[];
-  pdfPath?: string;          // Optional for PDF generation
+  /** Path to the generated PDF (if applicable) */
+  pdfPath?: string;
 }
 
 /**
- * Optimizes content for ATS compatibility
+ * Optimizes markdown content for ATS compatibility
+ * @param markdown - The markdown content to optimize
+ * @returns Promise containing the optimization results
  */
-export async function optimizeForATS(markdown: string): Promise<ATSAnalysis> {
+export async function optimizeForATS(markdown: string): Promise<OptimizationResult> {
+  // Get initial ATS analysis
   const analysis = await analyzeForATS(markdown);
-  
-  // Basic optimization
   let optimizedMarkdown = markdown;
   
-  // Apply suggestions
-  analysis.suggestions.forEach(suggestion => {
-    // Apply suggestion to optimizedMarkdown
+  // Apply recommendations from analysis
+  analysis.recommendations.forEach((recommendation: string) => {
+    // TODO: Implement specific optimization logic for each recommendation
+    // This could include:
+    // - Standardizing headings
+    // - Fixing date formats
+    // - Improving keyword density
+    // - Enhancing readability
   });
   
-  // Fix formatting issues
-  analysis.formattingIssues.forEach(issue => {
-    // Fix formatting issue in optimizedMarkdown
+  // Fix identified issues
+  analysis.issues.forEach((issue) => {
+    // TODO: Implement specific fixes for each issue type
+    // This could include:
+    // - Removing complex formatting
+    // - Fixing contact information layout
+    // - Standardizing section structure
   });
   
-  return analysis;
+  return {
+    content: optimizedMarkdown,
+    analysis: {
+      ...analysis,
+      keywordMatches: [],
+      missingKeywords: [],
+      suggestions: [],
+      formattingIssues: []
+    },
+    appliedOptimizations: analysis.recommendations
+  };
 }
 
 /**
@@ -157,45 +184,38 @@ ${location || ''}
 }
 
 /**
- * Integration with PDF generation
+ * Creates an ATS-optimized PDF from markdown content
+ * @param content - The markdown content to optimize and convert
+ * @param outputPath - Where to save the generated PDF
+ * @param options - PDF generation options
+ * @returns Promise containing the optimization results and PDF path
  */
 export async function createATSOptimizedPDF(
   content: string,
   outputPath: string,
   options: PDFOptions
-): Promise<{
-  pdfPath: string;
-  content: string;          // Add this to preserve content
-  analysis: ATSAnalysis;
-  optimizations: string[];
-}> {
-  // Optimize content
-  const { content: optimizedContent, analysis, appliedOptimizations } = 
-    await optimizeForATS(content);
-
-  // Add ATS optimization meta information
-  const contentWithMeta = `${optimizedContent}
+): Promise<OptimizationResult> {
+  // Optimize the content
+  const result = await optimizeForATS(content);
+  
+  // Add optimization metadata as a comment
+  const contentWithMeta = `${result.content}
 
 <!-- ATS Optimization Information
-Score: ${analysis.score}
+Score: ${result.analysis.score}
 Optimizations Applied:
-${appliedOptimizations.map(opt => `- ${opt}`).join('\n')}
+${result.appliedOptimizations.map((opt: string) => `- ${opt}`).join('\n')}
 -->`;
 
-  // Generate PDF with optimized content using the generator
+  // Generate the PDF
   const pdfPath = await convertMarkdownToPdf(
     contentWithMeta,
     outputPath,
-    {
-      ...options,
-      atsOptimized: true
-    }
+    options
   );
 
   return {
-    pdfPath,
-    content: optimizedContent,  // Return the optimized content
-    analysis,
-    optimizations: appliedOptimizations
+    ...result,
+    pdfPath
   };
 }
