@@ -1,4 +1,8 @@
-# DZB-CV: CV Management System
+# dzb-cv
+
+[![CI](https://img.shields.io/github/actions/workflow/status/TheScottyB/dzb-cv/ci.yml?branch=main&label=CI)](https://github.com/TheScottyB/dzb-cv/actions/workflows/ci.yml)
+[![Lint Status](https://img.shields.io/github/actions/workflow/status/TheScottyB/dzb-cv/ci.yml?label=lint)](https://github.com/TheScottyB/dzb-cv/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/codecov/c/github/TheScottyB/dzb-cv?logo=codecov)](https://codecov.io/gh/TheScottyB/dzb-cv)
 
 A modular CV management system with job analysis capabilities. This tool helps create, manage, and tailor CVs for specific job applications.
 

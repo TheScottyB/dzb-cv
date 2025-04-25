@@ -82,6 +82,10 @@
     "vite-tsconfig-paths": "^4.2.0",
     "vitest": "^1.0.0"
   },
+  "devDependencies": {
+    "commitlint": "^19.3.0",
+    "@commitlint/config-conventional": "^19.3.0"
+  },
   "lint-staged": {
     "src/**/*.ts": [
       "eslint --fix",

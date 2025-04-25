@@ -26,14 +26,20 @@ jobs:
     - name: Install dependencies
       run: pnpm install
       
+    - name: Add tsc matcher
+      run: echo "::add-matcher::.github/matchers/tsc.json"
     - name: Type check
       run: pnpm typecheck
-      
+    - name: Remove tsc matcher
+      run: echo "::remove-matcher owner=tsc::"
     - name: Run tests
       run: pnpm test
-      
+    - name: Add ESLint matcher
+      run: echo "::add-matcher::.github/matchers/eslint-stylish.json"
     - name: Check lint
       run: pnpm lint
+    - name: Remove ESLint matcher
+      run: echo "::remove-matcher owner=eslint-stylish::"
 
   build:
     needs: test
