@@ -9,6 +9,7 @@ import path from 'path';
 import { BaseCommand, RunConfiguration } from './base-command.js';
 import { generateCV } from '../../shared/tools/generator.js';
 import type { CVData, CVGenerationOptions } from '../../shared/types/cv-types.js';
+import { transformCVData } from '../../shared/utils/data-transformer.js';
 
 /**
  * Options for the generate CV command
@@ -71,6 +72,16 @@ export class GenerateCvCommand extends BaseCommand {
       } catch (error) {
         this.logError('Failed to load CV data. Please ensure base-info.json exists.', true);
         return; // This return is only reached if logError doesn't exit
+      }
+      
+      // Transform CV data for template compatibility
+      try {
+        this.logInfo('Transforming CV data structure...');
+        cvData = transformCVData(cvData);
+        this.logInfo('Data transformation successful');
+      } catch (error) {
+        this.logError(`Failed to transform CV data: ${error instanceof Error ? error.message : String(error)}`, true);
+        return;
       }
       
       // Generate the CV
