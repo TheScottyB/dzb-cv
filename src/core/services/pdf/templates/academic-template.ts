@@ -55,7 +55,7 @@ ${data.professionalSummary}
     });
 
     return `
-## Professional Experience
+## Academic Appointments
 
 ${experiences.map(exp => `
 <div class="experience-item">
@@ -107,6 +107,18 @@ ${data.skills.map(skill => `<div class="skill-item">${skill}</div>`).join('\n')}
     `.trim();
   }
 
+  protected generateResearchExpertise(data: CVData): string {
+    if (!this.isAcademicCVData(data)) {
+      throw new Error('Invalid data type for academic template');
+    }
+    if (!data.skills?.length) return '';
+    return `
+## Research Expertise
+
+${data.skills.map(s => `- ${s}`).join('\n')}
+    `.trim();
+  }
+
   protected generatePublications(data: CVData): string {
     if (!this.isAcademicCVData(data)) {
       throw new Error('Invalid data type for academic template');
@@ -115,17 +127,20 @@ ${data.skills.map(skill => `<div class="skill-item">${skill}</div>`).join('\n')}
 
     const publications = data.publications.sort((a, b) => b.year.localeCompare(a.year));
     
+    // Markdown academic citation style: Authors (Year). Title. *Journal*, vol(issue), pages.
     return `
 ## Publications
 
-${publications.map(pub => `
-<div class="publication-item">
-<div class="title">${pub.title}</div>
-<div class="authors">${pub.authors}</div>
-<div class="journal">${pub.journal}</div>
-<div class="year">${pub.year}</div>
-</div>
-`).join('\n')}
+${publications.map(pub => {
+  let volIssue = '';
+  if (pub.volume && pub.issue) {
+    volIssue = `${pub.volume}(${pub.issue})`;
+  } else if (pub.volume) {
+    volIssue = `${pub.volume}`;
+  }
+  let pages = pub.pages ? `, ${pub.pages}` : '';
+  return `- ${pub.authors} (${pub.year}). ${pub.title}. *${pub.journal}*${volIssue ? `, ${volIssue}` : ''}${pages}`;
+}).join('\n')}
     `.trim();
   }
 
@@ -231,32 +246,50 @@ ${service.description ? `<div class="description">${service.description}</div>` 
     `.trim();
   }
 
-  public override generateMarkdown(data: CVData): string {
+  public override generateMarkdown(
+    data: CVData,
+    options: { includeEducation?: boolean; includeSkills?: boolean } = {}
+  ): string {
+    // Defensive: Ensure the required arrays exist for the type guard
+    (data as any).publications = Array.isArray((data as any).publications) ? (data as any).publications : [];
+    (data as any).conferences = Array.isArray((data as any).conferences) ? (data as any).conferences : [];
+    (data as any).grants = Array.isArray((data as any).grants) ? (data as any).grants : [];
+    (data as any).awards = Array.isArray((data as any).awards) ? (data as any).awards : [];
+    const { includeEducation = true, includeSkills = true } = options;
     if (!this.isAcademicCVData(data)) {
       throw new Error('Invalid data type for academic template');
     }
     return `
 ${this.generateHeader(data)}
 ${this.generateProfessionalSummary(data)}
-${this.generateResearchInterests(data)}
-${this.generateEducation(data)}
+${includeSkills ? this.generateResearchExpertise(data) : ''}
+${includeEducation ? this.generateEducation(data) : ''}
 ${this.generateExperience(data)}
 ${this.generatePublications(data)}
 ${this.generateConferences(data)}
 ${this.generateGrants(data)}
 ${this.generateAwards(data)}
-${this.generateSkills(data)}
+${includeSkills ? this.generateSkills(data) : ''}
 ${this.generateAcademicService(data)}
     `.trim();
   }
 
   private isAcademicCVData(data: CVData): data is AcademicCVData {
-    return 'publications' in data && 'conferences' in data && 'grants' in data;
+    return (
+      Array.isArray((data as any).publications) &&
+      Array.isArray((data as any).conferences) &&
+      Array.isArray((data as any).grants) &&
+      Array.isArray((data as any).awards)
+    );
   }
 
   public getStyles(): string {
     return `
 <style>
+body, .academic-template-root {
+  font-family: 'Garamond', serif;
+}
+
 .contact-info {
   margin-bottom: 20px;
   color: #666;
@@ -299,6 +332,19 @@ ${this.generateAcademicService(data)}
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 0.9em;
+}
+
+@media print {
+  .experience-item, .academic-appointments, .publication-item, .conference-item, .grant-item, .award-item {
+    page-break-inside: avoid;
+  }
+  .publication-item {
+    text-indent: -12mm;
+    margin-left: 12mm;
+  }
+  .pagebreak {
+    page-break-after: always;
+  }
 }
 </style>
     `.trim();
