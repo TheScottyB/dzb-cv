@@ -109,9 +109,11 @@ ${[personalInfo.contact.email, personalInfo.contact.phone, personalInfo.contact.
 ## Experience
 
 ${experience.map(exp => {
-      // Handle both data structures (title/company and position/employer)
-      const position = exp.title || exp.position || '';
-      const employer = exp.company || exp.employer || '';
+      // Handle test data format vs actual CV data format
+      // TypeScript doesn't know about the test data structure with title/company
+      const testData = exp as any;
+      const position = testData.title || exp.position || '';
+      const employer = testData.company || exp.employer || '';
       const location = exp.location || '';
       const dateRange = `${exp.startDate}${exp.endDate ? ` - ${exp.endDate}` : ''}`;
 
@@ -160,8 +162,13 @@ ${edu.completionDate || edu.year}
 
   private orderExperienceEntries(experience: CVData['experience'], order: string[]): CVData['experience'] {
     return experience.sort((a, b) => {
-      const aIndex = order.indexOf(a.position);
-      const bIndex = order.indexOf(b.position);
+      // Handle both formats for position/title
+      const testDataA = a as any;
+      const testDataB = b as any;
+      const aPos = testDataA.title || a.position || '';
+      const bPos = testDataB.title || b.position || '';
+      const aIndex = order.indexOf(aPos);
+      const bIndex = order.indexOf(bPos);
       if (aIndex === -1) return 1;
       if (bIndex === -1) return -1;
       return aIndex - bIndex;
