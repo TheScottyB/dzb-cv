@@ -1,122 +1,20 @@
-import { marked } from 'marked';
-import { gfmHeadingId } from 'marked-gfm-heading-id';
-import { mangle } from 'marked-mangle';
-import { markedHighlight } from 'marked-highlight';
-import hljs from 'highlight.js';
-import { markedSmartypants } from 'marked-smartypants';
 
-interface MarkdownTheme {
-  primaryColor: string;
-  secondaryColor: string;
-  accentColor: string;
-  backgroundColor: string;
-  fontFamily: string;
-  fontSize: string;
-  lineHeight: string;
-  spacing: string;
-}
-
-const defaultTheme: MarkdownTheme = {
-  primaryColor: '#006633', // Forest green
-  secondaryColor: '#333333',
-  accentColor: '#cc3333',
-  backgroundColor: '#ffffff',
-  fontFamily: 'system-ui, -apple-system, sans-serif',
-  fontSize: '14px',
-  lineHeight: '1.6',
-  spacing: '1.5rem',
-};
-
-export class MarkdownConverter {
-  private theme: MarkdownTheme;
-  private pdfMode: boolean;
-
-  constructor(theme: Partial<MarkdownTheme> = {}, pdfMode = false) {
-    this.theme = { ...defaultTheme, ...theme };
-    this.pdfMode = pdfMode;
-    this.configureMarked();
-  }
-
-  private configureMarked(): void {
-    // Configure marked with extensions
-    marked.use(
-      gfmHeadingId(), // GitHub-style heading IDs
-      mangle(), // Mangle email addresses
-      markedSmartypants(), // Smart typography
-      markedHighlight({
-        langPrefix: 'hljs language-',
-        highlight(code, lang) {
-          const language = hljs.getLanguage(lang) ? lang : 'plaintext';
-          return hljs.highlight(code, { language }).value;
-        },
-      }),
-    );
-
-    // Set options
-    marked.setOptions({
-      gfm: true, // GitHub Flavored Markdown
-      breaks: true, // Add <br> on single line breaks
-    });
-  }
-
-  /**
-   * Converts markdown to HTML, with options to suppress extra headings and optimize for PDF.
-   * @param markdown The markdown content
-   * @param title Optional document title
-   * @param subtitle Optional document subtitle
-   * @param opts Optional options: { suppressHeadings?: boolean, pdfMode?: boolean }
-   */
-  public convertToHTML(
-    markdown: string,
-    title?: string,
-    subtitle?: string,
-    opts: { suppressHeadings?: boolean; pdfMode?: boolean } = {},
-  ): string {
-    let content = markdown;
-    let suppressHeadings = opts.suppressHeadings ?? false;
-    let pdfMode = opts.pdfMode ?? this.pdfMode;
-
-    // If suppressHeadings is true and markdown starts with a heading, remove it
-    if (suppressHeadings) {
-      content = content.replace(/^# .+\n?/, '').replace(/^## .+\n?/, '');
-    }
-    const htmlContent = marked(content);
-    const css = this.generateCSS(pdfMode);
-
-    return `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title || 'Generated Document'}</title>
-  <style>${css}</style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
-</head>
-<body>
-  ${title && !suppressHeadings ? `<h1 class="document-title">${title}</h1>` : ''}
-  ${subtitle && !suppressHeadings ? `<h2 class="document-subtitle">${subtitle}</h2>` : ''}
-  <div class="content">
-    ${htmlContent}
-  </div>
-  <footer>
-    Generated on ${new Date().toLocaleDateString()}
-  </footer>
-</body>
-</html>`;
-  }
-
-  private generateCSS(pdfMode = false): string {
-    return `
+  <title>Dawn Zurick Beilfuss</title>
+  <style>
       :root {
-        --primary-color: ${this.theme.primaryColor};
-        --secondary-color: ${this.theme.secondaryColor};
-        --accent-color: ${this.theme.accentColor};
-        --background-color: ${this.theme.backgroundColor};
-        --font-family: ${this.theme.fontFamily};
-        --font-size: ${this.theme.fontSize};
-        --line-height: ${this.theme.lineHeight};
-        --spacing: ${this.theme.spacing};
+        --primary-color: #006633;
+        --secondary-color: #333333;
+        --accent-color: #cc3333;
+        --background-color: #ffffff;
+        --font-family: system-ui, -apple-system, sans-serif;
+        --font-size: 14px;
+        --line-height: 1.6;
+        --spacing: 1.5rem;
       }
 
       body {
@@ -126,7 +24,7 @@ export class MarkdownConverter {
         color: var(--secondary-color);
         background: var(--background-color);
         margin: 0;
-        ${pdfMode ? 'padding: 0.5in 0.5in 0.5in 0.5in;' : 'padding: 2rem;'}
+        padding: 2rem;
       }
 
       .document-title {
@@ -134,7 +32,7 @@ export class MarkdownConverter {
         font-size: 2.5em;
         margin-bottom: 0.5rem;
         border-bottom: none;
-        ${pdfMode ? 'margin-top: 0.5em;' : ''}
+        
       }
 
       .document-subtitle {
@@ -290,6 +188,40 @@ export class MarkdownConverter {
           page-break-inside: avoid;
         }
       }
-    `;
-  }
-}
+    </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+</head>
+<body>
+  
+  
+  <div class="content">
+    <p>Dear Hiring Manager,</p>
+<p>I am writing to express my strong interest in the Assistant Manager position at Village Green in Palatine, IL. With over 20 years of experience in property management, real estate, and customer service, I am confident in my ability to contribute effectively to your team and support Village Green&#8217;s commitment to exceptional resident experiences.</p>
+<p>My career has been built on a foundation of:</p>
+<ul>
+<li>Rent collection & delinquency management</li>
+<li>Property management operations</li>
+<li>Team leadership & supervision</li>
+<li>Office administration & process improvement</li>
+<li>Resident relations & customer service</li>
+<li>Regulatory compliance (Fair Housing, state/local)</li>
+<li>Proficiency in Microsoft Office and property management software</li>
+</ul>
+<p>I am particularly drawn to this opportunity because it aligns with my background in managing residential properties, leading teams, and ensuring operational excellence. My experience in:</p>
+<ul>
+<li>Overseeing full property lifecycles, including rent collection and resident support</li>
+<li>Implementing process improvements and supporting team development</li>
+<li>Maintaining compliance with state and local regulations</li>
+<li>Delivering high-quality service to residents and stakeholders</li>
+<li>Managing multiple priorities in fast-paced environments</li>
+</ul>
+<p>makes me well-suited for the responsibilities of this position. I am committed to upholding Village Green&#8217;s standards and contributing to a positive, thriving community.</p>
+<p>I look forward to discussing how my skills and experience can benefit Village Green in more detail.</p>
+<p>Best regards,<br>Dawn Zurick Beilfuss </p>
+
+  </div>
+  <footer>
+    Generated on 4/26/2025
+  </footer>
+</body>
+</html>
