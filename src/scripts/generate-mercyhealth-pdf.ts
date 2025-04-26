@@ -3,41 +3,88 @@ import type { PDFGenerationOptions } from '../core/services/pdf/pdf-generator.js
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { marked } from 'marked';
+import chalk from 'chalk';
+import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
 
-async function generatePDFs() {
-  const generator = new PDFGeneratorImpl();
-  const timestamp = new Date().toISOString();
-
-  // Configure PDF options
-  const pdfOptions: Partial<PDFGenerationOptions> = {
-    includeHeaderFooter: true,
-    headerText: 'Dawn Zurick Beilfuss - Patient Registrar',
-    footerText: `Application for Mercyhealth Position - Job ID: 39369 | Generated: ${timestamp}`,
-    paperSize: 'Letter',
-    margins: {
-      top: 0.75,
-      right: 0.75,
-      bottom: 0.75,
-      left: 0.75
-    },
-    fontFamily: 'Arial, Helvetica, sans-serif',
-    pdfTitle: 'Dawn Zurick Beilfuss - Patient Registrar Application',
-    pdfAuthor: 'Dawn Zurick Beilfuss',
-    orientation: 'portrait'
+interface JobData {
+  title: string;
+  company: string;
+  jobId?: string;
+  location?: {
+    city?: string;
+    state?: string;
   };
+}
 
-  // Read markdown files
-  const cvMarkdown = await fs.readFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-39369/cv-draft.md'),
-    'utf-8'
-  );
-  const coverLetterMarkdown = await fs.readFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-39369/cover-letter.md'),
-    'utf-8'
-  );
+async function resolveJobDir(inputPath: string): Promise<{ jobDir: string; jobData: JobData }> {
+  // If input is a job-data.json file, resolve the folder name
+  if (inputPath.endsWith('job-data.json')) {
+    const folderName = await getJobPostingFolderName(inputPath);
+    if (!folderName) {
+      throw new Error('Could not resolve folder name from job-data.json');
+    }
+    const jobDir = path.join('job-postings', folderName);
+    console.log(chalk.green('📂 Resolved job posting folder:'), chalk.yellow(jobDir));
+    const jobData = JSON.parse(await fs.readFile(inputPath, 'utf-8'));
+    return { jobDir, jobData };
+  }
 
-  // Convert markdown to HTML with custom styling
-  const cvHtml = `
+  // If input is a folder, check for job-data.json
+  const jobDataPath = path.join(inputPath, 'job-data.json');
+  try {
+    await fs.access(jobDataPath);
+    const folderName = await getJobPostingFolderName(jobDataPath);
+    if (!folderName) {
+      throw new Error('Could not resolve folder name from job-data.json in folder');
+    }
+    const expectedDir = path.join('job-postings', folderName);
+    if (path.resolve(inputPath) !== path.resolve(expectedDir)) {
+      console.warn(
+        chalk.yellow('⚠️  Warning:'),
+        'Folder name does not match standardized convention. Expected:',
+        chalk.cyan(expectedDir),
+      );
+    }
+    const jobData = JSON.parse(await fs.readFile(jobDataPath, 'utf-8'));
+    return { jobDir: inputPath, jobData };
+  } catch (error) {
+    throw new Error(`No job-data.json found in folder ${inputPath}`);
+  }
+}
+
+async function generatePDFs(inputPath: string) {
+  try {
+    const { jobDir, jobData } = await resolveJobDir(inputPath);
+    const generator = new PDFGeneratorImpl();
+    const timestamp = new Date().toISOString();
+    const generatedDir = path.join(jobDir, 'generated');
+    await fs.mkdir(generatedDir, { recursive: true });
+
+    // Configure PDF options
+    const pdfOptions: Partial<PDFGenerationOptions> = {
+      includeHeaderFooter: true,
+      headerText: `Dawn Zurick Beilfuss - ${jobData.title}`,
+      footerText: `Application for ${jobData.company} Position${jobData.jobId ? ` - Job ID: ${jobData.jobId}` : ''} | Generated: ${timestamp}`,
+      paperSize: 'Letter',
+      margins: {
+        top: '0.75',
+        right: '0.75',
+        bottom: '0.75',
+        left: '0.75',
+      },
+      fontFamily: 'Arial, Helvetica, sans-serif',
+      pdfTitle: `Dawn Zurick Beilfuss - ${jobData.title} Application`,
+      pdfAuthor: 'Dawn Zurick Beilfuss',
+      orientation: 'portrait',
+    };
+
+    // Read markdown files
+    console.log(chalk.blue('📄 Reading source files...'));
+    const cvMarkdown = await fs.readFile(path.join(jobDir, 'cv-draft.md'), 'utf-8');
+    const coverLetterMarkdown = await fs.readFile(path.join(jobDir, 'cover-letter.md'), 'utf-8');
+
+    // Convert markdown to HTML with custom styling
+    const cvHtml = `
     <!DOCTYPE html>
     <html>
       <head>
@@ -98,7 +145,7 @@ async function generatePDFs() {
     </html>
   `;
 
-  const coverLetterHtml = `
+    const coverLetterHtml = `
     <!DOCTYPE html>
     <html>
       <head>
@@ -209,7 +256,7 @@ async function generatePDFs() {
         </style>
       </head>
       <body>
-        <div class="date">April 24, 2024</div>
+        <div class="date">${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
         <div class="header">
           <div class="sender-info">
             <div class="name">Dawn Zurick Beilfuss</div>
@@ -225,36 +272,54 @@ async function generatePDFs() {
           <div class="recipient-info">
             <div class="contact-line" style="margin-bottom: 0.4em;">Hiring Manager</div>
             <div class="address-group">
-              <div class="contact-line">Mercyhealth Crystal Lake Hospital</div>
-              <div class="contact-line">875 S. Route 31</div>
-              <div class="contact-line">Crystal Lake, IL 60014</div>
+              <div class="contact-line">${jobData.company}</div>
+              ${jobData.location?.city ? `<div class="contact-line">${jobData.location.city}${jobData.location.state ? `, ${jobData.location.state}` : ''}</div>` : ''}
             </div>
           </div>
         </div>
         <div class="content">
-          ${marked(coverLetterMarkdown.split(/Dear Hiring Manager,/i)[1] || coverLetterMarkdown).toString()
+          ${marked(coverLetterMarkdown.split(/Dear Hiring Manager,/i)[1] || coverLetterMarkdown)
+            .toString()
             .replace(/<ul>/g, '<div class="skills-section"><div class="skills-grid">')
             .replace(/<\/ul>/g, '</div></div>')
             .replace(/<li>/g, '<div class="skill-item">')
             .replace(/<\/li>/g, '</div>')
-            .replace(/My career has been built on a foundation of:/g, '<div class="skills-intro">My career has been built on a foundation of:</div>')}
+            .replace(
+              /My career has been built on a foundation of:/g,
+              '<div class="skills-intro">My career has been built on a foundation of:</div>',
+            )}
         </div>
         <div class="timestamp">Generated: ${timestamp}</div>
       </body>
     </html>
   `;
 
-  // Generate CV PDF
-  console.log('Generating CV PDF...');
-  const cvOutputPath = path.join(process.cwd(), 'job-postings/mercy-health-39369/Dawn_Zurick_Beilfuss_CV.pdf');
-  await generator.generateFromHTML(cvHtml, cvOutputPath, pdfOptions);
-  console.log(`Successfully created CV PDF at: ${cvOutputPath}`);
+    // Generate CV PDF
+    console.log(chalk.blue('🔨 Generating CV PDF...'));
+    const cvOutputPath = path.join(generatedDir, 'Dawn_Zurick_Beilfuss_CV.pdf');
+    await generator.generateFromHTML(cvHtml, cvOutputPath, pdfOptions);
+    console.log(chalk.green('✅ CV PDF generated:'), chalk.yellow(cvOutputPath));
 
-  // Generate Cover Letter PDF
-  console.log('Generating Cover Letter PDF...');
-  const coverOutputPath = path.join(process.cwd(), 'job-postings/mercy-health-39369/Dawn_Zurick_Beilfuss_Cover_Letter.pdf');
-  await generator.generateFromHTML(coverLetterHtml, coverOutputPath, pdfOptions);
-  console.log(`Successfully created Cover Letter PDF at: ${coverOutputPath}`);
+    // Generate Cover Letter PDF
+    console.log(chalk.blue('🔨 Generating Cover Letter PDF...'));
+    const coverLetterOutputPath = path.join(generatedDir, 'Dawn_Zurick_Beilfuss_Cover_Letter.pdf');
+    await generator.generateFromHTML(coverLetterHtml, coverLetterOutputPath, pdfOptions);
+    console.log(chalk.green('✅ Cover Letter PDF generated:'), chalk.yellow(coverLetterOutputPath));
+
+    // Clean up
+    console.log(chalk.green('✨ All PDFs generated successfully!'));
+  } catch (error: any) {
+    console.error(chalk.red('❌ Error generating PDFs:'), error.message || error);
+    process.exit(1);
+  }
 }
 
-generatePDFs().catch(console.error); 
+// Check if file path is provided
+if (process.argv.length < 3) {
+  console.error(
+    'Usage: pnpm tsx src/scripts/generate-mercyhealth-pdf.ts <job-posting-directory|job-data.json>',
+  );
+  process.exit(1);
+}
+
+generatePDFs(process.argv[2]);
