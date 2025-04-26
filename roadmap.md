@@ -2,7 +2,7 @@
 
 ## Design Principles
 
-### Open Agent SDK Concepts as Applied Here
+### OpenAI Agent SDK Concepts as Applied Here
 
 | Concept       | Meaning in This ATS System                                              |
 |---------------|------------------------------------------------------------------------|

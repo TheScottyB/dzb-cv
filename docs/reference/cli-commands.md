@@ -1,3 +1,11 @@
+---
+path: docs/reference/cli-commands.md
+type: reference
+category: cli
+maintainer: system
+last_updated: 2024-03-27
+---
+
 # CLI Reference
 
 ## Command Structure

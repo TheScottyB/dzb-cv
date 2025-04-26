@@ -1,3 +1,11 @@
+---
+path: docs/technical/profile-management.md
+type: technical
+category: profiles
+maintainer: system
+last_updated: 2024-03-27
+---
+
 # Profile Management
 
 ## Overview

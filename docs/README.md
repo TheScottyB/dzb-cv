@@ -1,3 +1,15 @@
+---
+path: docs/README.md
+type: index
+category: documentation
+maintainer: system
+last_updated: 2024-03-27
+related_files:
+  - docs/technical/system-architecture.md
+  - docs/technical/profile-management.md
+  - docs/reference/cli-commands.md
+---
+
 # DZB-CV Documentation
 
 ## Overview

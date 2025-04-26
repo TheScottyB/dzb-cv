@@ -1,3 +1,14 @@
+---
+path: docs/examples/ats-optimization.md
+type: example
+category: optimization
+maintainer: system
+last_updated: 2024-03-27
+related_files:
+  - docs/user-guide/advanced-usage.md
+  - docs/reference/cli-commands.md
+---
+
 # ATS Optimization Examples
 
 ## Basic Usage

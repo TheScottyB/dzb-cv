@@ -1,3 +1,11 @@
+---
+path: docs/technical/system-architecture.md
+type: technical
+category: architecture
+maintainer: system
+last_updated: 2024-03-27
+---
+
 # System Architecture
 
 ## Core Principles
