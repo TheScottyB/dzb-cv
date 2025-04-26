@@ -1,5 +1,5 @@
 import { promises as fs } from 'fs';
-import path from 'path';
+import * as path from 'path';
 
 // Agents (stubs for now; each should export a matching class)
 import { ConstructionForeman } from '../agents/ConstructionForeman';
@@ -16,6 +16,13 @@ interface AgentRegistry {
   [name: string]: any; // TODO: Replace 'any' with shared agent interface
 }
 
+
+// Helper to load blueprint file as string
+async function loadBlueprint(filePath: string): Promise<string> {
+  return await fs.readFile(filePath, 'utf-8');
+}
+
+console.log('[TOPLEVEL] bootstrap.ts file parsed');
 async function main() {
   // Assume projectRoot is the cwd; blueprint.md in root
   const projectRoot = process.cwd();
@@ -29,11 +36,25 @@ async function main() {
   const taskPlan = new TaskAssignmentPlan();
 
   // 1. Instantiate agents with minimal context
-  registry['Foreman'] = new ConstructionForeman({ blueprint: blueprintRaw, registry, projectRoot, taskPlan });
-  registry['ToolWrapperAgent'] = new ToolWrapperAgent({ blueprint: blueprintRaw, registry, projectRoot });
-  registry['AgentScaffolderAgent'] = new AgentScaffolderAgent({ blueprint: blueprintRaw, registry, projectRoot });
+  // Initialize builder agents and wire for ConstructionForeman task assignment
+  const builders = {
+    ToolWrapperAgent: new ToolWrapperAgent({ blueprint: blueprintRaw, registry, projectRoot }),
+    AgentScaffolderAgent: new AgentScaffolderAgent({ blueprint: blueprintRaw, registry, projectRoot }),
+    MemoryDesignerAgent: new MemoryDesignerAgent({ blueprint: blueprintRaw, registry, projectRoot }),
+  };
+  registry['ToolWrapperAgent'] = builders.ToolWrapperAgent;
+  registry['AgentScaffolderAgent'] = builders.AgentScaffolderAgent;
+  registry['MemoryDesignerAgent'] = builders.MemoryDesignerAgent;
   registry['RuntimeOrchestratorAgent'] = new RuntimeOrchestratorAgent({ blueprint: blueprintRaw, registry, projectRoot });
-  registry['MemoryDesignerAgent'] = new MemoryDesignerAgent({ blueprint: blueprintRaw, registry, projectRoot });
+
+  // Pass builders, taskPlan, and logger to the ConstructionForeman
+  console.log('[BOOTSTRAP] Instantiating ConstructionForeman...');
+  registry['Foreman'] = new ConstructionForeman({
+    builders,
+    taskPlan,
+    logger: console,
+  });
+  console.log('[BOOTSTRAP] ConstructionForeman instantiation complete.');
   registry['DocumentationAgent'] = new DocumentationAgent({ blueprint: blueprintRaw, registry, projectRoot });
 
   console.info('[Foreman] Agents instantiated.');
@@ -70,8 +91,11 @@ async function main() {
 
   // TODO: Integrate Open Agent SDK agent/registry pattern
   // TODO: Bring in actual agent business logic and task flow
+}
 
+console.log('[TOPLEVEL] before calling main()');
 main().catch((e) => {
   console.error('[Foreman] Bootstrap sequence failed.', e);
   process.exit(1);
 });
+console.log('[TOPLEVEL] after main() call');

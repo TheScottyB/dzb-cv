@@ -73,13 +73,18 @@ export class JobMatcher {
     const matches: string[] = [];
     const evidence: string[] = [];
 
+    // Split requirement string by comma (for multi-keyword requirements)
+    const segments = requirement.requirement.split(',').map(s => s.trim()).filter(Boolean);
+
     // Check core strengths
     Object.entries(this.template.coreStrengths).forEach(([category, strengths]) => {
       (strengths as string[]).forEach((strength: string) => {
-        if (this.isMatch(requirement.requirement, strength)) {
-          matches.push(strength);
-          // Use matched human-readable phrase
-          evidence.push(`Core strength in ${strength}`);
+        for (const seg of segments) {
+          if (this.isMatch(seg, strength)) {
+            matches.push(strength);
+            // Use matched human-readable phrase
+            evidence.push(`Core strength in ${strength}`);
+          }
         }
       });
     });
@@ -88,9 +93,12 @@ export class JobMatcher {
     Object.entries(this.template.experiencePatterns).forEach(([, pattern]) => {
       const expPattern = pattern as ExperiencePattern;
       expPattern.keyDuties.forEach((duty: string) => {
-        if (this.isMatch(requirement.requirement, duty)) {
-          matches.push(duty);
-          evidence.push(`Experience from ${expPattern.title} (${expPattern.period})`);
+        for (const seg of segments) {
+          if (this.isMatch(seg, duty)) {
+            matches.push(duty);
+            evidence.push(`Experience from ${expPattern.title} (${expPattern.period})`);
+            break;
+          }
         }
       });
     });
@@ -104,15 +112,8 @@ export class JobMatcher {
   }
 
   private isMatch(requirement: string, potentialMatch: string): boolean {
-    // Simple keyword matching - can be enhanced later
-    const reqWords = requirement.toLowerCase().split(/\s+/);
-    const matchWords = potentialMatch.toLowerCase().split(/\s+/);
-    
-    return reqWords.some(word => 
-      matchWords.some(matchWord => 
-        matchWord.includes(word) || word.includes(matchWord)
-      )
-    );
+    // Strict, trimmed, case-insensitive equality match
+    return requirement.trim().toLowerCase() === potentialMatch.trim().toLowerCase();
   }
 
   private calculateConfidence(matchCount: number): 'high' | 'medium' | 'low' {

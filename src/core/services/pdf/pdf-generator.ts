@@ -77,12 +77,18 @@ export class PDFGenerator implements IPDFGenerator {
   }
 
   async generateFromMarkdown(markdown: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+    const fs = await import('fs');
+    const path = await import('path');
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     const html = await marked(markdown);
     const result = await this.generateFromHTML(html, outputPath, options);
     return result;
   }
 
   async generateFromHTML(html: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+    const fs = await import('fs');
+    const path = await import('path');
+    fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     const browser = await puppeteer.launch();
     try {
       const page = await browser.newPage();
