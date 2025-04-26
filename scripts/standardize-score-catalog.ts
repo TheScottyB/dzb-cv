@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { ResumeAnalysisEngine } from '../src/ats/engine.js';
+import chalk from 'chalk';
 
 const JOB_POSTINGS_DIR = 'job-postings';
 const GENERATED = 'generated';
@@ -10,6 +11,25 @@ const UPLOADABLE_EXTS = ['.pdf', '.docx'];
 const CV_KEYWORDS = ['cv', 'resume'];
 const COVER_KEYWORDS = ['cover', 'letter'];
 const NAME = 'dawn_zurick_beilfuss';
+
+const args = process.argv.slice(2);
+const DRY_RUN = args.includes('--dry-run');
+
+function logAction(msg: string) {
+  console.log(chalk.blueBright('ℹ️'), msg);
+}
+function logMove(src: string, dest: string) {
+  console.log(chalk.green('📦 Move'), chalk.yellow(src), chalk.cyan('→'), chalk.yellow(dest));
+}
+function logScore(file: string) {
+  console.log(chalk.magenta('📝 Scoring'), chalk.yellow(file));
+}
+function logWrite(file: string) {
+  console.log(chalk.green('💾 Write'), chalk.yellow(file));
+}
+function logWarn(msg: string) {
+  console.warn(chalk.red('⚠️'), msg);
+}
 
 type CatalogEntry = {
   job_posting: string;
@@ -24,9 +44,13 @@ type CatalogEntry = {
 async function ensureSubfolders(dir: string) {
   for (const sub of [SOURCE, GENERATED, ANALYSIS]) {
     const subPath = path.join(dir, sub);
-    try {
-      await fs.mkdir(subPath, { recursive: true });
-    } catch {}
+    if (DRY_RUN) {
+      logAction(`Would ensure folder: ${subPath}`);
+    } else {
+      try {
+        await fs.mkdir(subPath, { recursive: true });
+      } catch {}
+    }
   }
 }
 
@@ -48,8 +72,12 @@ async function moveAndStandardizeFiles(jobDir: string) {
         const newName = `${NAME}_${type}${ext}`;
         const dest = path.join(jobDir, GENERATED, newName);
         const src = path.join(jobDir, entry.name);
-        await fs.rename(src, dest).catch(() => {});
-        console.log(`Moved and renamed: ${src} -> ${dest}`);
+        if (DRY_RUN) {
+          logMove(src, dest);
+        } else {
+          await fs.rename(src, dest).catch(() => {});
+          logMove(src, dest);
+        }
       }
     }
   }
@@ -69,6 +97,11 @@ async function scoreFiles(jobDir: string, catalog: CatalogEntry[]) {
     const type = detectType(file);
     if (!type) continue;
     const filePath = path.join(genDir, file);
+    if (DRY_RUN) {
+      logScore(filePath);
+      logWrite(path.join(jobDir, ANALYSIS, `${type}_score.json`));
+      continue;
+    }
     try {
       const buffer = await fs.readFile(filePath);
       const mimeType =
@@ -93,9 +126,10 @@ async function scoreFiles(jobDir: string, catalog: CatalogEntry[]) {
         path.join(analysisDir, `${type}_score.json`),
         JSON.stringify(result, null, 2),
       );
-      console.log(`Scored: ${filePath}`);
+      logScore(filePath);
+      logWrite(path.join(analysisDir, `${type}_score.json`));
     } catch (e: any) {
-      console.warn(`Failed to score ${filePath}:`, e.message);
+      logWarn(`Failed to score ${filePath}: ${e.message}`);
     }
   }
 }
@@ -112,11 +146,20 @@ async function main() {
     await scoreFiles(jobDir, catalog);
   }
   // Write catalog
-  await fs.writeFile(path.join(JOB_POSTINGS_DIR, 'catalog.json'), JSON.stringify(catalog, null, 2));
-  console.log('Catalog written to job-postings/catalog.json');
+  if (DRY_RUN) {
+    logWrite(path.join(JOB_POSTINGS_DIR, 'catalog.json'));
+    logAction('Dry run complete! No files were changed.');
+  } else {
+    await fs.writeFile(
+      path.join(JOB_POSTINGS_DIR, 'catalog.json'),
+      JSON.stringify(catalog, null, 2),
+    );
+    logWrite(path.join(JOB_POSTINGS_DIR, 'catalog.json'));
+    logAction('Catalog written to job-postings/catalog.json');
+  }
 }
 
 main().catch((e: any) => {
-  console.error(e);
+  logWarn(e);
   process.exit(1);
 });

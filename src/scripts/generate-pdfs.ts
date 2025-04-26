@@ -9,6 +9,43 @@ import { HTMLToPDFConverter } from '../utils/html-to-pdf.js';
 import { PDFDocument } from 'pdf-lib';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import chalk from 'chalk';
+import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
+
+async function resolveJobDir(inputPath: string): Promise<string> {
+  // If input is a job-data.json file, resolve the folder name
+  if (inputPath.endsWith('job-data.json')) {
+    const folderName = await getJobPostingFolderName(inputPath);
+    if (!folderName) {
+      throw new Error('Could not resolve folder name from job-data.json');
+    }
+    const jobDir = path.join('job-postings', folderName as string);
+    console.log(chalk.green('📂 Resolved job posting folder:'), chalk.yellow(jobDir));
+    return jobDir;
+  }
+  // If input is a folder, check for job-data.json and warn if not standardized
+  const jobDataPath = path.join(inputPath, 'job-data.json');
+  try {
+    await fs.access(jobDataPath);
+    const folderName = await getJobPostingFolderName(jobDataPath);
+    if (!folderName) {
+      throw new Error('Could not resolve folder name from job-data.json in folder');
+    }
+    const expectedDir = path.join('job-postings', folderName);
+    if (path.resolve(inputPath) !== path.resolve(expectedDir)) {
+      console.warn(
+        chalk.yellow('⚠️  Warning:'),
+        'Folder name does not match standardized convention. Expected:',
+        chalk.cyan(expectedDir),
+      );
+    }
+  } catch {
+    console.warn(
+      chalk.yellow('⚠️  Warning: No job-data.json found in folder. Cannot verify standardization.'),
+    );
+  }
+  return inputPath;
+}
 
 async function generatePDFsForJob(jobDir: string) {
   // Use pdfMode for PDF output
@@ -63,28 +100,36 @@ async function generatePDFsForJob(jobDir: string) {
         const pdfDoc = await PDFDocument.load(pdfBytes);
         if (pdfDoc.getPageCount() > 1) {
           console.warn(
-            'Warning: Cover letter exceeds one page! Consider shortening the content or adjusting formatting.',
+            chalk.yellow('⚠️  Warning:'),
+            'Cover letter exceeds one page! Consider shortening the content or adjusting formatting.',
           );
         }
       }
-      console.log(`${file.name}: HTML and PDF generated.`);
+      console.log(chalk.green('✅'), `${file.name}: HTML and PDF generated.`);
     } catch (err: any) {
       if (err.code === 'ENOENT') {
-        console.warn(`${file.name} markdown not found at ${mdPath}, skipping.`);
+        console.warn(chalk.yellow('⚠️'), `${file.name} markdown not found at ${mdPath}, skipping.`);
       } else {
-        console.error(`Error processing ${file.name}:`, err);
+        console.error(chalk.red('❌'), `Error processing ${file.name}:`, err);
       }
     }
   }
   await htmlToPdf.close();
-  console.log('Done!');
+  console.log(chalk.blueBright('Done!'));
 }
 
-// Accept CLI argument for job posting directory
-const [, , jobDir] = process.argv;
-if (!jobDir) {
-  console.error('Usage: pnpm tsx src/scripts/generate-pdfs.ts <job-posting-directory>');
+// Accept CLI argument for job posting directory or job-data.json
+const [, , inputPath] = process.argv;
+if (!inputPath) {
+  console.error(
+    'Usage: pnpm tsx src/scripts/generate-pdfs.ts <job-posting-directory|job-data.json>',
+  );
   process.exit(1);
 }
 
-generatePDFsForJob(jobDir).catch(console.error);
+resolveJobDir(inputPath)
+  .then(generatePDFsForJob)
+  .catch((err) => {
+    console.error(chalk.red('❌'), err.message || err);
+    process.exit(1);
+  });
