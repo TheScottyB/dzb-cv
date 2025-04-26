@@ -1,5 +1,6 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# Husky commit-msg hook (updated for v10+)
+# Removed deprecated lines as per Husky warning
 
-npx --no -- commitlint --edit ${1}
+npx --no-install commitlint --edit "$1"
 
