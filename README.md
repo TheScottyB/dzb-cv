@@ -6,6 +6,8 @@
 
 A modular CV management system with job analysis capabilities. This tool helps create, manage, and tailor CVs for specific job applications.
 
+> **Note:** This project is uniquely designed for a single user: Dawn Zurick Beilfuss. All features, templates, and workflows are tailored specifically for Dawn's career journey.
+
 ## Features
 
 - **CV Generation**: Generate CVs for different sectors (federal, state, private, academic)
@@ -16,6 +18,18 @@ A modular CV management system with job analysis capabilities. This tool helps c
 - **Multiple Templates**: Support for various CV templates including Basic, Minimal, Federal, and Academic
 - **Verification System**: Track and verify content sources
 - **Modular CLI**: Extensible command structure
+
+## Project Focus: A Personalized Career Toolkit for Dawn
+
+DZB-CV is not a generic CV generator. It is a deeply personalized, automated, and organized system for managing one person's (Dawn's) job search materials. Every feature, template, and workflow is tailored to Dawn's background, goals, and job search journey. All CVs, cover letters, and application materials are generated from a centralized data source, ensuring consistency and efficiency. The system automates tailoring, scoring, and cataloging of application materials, making it a powerful, personal career management toolkit—far beyond a generic CV generator.
+
+## Pluggable, User-First Design
+
+While DZB-CV is tailored for a single user at a time, its architecture is intentionally pluggable. By simply replacing the `base-info.json` file and using the provided advanced markdown templates, anyone can create a fully personalized CV management system.
+
+This "one repo per user" model is like using templated abstract classes: the templates define the structure, and the user's data fills in the details. To onboard a new user, just start with a fresh repo and their own `base-info.json`—no code changes required.
+
+This approach ensures privacy, full data ownership, and maximum flexibility, making DZB-CV a unique, user-first alternative to generic, multi-user CV platforms.
 
 ## Installation
 

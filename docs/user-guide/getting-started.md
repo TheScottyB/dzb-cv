@@ -13,7 +13,11 @@ related_files:
 
 ## Introduction
 
-DZB-CV is a specialized tool for generating tailored CVs for different job sectors from a single source of data. This guide will help you get started with the basic setup and usage.
+DZB-CV is a specialized tool for generating tailored CVs for different job sectors from a single source of data. 
+
+> **Note:** This tool is uniquely designed for a single user: Dawn Zurick Beilfuss. All features, templates, and data are tailored for Dawn, ensuring maximum consistency, automation, and personal optimization throughout her job search journey.
+
+This guide will help you get started with the basic setup and usage.
 
 ## Prerequisites
 
