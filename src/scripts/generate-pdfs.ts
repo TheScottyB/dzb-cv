@@ -16,12 +16,12 @@ async function generatePDFs(cvMdPath, coverMdPath, outputDir) {
   const cvHtml = markdownConverter.convertToHTML(
     cvMarkdown,
     'Dawn Zurick Beilfuss',
-    'Medical Cash Poster CV',
+    'Mental Health Technician Trainee',
   );
   const coverLetterHtml = markdownConverter.convertToHTML(
     coverLetterMarkdown,
     'Cover Letter',
-    'Medical Cash Poster',
+    'Mental Health Technician Trainee',
   );
 
   // Save HTML for inspection
