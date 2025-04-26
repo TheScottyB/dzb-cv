@@ -64,7 +64,9 @@
             "Scheduling",
             "Scribing",
             "Charting & Records Management",
-            "HIPAA Compliance",
+            "HIPAA compliance and patient confidentiality (human healthcare)",
+            "Maintained confidentiality of patient and client records (veterinary)",
+            "Verified pet insurance coverage and eligibility for animal patients",
             "Insurance Verification/Reconciliation",
             "Medical Equipment Prep/Sterilization",
             "Pharmacy Support"
@@ -82,7 +84,10 @@
             "Transaction Management Systems (DotLoop, MRED)",
             "BHGRE Connect Platform",
             "MLS Systems",
-            "Healthcare Scheduling Software"
+            "Healthcare Scheduling Software",
+            "Experienced with a variety of medical office and billing software (legacy and modern)",
+            "Proficient in Microsoft 365 and cloud-based business platforms",
+            "Quick to learn new EHR and practice management systems, including cloud-based platforms such as PointClickCare"
         ],
         "certifications": [
             "Certified Pharmacy Technician (CPhT, Illinois State License, 1996)",
@@ -532,7 +537,13 @@
     ],
     "cvTypes": {
         "federal": {
-            "requirements": ["detailed work history", "specific dates", "hours worked", "salary", "supervisor contacts"],
+            "requirements": [
+                "detailed work history",
+                "specific dates",
+                "hours worked",
+                "salary",
+                "supervisor contacts"
+            ],
             "format": "USAJOBS format",
             "emphasizedExperience": [
                 "healthcare.0",
@@ -549,7 +560,11 @@
             }
         },
         "state": {
-            "requirements": ["state-specific format", "detailed experience", "education details"],
+            "requirements": [
+                "state-specific format",
+                "detailed experience",
+                "education details"
+            ],
             "format": "Illinois State format",
             "emphasizedExperience": [
                 "healthcare.0",
@@ -559,12 +574,22 @@
                 "realEstate.2"
             ],
             "additionalDetails": {
-                "stateSpecificLicenses": ["Real Estate License - Illinois", "Real Estate License - Wisconsin"],
-                "boardMemberships": ["Lakes Area Realtors", "Heartland Realtor Organization"]
+                "stateSpecificLicenses": [
+                    "Real Estate License - Illinois",
+                    "Real Estate License - Wisconsin"
+                ],
+                "boardMemberships": [
+                    "Lakes Area Realtors",
+                    "Heartland Realtor Organization"
+                ]
             }
         },
         "private": {
-            "requirements": ["concise", "achievement-focused", "skills-oriented"],
+            "requirements": [
+                "concise",
+                "achievement-focused",
+                "skills-oriented"
+            ],
             "format": "Modern professional format",
             "emphasizedExperience": [
                 "realEstate.0",
@@ -578,6 +603,22 @@
                 "Experience managing teams across states",
                 "Strong administrative and organizational skills"
             ]
+        }
+    },
+    "complianceGuidance": {
+        "hipaa": "HIPAA (Health Insurance Portability and Accountability Act) is a U.S. law that protects the privacy and security of human patients' medical information. It does not apply to veterinary records or animal patients. Veterinary practices are not 'covered entities' under HIPAA. For veterinary roles, use 'confidentiality' or 'privacy' language instead of HIPAA compliance."
+    },
+    "stateApplicationDefaults": {
+        "global": {
+            "authorizedToWorkUS": "Yes",
+            "defaultOnStateLoan": "No",
+            "loanDefaultExplanation": ""
+        },
+        "IL": {
+            "successWithDisabilitiesProgram": "No",
+            "upwardMobilityProgram": "No",
+            "alternativeEmploymentProgram": "No",
+            "certifiedStatus": "Not Applicable"
         }
     }
 }
