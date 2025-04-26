@@ -16,7 +16,6 @@ Thank you for your interest in contributing to this project! Here's what you nee
 ```sh
 pnpm install
 pnpm run setup
-pnpm run prepare  # Installs Husky hooks
 ```
 
 ## VSCode Workspace Recommendations
@@ -36,7 +35,7 @@ pnpm run prepare  # Installs Husky hooks
 
 ## Commit Conventions
 
-- This repo enforces [Conventional Commits](https://www.conventionalcommits.org/) via commitlint and Husky.
+- This repo enforces [Conventional Commits](https://www.conventionalcommits.org/) via commitlint.
 - Please use descriptive commit messages (e.g., `feat: add user profile export`, `fix(cli): handle parse errors gracefully`).
 
 ## Workflow

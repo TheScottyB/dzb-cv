@@ -33,10 +33,6 @@ cd python
 pip install -r requirements.txt
 cd ..
 
-# Set up Git hooks
-echo -e "${GREEN}Setting up Git hooks...${NC}"
-pnpm prepare
-
 echo -e "${GREEN}Setup complete! You can now start developing.${NC}"
 echo -e "To start the development server, run: ${YELLOW}pnpm dev${NC}"
 echo -e "To run tests, run: ${YELLOW}pnpm test${NC}" 

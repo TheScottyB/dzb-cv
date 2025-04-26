@@ -32,9 +32,6 @@ _Keep this checklist up to date to ensure world-class developer experience (DX) 
 
 ## 🔒 Pre-commit/CI Code Quality
 
-- [ ] Pre-commit hook runs lint-staged and typecheck on staged files (`.husky/pre-commit`)
-- [ ] Pre-push hook runs the full test suite (`.husky/pre-push`)
-- [ ] Commit-msg hook enforces [Conventional Commits](https://www.conventionalcommits.org/) (`.husky/commit-msg`)
 - [ ] Problems are surfaced early via editor and PR (CI problem matchers active)
 - [ ] CI must pass on PR before merge (typecheck, lint, test, build)
 
@@ -59,7 +56,7 @@ _Keep this checklist up to date to ensure world-class developer experience (DX) 
 
 - [ ] Regularly update dependencies (use `pnpm outdated`/`pnpm update`)
 - [ ] Sync VSCode extensions/settings as workspace evolves
-- [ ] Review Husky and lint-staged config for coverage as code/types/format tooling expands
+- [ ] Review lint-staged config for coverage as code/types/format tooling expands
 - [ ] Pin new required tool versions in `package.json` via Volta
 - [ ] Periodically run the DX audit checklist to proactively address workflow friction
 

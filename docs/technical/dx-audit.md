@@ -6,7 +6,7 @@ _Audit Date: 2024-03-27_
 
 **Current Config:**
 - ESLint: Strict, TypeScript-friendly config (`.eslintrc.cjs` with `@typescript-eslint/recommended`), project-rooted, covers TS and JS.
-- `lint-staged` and Husky in `package.json` for staged file lint/format.
+- `lint-staged` in `package.json` for staged file lint/format.
 - Explicit Prettier config in `.prettierrc` with well-defined formatting rules.
 - `.editorconfig` present for universal formatting.
 - VSCode: Comprehensive extension recommendations including ESLint, Prettier, and Vitest.
@@ -139,11 +139,10 @@ _Audit Date: 2024-03-27_
 
 ## High-Leverage Improvement Summary
 
-1. **Wire up Husky hooks:** Add pre-commit for lint-staged+typecheck, pre-push for full tests.
-2. **VSCode settings:** Add format/lint on save configuration.
-3. **GitHub Actions enhancements:** Add PR annotations for fast feedback.
-4. **Badge status:** Add visual clarity with CI/lint/coverage badges.
-5. **Setup documentation:** Enhance onboarding experience with detailed setup guide.
+1. **VSCode settings:** Add format/lint on save configuration.
+2. **GitHub Actions enhancements:** Add PR annotations for fast feedback.
+3. **Badge status:** Add visual clarity with CI/lint/coverage badges.
+4. **Setup documentation:** Enhance onboarding experience with detailed setup guide.
 
 Following these actions will ensure most errors and style issues are visible immediately during development, pre-commit, or at worst during PR/CI—drastically improving velocity, pride, and code quality.
 
