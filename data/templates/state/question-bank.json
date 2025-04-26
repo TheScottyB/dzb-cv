@@ -1,0 +1,90 @@
+[
+    {
+        "id": "il-hs-requirement",
+        "question": "Do you meet the high school education requirement for this position?",
+        "type": "yesno",
+        "required": true,
+        "states": [
+            "IL"
+        ]
+    },
+    {
+        "id": "il-hs-education-detail",
+        "question": "Please describe in detail your education and experience as it relates to the requirements for this position. Include specific examples and context.",
+        "type": "text",
+        "required": true,
+        "maxLength": 2000,
+        "states": [
+            "IL"
+        ]
+    },
+    {
+        "id": "il-authorized-to-work-us",
+        "question": "Are you authorized to work in the United States?",
+        "type": "yesno",
+        "required": true,
+        "states": [
+            "IL"
+        ]
+    },
+    {
+        "id": "il-success-with-disabilities-program",
+        "question": "Are you a successful participant in the State of Illinois Successful Disability (SD) Program?",
+        "type": "yesno",
+        "required": true,
+        "states": [
+            "IL"
+        ]
+    },
+    {
+        "id": "il-upward-mobility-program",
+        "question": "Are you currently participating in the Upward Mobility Program?",
+        "type": "yesno",
+        "required": true,
+        "states": [
+            "IL"
+        ]
+    },
+    {
+        "id": "il-alternative-employment-program",
+        "question": "Are you currently participating in the Alternative Employment Program?",
+        "type": "yesno",
+        "required": true,
+        "states": [
+            "IL"
+        ]
+    },
+    {
+        "id": "il-certified-status",
+        "question": "Are you currently a certified State of Illinois Civil Service employee?",
+        "type": "select",
+        "options": [
+            "Yes",
+            "No",
+            "Not Applicable"
+        ],
+        "required": true,
+        "states": [
+            "IL"
+        ]
+    },
+    {
+        "id": "il-default-on-state-loan",
+        "question": "Are you currently in default on an educational loan guaranteed by the State of Illinois?",
+        "type": "yesno",
+        "required": true,
+        "states": [
+            "IL"
+        ]
+    },
+    {
+        "id": "il-loan-default-explanation",
+        "question": "If you answered 'Yes' to the previous question, please explain:",
+        "type": "text",
+        "required": false,
+        "maxLength": 1000,
+        "states": [
+            "IL"
+        ]
+    }
+]

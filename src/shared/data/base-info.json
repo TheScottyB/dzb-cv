@@ -607,5 +607,18 @@
   },
   "complianceGuidance": {
     "hipaa": "HIPAA (Health Insurance Portability and Accountability Act) is a U.S. law that protects the privacy and security of human patients' medical information. It does not apply to veterinary records or animal patients. Veterinary practices are not 'covered entities' under HIPAA. For veterinary roles, use 'confidentiality' or 'privacy' language instead of HIPAA compliance."
+  },
+  "stateApplicationDefaults": {
+    "global": {
+      "authorizedToWorkUS": "Yes",
+      "defaultOnStateLoan": "No",
+      "loanDefaultExplanation": ""
+    },
+    "IL": {
+      "successWithDisabilitiesProgram": "No",
+      "upwardMobilityProgram": "No",
+      "alternativeEmploymentProgram": "No",
+      "certifiedStatus": "Not Applicable"
+    }
   }
 }
