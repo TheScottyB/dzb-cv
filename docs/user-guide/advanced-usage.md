@@ -32,17 +32,27 @@ Templates use Handlebars syntax:
 
 ## Advanced Features
 
-### Job Analysis and Tailoring
+### Job Analysis and Tailoring (Beta)
 
-1. Analyze a job posting:
+The job analysis feature is currently in development with basic functionality:
+
+1. Analyze a local job description file:
    ```bash
-   dzb-cv analyze <job-posting-url> --output ./job-analysis.json --format json
+   dzb-cv analyze job-description.txt --file --output ./analysis.json
    ```
 
-2. Generate a tailored CV with ATS optimization:
+2. Basic URL content retrieval:
    ```bash
-   dzb-cv generate private --ats-optimize
+   dzb-cv analyze <job-posting-url> --save-raw-content
    ```
+
+Current Capabilities:
+- Basic text parsing of job descriptions
+- Simple keyword extraction
+- File-based analysis
+- Raw content saving
+
+Note: Full ATS optimization and detailed job analysis features are under development.
 
 ### Advanced Generation Options
 

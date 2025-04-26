@@ -4,23 +4,12 @@
     "module": "ES2020",
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "allowJs": true,
-    "checkJs": false,
-    "declaration": true,
-    "sourceMap": true,
-    "outDir": "./dist",
     "strict": true,
-    "baseUrl": ".",
-    "paths": {
-      "*": ["node_modules/*"]
-    },
-    "downlevelIteration": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "."
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  }
+  "include": ["scripts/**/*"],
+  "exclude": ["node_modules"]
 }

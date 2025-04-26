@@ -1,0 +1,54 @@
+# dzb-cv CODEOWNERS file
+# This file determines who is requested for review when someone opens a pull request.
+# For more information, see: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+# These owners will be the default owners for everything in the repository
+# unless a later match takes precedence
+*       @TheScottyB
+
+# Core application components
+/src/cli/                     @TheScottyB
+/src/core/                    @TheScottyB
+/src/types/                   @TheScottyB
+/src/shared/                  @TheScottyB
+/src/tools/                   @TheScottyB
+
+# Feature-specific owners
+/src/ats/                     @TheScottyB        # ATS analysis and optimization
+/src/core/services/pdf/       @TheScottyB        # PDF generation
+/src/core/services/import/    @TheScottyB        # Import functionality
+/src/core/services/export/    @TheScottyB        # Export functionality
+/src/core/services/profile/   @TheScottyB        # Profile management
+
+# Agent system
+/src/agents/                  @TheScottyB        # Agent system
+/src/AgentMessageBus.ts       @TheScottyB        # Agent messaging
+/src/spawnAgent.ts            @TheScottyB        # Agent initialization
+/src/bootstrap.ts             @TheScottyB        # System bootstrap
+
+# Tests
+/src/**/__tests__/            @TheScottyB        # All test files
+/src/**/*.test.ts             @TheScottyB        # All test files
+
+# Documentation
+/docs/                        @TheScottyB        # Documentation
+/README.md                    @TheScottyB        # Main README
+/CONTRIBUTING.md              @TheScottyB        # Contribution guidelines
+/changelog.md                 @TheScottyB        # Changelog
+
+# Configuration files
+/*.json                       @TheScottyB        # JSON configuration files
+/*.js                         @TheScottyB        # JavaScript configuration files
+/*.ts                         @TheScottyB        # TypeScript configuration files
+/.github/                     @TheScottyB        # GitHub workflows and configuration
+
+# Build and deployment
+/scripts/                     @TheScottyB        # Build and utility scripts
+/.github/workflows/           @TheScottyB        # CI/CD pipelines
+
+# Dependencies and package management
+/package.json                 @TheScottyB        # Package manifest
+/pnpm-lock.yaml               @TheScottyB        # Lock file
+/pnpm-workspace.yaml          @TheScottyB        # Workspace configuration
+

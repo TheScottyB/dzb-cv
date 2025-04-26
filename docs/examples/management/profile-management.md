@@ -1,5 +1,5 @@
 ---
-path: docs/examples/profile-management.md
+path: docs/examples/management/profile-management.md
 type: example
 category: profiles
 maintainer: system

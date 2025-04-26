@@ -1,5 +1,5 @@
 ---
-path: docs/examples/ats-optimization.md
+path: docs/examples/cv-types/ats-optimized-cv.md
 type: example
 category: optimization
 maintainer: system

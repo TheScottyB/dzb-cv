@@ -1,74 +1,59 @@
-import { PDFGenerator } from '../utils/pdf-generator.js';
+import { MarkdownConverter } from '../utils/markdown-converter.js';
+import { HTMLToPDFConverter } from '../utils/html-to-pdf.js';
+import { PDFDocument } from 'pdf-lib';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-async function generatePDFs() {
-  const generator = new PDFGenerator();
-
-  // Set theme
-  generator.setTheme({
-    primaryColor: [0, 0.3, 0.6], // Professional blue
-    secondaryColor: [0.2, 0.2, 0.2], // Dark gray
-    fontSize: 11,
-    lineHeight: 1.4,
-    accentColor: [0.6, 0, 0] // Dark red
-  });
+async function generatePDFs(cvMdPath, coverMdPath, outputDir) {
+  const markdownConverter = new MarkdownConverter();
+  const htmlToPdf = new HTMLToPDFConverter();
 
   // Read markdown files
-  const cvMarkdown = await fs.readFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-39369/cv-draft.md'),
-    'utf-8'
-  );
-  const coverLetterMarkdown = await fs.readFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-39369/cover-letter.md'),
-    'utf-8'
-  );
+  const cvMarkdown = await fs.readFile(cvMdPath, 'utf-8');
+  const coverLetterMarkdown = await fs.readFile(coverMdPath, 'utf-8');
 
-  // Generate CV PDF
-  const cvPdfBytes = await generator.generateFromMarkdown(
+  // Convert markdown to styled HTML
+  const cvHtml = markdownConverter.convertToHTML(
     cvMarkdown,
-    '',
-    {
-      title: 'Dawn Zurick Beilfuss',
-      subtitle: 'Patient Registrar | Healthcare Administration & Customer Service',
-      theme: {
-        primaryColor: [0, 0.3, 0.6],
-        secondaryColor: [0.2, 0.2, 0.2],
-        font: 'Helvetica'
-      },
-      includeHeader: true,
-      includeFooter: true
-    }
+    'Dawn Zurick Beilfuss',
+    'Medical Cash Poster CV',
+  );
+  const coverLetterHtml = markdownConverter.convertToHTML(
+    coverLetterMarkdown,
+    'Cover Letter',
+    'Medical Cash Poster',
   );
 
-  // Generate cover letter PDF
-  const coverLetterPdfBytes = await generator.generateFromMarkdown(
-    coverLetterMarkdown,
-    '',
-    {
-      title: 'Cover Letter',
-      subtitle: 'Patient Registrar Position',
-      theme: {
-        primaryColor: [0, 0.3, 0.6],
-        secondaryColor: [0.2, 0.2, 0.2],
-        font: 'Helvetica'
-      },
-      includeHeader: true,
-      includeFooter: true
-    }
-  );
+  // Save HTML for inspection
+  await fs.writeFile(path.join(outputDir, 'cv.html'), cvHtml);
+  await fs.writeFile(path.join(outputDir, 'cover-letter.html'), coverLetterHtml);
+
+  // Convert HTML to PDF
+  const cvPdfBytes = await htmlToPdf.convertToPDF(cvHtml);
+  const coverLetterPdfBytes = await htmlToPdf.convertToPDF(coverLetterHtml);
 
   // Save PDFs
-  await fs.writeFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-39369/cv.pdf'),
-    cvPdfBytes
-  );
-  await fs.writeFile(
-    path.join(process.cwd(), 'job-postings/mercy-health-39369/cover-letter.pdf'),
-    coverLetterPdfBytes
-  );
+  await fs.writeFile(path.join(outputDir, 'cv.pdf'), cvPdfBytes);
+  await fs.writeFile(path.join(outputDir, 'cover-letter.pdf'), coverLetterPdfBytes);
 
-  console.log('PDFs generated successfully!');
+  // Check cover letter page count and warn if > 1
+  const pdfDoc = await PDFDocument.load(coverLetterPdfBytes);
+  if (pdfDoc.getPageCount() > 1) {
+    console.warn(
+      'Warning: Cover letter exceeds one page! Consider shortening the content or adjusting formatting.',
+    );
+  }
+
+  console.log('PDFs and HTML files generated successfully!');
 }
 
-generatePDFs().catch(console.error); 
+// Accept CLI arguments for file paths
+const [, , cvMdPath, coverMdPath, outputDir] = process.argv;
+if (!cvMdPath || !coverMdPath || !outputDir) {
+  console.error(
+    'Usage: pnpm tsx src/scripts/generate-pdfs.ts <cv.md> <cover-letter.md> <outputDir>',
+  );
+  process.exit(1);
+}
+
+generatePDFs(cvMdPath, coverMdPath, outputDir).catch(console.error);

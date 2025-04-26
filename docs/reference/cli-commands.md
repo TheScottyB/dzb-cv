@@ -24,18 +24,28 @@ dzb-cv generate <sector> [options]
 Options:
   -f, --format <format>  Output format (markdown, pdf)
   -o, --output <path>    Output directory
-  --filename <name>      Custom filename
+  --filename <n>      Custom filename
 ```
 
-### 2. Analyze Job
+### 2. Analyze Job (Beta)
 ```bash
 dzb-cv analyze <source> [options]
 Options:
-  -o, --output <path>     Save analysis output
+  -o, --output <path>     Save analysis output (basic analysis only)
   -f, --format <format>   Output format (json, text, markdown)
-  --file                  Use local file instead of URL
+  --file                  Use local file instead of URL (basic parsing)
   --force-generic         Use generic parser
-  --save-raw-content     Save raw content
+  --save-raw-content     Save raw content from URL
+  --no-rate-limit        Disable rate limiting
+
+Note: This command is currently in development. Basic functionality includes:
+- File-based job description parsing
+- Basic URL content retrieval
+- Simple keyword extraction
+- Basic structure analysis
+
+Full job analysis features including ATS optimization and detailed 
+requirement extraction are planned for future releases.
 ```
 
 ### 3. Profile Management

@@ -1,11 +1,11 @@
 ---
-path: docs/examples/federal-cv.md
+path: docs/examples/cv-types/federal-cv.md
 type: example
 category: cv-generation
 maintainer: system
 last_updated: 2024-03-27
 related_files:
-  - docs/examples/ats-optimization.md
+  - docs/examples/cv-types/ats-optimized-cv.md
   - docs/user-guide/advanced-usage.md
 ---
 
