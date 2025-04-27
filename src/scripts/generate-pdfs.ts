@@ -11,180 +11,263 @@ import chalk from 'chalk';
 import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { marked } from 'marked';
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser, PaperFormat } from 'puppeteer';
+import { fileURLToPath } from 'url';
 
-async function resolveJobDir(inputPath: string): Promise<string> {
-  // If input is a job-data.json file, resolve the folder name
-  if (inputPath.endsWith('job-data.json')) {
-    const folderName = await getJobPostingFolderName(inputPath);
-    if (!folderName) {
-      throw new Error('Could not resolve folder name from job-data.json');
-    }
-    const jobDir = path.join('job-postings', folderName as string);
-    console.log(chalk.green('📂 Resolved job posting folder:'), chalk.yellow(jobDir));
-    return jobDir;
+// Configuration
+interface Config {
+  sourceFileNames: {
+    cv: string[];
+    coverLetter: string[];
+  };
+  outputDir: string;
+  pdfOptions: {
+    format: PaperFormat;
+    margin: {
+      top: string;
+      right: string;
+      bottom: string;
+      left: string;
+    };
+    printBackground: boolean;
+  };
+}
+
+const config: Config = {
+  sourceFileNames: {
+    cv: ['cv.md', 'source/Dawn_Zurick_Beilfuss_CV.md', 'application/cv.md'],
+    coverLetter: [
+      'cover-letter.md',
+      'source/Dawn_Zurick_Beilfuss_Cover_Letter.md',
+      'application/cover-letter.md',
+    ],
+  },
+  outputDir: 'application/generated',
+  pdfOptions: {
+    format: 'letter' as PaperFormat,
+    margin: { top: '0.5in', right: '0.75in', bottom: '0.5in', left: '0.75in' },
+    printBackground: true,
+  },
+};
+
+// Error handling
+class DocumentGenerationError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+  ) {
+    super(message);
+    this.name = 'DocumentGenerationError';
   }
-  // If input is a folder, check for job-data.json and warn if not standardized
-  const jobDataPath = path.join(inputPath, 'job-data.json');
+}
+
+// Logging utility
+const logger = {
+  info: (message: string) => console.log('\x1b[36m%s\x1b[0m', `[INFO] ${message}`),
+  success: (message: string) => console.log('\x1b[32m%s\x1b[0m', `[SUCCESS] ${message}`),
+  warn: (message: string) => console.log('\x1b[33m%s\x1b[0m', `[WARN] ${message}`),
+  error: (message: string) => console.log('\x1b[31m%s\x1b[0m', `[ERROR] ${message}`),
+};
+
+async function resolveJobDir(jobDir: string): Promise<string> {
   try {
-    await fs.access(jobDataPath);
-    const folderName = await getJobPostingFolderName(jobDataPath);
-    if (!folderName) {
-      throw new Error('Could not resolve folder name from job-data.json in folder');
+    const resolvedPath = path.resolve(jobDir);
+    if (!existsSync(resolvedPath)) {
+      throw new DocumentGenerationError(`Job directory not found: ${jobDir}`, 'DIR_NOT_FOUND');
     }
-    const expectedDir = path.join('job-postings', folderName);
-    if (path.resolve(inputPath) !== path.resolve(expectedDir)) {
-      console.warn(
-        chalk.yellow('⚠️  Warning:'),
-        'Folder name does not match standardized convention. Expected:',
-        chalk.cyan(expectedDir),
-      );
+
+    // Check for job-data.json and verify standardization
+    const jobDataPath = path.join(resolvedPath, 'job-data.json');
+    if (existsSync(jobDataPath)) {
+      const expectedFolderName = await getJobPostingFolderName(jobDataPath);
+      if (expectedFolderName) {
+        const expectedPath = path.join('job-postings', expectedFolderName);
+        if (path.resolve(jobDir) !== path.resolve(expectedPath)) {
+          logger.warn(
+            `Folder name does not match standardized convention. Expected: ${expectedPath}`,
+          );
+        }
+      }
+    } else {
+      logger.warn('No job-data.json found in folder. Cannot verify standardization.');
     }
-  } catch {
-    console.warn(
-      chalk.yellow('⚠️  Warning: No job-data.json found in folder. Cannot verify standardization.'),
+
+    return resolvedPath;
+  } catch (error) {
+    if (error instanceof DocumentGenerationError) {
+      throw error;
+    }
+    throw new DocumentGenerationError(
+      `Failed to resolve job directory: ${error.message}`,
+      'DIR_RESOLVE_ERROR',
     );
   }
-  return inputPath;
 }
 
-async function convertHTMLToPDF(htmlPath: string, pdfPath: string): Promise<void> {
-  const browser = await puppeteer.launch({ headless: true });
-  try {
-    const page = await browser.newPage();
-    const html = readFileSync(htmlPath, 'utf8');
-    await page.setContent(html, { waitUntil: 'networkidle0' });
-    await page.pdf({
-      path: pdfPath,
-      format: 'Letter',
-      margin: { top: '1in', right: '1in', bottom: '1in', left: '1in' },
-      printBackground: true,
-    });
-  } finally {
-    await browser.close();
+async function findSourceFile(jobDir: string, fileNames: string[]): Promise<string | null> {
+  for (const fileName of fileNames) {
+    const filePath = path.join(jobDir, fileName);
+    if (existsSync(filePath)) {
+      return filePath;
+    }
   }
+  return null;
 }
 
-function generateHTML(markdown: string): string {
-  return `<!DOCTYPE html>
+async function convertMarkdownToHTML(markdownPath: string): Promise<string> {
+  try {
+    const markdown = readFileSync(markdownPath, 'utf-8');
+    const htmlContent = marked(markdown);
+    return `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       line-height: 1.6;
       max-width: 8.5in;
       margin: 0 auto;
-      padding: 1in;
+      padding: 0.25in;
       color: #333;
     }
-    h1, h2, h3 { color: #222; }
-    hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
-    ul { margin: 0.7em 0; padding-left: 1.2em; }
-    li { margin: 0.4em 0; }
-    strong { color: #000; }
+    h1, h2, h3 { color: #2c5282; margin-bottom: 0.5em; }
+    h1 { font-size: 24px; border-bottom: 2px solid #3182ce; }
+    h2 { font-size: 20px; border-bottom: 1px solid #bee3f8; }
+    h3 { font-size: 16px; }
+    p { margin-bottom: 0.75em; }
+    ul, ol { margin: 0.7em 0; padding-left: 1.5em; }
+    li { margin: 0.5em 0; }
+    .header-info { text-align: center; margin-bottom: 2em; }
+    @media print {
+      body { 
+        font-size: 11pt;
+        padding: 0;
+      }
+      h1 { font-size: 18pt; }
+      h2 { font-size: 14pt; }
+      h3 { font-size: 12pt; }
+    }
   </style>
 </head>
 <body>
-  ${marked.parse(markdown)}
+  ${htmlContent}
 </body>
 </html>`;
-}
-
-async function generatePDFsForJob(jobDir: string) {
-  // First try the direct application directory
-  const cvMarkdownPaths = [
-    path.join(jobDir, 'cv.md'),
-    path.join(jobDir, 'source', 'Dawn_Zurick_Beilfuss_CV.md'),
-  ];
-
-  const coverLetterMarkdownPaths = [
-    path.join(jobDir, 'cover-letter.md'),
-    path.join(jobDir, 'source', 'Dawn_Zurick_Beilfuss_Cover_Letter.md'),
-  ];
-
-  // Try to find CV markdown
-  let cvMarkdownPath: string | null = null;
-  for (const p of cvMarkdownPaths) {
-    if (existsSync(p)) {
-      cvMarkdownPath = p;
-      break;
-    }
-  }
-
-  // Try to find cover letter markdown
-  let coverLetterMarkdownPath: string | null = null;
-  for (const p of coverLetterMarkdownPaths) {
-    if (existsSync(p)) {
-      coverLetterMarkdownPath = p;
-      break;
-    }
-  }
-
-  if (!cvMarkdownPath) {
-    console.warn(chalk.yellow('⚠️ CV markdown not found at any of these locations:'));
-    for (const p of cvMarkdownPaths) {
-      console.warn(chalk.yellow(p));
-    }
-    console.warn(chalk.yellow('skipping.'));
-  }
-
-  if (!coverLetterMarkdownPath) {
-    console.warn(chalk.yellow('⚠️ Cover Letter markdown not found at any of these locations:'));
-    for (const p of coverLetterMarkdownPaths) {
-      console.warn(chalk.yellow(p));
-    }
-    console.warn(chalk.yellow('skipping.'));
-  }
-
-  // Create generated directory if it doesn't exist
-  const generatedDir = path.join(jobDir, 'generated');
-  if (!existsSync(generatedDir)) {
-    mkdirSync(generatedDir);
-  }
-
-  // Generate HTML and PDF for CV if markdown exists
-  if (cvMarkdownPath) {
-    const cvMarkdown = readFileSync(cvMarkdownPath, 'utf8');
-    const cvHtml = generateHTML(cvMarkdown);
-    const cvHtmlPath = path.join(generatedDir, 'cv.html');
-    writeFileSync(cvHtmlPath, cvHtml);
-    await convertHTMLToPDF(cvHtmlPath, path.join(generatedDir, 'cv.pdf'));
-    console.log(chalk.green('✓ Generated CV HTML and PDF'));
-  }
-
-  // Generate HTML and PDF for cover letter if markdown exists
-  if (coverLetterMarkdownPath) {
-    const coverLetterMarkdown = readFileSync(coverLetterMarkdownPath, 'utf8');
-    const coverLetterHtml = generateHTML(coverLetterMarkdown);
-    const coverLetterHtmlPath = path.join(generatedDir, 'cover-letter.html');
-    writeFileSync(coverLetterHtmlPath, coverLetterHtml);
-    await convertHTMLToPDF(coverLetterHtmlPath, path.join(generatedDir, 'cover-letter.pdf'));
-    console.log(chalk.green('✓ Generated Cover Letter HTML and PDF'));
-
-    // Check if cover letter is more than one page
-    const pdfPath = path.join(generatedDir, 'cover-letter.pdf');
-    const pdfBytes = readFileSync(pdfPath);
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-    if (pdfDoc.getPageCount() > 1) {
-      console.warn(chalk.yellow('⚠️ Warning: Cover letter is more than one page!'));
-    }
+  } catch (error) {
+    throw new DocumentGenerationError(
+      `Failed to convert markdown to HTML: ${error.message}`,
+      'MARKDOWN_CONVERSION_ERROR',
+    );
   }
 }
 
-// Accept CLI argument for job posting directory or job-data.json
-const [, , inputPath] = process.argv;
-if (!inputPath) {
-  console.error(
-    'Usage: pnpm tsx src/scripts/generate-pdfs.ts <job-posting-directory|job-data.json>',
-  );
-  process.exit(1);
+async function convertHTMLToPDF(
+  browser: Browser,
+  html: string,
+  outputPath: string,
+  pdfOptions = config.pdfOptions,
+): Promise<void> {
+  const page = await browser.newPage();
+  try {
+    await page.setContent(html);
+    await page.pdf({ ...pdfOptions, path: outputPath });
+  } catch (error) {
+    throw new DocumentGenerationError(
+      `Failed to convert HTML to PDF: ${error.message}`,
+      'PDF_CONVERSION_ERROR',
+    );
+  } finally {
+    await page.close();
+  }
 }
 
-resolveJobDir(inputPath)
-  .then(generatePDFsForJob)
-  .catch((err) => {
-    console.error(chalk.red('❌'), err.message || err);
+async function generatePDFsForJob(jobDir: string): Promise<void> {
+  let browser: Browser | null = null;
+  try {
+    const resolvedJobDir = await resolveJobDir(jobDir);
+    logger.info(`Processing job directory: ${resolvedJobDir}`);
+
+    // Create output directory if it doesn't exist
+    const outputDir = path.join(resolvedJobDir, config.outputDir);
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true });
+    }
+
+    // Initialize browser
+    browser = await puppeteer.launch();
+
+    // Process CV
+    const cvPath = await findSourceFile(resolvedJobDir, config.sourceFileNames.cv);
+    if (cvPath) {
+      logger.info(`Found CV at: ${cvPath}`);
+      const cvHtml = await convertMarkdownToHTML(cvPath);
+      const cvHtmlPath = path.join(outputDir, 'cv.html');
+      const cvPdfPath = path.join(outputDir, 'cv.pdf');
+
+      writeFileSync(cvHtmlPath, cvHtml);
+      await convertHTMLToPDF(browser, cvHtml, cvPdfPath);
+      logger.success('CV generated successfully');
+    } else {
+      logger.warn('No CV markdown file found');
+    }
+
+    // Process Cover Letter
+    const coverLetterPath = await findSourceFile(
+      resolvedJobDir,
+      config.sourceFileNames.coverLetter,
+    );
+    if (coverLetterPath) {
+      logger.info(`Found Cover Letter at: ${coverLetterPath}`);
+      const coverLetterHtml = await convertMarkdownToHTML(coverLetterPath);
+      const coverLetterHtmlPath = path.join(outputDir, 'cover-letter.html');
+      const coverLetterPdfPath = path.join(outputDir, 'cover-letter.pdf');
+
+      writeFileSync(coverLetterHtmlPath, coverLetterHtml);
+      await convertHTMLToPDF(browser, coverLetterHtml, coverLetterPdfPath);
+
+      // Check cover letter length
+      const pdfBytes = readFileSync(coverLetterPdfPath);
+      const pdfDoc = await PDFDocument.load(pdfBytes);
+      if (pdfDoc.getPageCount() > 1) {
+        logger.warn('Cover letter is more than one page!');
+      }
+
+      logger.success('Cover Letter generated successfully');
+    } else {
+      logger.warn('No Cover Letter markdown file found');
+    }
+  } catch (error) {
+    if (error instanceof DocumentGenerationError) {
+      logger.error(`${error.code}: ${error.message}`);
+    } else {
+      logger.error(`Unexpected error: ${error.message}`);
+    }
+    throw error;
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
+}
+
+// Main execution
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+
+if (isMainModule) {
+  const jobDir = process.argv[2];
+  if (!jobDir) {
+    logger.error('Please provide a job directory path');
     process.exit(1);
-  });
+  }
+
+  generatePDFsForJob(jobDir)
+    .then(() => {
+      logger.success('PDF generation completed');
+    })
+    .catch(() => {
+      process.exit(1);
+    });
+}
+
+export { generatePDFsForJob };

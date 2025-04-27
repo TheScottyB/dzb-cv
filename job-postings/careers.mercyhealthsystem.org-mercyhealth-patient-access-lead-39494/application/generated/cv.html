@@ -3,19 +3,208 @@
 <head>
   <meta charset="UTF-8">
   <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
       line-height: 1.6;
       max-width: 8.5in;
       margin: 0 auto;
       padding: 1in;
-      color: #333;
+      color: #2c3e50;
+      background: #fff;
     }
-    h1, h2, h3 { color: #222; }
-    hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
-    ul { margin: 0.7em 0; padding-left: 1.2em; }
-    li { margin: 0.4em 0; }
-    strong { color: #000; }
+
+    /* Typography */
+    h1 {
+      font-size: 24px;
+      color: #1a365d;
+      margin-bottom: 0.5em;
+      border-bottom: 2px solid #3182ce;
+      padding-bottom: 0.3em;
+    }
+
+    h2 {
+      font-size: 20px;
+      color: #2c5282;
+      margin-top: 1.5em;
+      margin-bottom: 0.75em;
+      border-bottom: 1px solid #bee3f8;
+      padding-bottom: 0.3em;
+    }
+
+    h3 {
+      font-size: 16px;
+      color: #2b6cb0;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+    }
+
+    p {
+      margin-bottom: 0.75em;
+      text-align: justify;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: 0.7em 0;
+      padding-left: 1.5em;
+    }
+
+    li {
+      margin: 0.5em 0;
+      line-height: 1.4;
+      padding-left: 0.5em;
+    }
+
+    /* Contact Info */
+    .header-info {
+      text-align: center;
+      margin-bottom: 2em;
+      line-height: 1.8;
+    }
+
+    .header-info p {
+      text-align: center;
+      margin-bottom: 0.2em;
+    }
+
+    /* Address Block */
+    .address-block {
+      margin: 2em 0;
+      line-height: 1.8;
+    }
+
+    .address-block p {
+      text-align: left;
+      margin-bottom: 0;
+    }
+
+    /* Horizontal Rules */
+    hr {
+      border: none;
+      border-top: 1px solid #e2e8f0;
+      margin: 2em 0;
+    }
+
+    /* Links */
+    a {
+      color: #3182ce;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Emphasis */
+    strong {
+      color: #1a365d;
+      font-weight: 600;
+    }
+
+    em {
+      color: #2c5282;
+    }
+
+    /* Job Experience */
+    .experience-item {
+      margin-bottom: 2em;
+    }
+
+    .job-header {
+      margin-bottom: 0.75em;
+    }
+
+    .job-title {
+      font-weight: 600;
+      color: #2c5282;
+      display: block;
+    }
+
+    .job-company {
+      font-weight: 500;
+      color: #4a5568;
+    }
+
+    .job-date {
+      color: #718096;
+      font-style: italic;
+      font-size: 0.9em;
+    }
+
+    /* Skills and Qualifications */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 0.75em;
+      margin: 1em 0;
+    }
+
+    .skills-grid li {
+      background-color: #f7fafc;
+      padding: 0.5em 1em;
+      border-radius: 4px;
+      margin: 0;
+      list-style: none;
+      border-left: 3px solid #3182ce;
+    }
+
+    /* Cover Letter Specific */
+    .cover-letter {
+      line-height: 1.8;
+    }
+
+    .cover-letter .salutation {
+      margin: 2em 0;
+    }
+
+    .cover-letter .signature {
+      margin-top: 2em;
+    }
+
+    .cover-letter .signature-name {
+      margin-top: 1em;
+      font-weight: 500;
+    }
+
+    .cover-letter ul {
+      margin: 1.5em 0;
+    }
+
+    .cover-letter li {
+      margin: 1em 0;
+    }
+
+    /* Print-specific styles */
+    @media print {
+      body {
+        padding: 0.5in;
+        font-size: 11pt;
+      }
+
+      h1 { font-size: 18pt; }
+      h2 { font-size: 14pt; }
+      h3 { font-size: 12pt; }
+
+      a {
+        color: #2c5282;
+        text-decoration: none;
+      }
+
+      .page-break {
+        page-break-before: always;
+      }
+
+      .cover-letter {
+        font-size: 11pt;
+      }
+    }
   </style>
 </head>
 <body>
