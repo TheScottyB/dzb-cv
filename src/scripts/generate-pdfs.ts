@@ -4,8 +4,6 @@
 // This script will look for source/Dawn_Zurick_Beilfuss_CV.md and source/Dawn_Zurick_Beilfuss_Cover_Letter.md in the given directory,
 // and output HTML and PDF versions to generated/.
 
-import { MarkdownConverter } from '../utils/markdown-converter.js';
-import { HTMLToPDFConverter } from '../utils/html-to-pdf.js';
 import { PDFDocument } from 'pdf-lib';
 import fs from 'fs/promises';
 import path from 'path';
@@ -13,6 +11,7 @@ import chalk from 'chalk';
 import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { marked } from 'marked';
+import puppeteer from 'puppeteer';
 
 async function resolveJobDir(inputPath: string): Promise<string> {
   // If input is a job-data.json file, resolve the folder name
@@ -47,6 +46,50 @@ async function resolveJobDir(inputPath: string): Promise<string> {
     );
   }
   return inputPath;
+}
+
+async function convertHTMLToPDF(htmlPath: string, pdfPath: string): Promise<void> {
+  const browser = await puppeteer.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    const html = readFileSync(htmlPath, 'utf8');
+    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.pdf({
+      path: pdfPath,
+      format: 'Letter',
+      margin: { top: '1in', right: '1in', bottom: '1in', left: '1in' },
+      printBackground: true,
+    });
+  } finally {
+    await browser.close();
+  }
+}
+
+function generateHTML(markdown: string): string {
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      max-width: 8.5in;
+      margin: 0 auto;
+      padding: 1in;
+      color: #333;
+    }
+    h1, h2, h3 { color: #222; }
+    hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
+    ul { margin: 0.7em 0; padding-left: 1.2em; }
+    li { margin: 0.4em 0; }
+    strong { color: #000; }
+  </style>
+</head>
+<body>
+  ${marked.parse(markdown)}
+</body>
+</html>`;
 }
 
 async function generatePDFsForJob(jobDir: string) {
@@ -104,21 +147,20 @@ async function generatePDFsForJob(jobDir: string) {
   // Generate HTML and PDF for CV if markdown exists
   if (cvMarkdownPath) {
     const cvMarkdown = readFileSync(cvMarkdownPath, 'utf8');
-    const cvHtml = marked.parse(cvMarkdown);
-    writeFileSync(path.join(generatedDir, 'cv.html'), cvHtml);
-    await convertHTMLToPDF(path.join(generatedDir, 'cv.html'), path.join(generatedDir, 'cv.pdf'));
+    const cvHtml = generateHTML(cvMarkdown);
+    const cvHtmlPath = path.join(generatedDir, 'cv.html');
+    writeFileSync(cvHtmlPath, cvHtml);
+    await convertHTMLToPDF(cvHtmlPath, path.join(generatedDir, 'cv.pdf'));
     console.log(chalk.green('✓ Generated CV HTML and PDF'));
   }
 
   // Generate HTML and PDF for cover letter if markdown exists
   if (coverLetterMarkdownPath) {
     const coverLetterMarkdown = readFileSync(coverLetterMarkdownPath, 'utf8');
-    const coverLetterHtml = marked.parse(coverLetterMarkdown);
-    writeFileSync(path.join(generatedDir, 'cover-letter.html'), coverLetterHtml);
-    await convertHTMLToPDF(
-      path.join(generatedDir, 'cover-letter.html'),
-      path.join(generatedDir, 'cover-letter.pdf'),
-    );
+    const coverLetterHtml = generateHTML(coverLetterMarkdown);
+    const coverLetterHtmlPath = path.join(generatedDir, 'cover-letter.html');
+    writeFileSync(coverLetterHtmlPath, coverLetterHtml);
+    await convertHTMLToPDF(coverLetterHtmlPath, path.join(generatedDir, 'cover-letter.pdf'));
     console.log(chalk.green('✓ Generated Cover Letter HTML and PDF'));
 
     // Check if cover letter is more than one page
