@@ -7,10 +7,12 @@
 import { MarkdownConverter } from '../utils/markdown-converter.js';
 import { HTMLToPDFConverter } from '../utils/html-to-pdf.js';
 import { PDFDocument } from 'pdf-lib';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import fs from 'fs/promises';
+import path from 'path';
 import chalk from 'chalk';
 import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { marked } from 'marked';
 
 async function resolveJobDir(inputPath: string): Promise<string> {
   // If input is a job-data.json file, resolve the folder name
@@ -48,74 +50,85 @@ async function resolveJobDir(inputPath: string): Promise<string> {
 }
 
 async function generatePDFsForJob(jobDir: string) {
-  // Use pdfMode for PDF output
-  const markdownConverter = new MarkdownConverter({}, true);
-  const htmlToPdf = new HTMLToPDFConverter();
-
-  const sourceDir = path.join(jobDir, 'source');
-  const generatedDir = path.join(jobDir, 'generated');
-  await fs.mkdir(generatedDir, { recursive: true });
-
-  // File names
-  const files = [
-    {
-      name: 'CV',
-      md: 'Dawn_Zurick_Beilfuss_CV.md',
-      html: 'Dawn_Zurick_Beilfuss_CV.html',
-      pdf: 'Dawn_Zurick_Beilfuss_CV.pdf',
-      title: 'Dawn Zurick Beilfuss',
-      subtitle: 'Curriculum Vitae',
-    },
-    {
-      name: 'Cover Letter',
-      md: 'Dawn_Zurick_Beilfuss_Cover_Letter.md',
-      html: 'Dawn_Zurick_Beilfuss_Cover_Letter.html',
-      pdf: 'Dawn_Zurick_Beilfuss_Cover_Letter.pdf',
-      title: 'Dawn Zurick Beilfuss',
-      subtitle: 'Cover Letter',
-    },
+  // First try the direct application directory
+  const cvMarkdownPaths = [
+    path.join(jobDir, 'cv.md'),
+    path.join(jobDir, 'source', 'Dawn_Zurick_Beilfuss_CV.md'),
   ];
 
-  for (const file of files) {
-    const mdPath = path.join(sourceDir, file.md);
-    try {
-      const markdown = await fs.readFile(mdPath, 'utf-8');
-      // Convert to HTML (normal for HTML output, pdfMode for PDF output)
-      const html = markdownConverter.convertToHTML(markdown, file.title, file.subtitle, {
-        suppressHeadings: true,
-        pdfMode: false,
-      });
-      const htmlPath = path.join(generatedDir, file.html);
-      await fs.writeFile(htmlPath, html);
-      // Convert to PDF (with pdfMode and suppressHeadings)
-      const pdfHtml = markdownConverter.convertToHTML(markdown, file.title, file.subtitle, {
-        suppressHeadings: true,
-        pdfMode: true,
-      });
-      const pdfBytes = await htmlToPdf.convertToPDF(pdfHtml);
-      const pdfPath = path.join(generatedDir, file.pdf);
-      await fs.writeFile(pdfPath, pdfBytes);
-      // For cover letter, warn if >1 page
-      if (file.name === 'Cover Letter') {
-        const pdfDoc = await PDFDocument.load(pdfBytes);
-        if (pdfDoc.getPageCount() > 1) {
-          console.warn(
-            chalk.yellow('⚠️  Warning:'),
-            'Cover letter exceeds one page! Consider shortening the content or adjusting formatting.',
-          );
-        }
-      }
-      console.log(chalk.green('✅'), `${file.name}: HTML and PDF generated.`);
-    } catch (err: any) {
-      if (err.code === 'ENOENT') {
-        console.warn(chalk.yellow('⚠️'), `${file.name} markdown not found at ${mdPath}, skipping.`);
-      } else {
-        console.error(chalk.red('❌'), `Error processing ${file.name}:`, err);
-      }
+  const coverLetterMarkdownPaths = [
+    path.join(jobDir, 'cover-letter.md'),
+    path.join(jobDir, 'source', 'Dawn_Zurick_Beilfuss_Cover_Letter.md'),
+  ];
+
+  // Try to find CV markdown
+  let cvMarkdownPath: string | null = null;
+  for (const p of cvMarkdownPaths) {
+    if (existsSync(p)) {
+      cvMarkdownPath = p;
+      break;
     }
   }
-  await htmlToPdf.close();
-  console.log(chalk.blueBright('Done!'));
+
+  // Try to find cover letter markdown
+  let coverLetterMarkdownPath: string | null = null;
+  for (const p of coverLetterMarkdownPaths) {
+    if (existsSync(p)) {
+      coverLetterMarkdownPath = p;
+      break;
+    }
+  }
+
+  if (!cvMarkdownPath) {
+    console.warn(chalk.yellow('⚠️ CV markdown not found at any of these locations:'));
+    for (const p of cvMarkdownPaths) {
+      console.warn(chalk.yellow(p));
+    }
+    console.warn(chalk.yellow('skipping.'));
+  }
+
+  if (!coverLetterMarkdownPath) {
+    console.warn(chalk.yellow('⚠️ Cover Letter markdown not found at any of these locations:'));
+    for (const p of coverLetterMarkdownPaths) {
+      console.warn(chalk.yellow(p));
+    }
+    console.warn(chalk.yellow('skipping.'));
+  }
+
+  // Create generated directory if it doesn't exist
+  const generatedDir = path.join(jobDir, 'generated');
+  if (!existsSync(generatedDir)) {
+    mkdirSync(generatedDir);
+  }
+
+  // Generate HTML and PDF for CV if markdown exists
+  if (cvMarkdownPath) {
+    const cvMarkdown = readFileSync(cvMarkdownPath, 'utf8');
+    const cvHtml = marked.parse(cvMarkdown);
+    writeFileSync(path.join(generatedDir, 'cv.html'), cvHtml);
+    await convertHTMLToPDF(path.join(generatedDir, 'cv.html'), path.join(generatedDir, 'cv.pdf'));
+    console.log(chalk.green('✓ Generated CV HTML and PDF'));
+  }
+
+  // Generate HTML and PDF for cover letter if markdown exists
+  if (coverLetterMarkdownPath) {
+    const coverLetterMarkdown = readFileSync(coverLetterMarkdownPath, 'utf8');
+    const coverLetterHtml = marked.parse(coverLetterMarkdown);
+    writeFileSync(path.join(generatedDir, 'cover-letter.html'), coverLetterHtml);
+    await convertHTMLToPDF(
+      path.join(generatedDir, 'cover-letter.html'),
+      path.join(generatedDir, 'cover-letter.pdf'),
+    );
+    console.log(chalk.green('✓ Generated Cover Letter HTML and PDF'));
+
+    // Check if cover letter is more than one page
+    const pdfPath = path.join(generatedDir, 'cover-letter.pdf');
+    const pdfBytes = readFileSync(pdfPath);
+    const pdfDoc = await PDFDocument.load(pdfBytes);
+    if (pdfDoc.getPageCount() > 1) {
+      console.warn(chalk.yellow('⚠️ Warning: Cover letter is more than one page!'));
+    }
+  }
 }
 
 // Accept CLI argument for job posting directory or job-data.json

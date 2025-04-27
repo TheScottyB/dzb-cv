@@ -38,11 +38,25 @@ export interface ExternalATSAnalysisResponse {
   compatibilityScore: number;
   format: {
     isValid: boolean;
-    issues: string[];
+    issues: Array<{
+      type: string;
+      category: string;
+      message: string;
+      fix: string;
+      score: number;
+      detected: string;
+    }>;
   };
   content: {
     isValid: boolean;
-    issues: string[];
+    issues: Array<{
+      type: string;
+      category: string;
+      message: string;
+      fix: string;
+      score: number;
+      detected: string;
+    }>;
   };
 }
 
@@ -53,7 +67,7 @@ export class ATSApiError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public response?: any
+    public response?: any,
   ) {
     super(message);
     this.name = 'ATSApiError';
@@ -69,7 +83,7 @@ export class ATSApiClient {
   constructor(options: JobBoardAPIOptions) {
     this.options = {
       timeout: 30000, // Default timeout of 30 seconds
-      ...options
+      ...options,
     };
   }
 
@@ -82,36 +96,34 @@ export class ATSApiClient {
   private async makeRequest<T>(
     endpoint: string,
     method: 'GET' | 'POST' = 'GET',
-    body?: unknown
+    body?: unknown,
   ): Promise<T> {
     try {
       const response = await fetch(`${this.options.baseUrl}${endpoint}`, {
         method,
         headers: {
-          'Authorization': `Bearer ${this.options.apiKey}`,
+          Authorization: `Bearer ${this.options.apiKey}`,
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          Accept: 'application/json',
         },
         body: body ? JSON.stringify(body) : null,
-        signal: AbortSignal.timeout(this.options.timeout)
+        signal: AbortSignal.timeout(this.options.timeout),
       });
 
       if (!response.ok) {
         throw new ATSApiError(
           `API request failed: ${response.statusText}`,
           response.status,
-          await response.json().catch(() => null)
+          await response.json().catch(() => null),
         );
       }
 
-      return await response.json() as T;
+      return (await response.json()) as T;
     } catch (error) {
       if (error instanceof ATSApiError) {
         throw error;
       }
-      throw new ATSApiError(
-        error instanceof Error ? error.message : 'Unknown API error'
-      );
+      throw new ATSApiError(error instanceof Error ? error.message : 'Unknown API error');
     }
   }
 
@@ -130,13 +142,12 @@ export class ATSApiClient {
    */
   async analyzeResumeForJob(
     resumeData: string,
-    jobId: string
+    jobId: string,
   ): Promise<ExternalATSAnalysisResponse> {
-    return this.makeRequest<ExternalATSAnalysisResponse>(
-      '/analyze',
-      'POST',
-      { resume: resumeData, jobId }
-    );
+    return this.makeRequest<ExternalATSAnalysisResponse>('/analyze', 'POST', {
+      resume: resumeData,
+      jobId,
+    });
   }
 
   /**
@@ -144,11 +155,9 @@ export class ATSApiClient {
    * @param jobDescription Full text of job description
    */
   async extractKeywords(jobDescription: string): Promise<string[]> {
-    const result = await this.makeRequest<{ keywords: string[] }>(
-      '/keywords/extract',
-      'POST',
-      { text: jobDescription }
-    );
+    const result = await this.makeRequest<{ keywords: string[] }>('/keywords/extract', 'POST', {
+      text: jobDescription,
+    });
     return result.keywords;
   }
 
@@ -185,26 +194,24 @@ export class ATSApiClient {
    * @param externalAnalysis Analysis result from external API
    */
   convertExternalAnalysis(
-    externalAnalysis: ExternalATSAnalysisResponse
+    externalAnalysis: ExternalATSAnalysisResponse,
   ): Partial<ATSAnalysisResult> {
-    const formatIssues: ATSIssue[] = externalAnalysis.format.issues.map(issue => ({
-      type: this.mapExternalIssueType('format'),
-      category: this.mapExternalIssueCategory('format'),
-      score: -5, // Default penalty for format issues
-      message: issue,
-      fix: 'Review and fix formatting issues',
-      examples: ['Use simple formatting', 'Avoid tables and columns'],
-      detected: issue
+    const formatIssues: ATSIssue[] = externalAnalysis.format.issues.map((issue) => ({
+      type: issue.type as ATSIssueType,
+      category: issue.category as ATSIssueCategory,
+      message: issue.message,
+      fix: issue.fix,
+      impact: issue.score,
+      location: issue.detected,
     }));
 
-    const contentIssues: ATSIssue[] = externalAnalysis.content.issues.map(issue => ({
-      type: this.mapExternalIssueType('content'),
-      category: this.mapExternalIssueCategory('content'),
-      score: -3, // Default penalty for content issues
-      message: issue,
-      fix: 'Review and improve content',
-      examples: ['Add more details', 'Use industry-standard terms'],
-      detected: issue
+    const contentIssues: ATSIssue[] = externalAnalysis.content.issues.map((issue) => ({
+      type: issue.type as ATSIssueType,
+      category: issue.category as ATSIssueCategory,
+      message: issue.message,
+      fix: issue.fix,
+      impact: issue.score,
+      location: issue.detected,
     }));
 
     return {
@@ -213,10 +220,10 @@ export class ATSApiClient {
       keywords: {
         found: externalAnalysis.keywords,
         missing: externalAnalysis.missingKeywords,
-        relevanceScore: externalAnalysis.compatibilityScore
+        relevanceScore: externalAnalysis.compatibilityScore,
       },
       issues: [...formatIssues, ...contentIssues],
-      recommendation: externalAnalysis.feedback.join(' ')
+      recommendation: externalAnalysis.feedback.join(' '),
     };
   }
 
@@ -231,7 +238,7 @@ export class ATSApiClient {
       'Greenhouse',
       'Jobvite',
       'ADP Recruiting',
-      'SmartRecruiters'
+      'SmartRecruiters',
     ];
   }
 }
@@ -242,4 +249,4 @@ export class ATSApiClient {
  */
 export function createATSApiClient(options: JobBoardAPIOptions): ATSApiClient {
   return new ATSApiClient(options);
-} 
+}

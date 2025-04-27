@@ -41,7 +41,7 @@ export class ResumeAnalysisEngine {
   async analyzeResume(
     buffer: Buffer,
     mimeType: string,
-    jobId?: string
+    jobId?: string,
   ): Promise<ResumeAnalysisResult> {
     // Parse resume using ML parser
     const parsed = await this.mlParser.parseResume(buffer, mimeType);
@@ -58,25 +58,54 @@ export class ResumeAnalysisEngine {
         // Get ATS analysis from external API
         const externalAnalysis = await this.atsApiClient.analyzeResumeForJob(
           buffer.toString('base64'),
-          jobId
+          jobId,
         );
-        atsAnalysis = this.atsApiClient.convertExternalAnalysis(externalAnalysis);
+
+        // Convert external analysis to our format
+        atsAnalysis = {
+          score: 0,
+          issues: [],
+          improvements: [],
+          keywords: {
+            found: [],
+            missing: [],
+            relevanceScore: 0,
+          },
+          parseRate: 0,
+          sectionScores: {},
+          recommendation: '',
+        };
+
+        if (externalAnalysis) {
+          const converted = this.atsApiClient.convertExternalAnalysis(externalAnalysis);
+          atsAnalysis = {
+            ...atsAnalysis,
+            ...converted,
+            score: converted.score ?? 0,
+            parseRate: converted.parseRate ?? 0,
+            keywords: {
+              found: converted.keywords?.found ?? [],
+              missing: converted.keywords?.missing ?? [],
+              relevanceScore: converted.keywords?.relevanceScore ?? 0,
+            },
+          };
+        }
       } catch (error) {
         console.error('Failed to get job details or ATS analysis:', error);
       }
     }
 
     // Get ML analysis
-    const mlAnalysis = await this.mlParser.analyzeResume(
-      parsed,
-      jobDescription ?? ''
-    );
+    const mlAnalysis = await this.mlParser.analyzeResume(parsed, jobDescription ?? '');
 
     // Combine suggestions from both analyses
     const suggestions = [
       ...mlAnalysis.suggestions,
-      ...(atsAnalysis?.issues.map(issue => issue.fix) ?? [])
+      ...(atsAnalysis?.issues.map((issue) => issue.fix) ?? []),
     ];
+
+    // Filter out undefined suggestions
+    const validSuggestions = suggestions.filter((s): s is string => s !== undefined);
 
     // Calculate combined score
     const combinedScore = this.calculateCombinedScore(mlAnalysis, atsAnalysis);
@@ -86,7 +115,7 @@ export class ResumeAnalysisEngine {
       mlAnalysis,
       atsAnalysis,
       combinedScore,
-      suggestions: [...new Set(suggestions)] // Remove duplicates
+      suggestions: validSuggestions,
     };
   }
 
@@ -95,14 +124,14 @@ export class ResumeAnalysisEngine {
    */
   private calculateCombinedScore(
     mlAnalysis: MLAnalysisResult,
-    atsAnalysis?: ATSAnalysisResult
+    atsAnalysis?: ATSAnalysisResult,
   ): number {
     if (!atsAnalysis) {
       return mlAnalysis.overallMatch;
     }
 
     // Weight ML analysis more heavily as it's more detailed
-    return (mlAnalysis.overallMatch * 0.6 + atsAnalysis.score * 0.4);
+    return mlAnalysis.overallMatch * 0.6 + atsAnalysis.score * 0.4;
   }
 
   /**
@@ -127,4 +156,4 @@ export class ResumeAnalysisEngine {
   updateMlConfig(options: MLParserOptions): void {
     this.mlParser = new MLResumeParser(options);
   }
-} 
+}

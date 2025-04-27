@@ -1,0 +1,71 @@
+{
+    "title": "Patient Access Lead",
+    "company": "Mercyhealth",
+    "facility": "Javon Bea Hospital-Riverside",
+    "location": {
+        "city": "Rockford",
+        "state": "Illinois",
+        "zip": "61114",
+        "address": "8201 E Riverside Blvd"
+    },
+    "job_id": "39494",
+    "posting_date": "2025-04-23",
+    "source_url": "https://careers.mercyhealthsystem.org/jobs/39494",
+    "employment_type": "FULL_TIME",
+    "schedule": "2nd Shift, 80 Hrs/2 wks",
+    "department": "Patient Access",
+    "category": "Administrative / Clerical",
+    "compensation": {
+        "type": "Hourly",
+        "range": {
+            "min": 23.18,
+            "max": 34.78,
+            "currency": "USD"
+        }
+    },
+    "overview": "Plans and supervises activities within the Office of Patient Access Management. Develops and updates department workflows and expectations. Assigns work and coordinates activities to maintain efficient workflow. Monitors quantity and quality of work performed. Interviews, trains, supervises and evaluates employees. Maintains equipment and supplies for the department. Participates in process improvement activities and makes recommendations for new/revised policies, procedures and workflows. Considers impacts and anticipates barriers and develops alternatives. Must have knowledge of all software systems. Must understand Mercyhealth policies and procedures pertinent to operations and must understand revenue cycle operations. Assigned Departments include all access areas (Hospital Registration, Financial Resource Specialists, Registration Specialists, Precertification Specialists, Patient Access Specialists, Training Specialists, Seniors Program Coordinators etc.) This position will also provide dotted line oversight to other front-end operations such as reception and patient service representative in conjunction with clinic and hospital leadership.",
+    "education": {
+        "required": "High school diploma or equivalent preferred",
+        "preferred": "Associates degree in a business or healthcare field"
+    },
+    "experience": {
+        "required": "Two years of patient access, revenue cycle or other healthcare experience",
+        "preferred": "One year prior leadership related experience"
+    },
+    "certifications": {
+        "required": "Healthcare revenue cycle related certification or equivalent within 1 year"
+    },
+    "skills": [
+        "Strong interpersonal/oral/communication skills",
+        "Analytical skills",
+        "Keyboard and typing skills",
+        "Ability to handle stress",
+        "Knowledge of PPM and STAR billing systems (desirable)",
+        "Microsoft Word and Excel experience (desirable)"
+    ],
+    "physical_demands": {
+        "lifting": "10-25 lbs frequently, 25-60 lbs occasionally",
+        "other": [
+            "Frequent sitting, handling, fingering, feeling, reaching, talking and hearing",
+            "Occasional standing, walking, stooping, kneeling, crouching and crawling",
+            "Close vision and ability to adjust focus",
+            "Manual dexterity for telephone and keyboard",
+            "Ability to push patient in wheelchair"
+        ]
+    },
+    "benefits": [
+        "Retirement plan with matching contribution",
+        "Medical, dental, and vision insurance",
+        "Life and disability coverage",
+        "Flexible spending plans",
+        "Competitive pay with shift differentials",
+        "Generous paid time off",
+        "Educational assistance programs",
+        "Career advancement opportunities",
+        "Employee wellness programs",
+        "Employee assistance programs",
+        "Employee discounts",
+        "Paid parental and caregiver leaves",
+        "On-demand pay"
+    ]
+}

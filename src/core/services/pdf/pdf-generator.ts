@@ -32,25 +32,44 @@ export interface PDFGenerationOptions {
   orientation?: 'portrait' | 'landscape';
   /** Font family to use in the PDF */
   fontFamily?: string;
+  /** Template to use */
+  template?: 'default' | 'minimal' | 'federal' | 'academic';
 }
 
 /**
- * Interface for PDF generation
+ * Abstract base class for PDF generation
  */
-export interface IPDFGenerator {
-  generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer>;
-  generateFromMarkdown(markdown: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string>;
-  generateFromHTML(html: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string>;
-  generateFromTemplate(templatePath: string, data: CVData, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string>;
+export abstract class PDFGenerator {
+  abstract generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer>;
+  abstract generateFromMarkdown(
+    markdown: string,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string>;
+  abstract generateFromHTML(
+    html: string,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string>;
+  abstract generateFromTemplate(
+    templatePath: string,
+    data: CVData,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string>;
+  protected abstract generateHTML(data: CVData): string;
 }
 
 /**
- * Concrete implementation of PDF Generator
+ * Default implementation of PDF Generator
  */
-export class PDFGenerator implements IPDFGenerator {
+export class DefaultPDFGenerator extends PDFGenerator {
   async generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer> {
     // Template validation: fail fast for unknown types
-    if (options?.template && !['default', 'minimal', 'federal', 'academic'].includes(options.template)) {
+    if (
+      options?.template &&
+      !['default', 'minimal', 'federal', 'academic'].includes(options.template)
+    ) {
       throw new Error(`Template '${options.template}' not found`);
     }
     const browser = await puppeteer.launch();
@@ -58,7 +77,7 @@ export class PDFGenerator implements IPDFGenerator {
       const page = await browser.newPage();
       const html = this.generateHTML(data);
       await page.setContent(html);
-      
+
       const pdfOptions = {
         format: (options?.paperSize || 'letter') as PaperFormat,
         margin: options?.margins || { top: '1in', right: '1in', bottom: '1in', left: '1in' },
@@ -66,9 +85,9 @@ export class PDFGenerator implements IPDFGenerator {
         displayHeaderFooter: options?.includeHeaderFooter || false,
         headerTemplate: options?.headerText || '',
         footerTemplate: options?.footerText || '',
-        landscape: options?.orientation === 'landscape'
+        landscape: options?.orientation === 'landscape',
       };
-      
+
       const pdfBuffer = await page.pdf(pdfOptions);
       return Buffer.from(pdfBuffer);
     } finally {
@@ -76,7 +95,11 @@ export class PDFGenerator implements IPDFGenerator {
     }
   }
 
-  async generateFromMarkdown(markdown: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+  async generateFromMarkdown(
+    markdown: string,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string> {
     const fs = await import('fs');
     const path = await import('path');
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
@@ -85,7 +108,11 @@ export class PDFGenerator implements IPDFGenerator {
     return result;
   }
 
-  async generateFromHTML(html: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+  async generateFromHTML(
+    html: string,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string> {
     const fs = await import('fs');
     const path = await import('path');
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
@@ -93,7 +120,7 @@ export class PDFGenerator implements IPDFGenerator {
     try {
       const page = await browser.newPage();
       await page.setContent(html);
-      
+
       const pdfOptions = {
         path: outputPath,
         format: (options?.paperSize || 'letter') as PaperFormat,
@@ -102,9 +129,9 @@ export class PDFGenerator implements IPDFGenerator {
         displayHeaderFooter: options?.includeHeaderFooter || false,
         headerTemplate: options?.headerText || '',
         footerTemplate: options?.footerText || '',
-        landscape: options?.orientation === 'landscape'
+        landscape: options?.orientation === 'landscape',
       };
-      
+
       await page.pdf(pdfOptions);
       return outputPath;
     } finally {
@@ -112,7 +139,12 @@ export class PDFGenerator implements IPDFGenerator {
     }
   }
 
-  async generateFromTemplate(templatePath: string, data: CVData, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+  async generateFromTemplate(
+    templatePath: string,
+    data: CVData,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string> {
     const templateContent = readFileSync(templatePath, 'utf-8');
     const template = handlebars.compile(templateContent);
     const html = template(data);
@@ -120,7 +152,7 @@ export class PDFGenerator implements IPDFGenerator {
     return result;
   }
 
-  private generateHTML(data: CVData): string {
+  protected generateHTML(data: CVData): string {
     // Basic HTML template
     return `
       <!DOCTYPE html>
@@ -142,42 +174,50 @@ export class PDFGenerator implements IPDFGenerator {
           
           <div class="section">
             <h2>Professional Experience</h2>
-            ${data.experience.map(exp => `
+            ${data.experience
+              .map(
+                (exp) => `
               <div>
-                <h3>${exp.position} at ${exp.employer}</h3>
+                <h3>${exp.title} at ${exp.company}</h3>
                 <p>${exp.startDate} - ${exp.endDate || 'Present'}</p>
                 <ul>
-                  ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
+                  ${exp.responsibilities.map((r) => `<li>${r}</li>`).join('')}
                 </ul>
               </div>
-            `).join('')}
+            `,
+              )
+              .join('')}
           </div>
 
           <div class="section">
             <h2>Education</h2>
-            ${data.education.map(edu => `
+            ${data.education
+              .map(
+                (edu) => `
               <div>
                 <h3>${edu.degree} - ${edu.institution}</h3>
                 <p>${edu.year}</p>
               </div>
-            `).join('')}
+            `,
+              )
+              .join('')}
           </div>
 
           <div class="section">
             <h2>Skills</h2>
             <ul>
-              ${data.skills.map(skill => `<li>${skill}</li>`).join('')}
+              ${data.skills.map((skill) => `<li>${skill}</li>`).join('')}
             </ul>
           </div>
 
           <div class="section">
             <h2>Certifications</h2>
             <ul>
-              ${data.certifications.map(cert => `<li>${cert}</li>`).join('')}
+              ${data.certifications.map((cert) => `<li>${cert}</li>`).join('')}
             </ul>
           </div>
         </body>
       </html>
     `;
   }
-} 
+}

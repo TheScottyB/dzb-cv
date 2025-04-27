@@ -5,6 +5,8 @@ export interface CVData {
       first?: string;
       last?: string;
     };
+    title?: string;
+    citizenship?: string;
     contact: {
       email: string;
       phone: string;
@@ -14,6 +16,7 @@ export interface CVData {
     };
     summary?: string;
   };
+  professionalSummary?: string;
   experience: Array<{
     title: string;
     company: string;
@@ -22,8 +25,14 @@ export interface CVData {
     endDate?: string;
     responsibilities: string[];
     achievements?: string[];
-    employment_type?: 'full-time' | 'part-time' | 'contract' | 'internship' | 'academic' | 'government';
-    grade_level?: string;  // For government positions
+    employment_type?:
+      | 'full-time'
+      | 'part-time'
+      | 'contract'
+      | 'internship'
+      | 'academic'
+      | 'government';
+    grade_level?: string; // For government positions
   }>;
   education: Array<{
     degree: string;
@@ -68,4 +77,4 @@ export interface CVData {
     endDate?: string;
     description?: string;
   }>;
-}; 
+}

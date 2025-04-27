@@ -4,7 +4,7 @@ export enum ATSIssueCategory {
   CRITICAL = 'CRITICAL',
   HIGH = 'HIGH',
   MEDIUM = 'MEDIUM',
-  LOW = 'LOW'
+  LOW = 'LOW',
 }
 
 export enum ATSIssueType {
@@ -32,7 +32,16 @@ export enum ATSIssueType {
   EXCESSIVE_SPACING = 'EXCESSIVE_SPACING',
   UNNECESSARY_STYLING = 'UNNECESSARY_STYLING',
   INCONSISTENT_FORMATTING = 'INCONSISTENT_FORMATTING',
-  FILE_SIZE_LARGE = 'FILE_SIZE_LARGE'
+  FILE_SIZE_LARGE = 'FILE_SIZE_LARGE',
+}
+
+export interface ATSIssue {
+  type: ATSIssueType;
+  category: ATSIssueCategory;
+  message: string;
+  location?: string;
+  impact: number;
+  fix?: string;
 }
 
 export interface ATSImprovement {
@@ -63,7 +72,7 @@ export interface ATSAnalysisResult {
 export function analyzeATS(
   resumeText: string,
   fileInfo: { format: string; size: number },
-  jobDescription?: string
+  jobDescription?: string,
 ): ATSAnalysisResult {
   return {
     score: 0,
@@ -72,7 +81,7 @@ export function analyzeATS(
     keywords: { found: [], missing: [], relevanceScore: 0 },
     parseRate: 0,
     sectionScores: {},
-    recommendation: "",
+    recommendation: '',
   };
 }
 
@@ -82,32 +91,32 @@ export const ATS_SCORING = {
     MISSING_DATES: -8,
     INCORRECT_DATE_FORMAT: -9,
     INCOMPATIBLE_FILE_FORMAT: -10,
-    SCANNED_DOCUMENT: -10
+    SCANNED_DOCUMENT: -10,
   },
   HIGH: {
     NONSTANDARD_HEADERS: -5,
     TABLE_LAYOUTS: -6,
     MULTICOLUMN_LAYOUT: -7,
     CONTACT_FORMAT: -5,
-    MISSING_KEYWORDS: -7
+    MISSING_KEYWORDS: -7,
   },
   MEDIUM: {
     COMPLEX_FORMATTING: -3,
     SPECIAL_CHARS: -3,
     FONT_ISSUES: -4,
     GRAPHICS_CHARTS: -4,
-    HEADER_FOOTER_INFO: -3
+    HEADER_FOOTER_INFO: -3,
   },
   LOW: {
     EXCESSIVE_SPACING: -2,
     UNNECESSARY_STYLING: -1,
     INCONSISTENT_FORMATTING: -2,
-    FILE_SIZE_LARGE: -1
+    FILE_SIZE_LARGE: -1,
   },
   BONUSES: {
     KEYWORD_DENSITY: 5,
     STANDARD_FORMAT: 3,
     CONSISTENT_DATES: 2,
-    PROPER_SECTION_HEADERS: 2
-  }
-} as const; 
+    PROPER_SECTION_HEADERS: 2,
+  },
+} as const;

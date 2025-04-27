@@ -1,22 +1,23 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { PDFOptions } from 'puppeteer';
 import MarkdownIt from 'markdown-it';
 import { writeFile } from 'fs/promises';
-import type { CVData, Experience } from '../../types/cv-base.js';
-import type { PDFGenerator, PDFGenerationOptions } from './pdf-generator.js';
+import type { CVData } from '../../../shared/types/cv-base.js';
+import { PDFGenerator, PDFGenerationOptions } from './pdf-generator.js';
 
 /**
  * Implementation of the PDFGenerator interface using Puppeteer
  */
-export class PDFGeneratorImpl implements PDFGenerator {
+export class PDFGeneratorImpl extends PDFGenerator {
   private readonly markdown: MarkdownIt;
 
   constructor() {
+    super();
     this.markdown = new MarkdownIt();
   }
 
   async generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer> {
     const markdown = this.formatCVData(data);
-    const html = this.generateHTML(markdown, this.getStyles());
+    const html = this.generateHTML(data);
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
@@ -30,12 +31,20 @@ export class PDFGeneratorImpl implements PDFGenerator {
     }
   }
 
-  async generateFromMarkdown(markdown: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
-    const html = this.generateHTML(markdown, this.getStyles());
+  async generateFromMarkdown(
+    markdown: string,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string> {
+    const html = this.markdown.render(markdown);
     return this.generateFromHTML(html, outputPath, options);
   }
 
-  async generateFromHTML(html: string, outputPath: string, options?: Partial<PDFGenerationOptions>): Promise<string> {
+  async generateFromHTML(
+    html: string,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string> {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
@@ -50,53 +59,103 @@ export class PDFGeneratorImpl implements PDFGenerator {
     }
   }
 
-  async generateFromTemplate(): Promise<string> {
+  async generateFromTemplate(
+    templatePath: string,
+    data: CVData,
+    outputPath: string,
+    options?: Partial<PDFGenerationOptions>,
+  ): Promise<string> {
     throw new Error('Template-based generation not implemented');
   }
 
-  private formatCVData(data: CVData): string {
+  protected generateHTML(data: CVData): string {
+    const markdown = this.formatCVData(data);
+    const html = this.markdown.render(markdown);
     return `
-# ${data.personalInfo.name.full}
-${data.personalInfo.title ? `*${data.personalInfo.title}*` : ''}
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="UTF-8">
+          <style>${this.getStyles()}</style>
+        </head>
+        <body>
+          ${html}
+        </body>
+      </html>
+    `;
+  }
 
-${data.personalInfo.contact.email} | ${data.personalInfo.contact.phone}
-${data.personalInfo.contact.address || ''}
-${data.personalInfo.citizenship ? `Citizenship: ${data.personalInfo.citizenship}` : ''}
+  private formatCVData(data: CVData): string {
+    const { personalInfo, professionalSummary, education, experience, skills, certifications } =
+      data;
+    const { name, contact } = personalInfo;
 
-${data.professionalSummary ? `
+    return `
+# ${name.full}
+${personalInfo.title ? `*${personalInfo.title}*` : ''}
+
+${contact.email} | ${contact.phone}
+${contact.address || ''}
+${personalInfo.citizenship ? `Citizenship: ${personalInfo.citizenship}` : ''}
+
+${
+  professionalSummary
+    ? `
 ## Professional Summary
-${data.professionalSummary}
-` : ''}
+${professionalSummary}
+`
+    : ''
+}
 
 ## Education
-${data.education.map((edu) => `
+${education
+  .map(
+    (edu) => `
 ### ${edu.institution}
-${edu.degree}${edu.field ? ` in ${edu.field}` : ''}
-${edu.year}${edu.notes ? `\n${edu.notes}` : ''}
-`).join('\n')}
+${edu.degree}
+${edu.year}${edu.gpa ? `\nGPA: ${edu.gpa}` : ''}${edu.honors?.length ? `\nHonors: ${edu.honors.join(', ')}` : ''}
+`,
+  )
+  .join('\n')}
 
 ## Experience
-${data.experience.map((exp: Experience) => `
-### ${exp.position} at ${exp.employer}
+${experience
+  .map(
+    (exp) => `
+### ${exp.title} at ${exp.company}
 ${exp.startDate} - ${exp.endDate || 'Present'}
 ${exp.location ? `Location: ${exp.location}` : ''}
 
 ${exp.responsibilities.map((r) => `- ${r}`).join('\n')}
-${exp.achievements?.length ? `
+${
+  exp.achievements?.length
+    ? `
 #### Achievements
 ${exp.achievements.map((a) => `- ${a}`).join('\n')}
-` : ''}
-`).join('\n')}
+`
+    : ''
+}
+`,
+  )
+  .join('\n')}
 
-${data.skills.length ? `
+${
+  skills.length
+    ? `
 ## Skills
-${data.skills.map((skill) => `- ${skill}`).join('\n')}
-` : ''}
+${skills.map((skill) => `- ${skill}`).join('\n')}
+`
+    : ''
+}
 
-${data.certifications.length ? `
+${
+  certifications.length
+    ? `
 ## Certifications
-${data.certifications.map((cert) => `- ${cert}`).join('\n')}
-` : ''}
+${certifications.map((cert) => `- ${cert}`).join('\n')}
+`
+    : ''
+}
     `.trim();
   }
 
@@ -135,36 +194,20 @@ ${data.certifications.map((cert) => `- ${cert}`).join('\n')}
     `;
   }
 
-  private getPDFOptions(options?: Partial<PDFGenerationOptions>): puppeteer.PDFOptions {
+  private getPDFOptions(options?: Partial<PDFGenerationOptions>): PDFOptions {
     return {
       format: options?.paperSize || 'A4',
       margin: options?.margins || {
         top: 20,
         right: 20,
         bottom: 20,
-        left: 20
+        left: 20,
       },
       printBackground: true,
       displayHeaderFooter: options?.includeHeaderFooter || false,
       headerTemplate: options?.headerText || '',
       footerTemplate: options?.footerText || '',
-      landscape: options?.orientation === 'landscape'
+      landscape: options?.orientation === 'landscape',
     };
   }
-
-  private generateHTML(content: string, styles: string): string {
-    const html = this.markdown.render(content);
-    return `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="UTF-8">
-          <style>${styles}</style>
-        </head>
-        <body>
-          ${html}
-        </body>
-      </html>
-    `;
-  }
-} 
+}
