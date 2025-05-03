@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PDFGenerator } from '../pdf-generator.js';
+import { DefaultPDFGenerator } from '../pdf-generator.js';
 import type { CVData } from '../../../types/cv-base.js';
 import type { CVGenerationOptions } from '../../../types/cv-generation.js';
 
@@ -22,11 +22,11 @@ vi.mock('puppeteer', () => {
 });
 
 describe('PDFGenerator', () => {
-  let generator: PDFGenerator;
+  let generator: DefaultPDFGenerator;
   let testData: CVData;
 
   beforeEach(() => {
-    generator = new PDFGenerator();
+    generator = new DefaultPDFGenerator();
     testData = {
       personalInfo: {
         name: { full: 'Test User' },
@@ -54,12 +54,9 @@ describe('PDFGenerator', () => {
 
   describe('generate', () => {
     it('should generate PDF with default template', async () => {
-      const options: CVGenerationOptions = {
-        format: 'pdf',
-        pdfOptions: {
-          includeHeaderFooter: false,
-          paperSize: 'Letter'
-        }
+      const options = {
+        includeHeaderFooter: false,
+        paperSize: 'Letter'
       };
 
       const result = await generator.generate(testData, options);
@@ -67,13 +64,10 @@ describe('PDFGenerator', () => {
     });
 
     it('should generate PDF with minimal template', async () => {
-      const options: CVGenerationOptions & { template: string } = {
-        format: 'pdf',
+      const options = {
         template: 'minimal',
-        pdfOptions: {
-          includeHeaderFooter: false,
-          paperSize: 'Letter'
-        }
+        includeHeaderFooter: false,
+        paperSize: 'Letter'
       };
 
       const result = await generator.generate(testData, options);
@@ -102,7 +96,6 @@ describe('PDFGenerator', () => {
 
   it('should throw error for invalid template', async () => {
     const options = {
-      format: 'pdf' as const,
       template: 'non-existent'
     };
 
