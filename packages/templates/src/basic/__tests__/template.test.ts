@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { BasicTemplate } from '../template';
+import { BasicTemplate } from '../template.js';
 import type { CVData } from '@dzb-cv/types';
 
 describe('BasicTemplate', () => {
@@ -23,20 +23,22 @@ describe('BasicTemplate', () => {
         employer: 'Tech Corp',
         startDate: '2020-01',
         endDate: '2023-12',
-        responsibilities: ['Development', 'Testing']
+        responsibilities: ['Development', 'Testing'],
+        employmentType: 'full-time'
       }
     ],
     education: [
       {
-        degree: 'BS Computer Science',
+        degree: 'BS',
+        field: 'Computer Science',
         institution: 'Test University',
-        year: '2019'
+        graduationDate: '2019'
       }
     ],
     skills: [
       {
         name: 'TypeScript',
-        level: 'Expert'
+        level: 'expert'
       }
     ]
   };
@@ -144,14 +146,16 @@ describe('BasicTemplate', () => {
           employer: 'Advanced Tech',
           startDate: 'Jan 2021',
           endDate: 'Present',
-          responsibilities: ['Leadership']
+          responsibilities: ['Leadership'],
+          employmentType: 'full-time'
         },
         {
           position: 'Junior Developer',
           employer: 'Startup Inc',
           startDate: '2018',
           endDate: '2020',
-          responsibilities: ['Coding']
+          responsibilities: ['Coding'],
+          employmentType: 'full-time'
         }
       ]
     };
@@ -173,14 +177,16 @@ describe('BasicTemplate', () => {
           employer: 'Big Corp',
           startDate: '2020',
           endDate: '2023',
-          responsibilities: []
+          responsibilities: [],
+          employmentType: 'full-time'
         },
         {
           position: 'Intern',
           employer: 'Small Shop',
           startDate: '2019',
           endDate: '2019',
-          responsibilities: ['Very long responsibility description that goes into significant detail about the tasks performed and projects completed during the internship period']
+          responsibilities: ['Very long responsibility description that goes into significant detail about the tasks performed and projects completed during the internship period'],
+          employmentType: 'internship'
         }
       ]
     };

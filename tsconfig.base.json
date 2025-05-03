@@ -13,7 +13,6 @@
     "baseUrl": ".",
     "paths": {
       "@dzb-cv/*": ["packages/*/src"],
-      "@dzb-cv/common/*": ["packages/common/src/*"],
       "@dzb-cv/core/*": ["packages/core/src/*"],
       "@dzb-cv/cli/*": ["packages/cli/src/*"],
       "@dzb-cv/templates/*": ["packages/templates/src/*"],

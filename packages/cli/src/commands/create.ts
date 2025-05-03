@@ -1,8 +1,7 @@
 import { Command } from 'commander';
 import { CVService } from '@dzb-cv/core';
-import { StandardPDFGenerator } from '@dzb-cv/pdf';
-import type { CVData, PDFGenerator } from '@dzb-cv/types';
-
+import { PDFGenerator } from '@dzb-cv/pdf';
+import type { CVData } from '@dzb-cv/types';
 export function createCVCommand(program: Command): void {
   program
     .command('create')
@@ -24,7 +23,8 @@ export function createCVCommand(program: Command): void {
             full: options.name
           },
           contact: {
-            email: options.email
+            email: options.email,
+            phone: '' // Add missing required property
           }
         },
         experience: [],
@@ -41,9 +41,8 @@ export function createCVCommand(program: Command): void {
         delete: async (id: string) => { throw new Error('Not implemented'); }
       };
 
-      const pdfGenerator = new StandardPDFGenerator();
+      const pdfGenerator = new PDFGenerator();
       const service = new CVService(storage, pdfGenerator);
-
       try {
         await service.createCV(cvData);
         const pdf = await service.generatePDF(cvData);

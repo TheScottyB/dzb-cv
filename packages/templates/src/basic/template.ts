@@ -1,8 +1,9 @@
 import type { CVData, Template, PDFGenerationOptions } from '@dzb-cv/types';
 
 export class BasicTemplate implements Template {
+  readonly id = 'basic';
   readonly name = 'basic';
-
+  readonly description = 'A basic Markdown template for CVs.';
   render(data: CVData, _options?: PDFGenerationOptions): string {
     let output = '';
 
@@ -60,12 +61,13 @@ export class BasicTemplate implements Template {
       for (const edu of data.education) {
         // Safely access properties
         const degree = edu?.degree || 'Degree';
+        const field = edu?.field ? ` (${edu.field})` : '';
         const institution = edu?.institution || 'Institution';
-        const year = edu?.year || '';
+        const graduationDate = edu?.graduationDate || '';
         
-        output += `### ${degree}\n`;
-        if (institution || year) {
-          output += `${institution}${institution && year ? ', ' : ''}${year}\n\n`;
+        output += `### ${degree}${field}\n`;
+        if (institution || graduationDate) {
+          output += `${institution}${institution && graduationDate ? ', ' : ''}${graduationDate}\n\n`;
         } else {
           output += '\n';
         }
