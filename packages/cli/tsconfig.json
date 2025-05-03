@@ -1,19 +1,14 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../config/src/typescript/base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist",
-    "composite": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@dzb-cv/core/*": ["../core/src/*"],
-      "@dzb-cv/types": ["../../types/cv-types.d.ts"]
-    }
+    "outDir": "dist"
   },
-  "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts"],
   "references": [
-    { "path": "../core" }
-  ]
+    { "path": "../core" },
+    { "path": "../pdf" },
+    { "path": "../templates" },
+    { "path": "../types" }
+  ],
+  "include": ["src/**/*"]
 }

@@ -1,0 +1,16 @@
+{
+  "name": "@dzb-cv/config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "src/typescript",
+    "src/eslint",
+    "src/vitest"
+  ],
+  "exports": {
+    "./typescript/base": "./src/typescript/base.json",
+    "./eslint": "./src/eslint/index.js",
+    "./vitest": "./src/vitest/base.js"
+  }
+}

@@ -1,0 +1,34 @@
+declare const styles: {
+  'ats-analyzer': string;
+  'ats-issues-section': string;
+  'ats-issues-list': string;
+  'ats-issue-item': string;
+  'issue-category': string;
+  'issue-message': string;
+  'issue-fix': string;
+  'ats-keywords-section': string;
+  'keyword-relevance': string;
+  'keywords-found': string;
+  'keywords-missing': string;
+  'keyword-tags': string;
+  'keyword-tag': string;
+  'found': string;
+  'missing': string;
+  'ats-section-scores': string;
+  'section-scores-container': string;
+  'section-score-item': string;
+  'section-name': string;
+  'section-score': string;
+  'ats-improvements-section': string;
+  'ats-improvements-list': string;
+  'ats-improvement-item': string;
+  'priority-critical': string;
+  'priority-high': string;
+  'priority-medium': string;
+  'priority-low': string;
+  'improvement-priority': string;
+  'improvement-message': string;
+  'improvement-fix': string;
+};
+
+export default styles; 

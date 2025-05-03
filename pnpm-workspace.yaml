@@ -1,8 +1,5 @@
 packages:
-  - 'packages/cli'
-  - 'packages/core'
-  - 'packages/templates'
-  - 'packages/tests'
+  - 'packages/*'
 onlyBuiltDependencies:
   - esbuild
   - puppeteer

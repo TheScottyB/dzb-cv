@@ -1,226 +1,43 @@
-import { v4 as uuidv4 } from 'uuid';
-import type { 
-  CVData, 
-  Experience as ExperienceEntry, 
-  Profile, 
-  ProfileVersion, 
-  ProfileChange,
-  PDFGenerationOptions
-} from '@dzb-cv/common';
+import type { CVData, PDFGenerator } from '@dzb-cv/types';
 
-// Define local interface to extend the common one
-interface ExtendedProfileChange extends ProfileChange {
-  field?: string;
-  oldValue?: any;
-  newValue?: any;
-  resolutionNote?: string;
+export interface CVStorageProvider {
+  save(id: string, data: CVData): Promise<void>;
+  load(id: string): Promise<CVData>;
+  delete(id: string): Promise<void>;
 }
 
-/**
- * Service for managing CV data and operations
- */
 export class CVService {
   constructor(
-    private readonly storage: CVStorageProvider,
-    private readonly pdfGenerator: PDFGenerationProvider
+    private storage: CVStorageProvider,
+    private pdfGenerator: PDFGenerator
   ) {}
 
-  /**
-   * Create a new CV profile
-   * @param owner The name of the CV owner
-   * @param data Initial CV data
-   */
-  async createCV(owner: string, data: CVData): Promise<Profile> {
-    const id = uuidv4();
-    const version: ProfileVersion = {
-      id: uuidv4(),
-      profileId: id,
-      versionNumber: 1,
-      timestamp: new Date().toISOString(),
-      data
-    };
-    
-    const profile: Profile = {
-      id,
-      owner,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      versions: [version],
-      currentVersion: version
-    };
-
-    await this.storage.saveProfile(profile);
-    await this.storage.saveVersion(version);
-    
-    return profile;
+  async createCV(data: CVData): Promise<CVData> {
+    const id = this.generateId();
+    await this.storage.save(id, data);
+    return data;
   }
 
-  /**
-   * Generate CV in specified format
-   */
-  async generateCV(
-    profileId: string, 
-    options: PDFGenerationOptions
-  ): Promise<Buffer> {
-    const profile = await this.storage.getProfile(profileId);
-    if (!profile) {
-      throw new Error(`Profile ${profileId} not found`);
-    }
-
-    if (options.format === 'pdf') {
-      return this.pdfGenerator.generate(
-        profile.currentVersion.data,
-        {
-          includeHeaderFooter: true,
-          ...options.pdfOptions
-        }
-      );
-    }
-
-    throw new Error(`Format ${options.format} not supported`);
+  async getCV(id: string): Promise<CVData> {
+    return this.storage.load(id);
   }
 
-  /**
-   * Update existing CV data
-   */
-  async updateCV(
-    profileId: string,
-    data: Partial<CVData>,
-    reason?: string
-  ): Promise<ProfileVersion> {
-    const profile = await this.storage.getProfile(profileId);
-    if (!profile) {
-      throw new Error(`Profile ${profileId} not found`);
-    }
-
-    const currentData = profile.currentVersion.data;
-    const newData = this.mergeData(currentData, data);
-    const changes = this.calculateChanges(currentData, newData);
-
-    const version: ProfileVersion = {
-      id: uuidv4(),
-      profileId,
-      versionNumber: profile.currentVersion.versionNumber + 1,
-      timestamp: new Date().toISOString(),
-      data: newData,
-      changes,
-      ...(reason ? { changeReason: reason } : {})
-    };
-
-    profile.versions.push(version);
-    profile.currentVersion = version;
-    profile.updatedAt = version.timestamp;
-
-    await this.storage.saveProfile(profile);
-    await this.storage.saveVersion(version);
-
-    return version;
+  async updateCV(id: string, data: Partial<CVData>): Promise<CVData> {
+    const existing = await this.storage.load(id);
+    const updated = { ...existing, ...data };
+    await this.storage.save(id, updated);
+    return updated;
   }
 
-  private mergeData(current: CVData, updates: Partial<CVData>): CVData {
-    return {
-      ...current,
-      ...updates,
-      personalInfo: {
-        ...current.personalInfo,
-        ...updates.personalInfo,
-      },
-      experience: updates.experience || current.experience,
-      education: updates.education || current.education,
-      skills: updates.skills || current.skills,
-      certifications: updates.certifications || current.certifications,
-    };
+  async deleteCV(id: string): Promise<void> {
+    await this.storage.delete(id);
   }
 
-  private calculateChanges(oldData: CVData, newData: CVData): ExtendedProfileChange[] {
-    const changes: ExtendedProfileChange[] = [];
-    
-    // Compare experience entries
-    if (oldData.experience.length !== newData.experience.length) {
-      changes.push({
-        field: 'experience.length',
-        oldValue: oldData.experience.length,
-        newValue: newData.experience.length,
-        resolutionNote: `Changed number of experience entries from ${oldData.experience.length} to ${newData.experience.length}`
-      });
-    }
-    
-    // Compare individual experience entries
-    const robustKey = (exp: ExperienceEntry) => [
-      exp.position,
-      exp.employer,
-      exp.startDate,
-      exp.endDate || '',
-      exp.location || ''
-    ].join('|');
-
-    const oldExperienceMap = new Map<string, ExperienceEntry>(
-      oldData.experience.map(exp => [robustKey(exp), exp])
-    );
-    const newExperienceMap = new Map<string, ExperienceEntry>(
-      newData.experience.map(exp => [robustKey(exp), exp])
-    );
-    
-    this.detectExperienceChanges(oldExperienceMap, newExperienceMap, changes);
-    
-    // Compare personal info
-    if (JSON.stringify(oldData.personalInfo) !== JSON.stringify(newData.personalInfo)) {
-      changes.push({
-        field: 'personalInfo',
-        oldValue: oldData.personalInfo,
-        newValue: newData.personalInfo,
-        resolutionNote: 'Updated personal information'
-      });
-    }
-    
-    return changes;
+  async generatePDF(data: CVData): Promise<Buffer> {
+    return this.pdfGenerator.generate(data);
   }
 
-  private detectExperienceChanges(
-    oldMap: Map<string, ExperienceEntry>,
-    newMap: Map<string, ExperienceEntry>,
-    changes: ExtendedProfileChange[]
-  ): void {
-    // Check for removed experiences
-    for (const [key, oldExp] of oldMap) {
-      if (!newMap.has(key)) {
-        changes.push({
-          field: 'experience.remove',
-          oldValue: oldExp,
-          newValue: null,
-          resolutionNote: `Removed experience: ${oldExp.position} at ${oldExp.employer}`
-        });
-      }
-    }
-
-    // Check for added experiences
-    for (const [key, newExp] of newMap) {
-      if (!oldMap.has(key)) {
-        changes.push({
-          field: 'experience.add',
-          oldValue: null,
-          newValue: newExp,
-          resolutionNote: `Added experience: ${newExp.position} at ${newExp.employer}`
-        });
-      }
-    }
+  private generateId(): string {
+    return `cv-${Date.now()}-${Math.random().toString(36).slice(2)}`;
   }
 }
-
-/**
- * Interface for storage implementations
- */
-export interface CVStorageProvider {
-  saveProfile(profile: Profile): Promise<void>;
-  saveVersion(version: ProfileVersion): Promise<void>;
-  getProfile(id: string): Promise<Profile | null>;
-  getVersion(id: string): Promise<ProfileVersion | null>;
-}
-
-/**
- * Interface for PDF generation implementations
- */
-export interface PDFGenerationProvider {
-  generate(data: CVData, options?: PDFGenerationOptions): Promise<Buffer>;
-}
-

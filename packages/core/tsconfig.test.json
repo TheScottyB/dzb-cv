@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "rootDir": ".",
-    "isolatedModules": false
-  },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.spec.ts", "src/**/*.test.ts", "src/**/*", "../vitest-setup.ts"],
-  "exclude": ["dist", "node_modules"]
-}

@@ -1,0 +1,29 @@
+{
+  "name": "@dzb-cv/types",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./cv": {
+      "types": "./dist/cv/index.d.ts",
+      "import": "./dist/cv/index.js"
+    },
+    "./pdf": {
+      "types": "./dist/pdf/index.d.ts",
+      "import": "./dist/pdf/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

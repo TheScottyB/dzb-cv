@@ -5,29 +5,31 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./basic": {
+      "types": "./dist/basic/index.d.ts",
+      "import": "./dist/basic/index.js"
+    },
+    "./academic": {
+      "types": "./dist/academic/index.d.ts",
+      "import": "./dist/academic/index.js"
+    }
+  },
   "scripts": {
     "build": "tsc",
-    "dev": "tsc --watch",
     "test": "vitest run",
-    "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@dzb-cv/core": "workspace:^1.0.0",
-    "handlebars": "^4.7.8",
-    "markdown-it": "^14.1.0",
-    "marked": "^15.0.11",
-    "marked-gfm-heading-id": "^4.1.1"
+    "@dzb-cv/types": "workspace:*"
   },
   "devDependencies": {
-    "@types/handlebars": "^4.1.0",
-    "@types/markdown-it": "^14.1.2",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "@vitest/coverage-v8": "^1.3.1",
-    "eslint": "^8.0.0",
+    "@types/node": "^20.0.0",
     "typescript": "^5.0.0",
-    "vitest": "^1.3.1"
+    "vitest": "^1.6.1"
   }
 }
-
