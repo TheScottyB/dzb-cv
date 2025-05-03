@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { CVService } from '@dzb-cv/core';
-import { PDFGenerator } from '@dzb-cv/pdf';
+import { createPDFGenerator } from '@dzb-cv/pdf';
 import type { CVData } from '@dzb-cv/types';
 export function createCVCommand(program: Command): void {
   program
@@ -47,7 +47,7 @@ export function createCVCommand(program: Command): void {
         }
       };
 
-      const pdfGenerator = new PDFGenerator();
+      const pdfGenerator = createPDFGenerator();
       const service = new CVService(storage, pdfGenerator);
       try {
         await service.createCV(cvData);
