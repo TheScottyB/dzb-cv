@@ -91,7 +91,7 @@ describe('BasicTemplate', () => {
         },
         contact: {
           email: '',
-          phone: null
+          phone: '' // Changed from null to empty string to match type definition
         }
       },
       experience: [],

@@ -3,14 +3,21 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "inputs": ["src/**/*.ts"]
     },
     "test": {
       "dependsOn": ["build"],
-      "outputs": ["coverage/**"]
+      "outputs": ["coverage/**"],
+      "inputs": ["src/**/*.{test,spec}.ts"]
     },
     "typecheck": {
-      "outputs": []
+      "outputs": [],
+      "inputs": ["src/**/*.ts"]
+    },
+    "lint": {
+      "outputs": [],
+      "inputs": ["src/**/*.ts"]
     },
     "clean": {
       "cache": false

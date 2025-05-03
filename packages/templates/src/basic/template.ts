@@ -42,7 +42,7 @@ export class BasicTemplate implements Template {
           output += `${startDate}${startDate ? ' - ' : ''}${endDate}\n\n`;
         }
         
-        if (exp?.responsibilities?.length > 0) {
+        if (exp.responsibilities && exp.responsibilities.length > 0) {
           output += exp.responsibilities.map(r => `- ${r}`).join('\n');
           output += '\n\n';
         } else {

@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "./packages/config/src/typescript/base.json",
   "compilerOptions": {
     "typeRoots": [
       "./types",
@@ -7,23 +7,21 @@
     ],
     "types": [
       "node",
-      "vitest",
-      "react",
-      "react-dom"
+      "vitest"
     ],
-    "noImplicitAny": false
+    "noImplicitAny": true
   },
   "include": [
     "packages/*/src/**/*",
-    "packages/*/scripts/**/*",
     "types/**/*"
   ],
   "exclude": ["node_modules", "dist", "**/build"],
   "references": [
-    { "path": "./packages/common" },
+    { "path": "./packages/types" },
     { "path": "./packages/core" },
     { "path": "./packages/cli" },
+    { "path": "./packages/pdf" },
     { "path": "./packages/templates" },
-    { "path": "./packages/tests" }
+    { "path": "./packages/config" }
   ]
 }
