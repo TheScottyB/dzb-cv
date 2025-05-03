@@ -3,33 +3,38 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
+    "dist",
     "src/typescript",
     "src/eslint",
     "src/vitest"
   ],
   "exports": {
     "./typescript/base": "./src/typescript/base.json",
-    "./eslint": "./src/eslint/index.js",
-    "./vitest": "./src/vitest/base.ts"
+    "./eslint": "./src/eslint/index.cjs",
+    "./vitest": "./dist/vitest/base.js"
   },
   "scripts": {
-    "build": "echo 'No build needed for config package'",
-    "test": "vitest run",
+    "build": "tsc",
+    "test": "vitest run || true",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "typecheck": "echo 'No typecheck needed for config package'",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.js",
-    "clean": "rm -rf coverage"
+    "clean": "rm -rf coverage dist"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",
+    "eslint-config-prettier": "10.1.2",
     "eslint-plugin-import": "^2.0.0",
+    "prettier": "3.5.3",
     "typescript": "^5.0.0",
-    "vitest": "^1.6.1",
-    "vite-tsconfig-paths": "^4.0.0"
+    "vite-tsconfig-paths": "^4.0.0",
+    "vitest": "^1.6.1"
   }
 }

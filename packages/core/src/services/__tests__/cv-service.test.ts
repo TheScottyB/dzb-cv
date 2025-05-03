@@ -1,18 +1,20 @@
-import { describe, it, expect, vi } from 'vitest';
-import { CVService } from '../cv-service.js';
+import { describe, it, expect, vi, beforeEach, Mocked } from 'vitest';
 import type { CVData } from '@dzb-cv/types';
+
+import { CVService } from '../cv-service.js';
+
+interface Storage {
+  save: (id: string, data: CVData) => Promise<void>;
+  load: (id: string) => Promise<CVData>;
+  delete: (id: string) => Promise<void>;
+}
 
 describe('CVService', () => {
   let service: CVService;
-  let mockStorage: {
-    save: any;
-    load: any;
-    delete: any;
-  };
+  let mockStorage: Mocked<Storage>;
   let mockPdfGenerator: {
-    generate: any;
+    generate: (data: CVData, options?: unknown) => Promise<Buffer>;
   };
-
   const sampleCV: CVData = {
     personalInfo: {
       name: {
@@ -32,13 +34,16 @@ describe('CVService', () => {
 
   beforeEach(() => {
     mockStorage = {
-      save: vi.fn(),
-      load: vi.fn(),
-      delete: vi.fn()
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      save: vi.fn().mockImplementation((id: string, data: CVData): Promise<void> => Promise.resolve()),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      load: vi.fn().mockImplementation((id: string): Promise<CVData> => Promise.resolve(sampleCV)),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      delete: vi.fn().mockImplementation((id: string): Promise<void> => Promise.resolve())
     };
 
     mockPdfGenerator = {
-      generate: vi.fn()
+      generate: vi.fn().mockResolvedValue(Buffer.from('fake-pdf'))
     };
 
     service = new CVService(mockStorage, mockPdfGenerator);
@@ -98,8 +103,9 @@ describe('CVService', () => {
       
       mockStorage.load.mockResolvedValue(existingCV);
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const _result = await service.updateCV(id, updateData);
-
+      expect(mockStorage.load).toHaveBeenCalledWith(id);
       expect(mockStorage.load).toHaveBeenCalledWith(id);
       expect(mockStorage.save).toHaveBeenCalledWith(id, expect.objectContaining({
         personalInfo: expect.objectContaining({

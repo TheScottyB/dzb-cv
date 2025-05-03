@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
-import { CVService } from '../index.js';
 import type { CVData } from '@dzb-cv/types';
+
+import { CVService } from '../index.js';
 
 describe('Package exports', () => {
   it('should properly export CVService', () => {

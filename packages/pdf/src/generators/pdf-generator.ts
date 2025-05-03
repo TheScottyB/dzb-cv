@@ -15,14 +15,16 @@ export class PDFGenerator {
     const pageHeight = options.format === 'A4' ? 841.89 : 792;
 
     const page = doc.addPage([pageWidth, pageHeight]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { width: _width, height } = page.getSize();
     const font = await doc.embedFont(StandardFonts.Helvetica);
     const defaultMargin = 50;
     const marginTop = this.convertToNumber(options.margin?.top, defaultMargin);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _marginRight = this.convertToNumber(options.margin?.right, defaultMargin);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const _marginBottom = this.convertToNumber(options.margin?.bottom, defaultMargin);
     const marginLeft = this.convertToNumber(options.margin?.left, defaultMargin);
-
     let y = height - marginTop;
     const startX = marginLeft;
 

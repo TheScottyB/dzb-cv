@@ -1,16 +1,28 @@
-import type { CVData, Template, PDFGenerationOptions } from '@dzb-cv/types';
+// No Template or PDFGenerationOptions imports needed here
+import type { CVData } from '@dzb-cv/types';
 
-export class BasicTemplate implements Template {
-  readonly id = 'basic';
+// TODO: Define or import MarkdownTemplate interface if it's needed
+// Assuming MarkdownTemplate might be similar to this for now:
+interface MarkdownTemplate {
+  name: string;
+  description: string;
+  render(cv: CVData, options?: Record<string, unknown>): string;
+  getStyles?(): string;
+}
+
+
+export class BasicTemplate implements MarkdownTemplate {
   readonly name = 'basic';
-  readonly description = 'A basic Markdown template for CVs.';
-  render(data: CVData, _options?: PDFGenerationOptions): string {
-    let output = '';
+  readonly description = 'A basic, clean Markdown template.'; // Corrected syntax
 
-    // Personal Info - safely access properties with optional chaining
-    output += `# ${data?.personalInfo?.name?.full || ''}\n\n`;
-    if (data?.personalInfo?.contact) {
-      const contact = data.personalInfo.contact;
+  // Method to render CV data into Markdown string
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  render(cv: CVData, _options?: Record<string, unknown>): string {
+    let output = '';
+    output += `# ${cv?.personalInfo?.name?.full || ''}\n\n`;
+    
+    if (cv?.personalInfo?.contact) {
+      const contact = cv.personalInfo.contact;
       const contactParts = [];
       
       // Add email and phone with proper handling for empty/null values
@@ -30,8 +42,8 @@ export class BasicTemplate implements Template {
 
     // Experience - always include section header
     output += '## Experience\n\n';
-    if (data?.experience?.length > 0) {
-      for (const exp of data.experience) {
+    if (cv?.experience?.length > 0) { // Changed data to cv
+      for (const exp of cv.experience) { // Changed data to cv
         // Safely access properties
         const position = exp?.position || 'Position';
         const employer = exp?.employer || 'Employer';
@@ -57,8 +69,8 @@ export class BasicTemplate implements Template {
 
     // Education - always include section header
     output += '## Education\n\n';
-    if (data?.education?.length > 0) {
-      for (const edu of data.education) {
+    if (cv?.education?.length > 0) { // Changed data to cv
+      for (const edu of cv.education) { // Changed data to cv
         // Safely access properties
         const degree = edu?.degree || 'Degree';
         const field = edu?.field ? ` (${edu.field})` : '';
@@ -79,8 +91,8 @@ export class BasicTemplate implements Template {
 
     // Skills - always include section header
     output += '## Skills\n\n';
-    if (data?.skills?.length > 0) {
-      output += data.skills
+    if (cv?.skills?.length > 0) { // Changed data to cv
+      output += cv.skills // Changed data to cv
         .filter((skill: { name?: string }) => skill?.name) // Filter out skills without names
         .map((skill: { name: string }) => `- ${skill.name}`)
         .join('\n');

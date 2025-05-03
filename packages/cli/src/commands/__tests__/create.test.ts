@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, SpyInstance } from 'vitest';
 import { Command } from 'commander';
+
 import { createCVCommand } from '../create.js';
 
 // Mock the dependencies
@@ -17,16 +18,15 @@ vi.mock('@dzb-cv/core', () => ({
 }));
 describe('createCVCommand', () => {
   let program: Command;
-  let mockConsoleLog: any;
-  let mockConsoleError: any;
-  let originalProcessExit: any;
-
+  let mockConsoleLog: SpyInstance;
+  let mockConsoleError: SpyInstance;
+  let originalProcessExit: typeof process.exit;
   beforeEach(() => {
     program = new Command();
     mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
     mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
     originalProcessExit = process.exit;
-    process.exit = vi.fn() as any;
+    process.exit = vi.fn() as unknown as typeof process.exit; // Type assertion for mock
     createCVCommand(program);
   });
 

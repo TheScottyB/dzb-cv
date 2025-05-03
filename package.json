@@ -12,9 +12,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "pnpm run -r typecheck",
-    "clean": "pnpm run -r clean && rm -rf node_modules"
+    "clean": "pnpm run -r clean && rm -rf node_modules",
+    "turbo:build": "turbo run build",
+    "turbo:test": "turbo run test",
+    "turbo:clean": "turbo run clean"
   },
   "devDependencies": {
+    "@dzb-cv/config": "workspace:*",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",

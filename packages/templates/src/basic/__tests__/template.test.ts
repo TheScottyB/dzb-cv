@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { BasicTemplate } from '../template.js';
 import type { CVData } from '@dzb-cv/types';
+
+import { BasicTemplate } from '../template.js';
 
 describe('BasicTemplate', () => {
   const template = new BasicTemplate();

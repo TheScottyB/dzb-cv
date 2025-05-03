@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { PDFGenerator } from '../pdf-generator.js';
 import type { CVData } from '@dzb-cv/types';
+
+import { PDFGenerator } from '../pdf-generator.js';
 
 describe('PDFGenerator', () => {
   const generator = new PDFGenerator();
