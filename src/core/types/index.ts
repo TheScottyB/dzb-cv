@@ -15,6 +15,7 @@
 export * from './cv-base.js';
 export * from './cv-types.js';
 export * from './cv-generation.js';
+export * from './cv-templates.js';
 
 // Profile Management Types
 export * from './profile-management.js';
@@ -24,9 +25,13 @@ export * from './config-types.js';
 
 // Job Analysis Types
 export * from './job-analysis.js';
+export * from './ats-types.js';
 
 // Academic CV Types
 export * from './academic-types.js';
 
-// Future type exports will be added here
+// Validation and Scoring Types
+export * from './validation.js';
+export * from './scoring.js';
 
+// Future type exports will be added here
