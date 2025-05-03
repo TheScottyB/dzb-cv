@@ -17,7 +17,7 @@
     },
     "lint": {
       "outputs": [],
-      "inputs": ["src/**/*.ts"]
+      "inputs": ["src/**/*.ts", "tsconfig.json", ".eslintrc.cjs"]
     },
     "clean": {
       "cache": false

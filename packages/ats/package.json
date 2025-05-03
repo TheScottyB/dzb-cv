@@ -1,7 +1,7 @@
 {
-  "name": "@dzb-cv/pdf",
+  "name": "@dzb-cv/ats",
   "version": "1.0.0",
-  "description": "PDF generation functionality for DZB CV Generator",
+  "description": "ATS (Applicant Tracking System) functionality for DZB CV Generator",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -12,9 +12,25 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./generators": {
-      "types": "./dist/generators/index.d.ts",
-      "import": "./dist/generators/index.js"
+    "./analyzer": {
+      "types": "./dist/analyzer/index.d.ts",
+      "import": "./dist/analyzer/index.js"
+    },
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "import": "./dist/engine/index.js"
+    },
+    "./parsers": {
+      "types": "./dist/parsers/index.d.ts",
+      "import": "./dist/parsers/index.js"
+    },
+    "./scoring": {
+      "types": "./dist/scoring/index.d.ts",
+      "import": "./dist/scoring/index.js"
+    },
+    "./taxonomies": {
+      "types": "./dist/taxonomies/index.d.ts",
+      "import": "./dist/taxonomies/index.js"
     }
   },
   "scripts": {
@@ -28,12 +44,12 @@
   },
   "dependencies": {
     "@dzb-cv/types": "workspace:*",
-    "pdf-lib": "^1.17.1",
-    "puppeteer": "^21.0.0",
-    "markdown-it": "^14.0.0"
+    "openai": "^4.0.0",
+    "natural": "^6.0.0",
+    "cheerio": "^1.0.0-rc.12"
   },
   "devDependencies": {
-    "@types/markdown-it": "^13.0.0",
+    "@types/natural": "^5.1.5",
     "@types/node": "^20.0.0",
     "typescript": "^5.8.3",
     "vitest": "^1.6.1",
@@ -44,12 +60,12 @@
     "src"
   ],
   "keywords": [
-    "pdf",
+    "ats",
     "cv",
     "resume",
-    "generator",
-    "html-to-pdf",
-    "markdown-to-pdf"
+    "job-matching",
+    "nlp",
+    "machine-learning"
   ],
   "publishConfig": {
     "access": "restricted"

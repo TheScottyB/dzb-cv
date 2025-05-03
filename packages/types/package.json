@@ -1,8 +1,10 @@
 {
   "name": "@dzb-cv/types",
   "version": "1.0.0",
+  "description": "TypeScript type definitions for the DZB CV Generator system",
   "private": true,
   "type": "module",
+  "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -17,8 +19,30 @@
     "./pdf": {
       "types": "./dist/pdf/index.d.ts",
       "import": "./dist/pdf/index.js"
+    },
+    "./ats": {
+      "types": "./dist/ats/index.d.ts",
+      "import": "./dist/ats/index.js"
+    },
+    "./job": {
+      "types": "./dist/job/index.d.ts",
+      "import": "./dist/job/index.js"
+    },
+    "./templates": {
+      "types": "./dist/templates/index.d.ts",
+      "import": "./dist/templates/index.js"
     }
   },
+  "keywords": [
+    "typescript",
+    "types",
+    "cv",
+    "resume",
+    "ats",
+    "job-matching",
+    "pdf-generation",
+    "templates"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "vitest run || true",
@@ -26,9 +50,17 @@
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
-    "clean": "rm -rf dist coverage"
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.3",
+    "@dzb-cv/config": "workspace:*"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "restricted"
   }
 }

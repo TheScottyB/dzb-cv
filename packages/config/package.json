@@ -2,9 +2,8 @@
   "name": "@dzb-cv/config",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "type": "commonjs",
+  "main": "./src/eslint/index.cjs",
   "files": [
     "dist",
     "src/typescript",
@@ -12,8 +11,8 @@
     "src/vitest"
   ],
   "exports": {
+    ".": "./src/eslint/index.cjs",
     "./typescript/base": "./src/typescript/base.json",
-    "./eslint": "./src/eslint/index.cjs",
     "./vitest": "./dist/vitest/base.js"
   },
   "scripts": {
@@ -23,18 +22,21 @@
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.js",
-    "clean": "rm -rf coverage dist"
+    "clean": "rm -rf coverage dist tsconfig.tsbuildinfo"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.0.0",
-    "eslint-config-prettier": "10.1.2",
-    "eslint-plugin-import": "^2.0.0",
     "prettier": "3.5.3",
     "typescript": "^5.0.0",
     "vite-tsconfig-paths": "^4.0.0",
     "vitest": "^1.6.1"
+  },
+  "peerDependencies": {
+    "@typescript-eslint/eslint-plugin": ">=6.0.0",
+    "@typescript-eslint/parser": ">=6.0.0",
+    "eslint": ">=8.0.0",
+    "eslint-config-prettier": "*",
+    "eslint-plugin-import": ">=2.0.0",
+    "typescript": ">=5.0.0"
   }
 }

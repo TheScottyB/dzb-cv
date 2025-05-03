@@ -1,5 +1,5 @@
 {
-  "extends": "@dzb-cv/config/typescript/base", // Use exported path
+  "extends": "./packages/config/tsconfig.json",
   "compilerOptions": {
     "typeRoots": ["./node_modules/@types"],
     "types": ["node", "vitest/globals"],
