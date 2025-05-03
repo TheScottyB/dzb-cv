@@ -1,5 +1,110 @@
-# dzb-cv
+# DZB-CV
 
+A comprehensive CV management system with ATS optimization capabilities.
+
+## Project Structure
+
+This is a monorepo using PNPM workspaces and Turborepo, containing the following packages:
+
+- `@dzb-cv/core` - Core CV processing and ATS analysis functionality
+- `@dzb-cv/cli` - Command-line interface for CV management
+- `@dzb-cv/templates` - CV templates and formatting utilities
+- `@dzb-cv/tests` - Shared test utilities and integration tests
+
+## Prerequisites
+
+- Node.js >= 20.10.0
+- PNPM >= 10.9.0
+- [Volta](https://volta.sh/) (recommended for version management)
+
+## Quick Start
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm build
+
+# Run tests
+pnpm test
+
+# Start CLI in development mode
+pnpm dev
+```
+
+## Development
+
+### Package Scripts
+
+Each package supports the following scripts:
+
+- `build` - Builds the package
+- `dev` - Starts development mode
+- `test` - Runs tests
+- `lint` - Lints source files
+- `format` - Formats source files
+
+Run a script for all packages:
+```bash
+pnpm run build    # Builds all packages
+pnpm run test     # Tests all packages
+pnpm run lint     # Lints all packages
+pnpm run format   # Formats all packages
+```
+
+Run a script for a specific package:
+```bash
+pnpm --filter @dzb-cv/core build
+pnpm --filter @dzb-cv/cli dev
+```
+
+### Development Workflow
+
+1. Create a new branch for your feature/fix
+2. Make your changes
+3. Ensure tests pass and code is formatted: `pnpm test && pnpm format`
+4. Create a pull request
+
+### Package Dependencies
+
+- `@dzb-cv/core` - Base package with no internal dependencies
+- `@dzb-cv/cli` - Depends on @dzb-cv/core
+- `@dzb-cv/templates` - Depends on @dzb-cv/core
+- `@dzb-cv/tests` - Depends on all other packages
+
+## Contributing
+
+Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines.
+
+## Testing
+
+This project uses Vitest for testing. Run tests with:
+
+```bash
+# Run all tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:coverage
+
+# Run tests in watch mode
+pnpm test:watch
+```
+
+## Continuous Integration
+
+CI runs on GitHub Actions and checks:
+
+- Code formatting (Prettier)
+- Linting (ESLint)
+- Type checking (TypeScript)
+- Tests (Vitest)
+- Build verification
+
+## License
+
+ISC
 [![CI](https://img.shields.io/github/actions/workflow/status/TheScottyB/dzb-cv/ci.yml?branch=main&label=CI)](https://github.com/TheScottyB/dzb-cv/actions/workflows/ci.yml)
 [![Lint Status](https://img.shields.io/github/actions/workflow/status/TheScottyB/dzb-cv/ci.yml?label=lint)](https://github.com/TheScottyB/dzb-cv/actions/workflows/ci.yml)
 [![Coverage](https://img.shields.io/codecov/c/github/TheScottyB/dzb-cv?logo=codecov)](https://codecov.io/gh/TheScottyB/dzb-cv)
