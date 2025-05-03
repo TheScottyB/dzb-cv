@@ -1,122 +1,31 @@
 /**
- * @deprecated Import from packages/core/src/types/cv-base.ts instead
+ * @deprecated Import from @dzb-cv/core/types instead
  */
-import { CVData as BaseCVData } from '../../../packages/core/src/types/cv-base';
+import { 
+  CVData as BaseCVData,
+  Experience as BaseExperience,
+  CVTypeConfiguration as BaseCVTypeConfiguration,
+  PDFGenerationOptions as BasePDFOptions,
+  TemplateOptions as BaseTemplateOptions,
+  CVGenerationOptions as BaseCVGenerationOptions
+} from '@dzb-cv/core/types';
 
 export type CVData = BaseCVData;
-  profiles?: {
-    linkedIn?: string;
-    github?: string;
-    twitter?: string;
-    website?: string;
-    [key: string]: string | undefined;
-  };
-  professionalSummary?: string;
-  education: Array<{
-    degree: string;
-    institution: string;
-    year: string;
-    field?: string;
-    degree_type?: string;
-    completion_date?: string;
-    status?: string;
-    notes?: string;
-  }>;
-  skills: string[];
-  certifications: string[];
-  professionalAffiliations?: Array<{
-    organization: string;
-    roles?: string[];
-    activities?: string[];
-  }>;
-  workExperience?: {
-    healthcare?: Experience[];
-    realEstate?: Experience[];
-    foodIndustry?: Experience[];
-    [key: string]: Experience[] | undefined;
-  };
-  volunteerWork?: Array<{
-    organization?: string;
-    year?: string;
-    position?: string;
-    duties?: string[];
-    activities?: string[];
-    location?: string;
-    while?: string;
-  }>;
-  awards?: Array<{
-    title: string;
-    organization?: string;
-    period?: string;
-    notes?: string;
-    achievement?: string;
-    description?: string;
-  }>;
-  cvTypes?: {
-    federal?: CVTypeConfiguration;
-    state?: CVTypeConfiguration;
-    private?: CVTypeConfiguration;
-    [key: string]: CVTypeConfiguration | undefined;
-  };
-  experience: Array<{
-    title: string;
-    company: string;
-    startDate: string;
-    endDate?: string;
-    responsibilities: string[];
-  }>;
-}
 
 /**
- * Experience entry structure for work history
+ * @deprecated Import from @dzb-cv/core/types instead
  */
-export interface Experience {
-  employer: string;
-  position: string;
-  period: string;
-  address?: string;
-  location?: string;
-  duties?: string[];
-  hours?: string;
-  employmentType: string;
-  supervisor?: string;
-  mayContact?: boolean;
-  achievements?: string[];
-  grade_level?: string;
-  salary?: string;
-  career_progression?: string[];
-}
+export type Experience = BaseExperience;
 
 /**
- * CV type-specific configuration
+ * @deprecated Import from @dzb-cv/core/types instead
  */
-export interface CVTypeConfiguration {
-  requirements?: string[];
-  format?: string;
-  emphasizedExperience?: string[];
-  additionalDetails?: Record<string, unknown>;
-  highlights?: string[];
-}
+export type CVTypeConfiguration = BaseCVTypeConfiguration;
 
 /**
- * PDF generation options
+ * @deprecated Use PDFGenerationOptions from @dzb-cv/core/types instead
  */
-export interface PDFOptions {
-  includeHeaderFooter: boolean;
-  headerText?: string;
-  footerText?: string;
-  paperSize?: 'Letter' | 'A4' | 'Legal';
-  margins?: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-  pdfTitle?: string;
-  pdfAuthor?: string;
-  orientation?: 'portrait' | 'landscape';
-  fontFamily?: string;
-}
+export type PDFOptions = BasePDFOptions;
 
 /**
  * Job posting analysis interfaces
@@ -183,16 +92,11 @@ export interface CVMatchResult {
 
 /**
 /**
- * @deprecated Import from packages/core/src/types/cv-base.ts instead
+ * @deprecated Use TemplateOptions from @dzb-cv/core/types instead
  */
-import { TemplateOptions as BaseTemplateOptions } from '../../../packages/core/src/types/cv-base';
-
 export type TemplateOptions = BaseTemplateOptions;
+
 /**
- * CV Generation options for both markdown and PDF
+ * @deprecated Use CVGenerationOptions from @dzb-cv/core/types instead
  */
-export interface CVGenerationOptions {
-  format: 'markdown' | 'pdf';
-  pdfOptions?: Partial<PDFOptions>;
-  filename?: string;
-}
+export type CVGenerationOptions = BaseCVGenerationOptions;

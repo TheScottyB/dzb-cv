@@ -943,3 +943,29 @@ export interface ATSImprovement {
    */
   enhancedKeywords?: string[];
 }
+
+/**
+ * CV type-specific configuration for different CV formats (federal, state, private)
+ */
+export interface CVTypeConfiguration {
+  /**
+   * Required sections or information for this CV type
+   */
+  requirements?: string[];
+  /**
+   * Specific format guidelines or standards
+   */
+  format?: string;
+  /**
+   * Experience types that should be highlighted for this CV type
+   */
+  emphasizedExperience?: string[];
+  /**
+   * Additional details specific to this CV type
+   */
+  additionalDetails?: Record<string, unknown>;
+  /**
+   * Key highlights to include in this CV type
+   */
+  highlights?: string[];
+}
