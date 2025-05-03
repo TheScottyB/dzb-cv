@@ -13,15 +13,14 @@ export class PDFGenerator {
     const doc = await PDFDocument.create();
     const pageWidth = options.format === 'A4' ? 595.28 : 612;
     const pageHeight = options.format === 'A4' ? 841.89 : 792;
-    
-    const page = doc.addPage([pageWidth, pageHeight]);
-    const { width, height } = page.getSize();
-    const font = await doc.embedFont(StandardFonts.Helvetica);
 
+    const page = doc.addPage([pageWidth, pageHeight]);
+    const { width: _width, height } = page.getSize();
+    const font = await doc.embedFont(StandardFonts.Helvetica);
     const defaultMargin = 50;
     const marginTop = this.convertToNumber(options.margin?.top, defaultMargin);
-    const marginRight = this.convertToNumber(options.margin?.right, defaultMargin);
-    const marginBottom = this.convertToNumber(options.margin?.bottom, defaultMargin);
+    const _marginRight = this.convertToNumber(options.margin?.right, defaultMargin);
+    const _marginBottom = this.convertToNumber(options.margin?.bottom, defaultMargin);
     const marginLeft = this.convertToNumber(options.margin?.left, defaultMargin);
 
     let y = height - marginTop;

@@ -33,14 +33,14 @@ export function createCVCommand(program: Command): void {
       };
 
       const storage = {
-        save: async (id: string, data: CVData): Promise<void> => {
+        save: async (id: string, _data: CVData): Promise<void> => {
           console.log(`Saving CV with ID: ${id}`);
           // Don't return data, just return void as expected by the interface
         },
-        load: async (id: string): Promise<CVData> => { 
+        load: async (_id: string): Promise<CVData> => {
           throw new Error('Not implemented');
         },
-        delete: async (id: string): Promise<void> => { 
+        delete: async (_id: string): Promise<void> => {
           throw new Error('Not implemented');
         }
       };

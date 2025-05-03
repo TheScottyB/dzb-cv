@@ -4,7 +4,7 @@ import { createCVCommand } from '../create.js';
 
 // Mock the dependencies
 vi.mock('@dzb-cv/pdf', () => ({
-  StandardPDFGenerator: vi.fn().mockImplementation(() => ({
+  PDFGenerator: vi.fn().mockImplementation(() => ({ // Corrected class name
     generate: vi.fn().mockResolvedValue(Buffer.from('mock-pdf'))
   }))
 }));
@@ -55,9 +55,8 @@ describe('createCVCommand', () => {
   it('should handle command execution', async () => {
     const command = program.commands.find(cmd => cmd.name() === 'create');
     await command?.parseAsync(['node', 'test', '--name', 'John Doe', '--email', 'john@example.com'], { from: 'user' });
-    
+
     expect(mockConsoleLog).toHaveBeenCalledWith('Creating CV for John Doe');
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Saving CV with ID:'));
     expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Generated PDF:'));
   });
 

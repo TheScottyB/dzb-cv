@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CVService } from '../cv-service.js';
-import type { CVData, Skill } from '@dzb-cv/types';
+import type { CVData } from '@dzb-cv/types';
 
 describe('CVService', () => {
   let service: CVService;
@@ -97,9 +97,9 @@ describe('CVService', () => {
       };
       
       mockStorage.load.mockResolvedValue(existingCV);
-      
-      const result = await service.updateCV(id, updateData);
-      
+
+      const _result = await service.updateCV(id, updateData);
+
       expect(mockStorage.load).toHaveBeenCalledWith(id);
       expect(mockStorage.save).toHaveBeenCalledWith(id, expect.objectContaining({
         personalInfo: expect.objectContaining({
