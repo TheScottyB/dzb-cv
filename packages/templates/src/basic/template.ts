@@ -6,43 +6,86 @@ export class BasicTemplate implements Template {
   render(data: CVData, _options?: PDFGenerationOptions): string {
     let output = '';
 
-    // Personal Info
-    output += `# ${data.personalInfo.name.full}\n\n`;
-    if (data.personalInfo.contact) {
+    // Personal Info - safely access properties with optional chaining
+    output += `# ${data?.personalInfo?.name?.full || ''}\n\n`;
+    if (data?.personalInfo?.contact) {
       const contact = data.personalInfo.contact;
-      output += `${contact.email}${contact.phone ? ` | ${contact.phone}` : ''}\n`;
+      const contactParts = [];
+      
+      // Add email and phone with proper handling for empty/null values
+      if (contact.email) contactParts.push(contact.email);
+      if (contact.phone) contactParts.push(contact.phone);
+      
+      // Only add the contact line if we have at least one contact method
+      if (contactParts.length > 0) {
+        output += `${contactParts.join(' | ')}\n`;
+      }
+      
+      // Optional contact fields
       if (contact.address) output += `${contact.address}\n`;
       if (contact.linkedin) output += `LinkedIn: ${contact.linkedin}\n`;
     }
     output += '\n';
 
-    // Experience
-    if (data.experience.length > 0) {
-      output += '## Experience\n\n';
+    // Experience - always include section header
+    output += '## Experience\n\n';
+    if (data?.experience?.length > 0) {
       for (const exp of data.experience) {
-        output += `### ${exp.position} at ${exp.employer}\n`;
-        output += `${exp.startDate} - ${exp.endDate || 'Present'}\n\n`;
-        if (exp.responsibilities?.length) {
+        // Safely access properties
+        const position = exp?.position || 'Position';
+        const employer = exp?.employer || 'Employer';
+        const startDate = exp?.startDate || '';
+        const endDate = exp?.endDate || 'Present';
+        
+        output += `### ${position} at ${employer}\n`;
+        if (startDate || endDate) {
+          output += `${startDate}${startDate ? ' - ' : ''}${endDate}\n\n`;
+        }
+        
+        if (exp?.responsibilities?.length > 0) {
           output += exp.responsibilities.map(r => `- ${r}`).join('\n');
           output += '\n\n';
+        } else {
+          output += '\n';
         }
       }
+    } else {
+      // Add placeholder text for empty experience section
+      output += '\n';
     }
 
-    // Education
-    if (data.education.length > 0) {
-      output += '## Education\n\n';
+    // Education - always include section header
+    output += '## Education\n\n';
+    if (data?.education?.length > 0) {
       for (const edu of data.education) {
-        output += `### ${edu.degree}\n`;
-        output += `${edu.institution}, ${edu.year}\n\n`;
+        // Safely access properties
+        const degree = edu?.degree || 'Degree';
+        const institution = edu?.institution || 'Institution';
+        const year = edu?.year || '';
+        
+        output += `### ${degree}\n`;
+        if (institution || year) {
+          output += `${institution}${institution && year ? ', ' : ''}${year}\n\n`;
+        } else {
+          output += '\n';
+        }
       }
+    } else {
+      // Add placeholder text for empty education section
+      output += '\n';
     }
 
-    // Skills
-    if (data.skills.length > 0) {
-      output += '## Skills\n\n';
-      output += data.skills.map(skill => `- ${skill.name}`).join('\n');
+    // Skills - always include section header
+    output += '## Skills\n\n';
+    if (data?.skills?.length > 0) {
+      output += data.skills
+        .filter(skill => skill?.name) // Filter out skills without names
+        .map(skill => `- ${skill.name}`)
+        .join('\n');
       output += '\n\n';
+    } else {
+      // Add placeholder text for empty skills section
+      output += '\n';
     }
 
     return output;
@@ -50,35 +93,158 @@ export class BasicTemplate implements Template {
 
   getStyles(): string {
     return `
+      /* Base styles with improved typography */
       body {
-        font-family: Arial, sans-serif;
-        margin: 40px;
+        font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 25mm 20mm;
         color: #333;
+        max-width: 210mm; /* A4 width */
+        margin: 0 auto;
+        background-color: #fff;
+        font-size: 10.5pt; /* Optimal size for reading */
       }
+      
+      /* Header - Name styling */
       h1 {
-        font-size: 24px;
-        margin-bottom: 20px;
+        font-size: 22pt;
+        font-weight: 700;
+        margin: 0 0 12pt 0;
         color: #1a1a1a;
+        letter-spacing: -0.01em;
+        border-bottom: 1pt solid #ddd;
+        padding-bottom: 8pt;
       }
+      
+      /* Contact information styling */
+      .contact-info {
+        font-size: 10pt;
+        color: #505050;
+        margin-bottom: 15pt;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10pt;
+      }
+      
+      .contact-info a {
+        color: #2c5282;
+        text-decoration: none;
+      }
+      
+      .contact-info a:hover {
+        text-decoration: underline;
+      }
+      
+      /* Section headers */
       h2 {
-        font-size: 20px;
-        margin-top: 30px;
-        margin-bottom: 15px;
-        border-bottom: 1px solid #ccc;
-        color: #444;
+        font-size: 14pt;
+        font-weight: 600;
+        margin: 20pt 0 10pt 0;
+        padding-bottom: 5pt;
+        border-bottom: 0.75pt solid #e5e5e5;
+        color: #2d3748;
+        page-break-after: avoid;
       }
+      
+      /* Subsections - experience and education items */
       h3 {
-        font-size: 16px;
-        margin-top: 20px;
-        margin-bottom: 10px;
+        font-size: 12pt;
+        font-weight: 600;
+        margin: 12pt 0 5pt 0;
+        color: #4a5568;
+        page-break-after: avoid;
+      }
+      
+      /* Date ranges and institutions */
+      .date-range, .institution {
+        font-size: 10pt;
+        font-style: italic;
         color: #666;
+        margin-bottom: 5pt;
       }
+      
+      /* Lists styling - better bullets and spacing */
       ul {
-        margin: 10px 0;
-        padding-left: 20px;
+        margin: 8pt 0 12pt 0;
+        padding-left: 18pt;
+        list-style-type: square;
       }
+      
       li {
-        margin: 5px 0;
+        margin: 3pt 0;
+        padding-left: 3pt;
+      }
+      
+      /* Skills section styling */
+      .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8pt;
+        margin-top: 5pt;
+      }
+      
+      .skill-item {
+        background-color: #f5f5f5;
+        padding: 3pt 8pt;
+        border-radius: 3pt;
+        font-size: 9.5pt;
+      }
+      
+      /* Print optimization */
+      @media print {
+        body {
+          padding: 15mm;
+          font-size: 10pt;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+        }
+        
+        h1 {
+          font-size: 18pt;
+        }
+        
+        h2 {
+          font-size: 13pt;
+        }
+        
+        h3 {
+          font-size: 11pt;
+        }
+        
+        a {
+          text-decoration: none;
+          color: #333;
+        }
+        
+        .page-break {
+          page-break-before: always;
+        }
+        
+        /* Avoid page breaks inside items */
+        li, h3, h2 + p {
+          page-break-inside: avoid;
+        }
+      }
+      
+      /* Responsive design for smaller screens */
+      @media screen and (max-width: 600px) {
+        body {
+          padding: 15px;
+          font-size: 14px;
+        }
+        
+        h1 {
+          font-size: 20px;
+        }
+        
+        h2 {
+          font-size: 18px;
+        }
+        
+        h3 {
+          font-size: 16px;
+        }
       }
     `;
   }

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CVService } from '../cv-service';
-import type { CVData } from '@dzb-cv/types';
+import type { CVData, Skill } from '@dzb-cv/types';
 
 describe('CVService', () => {
   let service: CVService;
@@ -59,6 +59,115 @@ describe('CVService', () => {
     it('should generate PDF from CV data', async () => {
       await service.generatePDF(sampleCV);
       expect(mockPdfGenerator.generate).toHaveBeenCalledWith(sampleCV);
+    });
+  });
+
+  describe('getCV', () => {
+    it('should retrieve CV data by id', async () => {
+      const id = 'test-id';
+      mockStorage.load.mockResolvedValue(sampleCV);
+      
+      const result = await service.getCV(id);
+      
+      expect(mockStorage.load).toHaveBeenCalledWith(id);
+      expect(result).toEqual(sampleCV);
+    });
+
+    it('should throw error when CV not found', async () => {
+      const id = 'non-existent-id';
+      mockStorage.load.mockRejectedValue(new Error('CV not found'));
+      
+      await expect(service.getCV(id)).rejects.toThrow('CV not found');
+    });
+  });
+
+  describe('updateCV', () => {
+    it('should update existing CV with new data', async () => {
+      const id = 'test-id';
+      const existingCV = { ...sampleCV };
+      const updateData = {
+        personalInfo: {
+          ...sampleCV.personalInfo,
+          contact: {
+            email: 'updated@example.com'
+          }
+        }
+      };
+      
+      mockStorage.load.mockResolvedValue(existingCV);
+      
+      const result = await service.updateCV(id, updateData);
+      
+      expect(mockStorage.load).toHaveBeenCalledWith(id);
+      expect(mockStorage.save).toHaveBeenCalledWith(id, {
+        ...existingCV,
+        ...updateData
+      });
+      expect(result.personalInfo.contact.email).toBe('updated@example.com');
+    });
+
+    it('should throw error when updating non-existent CV', async () => {
+      const id = 'non-existent-id';
+      mockStorage.load.mockRejectedValue(new Error('CV not found'));
+      
+      await expect(service.updateCV(id, {})).rejects.toThrow('CV not found');
+    });
+
+    it('should correctly merge nested properties', async () => {
+      const id = 'test-id';
+      const existingCV = { 
+        ...sampleCV,
+        skills: [
+          { name: 'JavaScript' },
+          { name: 'TypeScript' }
+        ] 
+      };
+      const updateData = {
+        skills: [
+          { name: 'JavaScript' },
+          { name: 'TypeScript' },
+          { name: 'React' }
+        ]
+      };
+      
+      mockStorage.load.mockResolvedValue(existingCV);
+      
+      const result = await service.updateCV(id, updateData);
+      
+      expect(result.skills).toEqual([
+        { name: 'JavaScript' },
+        { name: 'TypeScript' },
+        { name: 'React' }
+      ]);
+      expect(result.personalInfo).toEqual(existingCV.personalInfo);
+    });
+  });
+
+  describe('deleteCV', () => {
+    it('should delete existing CV', async () => {
+      const id = 'test-id';
+      
+      await service.deleteCV(id);
+      
+      expect(mockStorage.delete).toHaveBeenCalledWith(id);
+    });
+
+    it('should throw error when deleting non-existent CV', async () => {
+      const id = 'non-existent-id';
+      mockStorage.delete.mockRejectedValue(new Error('CV not found'));
+      
+      await expect(service.deleteCV(id)).rejects.toThrow('CV not found');
+    });
+  });
+
+  describe('generateId', () => {
+    it('should generate unique IDs', () => {
+      const id1 = service['generateId']();
+      const id2 = service['generateId']();
+      
+      expect(id1).toMatch(/^cv-\d+-[a-z0-9]+$/);
+      expect(id2).toMatch(/^cv-\d+-[a-z0-9]+$/);
+      expect(id1).not.toBe(id2);
     });
   });
 });
