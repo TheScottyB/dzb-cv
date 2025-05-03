@@ -1,4 +1,7 @@
-export const scrapeJobPosting = jest.fn().mockResolvedValue({
+import { vi } from 'vitest';
+import type { JobPosting } from '../types';
+
+export const scrapeJobPosting = vi.fn().mockImplementation(async (): Promise<JobPosting> => ({
   url: 'https://example.com/jobs/12345',
   title: 'Mock Job Title',
   company: 'Mock Company',
@@ -8,4 +11,6 @@ export const scrapeJobPosting = jest.fn().mockResolvedValue({
   qualifications: ['Mock qualification 1', 'Mock qualification 2'],
   htmlPath: 'test-output/example-12345/job.html',
   screenshotPath: 'test-output/example-12345/screenshot.png'
-}); 
+}));
+
+export default { scrapeJobPosting };
