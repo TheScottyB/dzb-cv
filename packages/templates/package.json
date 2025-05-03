@@ -25,14 +25,25 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src --ext .ts",
-    "clean": "rm -rf dist coverage"
+    "lint": "eslint src --ext .ts,tsx",
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@dzb-cv/types": "workspace:*"
+    "@dzb-cv/types": "workspace:*",
+    "@dzb-cv/ui": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@dzb-cv/config": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^14.1.2",
     "@types/node": "^20.0.0",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "@types/testing-library__jest-dom": "^6.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "jsdom": "^23.0.1",
     "typescript": "^5.0.0",
     "vitest": "^1.6.1"
   }

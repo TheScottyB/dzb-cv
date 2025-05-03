@@ -1,0 +1,112 @@
+/* Base text styles */
+.text {
+  margin: 0;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+/* Size variants */
+.size-xs {
+  font-size: 0.75rem; /* 12px */
+}
+
+.size-sm {
+  font-size: 0.875rem; /* 14px */
+}
+
+.size-md {
+  font-size: 1rem; /* 16px */
+}
+
+.size-lg {
+  font-size: 1.125rem; /* 18px */
+}
+
+.size-xl {
+  font-size: 1.25rem; /* 20px */
+}
+
+/* Font weights */
+.weight-light {
+  font-weight: 300;
+}
+
+.weight-normal {
+  font-weight: 400;
+}
+
+.weight-medium {
+  font-weight: 500;
+}
+
+.weight-semibold {
+  font-weight: 600;
+}
+
+.weight-bold {
+  font-weight: 700;
+}
+
+/* Font style */
+.italic {
+  font-style: italic;
+}
+
+/* Truncation */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.lineClamp {
+  display: -webkit-box;
+  -webkit-line-clamp: var(--line-clamp);
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Text alignment */
+.align-left {
+  text-align: left;
+}
+
+.align-center {
+  text-align: center;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.align-justify {
+  text-align: justify;
+}
+
+/* Text colors */
+.color-default {
+  color: #1a202c; /* Default text color */
+}
+
+.color-muted {
+  color: #718096; /* Muted/secondary text */
+}
+
+.color-primary {
+  color: #3182ce; /* Primary brand color */
+}
+
+.color-success {
+  color: #38a169; /* Success/positive text */
+}
+
+.color-warning {
+  color: #d69e2e; /* Warning text */
+}
+
+.color-danger {
+  color: #e53e3e; /* Danger/error text */
+}
+

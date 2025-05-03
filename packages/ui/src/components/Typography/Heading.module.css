@@ -1,0 +1,71 @@
+/* Base heading styles */
+.heading {
+  margin: 0;
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1.2;
+  color: inherit;
+}
+
+/* Size variants */
+.size-xs {
+  font-size: 0.75rem; /* 12px */
+}
+
+.size-sm {
+  font-size: 0.875rem; /* 14px */
+}
+
+.size-md {
+  font-size: 1rem; /* 16px */
+}
+
+.size-lg {
+  font-size: 1.125rem; /* 18px */
+}
+
+.size-xl {
+  font-size: 1.25rem; /* 20px */
+}
+
+.size-2xl {
+  font-size: 1.5rem; /* 24px */
+}
+
+.size-3xl {
+  font-size: 1.875rem; /* 30px */
+}
+
+.size-4xl {
+  font-size: 2.25rem; /* 36px */
+}
+
+/* Font weights */
+.weight-light {
+  font-weight: 300;
+}
+
+.weight-normal {
+  font-weight: 400;
+}
+
+.weight-medium {
+  font-weight: 500;
+}
+
+.weight-semibold {
+  font-weight: 600;
+}
+
+.weight-bold {
+  font-weight: 700;
+}
+
+/* Truncate text with ellipsis */
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+

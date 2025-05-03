@@ -1,28 +1,27 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import React from 'react';
 import { render, screen, cleanup } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ModernTemplate } from '../template';
+import { ModernTemplate } from '../template.js';
 import type { CVData } from '@dzb-cv/types';
 
-// Mock the window.matchMedia function for testing responsive layouts
-function mockMatchMedia(matches: boolean) {
-  Object.defineProperty(window, 'matchMedia', {
-    writable: true,
-    value: vi.fn().mockImplementation(query => ({
-      matches,
-      media: query,
-      onchange: null,
-      addListener: vi.fn(),
-      removeListener: vi.fn(),
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      dispatchEvent: vi.fn(),
-    })),
-  });
-}
-
 describe('ModernTemplate', () => {
+  // Mock the window.matchMedia function for testing responsive layouts
+  function mockMatchMedia(matches: boolean) {
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation(query => ({
+        matches,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+  }
   const template = new ModernTemplate();
 
   // Minimal CV data for basic tests
@@ -475,3 +474,4 @@ describe('ModernTemplate', () => {
     expect(container.querySelector('.page-break-before')).toBeInTheDocument();
     expect(container.querySelector('.page-break-avoid')).toBeInTheDocument();
   });
+});
