@@ -10,6 +10,18 @@ module.exports = {
   rules: {
     'import/order': ['error', { 'newlines-between': 'always' }],
     '@typescript-eslint/explicit-function-return-type': 'error',
+    'import/no-restricted-paths': [
+      'error',
+      {
+        zones: [
+          {
+            target: './packages/**/*', // Apply this rule to files within any package
+            from: '../src', // Forbid imports resolving to the top-level src
+            message: 'Direct imports from the root \'src/\' directory are forbidden. Import from the appropriate package instead.',
+          },
+        ],
+      },
+    ],
   },
 };
 
