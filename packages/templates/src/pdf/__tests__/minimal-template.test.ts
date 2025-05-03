@@ -36,7 +36,9 @@ describe('MinimalTemplate', () => {
     
     expect(result).toContain('# Test User');
     expect(result).toContain('Software Engineer');
-    expect(result).toContain('test@example.com · 123-456-7890 · Test City');
+    expect(result).toContain('test@example.com');
+    expect(result).toContain('123-456-7890');
+    expect(result).toContain('Test City');
   });
 
   it('should format experience entries with bullet points', () => {

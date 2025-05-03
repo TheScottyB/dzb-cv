@@ -11,48 +11,19 @@ export class MinimalTemplate extends BasicTemplate {
 
   generateMarkdown(data: CVData, options?: TemplateOptions): string {
     let md = '';
-    if (!options || options.includePersonalInfo !== false) {
-      md += `# ${data.personalInfo?.name?.full || ''}\n`;
-      if (data.personalInfo?.title) {
-        md += `${data.personalInfo.title}\n`;
-      }
-      if (data.personalInfo?.contact) {
-        const { email, phone, address } = data.personalInfo.contact;
-        md += `${[email, phone, address].filter(Boolean).join(' · ')}\n`;
-      }
-    }
-    // Experience
-    if (!options || options.includeExperience !== false) {
-      md += '\n## Experience\n';
-      if (data.experience && data.experience.length > 0) {
-        for (const exp of data.experience) {
-          const position = (exp as any).title || exp.position || '';
-          const employer = (exp as any).company || exp.employer || '';
-          md += `### ${position} · ${employer}\n`;
-          if (exp.responsibilities?.length) {
-            for (const r of exp.responsibilities) md += `- ${r}\n`;
-          }
-        }
-      }
-    }
-    // Skills
-    if (!options || options.includeSkills !== false) {
-      md += '\n## Skills\n<div class="skills-list">\n';
-      if (data.skills && data.skills.length > 0) {
-        for (const skill of data.skills) md += `<span class="skill-item">${skill}</span>\n`;
-      }
-      md += '</div>\n';
-    }
-    // Education
-    if (!options || options.includeEducation !== false) {
-      md += '\n## Education\n';
-      if (data.education && data.education.length > 0) {
-        for (const edu of data.education) {
-          md += `### ${edu.degree} - ${edu.institution}\n`;
-          md += `${edu.completionDate || edu.year || ''}\n`;
-        }
-      }
-    }
+    
+    // Header section
+    md += this.generateHeader(data, options);
+    
+    // Experience section
+    md += '\n' + this.generateExperience(data, options);
+    
+    // Skills section
+    md += '\n' + this.generateSkills(data, options);
+    
+    // Education section
+    md += '\n' + this.generateEducation(data, options);
+    
     return md.trim();
   }
 
@@ -135,12 +106,27 @@ export class MinimalTemplate extends BasicTemplate {
     if (options?.includePersonalInfo === false) return '';
 
     const { personalInfo } = data;
+    // Handle both direct properties and nested contact structure
+    const contact = personalInfo.contact || personalInfo;
+    const email = contact.email;
+    const phone = contact.phone;
+    
+    // Handle different address structures
+    let addressText;
+    if (contact.address) {
+      if (typeof contact.address === 'string') {
+        addressText = contact.address;
+      } else {
+        addressText = contact.address.formatted || contact.address.city;
+      }
+    }
+    
     return `
 # ${personalInfo.name.full}
 <div style="color:#586069;font-size:15px;margin-bottom:8px;">${personalInfo.title || ''}</div>
 
 <div class="contact-info">
-${[personalInfo.contact.email, personalInfo.contact.phone, personalInfo.contact.address].filter(Boolean).join(' · ')}
+${[email, phone, addressText].filter(Boolean).join(' · ')}
 </div>
     `.trim();
   }
