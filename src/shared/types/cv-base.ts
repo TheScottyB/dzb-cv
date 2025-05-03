@@ -1,21 +1,9 @@
-export interface CVData {
-  personalInfo: {
-    name: {
-      full: string;
-      first?: string;
-      last?: string;
-    };
-    title?: string;
-    citizenship?: string;
-    contact: {
-      email: string;
-      phone: string;
-      address?: string;
-      linkedin?: string;
-      website?: string;
-    };
-    summary?: string;
-  };
+/**
+ * @deprecated Import from packages/core/src/types/cv-base.ts instead
+ */
+import { CVData as BaseCVData } from '../../../packages/core/src/types/cv-base';
+
+export type CVData = BaseCVData;
   professionalSummary?: string;
   experience: Array<{
     title: string;

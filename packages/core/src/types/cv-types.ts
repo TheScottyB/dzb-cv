@@ -4,4 +4,4 @@
  */
 
 // Re-export all types from cv-base for backward compatibility
-export * from './cv-base';
+export * from './cv-base.js';

@@ -75,6 +75,16 @@ export interface PersonalInfo {
   address?: Address;
   website?: string;
   /**
+   * @deprecated Use direct properties instead
+   * For backward compatibility - this property is synthesized from
+   * direct contact fields when needed
+   */
+  contact?: {
+    email: string;
+    phone: string;
+    address?: string;
+  };
+  /**
    * Social media profiles and other web links
    */
   profiles?: SocialLink[];
@@ -668,229 +678,43 @@ export interface CVGenerationOptions {
 }
 
 /**
- * Academic teaching experience for academic CVs
+ * User profile version information for tracking CV changes
  */
-export interface TeachingExperience {
+export interface ProfileVersion {
   /**
-   * Course name or code
+   * Version number of the profile
    */
-  course: string;
+  version: number;
   /**
-   * Institution where teaching was performed
+   * Complete CV data for this version
    */
-  institution: string;
+  data: CVData;
   /**
-   * Position (e.g., "Instructor", "Teaching Assistant")
+   * Timestamp when this version was created
    */
-  position: string;
+  timestamp: string;
   /**
-   * When the teaching role began
+   * List of changes made in this version
    */
-  startDate: string;
-  /**
-   * When the teaching role ended
-   */
-  endDate?: string;
-  /**
-   * Flag for ongoing teaching roles
-   */
-  current?: boolean;
-  /**
-   * Description of teaching responsibilities
-   */
-  description?: string;
-  /**
-   * Student evaluations with scores and comments
-   */
-  evaluations?: {
-    score: number;
-    scale: string;
-    comments?: string;
-  }[];
-  /**
-   * Primary teaching responsibilities
-   */
-  responsibilities?: string[];
-  /**
-   * Number of students taught
-   */
-  students?: number;
-  /**
-   * Link to course information or evaluations
-   */
-  url?: string;
+  changes: string[];
 }
 
 /**
- * Research experience for academic CVs
+ * User profile containing CV data and version history
  */
-export interface ResearchExperience {
+export interface Profile {
   /**
-   * Research project title
+   * Unique identifier for the user
    */
-  title: string;
+  userId: string;
   /**
-   * Research institution
+   * Current CV data
    */
-  institution: string;
+  data: CVData;
   /**
-   * Position or role in the research
+   * History of profile versions
    */
-  position: string;
-  /**
-   * When the research began
-   */
-  startDate: string;
-  /**
-   * When the research ended
-   */
-  endDate?: string;
-  /**
-   * Flag for ongoing research
-   */
-  current?: boolean;
-  /**
-   * Description of the research
-   */
-  description?: string;
-  /**
-   * Key findings or contributions
-   */
-  highlights?: string[];
-  /**
-   * Related publications
-   */
-  publications?: string[];
-  /**
-   * Funding source information
-   */
-  funding?: string;
-  /**
-   * Link to research project information
-   */
-  url?: string;
-}
-
-/**
- * Grant information for academic CVs
- */
-export interface Grant {
-  /**
-   * Grant title
-   */
-  title: string;
-  /**
-   * Funding agency
-   */
-  agency: string;
-  /**
-   * Amount of funding
-   */
-  amount: string;
-  /**
-   * Award date
-   */
-  date: string;
-  /**
-   * End date of grant period
-   */
-  endDate?: string;
-  /**
-   * Role on the grant (e.g., "Principal Investigator")
-   */
-  role: string;
-  /**
-   * Current status of the grant
-   */
-  status: 'awarded' | 'submitted' | 'rejected' | 'in progress';
-  /**
-   * Description of the grant project
-   */
-  description?: string;
-  /**
-   * Other investigators on the grant
-   */
-  collaborators?: string[];
-  /**
-   * Link to grant information
-   */
-  url?: string;
-}
-
-/**
- * Committee service for academic CVs
- */
-export interface Committee {
-  /**
-   * Committee name
-   */
-  name: string;
-  /**
-   * Institution or organization
-   */
-  institution: string;
-  /**
-   * Role on the committee
-   */
-  position: string;
-  /**
-   * When committee service began
-   */
-  startDate: string;
-  /**
-   * When committee service ended
-   */
-  endDate?: string;
-  /**
-   * Flag for ongoing committee service
-   */
-  current?: boolean;
-  /**
-   * Description of responsibilities
-   */
-  description?: string;
-  /**
-   * Link to committee information
-   */
-  url?: string;
-}
-
-/**
- * Academic service activities for academic CVs
- */
-export interface AcademicService {
-  /**
-   * Type of service
-   */
-  type: 'reviewer' | 'editor' | 'chair' | 'organizer' | 'other';
-  /**
-   * Publication or venue name
-   */
-  publication: string;
-  /**
-   * Specific role
-   */
-  role: string;
-  /**
-   * When service began
-   */
-  startDate?: string;
-  /**
-   * When service ended
-   */
-  endDate?: string;
-  /**
-   * Flag for ongoing service
-   */
-  current?: boolean;
-  /**
-   * Description of service activities
-   */
-  description?: string;
-  /**
-   * Link to related information
-   */
-  url?: string;
+  versions: ProfileVersion[];
 }
 
 /**
@@ -942,33 +766,6 @@ export interface CVData {
    */
   references?: Reference[];
 }
-
-/**
- * Academic CV data structure that extends the base CV with academic-specific sections
- */
-export interface AcademicCVData extends CVData {
-  /**
-   * Teaching experience entries
-   */
-  teaching: TeachingExperience[];
-  /**
-   * Research experience entries
-   */
-  research: ResearchExperience[];
-  /**
-   * Grant and funding information
-   */
-  grants: Grant[];
-  /**
-   * Committee service
-   */
-  committees: Committee[];
-  /**
-   * Academic service activities
-   */
-  academicService: AcademicService[];
-}
-
 /**
  * Template options for customizing CV generation
  */

@@ -1,21 +1,9 @@
 /**
- * Core CV data structure
+ * @deprecated Import from packages/core/src/types/cv-base.ts instead
  */
-export interface CVData {
-  personalInfo: {
-    name: {
-      full: string;
-      first?: string;
-      last?: string;
-    };
-    title?: string;
-    contact: {
-      email: string;
-      phone: string;
-      address?: string;
-    };
-    citizenship?: string;
-  };
+import { CVData as BaseCVData } from '../../../packages/core/src/types/cv-base';
+
+export type CVData = BaseCVData;
   profiles?: {
     linkedIn?: string;
     github?: string;
@@ -194,27 +182,12 @@ export interface CVMatchResult {
 }
 
 /**
- * Template rendering options
+/**
+ * @deprecated Import from packages/core/src/types/cv-base.ts instead
  */
-export interface TemplateOptions {
-  includePersonalInfo?: boolean;
-  includeProfessionalSummary?: boolean;
-  includeEducation?: boolean;
-  includeSkills?: boolean;
-  includeExperience?: boolean;
-  includeVolunteerWork?: boolean;
-  includeAwards?: boolean;
-  includeAffiliations?: boolean;
-  customSections?: Array<{
-    title: string;
-    content: string;
-  }>;
-  experienceOrder?: string[];
-  experienceFilter?: (exp: Experience) => boolean;
-  customFooter?: string;
-  customHeader?: string;
-}
+import { TemplateOptions as BaseTemplateOptions } from '../../../packages/core/src/types/cv-base';
 
+export type TemplateOptions = BaseTemplateOptions;
 /**
  * CV Generation options for both markdown and PDF
  */
