@@ -1,3 +1,18 @@
+export * from './test-utils';
+
+// Re-export test types and utilities
+export type {
+  TestContext,
+  MockFactory,
+  TestFactory
+} from './types';
+
+// Export test setup
+export * from './setup';
+
+// Export mock factories
+export * from './factories';
+
 // Test Utilities
 export * from './helpers/setup';
 export * from './helpers/test-utils';

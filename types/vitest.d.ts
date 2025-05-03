@@ -1,5 +1,18 @@
-// types/vitest.d.ts
+/// <reference types="vitest/globals" />
+
 declare module 'vitest' {
+  interface Assertion<T = any> extends jest.Matchers<void, T> {
+    toHaveLength(length: number): void;
+    toBeInstanceOf(constructor: Function): void;
+    toBeGreaterThan(number: number): void;
+    toContainEqual(item: unknown): void;
+    toBeNull(): void;
+    toHaveBeenCalled(): void;
+    toHaveBeenCalledTimes(times: number): void;
+    toMatch(pattern: RegExp | string): void;
+    not: Assertion<T>;
+  }
+
   export interface Suite {
     name: string;
     tests: Test[];
@@ -10,6 +23,14 @@ declare module 'vitest' {
     name: string;
     mode: 'test' | 'skip' | 'todo' | 'only';
     handler: () => void | Promise<void>;
+  }
+
+  export interface CustomMatchers<R = unknown> {
+    toHaveLength(length: number): R;
+    toBeInstanceOf(constructor: Function): R;
+    toContainEqual(expected: unknown): R;
+    toBeNull(): R;
+    toMatch(pattern: RegExp | string): R;
   }
 
   export const describe: {
@@ -28,19 +49,6 @@ declare module 'vitest' {
 
   export const it: typeof test;
 
-  export const expect: <T>(actual: T) => {
-    toBe: (expected: T) => void;
-    toEqual: (expected: T) => void;
-    toBeDefined: () => void;
-    toBeUndefined: () => void;
-    toBeTruthy: () => void;
-    toBeFalsy: () => void;
-    toContain: (expected: any) => void;
-    toThrow: (error?: any) => void;
-    resolves: any;
-    rejects: any;
-  };
-
   export const beforeEach: (fn: () => void | Promise<void>) => void;
   export const afterEach: (fn: () => void | Promise<void>) => void;
   export const beforeAll: (fn: () => void | Promise<void>) => void;
@@ -56,4 +64,3 @@ declare module 'vitest' {
 declare module 'vitest/globals' {
   export * from 'vitest';
 }
-

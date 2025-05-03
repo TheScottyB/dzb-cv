@@ -1,3 +1,75 @@
+declare module '@dzb-cv/types' {
+  export interface PersonalInfo {
+    name: {
+      first: string;
+      middle?: string;
+      last: string;
+      full: string;
+    };
+    contact: {
+      email: string;
+      phone: string;
+      address?: string;
+      linkedin?: string;
+      github?: string;
+      website?: string;
+    };
+    professionalTitle?: string;
+    summary?: string;
+  }
+
+  export interface Experience {
+    employer: string;
+    position: string;
+    startDate: string;
+    endDate?: string;
+    location?: string;
+    responsibilities: string[];
+    achievements?: string[];
+    employmentType: 'full-time' | 'part-time' | 'contract' | 'internship';
+  }
+
+  export interface Education {
+    institution: string;
+    degree: string;
+    field: string;
+    graduationDate: string;
+    gpa?: string;
+    honors?: string[];
+  }
+
+  export interface Skill {
+    name: string;
+    level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
+    category?: string;
+  }
+
+  export interface Certification {
+    name: string;
+    issuer: string;
+    date: string;
+    expiryDate?: string;
+  }
+
+  export interface CVData {
+    personalInfo: PersonalInfo;
+    experience: Experience[];
+    education: Education[];
+    skills: Skill[];
+    certifications?: Certification[];
+    languages?: string[];
+    interests?: string[];
+    metadata?: Record<string, unknown>;
+  }
+
+  export interface Template {
+    id: string;
+    name: string;
+    description: string;
+    generateMarkdown(data: CVData, options?: any): string;
+  }
+}
+
 // types/global.d.ts
 
 // Extend Vitest Expect interface

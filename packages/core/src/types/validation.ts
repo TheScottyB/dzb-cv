@@ -1,12 +1,21 @@
-/**
- * Validation type definitions for CV data
- */
-
-// Core validation types
+// Basic validation types
 export type ValidationRuleType = 'required' | 'format' | 'length' | 'range' | 'custom';
 
 export type ValidatorFunction<T> = (value: T) => boolean | Promise<boolean>;
 
+export interface ValidationError {
+  field: string;
+  message: string;
+  code: string;
+  details?: Record<string, unknown>;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: ValidationError[];
+}
+
+// Validation rules
 export interface ValidationRule<T = unknown> {
   field: string;
   type: ValidationRuleType;
@@ -25,20 +34,7 @@ export type ComposedValidationRule<T> = ValidationRule<T> & {
   compose?: ValidationRule<T>[];
 };
 
-// Validation result types
-export interface ValidationError {
-  field: string;
-  message: string;
-  code: string;
-  details?: Record<string, unknown>;
-}
-
-export interface ValidationResult {
-  isValid: boolean;
-  errors: ValidationError[];
-}
-
-// Section-specific validation rules
+// Section-specific validation
 export interface CVSectionValidation {
   section: string;
   rules: Array<ValidationRule | ComposedValidationRule<unknown>>;
@@ -46,7 +42,7 @@ export interface CVSectionValidation {
   dependsOn?: string[];
 }
 
-// Validation context
+// Validation context and schema
 export interface ValidationContext {
   strict?: boolean;
   locale?: string;
@@ -54,21 +50,25 @@ export interface ValidationContext {
   customValidators?: Record<string, ValidatorFunction<unknown>>;
 }
 
-// Validation schema
 export interface ValidationSchema {
   rules: Array<ValidationRule | ComposedValidationRule<unknown>>;
   sections?: CVSectionValidation[];
   context?: ValidationContext;
 }
 
-// Helper type for creating type-safe validation rules
+// Type-safe validation helpers
 export type TypedValidationRule<T> = Omit<ValidationRule<T>, 'field'> & {
   field: keyof T;
 };
 
-// Helper type for validation results with typed data
 export interface TypedValidationResult<T> extends ValidationResult {
   data: Partial<T>;
+}
+
+// Validator interfaces
+export interface Validator<T> {
+  validate(data: Partial<T>): ValidationError[];
+  getFirstErrorMessage(data: Partial<T>): string | null;
 }
 
 export interface DataValidator<T> {

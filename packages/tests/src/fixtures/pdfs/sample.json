@@ -1,0 +1,30 @@
+{
+  "metadata": {
+    "title": "John Doe - CV",
+    "author": "DZB CV Generator",
+    "creator": "DZB CV Generator v1.0.0",
+    "format": "A4"
+  },
+  "structure": {
+    "pageCount": 1,
+    "dimensions": {
+      "width": 595.28,
+      "height": 841.89
+    },
+    "sections": [
+      "header",
+      "experience",
+      "education",
+      "skills"
+    ]
+  },
+  "content": {
+    "requiredText": [
+      "John Doe",
+      "Tech Corp",
+      "Senior Developer",
+      "TypeScript"
+    ]
+  }
+}
+

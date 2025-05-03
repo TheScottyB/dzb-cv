@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@dzb-cv/core/*": ["../core/src/*"],
+      "@dzb-cv/cli/*": ["../cli/src/*"],
+      "@dzb-cv/templates/*": ["../templates/src/*"],
+      "@dzb-cv/types": ["../../types/cv-types.d.ts"]
+    },
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": [
+    { "path": "../core" },
+    { "path": "../cli" },
+    { "path": "../templates" }
+  ]
+}

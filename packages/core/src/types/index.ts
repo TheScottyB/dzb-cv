@@ -1,49 +1,41 @@
-export * from './cv-base';
-export * from './cv-templates';
+// Base types
+import type { CVData } from '@dzb-cv/types';
+export * from '@dzb-cv/types';
 
-/**
- * Central Type Definitions
- * 
- * This module serves as the central export point for all type definitions used throughout the application.
- * It consolidates common types to ensure consistency and prevent duplication.
- * 
- * All imports should use the @types path alias for better maintainability:
- * 
- * @example
- * import { CVData, Experience } from '@types/cv-base';
- * import { TemplateOptions } from '@types/cv-types';
- */
+// Local type exports
+export * from './config';
+export * from './storage';
+export * from './validation';
 
-// Core CV Types
-export * from './cv-base.js';
-export * from './cv-types.js';
-export * from './cv-generation.js';
+// Profile types
+export interface ProfileMetadata {
+  tags: string[];
+  lastModified: string;
+  createdAt: string;
+}
 
-// Profile Management Types
-export * from './profile-management.js';
+export interface ProfileVersion {
+  id: string;
+  profileId: string;
+  versionNumber: number;
+  timestamp: string;
+  createdBy: string;
+  data: CVData;
+}
 
-// Configuration Types
-export * from './config-types.js';
+export interface Profile {
+  id: string;
+  owner: string;
+  metadata: ProfileMetadata;
+  createdAt: string;
+  updatedAt: string;
+  versions: ProfileVersion[];
+  currentVersion: ProfileVersion;
+}
 
-// Job Analysis Types
-export * from './job-analysis.js';
-
-// Academic CV Types
-export * from './academic-types.js';
-
-// Parser Types
-export * from './parsers.js';
-
-// ATS-related Types
-export * from './ats-types.js';
-
-// All future type exports should be added here
-
-// Template Types
-export * from './cv-templates.js';
-
-// Scoring Types
-export * from './scoring.js';
-
-// Validation Types
-export * from './validation.js';
+// Core configuration
+export interface CoreConfig {
+  rootDir: string;
+  outputDir: string;
+  templatesDir: string;
+}

@@ -1,0 +1,66 @@
+{
+  "valid": [
+    {
+      "personalInfo": {
+        "name": {
+          "first": "John",
+          "last": "Doe",
+          "full": "John Doe"
+        },
+        "contact": {
+          "email": "john.doe@example.com",
+          "phone": "123-456-7890"
+        }
+      },
+      "experience": [
+        {
+          "employer": "Tech Corp",
+          "position": "Senior Developer",
+          "startDate": "2020-01",
+          "endDate": "2024-01",
+          "responsibilities": ["Lead development team", "Architect solutions"],
+          "employmentType": "full-time"
+        }
+      ],
+      "education": [
+        {
+          "institution": "University of Technology",
+          "degree": "Bachelor of Science",
+          "field": "Computer Science",
+          "graduationDate": "2020"
+        }
+      ],
+      "skills": [
+        {
+          "name": "TypeScript",
+          "level": "expert",
+          "category": "Programming Languages"
+        }
+      ]
+    }
+  ],
+  "invalid": [
+    {
+      "personalInfo": {
+        "name": {
+          "full": "Invalid Name"
+        },
+        "contact": {
+          "email": "invalid-email"
+        }
+      }
+    }
+  ],
+  "partial": [
+    {
+      "personalInfo": {
+        "name": {
+          "first": "Partial",
+          "last": "Data",
+          "full": "Partial Data"
+        }
+      }
+    }
+  ]
+}
+

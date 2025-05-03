@@ -1,16 +1,6 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ES2020",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "outDir": "./dist",
-    "rootDir": ".",
-    "composite": true,
-    "baseUrl": ".",
     "typeRoots": [
       "./types",
       "./node_modules/@types"
@@ -21,34 +11,18 @@
       "react",
       "react-dom"
     ],
-    "jsx": "react-jsx",
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noImplicitAny": false,
-    "paths": {
-      "@dzb-cv/cli/*": ["cli/src/*"],
-      "@dzb-cv/core/*": ["core/src/*"],
-      "@dzb-cv/templates/*": ["templates/src/*"],
-      "@dzb-cv/tests/*": ["tests/src/*"],
-      "@dzb-cv/*": ["src/*"],
-      "@/*": ["src/*"],
-      "@core/*": ["src/core/*"],
-      "@shared/*": ["src/shared/*"],
-      "@types/*": ["src/types/*"],
-      "@test/*": ["src/test/*"],
-      "*": ["types/*"]
-    }
+    "noImplicitAny": false
   },
   "include": [
-    "cli/**/*",
-    "core/**/*",
-    "templates/**/*",
-    "tests/**/*",
-    "scripts/**/*",
-    "src/**/*",
-    "agents/**/*",
+    "packages/*/src/**/*",
+    "packages/*/scripts/**/*",
     "types/**/*"
   ],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist", "**/build"],
+  "references": [
+    { "path": "./packages/core" },
+    { "path": "./packages/cli" },
+    { "path": "./packages/templates" },
+    { "path": "./packages/tests" }
+  ]
 }
