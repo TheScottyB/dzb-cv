@@ -44,7 +44,7 @@ export class BasicTemplate implements Template {
         }
         
         if (exp.responsibilities && exp.responsibilities.length > 0) {
-          output += exp.responsibilities.map(r => `- ${r}`).join('\n');
+          output += exp.responsibilities.map((r: string) => `- ${r}`).join('\n');
           output += '\n\n';
         } else {
           output += '\n';
@@ -81,8 +81,8 @@ export class BasicTemplate implements Template {
     output += '## Skills\n\n';
     if (data?.skills?.length > 0) {
       output += data.skills
-        .filter(skill => skill?.name) // Filter out skills without names
-        .map(skill => `- ${skill.name}`)
+        .filter((skill: { name?: string }) => skill?.name) // Filter out skills without names
+        .map((skill: { name: string }) => `- ${skill.name}`)
         .join('\n');
       output += '\n\n';
     } else {

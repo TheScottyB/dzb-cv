@@ -33,12 +33,16 @@ export function createCVCommand(program: Command): void {
       };
 
       const storage = {
-        save: async (id: string, data: CVData) => {
+        save: async (id: string, data: CVData): Promise<void> => {
           console.log(`Saving CV with ID: ${id}`);
-          return data;
+          // Don't return data, just return void as expected by the interface
         },
-        load: async (id: string) => { throw new Error('Not implemented'); },
-        delete: async (id: string) => { throw new Error('Not implemented'); }
+        load: async (id: string): Promise<CVData> => { 
+          throw new Error('Not implemented');
+        },
+        delete: async (id: string): Promise<void> => { 
+          throw new Error('Not implemented');
+        }
       };
 
       const pdfGenerator = new PDFGenerator();

@@ -1,11 +1,27 @@
 {
-  "extends": "../config/src/typescript/base.json",
   "compilerOptions": {
+    "target": "ES2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "rootDir": "src",
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["node", "vitest/globals"],
+    "baseUrl": ".",
+    "paths": {
+      "@dzb-cv/*": ["../*/src"]
+    }
   },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"],
   "references": [
     { "path": "../types" }
-  ],
-  "include": ["src/**/*"]
+  ]
 }

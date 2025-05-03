@@ -1,10 +1,10 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**"],
-      "inputs": ["src/**/*.ts"]
+      "outputs": ["dist/**", "**/tsconfig.tsbuildinfo"],
+      "inputs": ["src/**/*.ts", "tsconfig.json"]
     },
     "test": {
       "dependsOn": ["build"],
@@ -13,7 +13,7 @@
     },
     "typecheck": {
       "outputs": [],
-      "inputs": ["src/**/*.ts"]
+      "inputs": ["src/**/*.ts", "tsconfig.json"]
     },
     "lint": {
       "outputs": [],

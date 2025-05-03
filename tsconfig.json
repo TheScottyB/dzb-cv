@@ -1,21 +1,24 @@
 {
   "extends": "./packages/config/src/typescript/base.json",
   "compilerOptions": {
-    "typeRoots": [
-      "./types",
-      "./node_modules/@types"
-    ],
-    "types": [
-      "node",
-      "vitest"
-    ],
-    "noImplicitAny": true
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["node", "vitest/globals"],
+    "noImplicitAny": true,
+    "composite": true,
+    "noEmit": false,
+    "baseUrl": ".",
+    "paths": {
+      "@dzb-cv/*": ["packages/*/src"]
+    }
   },
-  "include": [
-    "packages/*/src/**/*",
-    "types/**/*"
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/build",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__/**"
   ],
-  "exclude": ["node_modules", "dist", "**/build"],
   "references": [
     { "path": "./packages/types" },
     { "path": "./packages/core" },
