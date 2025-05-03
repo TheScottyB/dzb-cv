@@ -64,3 +64,4 @@ coverage/
 job-posting.txt
 *-cv.pdf
 *-cv.html
+.backup/
