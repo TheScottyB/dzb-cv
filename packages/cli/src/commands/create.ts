@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 import { CVService } from '@dzb-cv/core';
 import { StandardPDFGenerator } from '@dzb-cv/pdf';
-import type { CVData } from '@dzb-cv/types';
+import type { CVData, PDFGenerator } from '@dzb-cv/types';
 
 export function createCVCommand(program: Command): void {
   program
@@ -33,7 +33,10 @@ export function createCVCommand(program: Command): void {
       };
 
       const storage = {
-        save: async (id: string, data: CVData) => console.log(`Saving CV ${id}`),
+        save: async (id: string, data: CVData) => {
+          console.log(`Saving CV with ID: ${id}`);
+          return data;
+        },
         load: async (id: string) => { throw new Error('Not implemented'); },
         delete: async (id: string) => { throw new Error('Not implemented'); }
       };

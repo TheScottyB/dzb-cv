@@ -1,4 +1,4 @@
-import type { CVData } from '../cv/base';
+import type { CVData } from './cv.js';
 
 export interface PDFGenerationOptions {
   pageSize?: 'A4' | 'Letter' | 'Legal';

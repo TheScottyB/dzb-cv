@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { CVService } from '../index';
+import { CVService } from '../index.js';
 import type { CVData } from '@dzb-cv/types';
 
 describe('Package exports', () => {
@@ -46,7 +46,8 @@ describe('Package exports', () => {
           full: 'Test Name'
         },
         contact: {
-          email: 'test@example.com'
+          email: 'test@example.com',
+          phone: '123-456-7890'  // Add required phone field
         }
       },
       experience: [],

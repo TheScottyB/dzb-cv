@@ -1,1 +1,1 @@
-export * from './cv-service';
+export { CVService } from './cv-service.js';

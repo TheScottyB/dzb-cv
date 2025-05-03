@@ -1,9 +1,11 @@
 import type { CVData, Template, PDFGenerationOptions } from '@dzb-cv/types';
 
 export abstract class BaseTemplate implements Template {
+  abstract id: string; // Add required id property
   abstract name: string;
+  abstract description: string; // Add required description property
   
-  abstract render(data: CVData, options?: PDFGenerationOptions): Promise<string> | string;
+  abstract render(data: CVData, options?: PDFGenerationOptions): string; // Remove Promise<string>
   
   getStyles(): string {
     return '';
@@ -11,8 +13,9 @@ export abstract class BaseTemplate implements Template {
 }
 
 export class DefaultTemplate extends BaseTemplate {
+  id = 'default';
   name = 'default';
-
+  description = 'Default CV template with clean, professional layout';
   render(data: CVData): string {
     return `
       <!DOCTYPE html>
@@ -41,7 +44,7 @@ export class DefaultTemplate extends BaseTemplate {
           ${data.education.map(edu => `
             <div class="education">
               <h3>${edu.degree}</h3>
-              <p>${edu.institution}, ${edu.year}</p>
+              <p>${edu.institution}, ${edu.graduationDate}</p>
             </div>
           `).join('')}
           

@@ -1,7 +1,20 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Command } from 'commander';
-import { createCVCommand } from '../create';
+import { createCVCommand } from '../create.js';
 
+// Mock the dependencies
+vi.mock('@dzb-cv/pdf', () => ({
+  StandardPDFGenerator: vi.fn().mockImplementation(() => ({
+    generate: vi.fn().mockResolvedValue(Buffer.from('mock-pdf'))
+  }))
+}));
+
+vi.mock('@dzb-cv/core', () => ({
+  CVService: vi.fn().mockImplementation(() => ({
+    createCV: vi.fn().mockResolvedValue({}),
+    generatePDF: vi.fn().mockResolvedValue(Buffer.from('mock-pdf'))
+  }))
+}));
 describe('createCVCommand', () => {
   let program: Command;
   let mockConsoleLog: any;
@@ -43,8 +56,9 @@ describe('createCVCommand', () => {
     const command = program.commands.find(cmd => cmd.name() === 'create');
     await command?.parseAsync(['node', 'test', '--name', 'John Doe', '--email', 'john@example.com'], { from: 'user' });
     
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Saving CV'));
-    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Generated PDF'));
+    expect(mockConsoleLog).toHaveBeenCalledWith('Creating CV for John Doe');
+    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Saving CV with ID:'));
+    expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Generated PDF:'));
   });
 
   it('should split name into first and last', async () => {

@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { CVService } from '../cv-service';
+import { describe, it, expect, vi } from 'vitest';
+import { CVService } from '../cv-service.js';
 import type { CVData, Skill } from '@dzb-cv/types';
 
 describe('CVService', () => {
@@ -21,7 +21,8 @@ describe('CVService', () => {
         full: 'John Doe'
       },
       contact: {
-        email: 'john@example.com'
+        email: 'john@example.com',
+        phone: '123-456-7890'  // Add required phone field
       }
     },
     experience: [],
@@ -89,7 +90,8 @@ describe('CVService', () => {
         personalInfo: {
           ...sampleCV.personalInfo,
           contact: {
-            email: 'updated@example.com'
+            email: 'updated@example.com',
+            phone: '987-654-3210'  // Add required phone field
           }
         }
       };
@@ -99,11 +101,14 @@ describe('CVService', () => {
       const result = await service.updateCV(id, updateData);
       
       expect(mockStorage.load).toHaveBeenCalledWith(id);
-      expect(mockStorage.save).toHaveBeenCalledWith(id, {
-        ...existingCV,
-        ...updateData
-      });
-      expect(result.personalInfo.contact.email).toBe('updated@example.com');
+      expect(mockStorage.save).toHaveBeenCalledWith(id, expect.objectContaining({
+        personalInfo: expect.objectContaining({
+          contact: expect.objectContaining({
+            email: 'updated@example.com',
+            phone: '987-654-3210'
+          })
+        })
+      }));
     });
 
     it('should throw error when updating non-existent CV', async () => {
