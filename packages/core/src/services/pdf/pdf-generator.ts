@@ -1,4 +1,8 @@
-import type { CVData } from '../../types/cv-base.js';
+import type { 
+  CVData, 
+  PDFGenerationOptions,
+  CVTemplate as PDFTemplate 
+} from '@dzb-cv/common';
 import type { PaperFormat } from 'puppeteer';
 import puppeteer from 'puppeteer';
 import { marked } from 'marked';
@@ -6,70 +10,102 @@ import { readFileSync } from 'fs';
 import handlebars from 'handlebars';
 
 /**
- * PDF generation options
+ * Puppeteer-specific PDF options
  */
-export interface PDFGenerationOptions {
-  /** Whether to include header and footer in the PDF */
-  includeHeaderFooter?: boolean;
-  /** Text to display in the header */
-  headerText?: string;
-  /** Text to display in the footer */
-  footerText?: string;
-  /** Paper size for the PDF */
-  paperSize?: PaperFormat;
-  /** Margins for the PDF in inches */
-  margins?: {
-    top: string;
-    right: string;
-    bottom: string;
-    left: string;
+interface PuppeteerPDFOptions {
+  format?: PaperFormat;
+  margin?: {
+    top?: string;
+    right?: string;
+    bottom?: string;
+    left?: string;
   };
-  /** Title of the PDF document */
-  pdfTitle?: string;
-  /** Author of the PDF document */
-  pdfAuthor?: string;
-  /** Page orientation */
-  orientation?: 'portrait' | 'landscape';
-  /** Font family to use in the PDF */
-  fontFamily?: string;
-  /** Template to use */
-  template?: 'default' | 'minimal' | 'federal' | 'academic';
+  printBackground?: boolean;
+  displayHeaderFooter?: boolean;
+  headerTemplate?: string;
+  footerTemplate?: string;
+  landscape?: boolean;
+  path?: string;
+}
+
+/**
+ * Maps PDFGenerationOptions to PuppeteerPDFOptions
+ */
+function mapToPuppeteerOptions(options?: Partial<PDFGenerationOptions>): PuppeteerPDFOptions {
+  if (!options) return { format: 'letter', printBackground: true };
+  
+  return {
+    format: (options.format || 'letter') as PaperFormat,
+    margin: options.margin || { top: '1in', right: '1in', bottom: '1in', left: '1in' },
+    printBackground: true,
+    displayHeaderFooter: options.headerTemplate !== undefined || options.footerTemplate !== undefined,
+    headerTemplate: options.headerTemplate || '',
+    footerTemplate: options.footerTemplate || '',
+    landscape: options.orientation === 'landscape'
+  };
 }
 
 /**
  * Abstract base class for PDF generation
  */
-export abstract class PDFGenerator {
-  abstract generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer>;
+export abstract class PDFGenerator implements PDFTemplate {
+  // Properties required by CVTemplate
+  abstract name: string;
+  title?: string;
+  description?: string;
+
+  // Method required by CVTemplate
+  abstract render(data: CVData, options?: PDFGenerationOptions): Promise<string> | string;
+
+  // PDF Generator specific methods
+  abstract generate(
+    data: CVData,
+    options?: Partial<PDFGenerationOptions>
+  ): Promise<Buffer>;
+
   abstract generateFromMarkdown(
     markdown: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string>;
+
   abstract generateFromHTML(
     html: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string>;
+
   abstract generateFromTemplate(
     templatePath: string,
     data: CVData,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string>;
-  protected abstract generateHTML(data: CVData): string;
 }
 
 /**
- * Default implementation of PDF Generator
+ * Default implementation of the PDF Generator
  */
 export class DefaultPDFGenerator extends PDFGenerator {
+  // Implement required CVTemplate properties
+  name = 'default';
+  title = 'Default PDF Template';
+  description = 'A simple default template for CV generation';
+
+  // Implement render method required by CVTemplate
+  render(data: CVData, options?: PDFGenerationOptions): string {
+    return this.generateHTML(data);
+  }
+
+  // Add template type validation
+  private isValidTemplate(template?: string): template is 'default' | 'minimal' | 'federal' | 'academic' {
+    if (!template) return true;
+    return ['default', 'minimal', 'federal', 'academic'].includes(template);
+  }
+
   async generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer> {
-    // Template validation: fail fast for unknown types
-    if (
-      options?.template &&
-      !['default', 'minimal', 'federal', 'academic'].includes(options.template)
-    ) {
+    // Template validation with type guard
+    if (options?.template && !this.isValidTemplate(options.template)) {
       throw new Error(`Template '${options.template}' not found`);
     }
     const browser = await puppeteer.launch();
@@ -78,15 +114,7 @@ export class DefaultPDFGenerator extends PDFGenerator {
       const html = this.generateHTML(data);
       await page.setContent(html);
 
-      const pdfOptions = {
-        format: (options?.paperSize || 'letter') as PaperFormat,
-        margin: options?.margins || { top: '1in', right: '1in', bottom: '1in', left: '1in' },
-        printBackground: true,
-        displayHeaderFooter: options?.includeHeaderFooter || false,
-        headerTemplate: options?.headerText || '',
-        footerTemplate: options?.footerText || '',
-        landscape: options?.orientation === 'landscape',
-      };
+      const pdfOptions = mapToPuppeteerOptions(options);
 
       const pdfBuffer = await page.pdf(pdfOptions);
       return Buffer.from(pdfBuffer);
@@ -121,24 +149,15 @@ export class DefaultPDFGenerator extends PDFGenerator {
       const page = await browser.newPage();
       await page.setContent(html);
 
-      const pdfOptions = {
-        path: outputPath,
-        format: (options?.paperSize || 'letter') as PaperFormat,
-        margin: options?.margins || { top: '1in', right: '1in', bottom: '1in', left: '1in' },
-        printBackground: true,
-        displayHeaderFooter: options?.includeHeaderFooter || false,
-        headerTemplate: options?.headerText || '',
-        footerTemplate: options?.footerText || '',
-        landscape: options?.orientation === 'landscape',
-      };
-
+      const pdfOptions = mapToPuppeteerOptions(options);
+      pdfOptions.path = outputPath;
+      
       await page.pdf(pdfOptions);
       return outputPath;
     } finally {
       await browser.close();
     }
   }
-
   async generateFromTemplate(
     templatePath: string,
     data: CVData,
@@ -153,12 +172,24 @@ export class DefaultPDFGenerator extends PDFGenerator {
   }
 
   protected generateHTML(data: CVData): string {
+    // Ensure all optional properties are handled safely through destructuring with defaults
+    const {
+      personalInfo: {
+        name: { full: name = 'CV' } = {},
+        contact = {}
+      } = {},
+      experience = [],
+      education = [],
+      skills = [],
+      certifications = []
+    } = data;
+    
     // Basic HTML template
     return `
       <!DOCTYPE html>
       <html>
         <head>
-          <title>${data.personalInfo.name.full} - CV</title>
+          <title>${name} - CV</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 40px; }
             h1 { color: #333; }
@@ -167,38 +198,40 @@ export class DefaultPDFGenerator extends PDFGenerator {
           </style>
         </head>
         <body>
-          <h1>${data.personalInfo.name.full}</h1>
+          <h1>${name}</h1>
           <div class="contact-info">
-            ${data.personalInfo.contact.email} | ${data.personalInfo.contact.phone}
+            ${contact.email ? contact.email : ''} ${contact.email && contact.phone ? '|' : ''} ${contact.phone ? contact.phone : ''}
           </div>
           
           <div class="section">
             <h2>Professional Experience</h2>
-            ${data.experience
+            ${experience
               .map(
                 (exp) => `
-              <div>
-                <h3>${exp.title} at ${exp.company}</h3>
-                <p>${exp.startDate} - ${exp.endDate || 'Present'}</p>
-                <ul>
-                  ${exp.responsibilities.map((r) => `<li>${r}</li>`).join('')}
-                </ul>
-              </div>
-            `,
+                  <div>
+                    <h3>${exp.position || ''} at ${exp.employer || ''}</h3>
+                    <p>${exp.startDate || ''} - ${exp.endDate || 'Present'}</p>
+                    ${exp.responsibilities ? `
+                      <ul>
+                        ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
+                      </ul>
+                    ` : ''}
+                  </div>
+                `
               )
               .join('')}
           </div>
 
           <div class="section">
             <h2>Education</h2>
-            ${data.education
+            ${education
               .map(
                 (edu) => `
-              <div>
-                <h3>${edu.degree} - ${edu.institution}</h3>
-                <p>${edu.year}</p>
-              </div>
-            `,
+                  <div>
+                    <h3>${edu.degree || ''} - ${edu.institution || ''}</h3>
+                    <p>${edu.year || edu.startDate || ''}</p>
+                  </div>
+                `
               )
               .join('')}
           </div>
@@ -206,16 +239,22 @@ export class DefaultPDFGenerator extends PDFGenerator {
           <div class="section">
             <h2>Skills</h2>
             <ul>
-              ${data.skills.map((skill) => `<li>${skill}</li>`).join('')}
+              ${skills
+                .map(skill => `<li>${typeof skill === 'string' ? skill : skill.name || ''}</li>`)
+                .join('')}
             </ul>
           </div>
 
-          <div class="section">
-            <h2>Certifications</h2>
-            <ul>
-              ${data.certifications.map((cert) => `<li>${cert}</li>`).join('')}
-            </ul>
-          </div>
+          ${certifications.length > 0 ? `
+            <div class="section">
+              <h2>Certifications</h2>
+              <ul>
+                ${certifications
+                  .map(cert => `<li>${typeof cert === 'string' ? cert : cert.name || ''}</li>`)
+                  .join('')}
+              </ul>
+            </div>
+          ` : ''}
         </body>
       </html>
     `;

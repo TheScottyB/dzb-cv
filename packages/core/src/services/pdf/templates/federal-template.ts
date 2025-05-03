@@ -1,6 +1,6 @@
 import { BasicTemplate } from './basic-template.js';
-import type { CVData } from '../../../types/cv-base.js';
-import type { TemplateOptions } from '../../../types/cv-types.js';
+import type { CVData } from '@dzb-cv/common';
+import type { PDFGenerationOptions } from '@dzb-cv/common';
 
 /**
  * Federal template following USA government resume guidelines
@@ -9,7 +9,7 @@ export class FederalTemplate extends BasicTemplate {
   id = 'federal';
   name = 'federal';
 
-  generateMarkdown(data: CVData, options?: TemplateOptions): string {
+  override generateMarkdown(data: CVData, options?: PDFGenerationOptions): string {
     let md = '';
     // Header/Personal Info
     if (!options || options.includePersonalInfo !== false) {
@@ -139,28 +139,37 @@ export class FederalTemplate extends BasicTemplate {
     `;
   }
 
-  protected override generateHeader(data: CVData, options?: TemplateOptions): string {
+  protected override generateHeader(data: CVData, options?: PDFGenerationOptions): string {
     if (options?.includePersonalInfo === false) return '';
 
-    const { personalInfo } = data;
-    return `
-# ${personalInfo.name.full}
-<div class="contact-info">
-${personalInfo.contact.address || ''}
+    const {
+      personalInfo: {
+        name: { full: name = '' } = {},
+        contact = {},
+        citizenship
+      } = {}
+    } = data;
 
-${personalInfo.contact.phone} | ${personalInfo.contact.email}
-${personalInfo.citizenship ? `Citizenship: ${personalInfo.citizenship}` : 'Citizenship: U.S. Citizen'}
+    return `
+# ${this.safeString(name)}
+<div class="contact-info">
+${this.safeString(contact.address)}
+
+${this.safeString(contact.phone)} | ${this.safeString(contact.email)}
+${citizenship ? `Citizenship: ${citizenship}` : 'Citizenship: U.S. Citizen'}
 </div>
     `.trim();
   }
 
-  protected override generateExperience(data: CVData, options?: TemplateOptions): string {
-    if (options?.includeExperience === false || !data.experience.length) return '';
+  protected override generateExperience(data: CVData, options?: PDFGenerationOptions): string {
+    if (options?.includeExperience === false) return '';
 
-    const experiences = data.experience.map(exp => ({
+    const experiences = this.safeArray(data.experience).map(exp => ({
       ...exp,
-      period: `${exp.startDate} - ${exp.endDate || 'Present'}`
+      period: `${this.safeString(exp.startDate)} - ${this.safeString(exp.endDate, 'Present')}`
     }));
+    
+    if (!experiences.length) return '';
 
     if (options?.experienceOrder) {
       experiences.sort((a, b) => {
@@ -205,28 +214,34 @@ ${exp.careerProgression.map(p => `<p>${p}</p>`).join('\n')}
     `.trim();
   }
 
-  protected override generateSkills(data: CVData, options?: TemplateOptions): string {
-    if (options?.includeSkills === false || !data.skills.length) return '';
+  protected override generateSkills(data: CVData, options?: PDFGenerationOptions): string {
+    if (options?.includeSkills === false) return '';
+    
+    const skills = this.safeArray(data.skills);
+    if (!skills.length) return '';
 
     return `
 ## Technical Skills and Competencies
 
 <div class="skills-section">
-${data.skills.map(skill => `- ${skill}`).join('\n')}
+${skills.map(skill => `- ${typeof skill === 'string' ? skill : this.safeString(skill.name)}`).join('\n')}
 </div>
     `.trim();
   }
 
-  protected override generateEducation(data: CVData, options?: TemplateOptions): string {
-    if (options?.includeEducation === false || !data.education.length) return '';
+  protected override generateEducation(data: CVData, options?: PDFGenerationOptions): string {
+    if (options?.includeEducation === false) return '';
+    
+    const education = this.safeArray(data.education);
+    if (!education.length) return '';
 
     return `
 ## Education
 
-${data.education.map(edu => {
-        const completionDate = edu.completionDate || edu.year || '2019';
+${education.map(edu => {
+        const completionDate = this.safeString(edu.completionDate || edu.year, '2019');
         // Add month if not present in completion date
-        const formattedDate = completionDate?.includes(' ') 
+        const formattedDate = completionDate.includes(' ') 
             ? completionDate 
             : `May ${completionDate}`;
             

@@ -6,7 +6,7 @@ import type {
   PersonalInfo,
   Profile,
   ProfileVersion
-} from '@dzb-cv/types';
+} from '@dzb-cv/core/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export const createMockPersonalInfo = (override?: Partial<PersonalInfo>): PersonalInfo => ({

@@ -1,6 +1,5 @@
 import { BaseTemplate } from './base-template.js';
-import { CVData } from '../../../types/cv-base.js';
-import { AcademicCVData } from '../../../types/academic-types.js';
+import { CVData, AcademicCVData } from '@dzb-cv/core/types';
 
 /**
  * Academic CV template following standard academic formatting

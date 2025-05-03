@@ -1,30 +1,23 @@
 /**
- * CV Generation and PDF options
+ * CV Generation options
  */
 
-import { TemplateOptions } from './cv-types.js';
+import type { PDFOptions } from './pdf.js';
+import type { TemplateOptions } from './template.js';
 
-export interface PDFOptions {
-  includeHeaderFooter: boolean;
-  headerText?: string;
-  footerText?: string;
-  paperSize?: 'Letter' | 'A4' | 'Legal';
-  margins?: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-  pdfTitle?: string;
-  pdfAuthor?: string;
-  orientation?: 'portrait' | 'landscape';
-  fontFamily?: string;
-}
-
+/**
+ * Options for controlling CV generation output
+ */
 export interface CVGenerationOptions {
-  format: 'markdown' | 'pdf';
+  /** Output format for the CV */
+  format: 'markdown' | 'pdf' | 'docx' | 'html';
+  /** Template options for generation */
+  templateOptions: Partial<TemplateOptions>;
+  /** PDF-specific options when generating PDF output */
   pdfOptions?: Partial<PDFOptions>;
+  /** Output filename */
   filename?: string;
-  templateOptions?: TemplateOptions;
 }
 
+/** @deprecated Use PDFOptions from './pdf.js' instead */
+export { PDFOptions as PDFGenerationOptions };

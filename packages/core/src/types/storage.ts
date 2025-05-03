@@ -1,4 +1,4 @@
-import type { CVData } from '@dzb-cv/types';
+import type { CVData } from '@dzb-cv/common';
 
 export interface Storage {
   read(key: string): Promise<CVData | null>;

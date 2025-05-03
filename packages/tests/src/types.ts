@@ -1,4 +1,4 @@
-import type { CVData, Experience, Education, Skill, Profile } from '@dzb-cv/types';
+import type { CVData, Experience, Education, Skill, Profile } from '@dzb-cv/core/types';
 
 // Test Context Types
 export interface TestContext {

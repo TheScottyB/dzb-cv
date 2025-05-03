@@ -1,12 +1,15 @@
 import { BaseTemplate } from './base-template.js';
-import type { CVData } from '../../../types/cv-base.js';
-import type { TemplateOptions } from '../../../types/cv-types.js';
+import type { CVData } from '@dzb-cv/common';
+import type { PDFGenerationOptions } from '@dzb-cv/common';
 
+/**
+ * Basic template implementation of BaseTemplate
+ */
 export class BasicTemplate extends BaseTemplate {
   id = 'basic';
   name = 'basic';
 
-  generateMarkdown(data: CVData, options?: TemplateOptions): string {
+  override generateMarkdown(data: CVData, options?: PDFGenerationOptions): string {
     let md = '';
     if (!options || options.includePersonalInfo !== false) {
       md += `# ${data.personalInfo?.name?.full || ''}\n\n`;
@@ -66,25 +69,25 @@ export class BasicTemplate extends BaseTemplate {
       }
     `;
   }
-  protected generateExperience(data: CVData, options?: TemplateOptions): string {
+  protected override generateExperience(data: CVData, options?: PDFGenerationOptions): string {
     return '';
   }
-  protected generateEducation(data: CVData, options?: TemplateOptions): string {
+  protected override generateEducation(data: CVData, options?: PDFGenerationOptions): string {
     return '';
   }
-  protected generateSkills(data: CVData, options?: TemplateOptions): string {
+  protected override generateSkills(data: CVData, options?: PDFGenerationOptions): string {
     return '';
   }
-  protected generatePublications(data: CVData, options?: TemplateOptions): string {
+  protected override generatePublications(data: CVData, options?: PDFGenerationOptions): string {
     return '';
   }
-  protected generateConferences(data: CVData, options?: TemplateOptions): string {
+  protected override generateConferences(data: CVData, options?: PDFGenerationOptions): string {
     return '';
   }
-  protected generateGrants(data: CVData, options?: TemplateOptions): string {
+  protected override generateGrants(data: CVData, options?: PDFGenerationOptions): string {
     return '';
   }
-  protected generateAwards(data: CVData, options?: TemplateOptions): string {
+  protected override generateAwards(data: CVData, options?: PDFGenerationOptions): string {
     return '';
   }
 }

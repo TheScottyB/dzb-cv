@@ -1,22 +1,20 @@
-// Core Services
-export * from './services/cv-service';
-export * from './services/profile-service';
-export * from './services/storage';
-export * from './services/import';
-export * from './services/export';
-export * from './services/pdf';
+/**
+ * Core package entry point
+ * 
+ * This file exports all types, services, and utilities needed by consumers
+ * of the @dzb-cv/core package. All imports use ESM-style .js extensions
+ * for compatibility with TypeScript's module system.
+ */
 
-// Types
-export * from './types/cv-types';
-export * from './types/profile-management';
-export * from './types/job-analysis';
-export * from './types/ats-types';
+// Export all types from the consolidated types index
+export * from './types/index.js';
 
-// ATS Features
-export * from './ats/analyzer';
-export * from './ats/optimizer';
-export * from './ats/scoring';
+// Export all core services
+export * from './services/index.js';
 
-// Utils
-export * from './utils/validators';
-export * from './parsers';
+// Export all ATS-related functionality
+export * from './ats/index.js';
+
+// Utils and Parsers
+export * from './utils/validators.js';
+export * from './parsers/index.js';

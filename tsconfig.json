@@ -20,6 +20,7 @@
   ],
   "exclude": ["node_modules", "dist", "**/build"],
   "references": [
+    { "path": "./packages/common" },
     { "path": "./packages/core" },
     { "path": "./packages/cli" },
     { "path": "./packages/templates" },

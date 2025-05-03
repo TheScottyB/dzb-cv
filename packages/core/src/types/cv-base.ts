@@ -619,63 +619,6 @@ export interface Certification {
   logo?: string;
 }
 
-/**
- * PDF generation specific options
- */
-export interface PDFGenerationOptions {
-  /**
-   * Template to use for PDF generation
-   */
-  template?: string;
-  /**
-   * Paper size
-   */
-  paperSize?: 'a4' | 'letter' | 'legal';
-  /**
-   * Page orientation
-   */
-  orientation?: 'portrait' | 'landscape';
-  /**
-   * Font settings
-   */
-  fonts?: {
-    primary?: string;
-    secondary?: string;
-    size?: number;
-  };
-  /**
-   * Page margins in points or millimeters
-   */
-  margins?: {
-    top?: number;
-    right?: number;
-    bottom?: number;
-    left?: number;
-  };
-  /**
-   * Color scheme
-   */
-  colors?: {
-    primary?: string;
-    secondary?: string;
-    text?: string;
-    background?: string;
-  };
-  /**
-   * Additional PDF metadata
-   */
-  metadata?: {
-    title?: string;
-    author?: string;
-    subject?: string;
-    keywords?: string[];
-  };
-}
-
-export interface CVGenerationOptions {
-  format: 'pdf' | 'docx';
-  pdfOptions?: PDFGenerationOptions;
-}
 
 /**
  * User profile version information for tracking CV changes
@@ -768,70 +711,11 @@ export interface CVData {
 }
 /**
  * Template options for customizing CV generation
+ * @deprecated Import from './template.js' instead
  */
-export interface TemplateOptions {
-  /**
-   * Template identifier
-   */
-  id: string;
-  /**
-   * Display name for the template
-   */
-  name: string;
-  /**
-   * Brief description of the template style
-   */
-  description?: string;
-  /**
-   * Path to template preview image
-   */
-  previewImage?: string;
-  /**
-   * Supported output formats
-   */
-  supportedFormats: ('pdf' | 'docx' | 'html')[];
-  /**
-   * Default color scheme
-   */
-  defaultColors?: {
-    primary: string;
-    secondary: string;
-    accent?: string;
-    text: string;
-    background: string;
-  };
-  /**
-   * Default font settings
-   */
-  defaultFonts?: {
-    heading: string;
-    body: string;
-    mono?: string;
-  };
-  /**
-   * Layout configuration options
-   */
-  layout?: {
-    sectionOrder?: string[];
-    columns?: 1 | 2;
-    header?: 'minimal' | 'standard' | 'prominent';
-    spacing?: 'compact' | 'standard' | 'comfortable';
-  };
-  /**
-   * Feature flags for template capabilities
-   */
-  features?: {
-    supportsCustomColors: boolean;
-    supportsCustomFonts: boolean;
-    supportsCustomLayout: boolean;
-    supportsSectionReordering: boolean;
-    supportsProfilePhoto: boolean;
-  };
-  /**
-   * Generation-specific options
-   */
-  generationOptions?: PDFGenerationOptions;
-}
+import { TemplateOptions as NewTemplateOptions } from './template.js';
+
+export type TemplateOptions = NewTemplateOptions;
 
 /**
  * CV template definition for generating resumes and CVs

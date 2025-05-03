@@ -1,10 +1,13 @@
 # Dependencies
 node_modules/
 .pnpm-store/
+
+# Python dependencies
 __pycache__/
 *.py[cod]
 *$py.class
 .Python
+.venv/
 env/
 build/
 develop-eggs/
@@ -33,10 +36,13 @@ dist/
 build/
 coverage/
 output/
+.turbo/
+
 # Ignore JS files when TS source exists (compiled output)
 src/**/*.js
 src/**/*.js.map
 src/**/*.d.ts
+tsconfig.tsbuildinfo
 
 # Environment
 .env
@@ -65,3 +71,4 @@ job-posting.txt
 *-cv.pdf
 *-cv.html
 .backup/
+backup/

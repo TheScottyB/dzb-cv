@@ -370,7 +370,7 @@ export const academicTestHelpers = {
       if (!match) return total;
       return total + parseFloat(match[1].replace(/,/g, ''));
     }, 0);
-  }
+  },
   validateTeachingMetrics(
     section: SectionMetrics,
     requirements: TeachingMetrics

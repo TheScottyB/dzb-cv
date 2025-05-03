@@ -1,30 +1,19 @@
 import { v4 as uuidv4 } from 'uuid';
-import type { CVData } from '../types/cv-base.js';
-import type { CVGenerationOptions } from '../types/cv-generation.js';
-import type { Profile, ProfileVersion, ProfileChange } from '../types/profile-management.js';
-import type { PDFGenerationOptions } from './pdf/pdf-generator.js';
+import type { 
+  CVData, 
+  Experience as ExperienceEntry, 
+  Profile, 
+  ProfileVersion, 
+  ProfileChange,
+  PDFGenerationOptions
+} from '@dzb-cv/common';
 
-interface ExperienceEntry {
-  employer: string;
-  position: string;
-  startDate: string;
-  endDate?: string;
-  location?: string;
-  responsibilities: string[];
-  employmentType: string;
-  supervisor?: string;
-  achievements?: string[];
-  gradeLevel?: string;
-  salary?: string;
-  careerProgression?: string[];
-  technologies?: string[];
-  isCurrent?: boolean;
-  keywords?: string[];
-  period?: string;
-  duties?: string[];
-  address?: string;
-  hours?: string;
-  mayContact?: boolean;
+// Define local interface to extend the common one
+interface ExtendedProfileChange extends ProfileChange {
+  field?: string;
+  oldValue?: any;
+  newValue?: any;
+  resolutionNote?: string;
 }
 
 /**
@@ -71,7 +60,7 @@ export class CVService {
    */
   async generateCV(
     profileId: string, 
-    options: CVGenerationOptions
+    options: PDFGenerationOptions
   ): Promise<Buffer> {
     const profile = await this.storage.getProfile(profileId);
     if (!profile) {
@@ -143,8 +132,8 @@ export class CVService {
     };
   }
 
-  private calculateChanges(oldData: CVData, newData: CVData): ProfileChange[] {
-    const changes: ProfileChange[] = [];
+  private calculateChanges(oldData: CVData, newData: CVData): ExtendedProfileChange[] {
+    const changes: ExtendedProfileChange[] = [];
     
     // Compare experience entries
     if (oldData.experience.length !== newData.experience.length) {
@@ -190,7 +179,7 @@ export class CVService {
   private detectExperienceChanges(
     oldMap: Map<string, ExperienceEntry>,
     newMap: Map<string, ExperienceEntry>,
-    changes: ProfileChange[]
+    changes: ExtendedProfileChange[]
   ): void {
     // Check for removed experiences
     for (const [key, oldExp] of oldMap) {

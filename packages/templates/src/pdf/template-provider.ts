@@ -1,7 +1,5 @@
-import type { CVData } from '../../../types/cv-base.js';
+import type { CVData, CVTemplate, TemplateOptions } from '@dzb-cv/core/types';
 import { BasicTemplate } from './basic-template.js';
-import type { CVData } from '../../../types/cv-base.js';
-import type { TemplateOptions } from '../../../types/cv-types.js';
 
 /**
  * Factory for creating CV templates

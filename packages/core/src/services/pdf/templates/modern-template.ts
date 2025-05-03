@@ -1,6 +1,6 @@
-import { BasicTemplate } from './template-provider.js';
-import type { CVData } from '../../../types/cv-base.js';
-import type { TemplateOptions } from '../../../types/cv-types.js';
+import { BasicTemplate } from './basic-template.js';
+import type { CVData } from '@dzb-cv/common';
+import type { PDFGenerationOptions } from '@dzb-cv/common';
 
 /**
  * Modern template with clean, contemporary styling
@@ -8,7 +8,7 @@ import type { TemplateOptions } from '../../../types/cv-types.js';
 export class ModernTemplate extends BasicTemplate {
   override name = 'modern';
 
-  override getStyles(): string {
+  getStyles(): string {
     return `
       body {
         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -99,20 +99,27 @@ export class ModernTemplate extends BasicTemplate {
     `;
   }
 
-  protected override generateHeader(data: CVData, options?: TemplateOptions): string {
+  protected override generateHeader(data: CVData, options?: PDFGenerationOptions): string {
     if (options?.includePersonalInfo === false) return '';
 
-    const { personalInfo } = data;
+    const { 
+      personalInfo: {
+        name: { full: name = '' } = {},
+        title,
+        contact = {}
+      } = {}
+    } = data;
+
     return `
-# ${personalInfo.name.full}
-${personalInfo.title ? `<span style="color:#666;font-size:18px;">${personalInfo.title}</span>\n` : ''}
+# ${name}
+${title ? `<span style="color:#666;font-size:18px;">${title}</span>\n` : ''}
 
 <div class="contact-info">
 
 ${[
-  personalInfo.contact.email,
-  personalInfo.contact.phone,
-  personalInfo.contact.address
+  contact.email,
+  contact.phone,
+  contact.address
 ].filter(Boolean).join(' | ')}
 
 </div>

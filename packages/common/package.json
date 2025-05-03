@@ -1,0 +1,47 @@
+{
+  "name": "@dzb-cv/common",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./config/*": {
+      "types": "./dist/config/*.d.ts",
+      "import": "./dist/config/*.js"
+    },
+    "./styles/*": {
+      "types": "./dist/styles/*.d.ts",
+      "import": "./dist/styles/*.js"
+    },
+    "./utils/*": {
+      "types": "./dist/utils/*.d.ts",
+      "import": "./dist/utils/*.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "lint": "eslint src --ext .ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@dzb-cv/core": "workspace:^1.0.0",
+    "debug": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/debug": "^4",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "eslint": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.1"
+  }
+}

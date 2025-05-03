@@ -1,4 +1,4 @@
-import { CVData } from '../shared/types/cv-base.js';
+import { CVData } from '@dzb-cv/common';
 
 export enum ATSIssueCategory {
   CRITICAL = 'CRITICAL',
@@ -87,6 +87,7 @@ export function analyzeATS(
 
 export const ATS_SCORING = {
   BASE_SCORE: 100,
+  MAX_SCORE: 100,
   CRITICAL: {
     MISSING_DATES: -8,
     INCORRECT_DATE_FORMAT: -9,

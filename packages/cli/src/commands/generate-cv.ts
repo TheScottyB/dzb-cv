@@ -8,7 +8,7 @@
 import path from 'path';
 import { BaseCommand, RunConfiguration } from './base-command.js';
 import { generateCV } from '../../shared/tools/generator.js';
-import type { CVData, CVGenerationOptions } from '../../shared/types/cv-types.js';
+import type { CVData, CVGenerationOptions } from '@dzb-cv/core/types';
 import { transformCVData } from '../../shared/utils/data-transformer.js';
 
 /**

@@ -13,18 +13,20 @@
     "baseUrl": ".",
     "paths": {
       "@dzb-cv/*": ["packages/*/src"],
+      "@dzb-cv/common/*": ["packages/common/src/*"],
       "@dzb-cv/core/*": ["packages/core/src/*"],
       "@dzb-cv/cli/*": ["packages/cli/src/*"],
       "@dzb-cv/templates/*": ["packages/templates/src/*"],
       "@dzb-cv/tests/*": ["packages/tests/src/*"],
       "@types/*": ["types/*"],
       "@shared/*": ["packages/core/src/shared/*"],
-      "@core/*": ["packages/core/src/*"]
+      "@core/*": ["packages/core/src/*"],
+      "@common/*": ["packages/common/src/*"]
     },
     "jsx": "react-jsx",
     "allowJs": true,
     "isolatedModules": true,
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "vitest"],
     "noImplicitAny": false,
     "typeRoots": ["./node_modules/@types", "./types"]
   },

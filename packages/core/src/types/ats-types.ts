@@ -34,6 +34,18 @@ export interface ATSSectionScore {
   suggestions: string[];
 }
 
+/**
+ * ATS compatibility score breakdown
+ */
+export interface ATSScore {
+  total: number;
+  categories: {
+    formatting: number;
+    content: number;
+    structure: number;
+    metadata: number;
+  };
+}
 export interface ATSCompatibilityReport {
   overallScore: number;
   sectionScores: ATSSectionScore[];

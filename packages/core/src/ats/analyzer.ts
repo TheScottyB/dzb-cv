@@ -1,15 +1,81 @@
-import { ATSIssueType, ATSIssueCategory, ATSIssue, ATSAnalysisResult, ATS_SCORING } from './scoring.js';
-import type { CVData } from '../core/types/cv-base.js';
-import type { ATSImprovement } from '../core/types/ats-types.js';
+import type { 
+  CVData, 
+  ATSImprovement,
+  ATSAnalysisResult as BaseATSAnalysisResult 
+} from '@dzb-cv/common';
+import { ATSIssueType, ATSIssueCategory, ATS_SCORING, ATSIssue } from './scoring.js';
 
-export interface ExperienceEntry {
+/**
+ * Helper function to create an ATSIssue with proper category and impact
+ */
+function createIssue(
+  type: ATSIssueType,
+  category: ATSIssueCategory,
+  impact: number,
+  message: string,
+  fix?: string,
+  location?: string
+): ATSIssue {
+  return {
+    type,
+    category,
+    message,
+    impact,
+    fix,
+    location
+  };
+}
+
+/**
+ * Type definition for experience entry used in the analyzer
+ */
+interface ExperienceEntry {
+  position: string;
+  employer: string;
   startDate?: string;
   endDate?: string;
 }
 
+/**
+ * Extended ATSAnalysisResult interface with additional metrics
+ */
+interface ATSAnalysisResult extends BaseATSAnalysisResult {
+  sectionScores: { [key: string]: number };
+  parseRate: number;
+  keywords: {
+    found: string[];
+    missing: string[];
+    relevanceScore: number;
+  };
+  recommendation: string;
+}
+
+/**
+ * Valid section headers in a CV
+ */
+type StandardSection = 
+  | 'experience'
+  | 'education'
+  | 'skills'
+  | 'certifications'
+  | 'projects'
+  | 'publications'
+  | 'awards';
+
+/**
+ * Interface for section analysis results
+ */
+interface SectionAnalysis {
+  issues: ATSIssue[];
+  sectionScores: { [key: string]: number };
+}
+
+/**
+ * Analyzer for ATS scoring and improvements
+ */
 export class ATSAnalyzer {
-  private readonly standardSections = [
-    'summary',
+  // Standard sections that should be recognized
+  private readonly standardSections: StandardSection[] = [
     'experience',
     'education',
     'skills',
@@ -19,6 +85,7 @@ export class ATSAnalyzer {
     'awards'
   ];
 
+  // Date and formatting patterns
   private readonly datePatterns = {
     standard: /^(0[1-9]|1[0-2])\/\d{4}$/,
     yearOnly: /^\d{4}$/,
@@ -30,6 +97,18 @@ export class ATSAnalyzer {
   private readonly tablePattern = /\|[\s-|]*\|/;
   private readonly complexFormattingPattern = /<[^>]+>|\{[^}]+\}|\[[^\]]+\]/g;
 
+  /**
+   * Common industry keywords to check for
+   */
+  private readonly commonKeywords = [
+    'managed', 'led', 'developed', 'created', 'implemented',
+    'analyzed', 'designed', 'coordinated', 'improved', 'increased',
+    'reduced', 'supervised', 'trained', 'project', 'team',
+    'leadership', 'results', 'successful', 'achievement', 'responsible'
+  ];
+  /**
+   * Analyze CV data and content for ATS optimization
+   */
   async analyze(cvData: CVData, content: string): Promise<ATSAnalysisResult> {
     const issues: ATSIssue[] = [];
     let score = ATS_SCORING.BASE_SCORE;
@@ -43,123 +122,124 @@ export class ATSAnalyzer {
     const formattingIssues = this.analyzeFormatting(content);
     issues.push(...formattingIssues);
 
-    // Analyze sections
+    // Analyze sections and their scores
     const sectionAnalysis = this.analyzeSections(content);
     issues.push(...sectionAnalysis.issues);
     Object.assign(sectionScores, sectionAnalysis.sectionScores);
 
-    // Calculate final score
-    score += issues.reduce((total, issue) => total + issue.score, 0);
+    // Calculate score adjustments
+    score += issues.reduce((total, issue) => total + issue.impact, 0);
+    const bonusPoints = this.calculateBonuses(cvData, content);
+    score += bonusPoints;
 
-    // Apply bonuses
-    const bonuses = this.calculateBonuses(cvData, content);
-    score += bonuses;
+    // Calculate additional metrics
+    const parseRate = this.calculateParseRate(content);
+    const keywords = this.analyzeKeywords(content);
+    const recommendation = this.generateRecommendation(score, issues);
 
     // Generate improvements
-    const improvements = issues.map(issue => ({
+    const improvements: ATSImprovement[] = issues.map(issue => ({
       type: issue.type,
-      score: issue.score,
+      score: issue.impact,
       message: issue.message,
-      fix: issue.fix,
-      examples: issue.examples,
+      fix: issue.fix || '',
+      examples: [],  // ATSIssue doesn't have examples, they come from the scoring system
       priority: this.getPriorityFromCategory(issue.category)
     }));
 
-    // Calculate parse rate
-    const parseRate = this.calculateParseRate(content);
-
     return {
       score: Math.max(0, Math.min(100, score)),
+      maxScore: ATS_SCORING.MAX_SCORE,
       issues,
       improvements,
-      keywords: this.analyzeKeywords(content),
-      parseRate,
       sectionScores,
-      recommendation: this.generateRecommendation(score, issues)
+      parseRate,
+      keywords,
+      recommendation
     };
   }
 
+  /**
+   * Analyze dates in CV data
+   */
   private analyzeDates(cvData: CVData): ATSIssue[] {
     const issues: ATSIssue[] = [];
-    
-    cvData.experience?.forEach((exp: ExperienceEntry, index: number) => {
+
+    cvData.experience?.forEach((exp, index) => {
       if (!exp.startDate) {
-        issues.push({
-          type: ATSIssueType.MISSING_DATES,
-          category: ATSIssueCategory.CRITICAL,
-          score: ATS_SCORING.CRITICAL.MISSING_DATES,
-          message: `Missing start date in experience entry ${index + 1}`,
-          fix: 'Add start date in MM/YYYY format',
-          examples: ['01/2020', '05/2019'],
-          location: `experience[${index}].startDate`
-        });
+        issues.push(createIssue(
+          ATSIssueType.MISSING_DATES,
+          ATSIssueCategory.CRITICAL,
+          ATS_SCORING.CRITICAL.MISSING_DATES,
+          `Missing start date in experience entry ${index + 1}`,
+          'Add start date in MM/YYYY format',
+          `experience[${index}].startDate`
+        ));
       } else if (!this.datePatterns.standard.test(exp.startDate)) {
-        issues.push({
-          type: ATSIssueType.INCORRECT_DATE_FORMAT,
-          category: ATSIssueCategory.CRITICAL,
-          score: ATS_SCORING.CRITICAL.INCORRECT_DATE_FORMAT,
-          message: `Invalid date format in experience entry ${index + 1}`,
-          fix: 'Use MM/YYYY format for dates',
-          examples: ['01/2020', '05/2019'],
-          detected: exp.startDate,
-          location: `experience[${index}].startDate`
-        });
+        issues.push(createIssue(
+          ATSIssueType.INCORRECT_DATE_FORMAT,
+          ATSIssueCategory.CRITICAL,
+          ATS_SCORING.CRITICAL.INCORRECT_DATE_FORMAT,
+          `Invalid date format in experience entry ${index + 1}`,
+          'Use MM/YYYY format for dates',
+          `experience[${index}].startDate`
+        ));
       }
     });
 
     return issues;
   }
 
+  /**
+   * Analyze formatting issues in CV content
+   */
   private analyzeFormatting(content: string): ATSIssue[] {
     const issues: ATSIssue[] = [];
 
     // Check for special characters
     const specialChars = content.match(this.specialCharPattern);
     if (specialChars) {
-      issues.push({
-        type: ATSIssueType.SPECIAL_CHARS,
-        category: ATSIssueCategory.MEDIUM,
-        score: ATS_SCORING.MEDIUM.SPECIAL_CHARS,
-        message: 'Special characters detected',
-        fix: 'Replace special characters with standard ASCII alternatives',
-        examples: ['• → *', '→ → ->', '© → (c)'],
-        detected: specialChars.join(', ')
-      });
+      issues.push(createIssue(
+        ATSIssueType.SPECIAL_CHARS,
+        ATSIssueCategory.MEDIUM,
+        ATS_SCORING.MEDIUM.SPECIAL_CHARS,
+        'Special characters detected',
+        'Replace special characters with standard ASCII alternatives'
+      ));
     }
 
     // Check for tables
     if (this.tablePattern.test(content)) {
-      issues.push({
-        type: ATSIssueType.TABLE_LAYOUTS,
-        category: ATSIssueCategory.HIGH,
-        score: ATS_SCORING.HIGH.TABLE_LAYOUTS,
-        message: 'Table layout detected',
-        fix: 'Convert tables to bullet points or paragraphs',
-        examples: ['• Skill 1\n• Skill 2', 'Achievement 1\nAchievement 2']
-      });
+      issues.push(createIssue(
+        ATSIssueType.TABLE_LAYOUTS,
+        ATSIssueCategory.HIGH,
+        ATS_SCORING.HIGH.TABLE_LAYOUTS,
+        'Table layout detected',
+        'Convert tables to bullet points or paragraphs'
+      ));
     }
 
     // Check for complex formatting
     const complexFormatting = content.match(this.complexFormattingPattern);
     if (complexFormatting) {
-      issues.push({
-        type: ATSIssueType.COMPLEX_FORMATTING,
-        category: ATSIssueCategory.MEDIUM,
-        score: ATS_SCORING.MEDIUM.COMPLEX_FORMATTING,
-        message: 'Complex formatting detected',
-        fix: 'Use simple text formatting without HTML or special markup',
-        examples: ['Plain text with standard bullet points'],
-        detected: complexFormatting.join(', ')
-      });
+      issues.push(createIssue(
+        ATSIssueType.COMPLEX_FORMATTING,
+        ATSIssueCategory.MEDIUM,
+        ATS_SCORING.MEDIUM.COMPLEX_FORMATTING,
+        'Complex formatting detected that may confuse ATS systems',
+        'Simplify formatting and use standard sections'
+      ));
     }
 
     return issues;
   }
 
-  private analyzeSections(content: string): { 
-    issues: ATSIssue[],
-    sectionScores: { [key: string]: number }
-  } {
+  /**
+   * Analyze sections for ATS issues and calculate section-specific scores
+   * @param content - The CV content to analyze
+   * @returns Object containing issues found and scores for each section
+   */
+  private analyzeSections(content: string): SectionAnalysis {
     const issues: ATSIssue[] = [];
     const sectionScores: { [key: string]: number } = {};
     const sections = this.extractSections(content);
@@ -168,15 +248,13 @@ export class ATSAnalyzer {
     sections.forEach(section => {
       const normalizedHeader = section.header.toLowerCase();
       if (!this.standardSections.includes(normalizedHeader)) {
-        issues.push({
-          type: ATSIssueType.NONSTANDARD_HEADERS,
-          category: ATSIssueCategory.HIGH,
-          score: ATS_SCORING.HIGH.NONSTANDARD_HEADERS,
-          message: `Non-standard section header: "${section.header}"`,
-          fix: 'Use standard section headers',
-          examples: this.standardSections,
-          detected: section.header
-        });
+        issues.push(createIssue(
+          ATSIssueType.NONSTANDARD_HEADERS,
+          ATSIssueCategory.HIGH,
+          ATS_SCORING.HIGH.NONSTANDARD_HEADERS,
+          'Non-standard section headers detected',
+          'Use standard section headers like "Experience", "Education", "Skills"'
+        ));
       }
 
       // Score each section based on content quality
@@ -186,6 +264,12 @@ export class ATSAnalyzer {
     return { issues, sectionScores };
   }
 
+  /**
+   * Calculate bonus points for positive ATS features
+   * @param cvData - The CV data object
+   * @param content - The CV text content
+   * @returns Total bonus points to add to the score
+   */
   private calculateBonuses(cvData: CVData, content: string): number {
     let bonus = 0;
 
@@ -206,26 +290,58 @@ export class ATSAnalyzer {
     return bonus;
   }
 
+  /**
+   * Calculate the percentage of content that can be successfully parsed
+   * @param content - The CV content to analyze
+   * @returns A percentage between 0 and 100
+   */
   private calculateParseRate(content: string): number {
-    // Calculate percentage of content that can be successfully parsed
     const totalLength = content.length;
-    const unparseable = content.match(this.specialCharPattern)?.length || 0;
-    return Math.round(((totalLength - unparseable) / totalLength) * 100);
+    if (totalLength === 0) return 0;
+    
+    const matches = content.match(this.specialCharPattern);
+    const unparseable = matches?.length ?? 0;
+    
+    // Ensure we don't return NaN or invalid percentages
+    const parseRate = ((totalLength - unparseable) / totalLength) * 100;
+    return Math.max(0, Math.min(100, Math.round(parseRate)));
   }
 
+  /**
+   * Analyze keyword relevance against industry terms
+   * @param content - The CV content to analyze for keywords
+   * @returns Object containing found keywords, missing keywords, and relevance score
+   */
   private analyzeKeywords(content: string): {
     found: string[];
     missing: string[];
     relevanceScore: number;
   } {
-    // Implement keyword analysis logic here
+    const normalizedContent = content.toLowerCase();
+    const found = this.commonKeywords.filter(keyword => 
+      normalizedContent.includes(keyword.toLowerCase())
+    );
+    
+    const missing = this.commonKeywords.filter(keyword => 
+      !normalizedContent.includes(keyword.toLowerCase())
+    );
+
+    // Calculate relevance score (0-100)
+    const relevanceScore = Math.round((found.length / this.commonKeywords.length) * 100);
+
     return {
-      found: [],
-      missing: [],
-      relevanceScore: 0
+      found,
+      missing,
+      relevanceScore
     };
   }
 
+  /**
+   * Generate a human-readable recommendation based on the ATS score
+   * @param score - The calculated ATS score
+   * @param issues - The list of issues found during analysis
+   * @returns A recommendation string
+   */
   private generateRecommendation(score: number, issues: ATSIssue[]): string {
     if (score >= 90) {
       return 'Your resume is highly ATS-compatible. Minor improvements possible.';
@@ -238,19 +354,12 @@ export class ATSAnalyzer {
     }
   }
 
-  private getPriorityFromCategory(category: ATSIssueCategory): 'critical' | 'high' | 'medium' | 'low' {
-    switch (category) {
-      case ATSIssueCategory.CRITICAL:
-        return 'critical';
-      case ATSIssueCategory.HIGH:
-        return 'high';
-      case ATSIssueCategory.MEDIUM:
-        return 'medium';
-      case ATSIssueCategory.LOW:
-        return 'low';
-    }
-  }
 
+  /**
+   * Extract sections from CV content using markdown headers or capitalized lines
+   * @param content - The full CV content
+   * @returns Array of sections with headers and content
+   */
   private extractSections(content: string): Array<{ header: string; content: string }> {
     const sections: Array<{ header: string; content: string }> = [];
     
@@ -303,6 +412,11 @@ export class ATSAnalyzer {
     return sections;
   }
 
+  /**
+   * Calculate score for an individual section based on content quality
+   * @param content - The text content of the section
+   * @returns A score between 0 and 100
+   */
   private calculateSectionScore(content: string): number {
     let score = 100;
     
@@ -332,11 +446,29 @@ export class ATSAnalyzer {
     
     // Check for bullet points consistency
     const bulletPoints = content.match(/^[•\-\*]\s/gm);
-    const differentBullets = new Set(bulletPoints).size;
-    if (bulletPoints && differentBullets > 1) {
-      score -= 5; // Inconsistent bullet points
+    if (bulletPoints) {
+      const differentBullets = new Set(bulletPoints).size;
+      if (differentBullets > 1) {
+        score -= 5; // Inconsistent bullet points
+      }
     }
     
     return Math.max(0, Math.min(100, score));
+  }
+  
+  /**
+   * Get priority level from category
+   */
+  private getPriorityFromCategory(category: ATSIssueCategory): 'low' | 'medium' | 'high' | 'critical' {
+    switch (category) {
+      case ATSIssueCategory.CRITICAL:
+        return 'critical';
+      case ATSIssueCategory.HIGH:
+        return 'high';
+      case ATSIssueCategory.MEDIUM:
+        return 'medium';
+      case ATSIssueCategory.LOW:
+        return 'low';
+    }
   }
 } 

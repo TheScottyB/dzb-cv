@@ -1,4 +1,4 @@
-import type { Profile, ProfileVersion } from '../../types/profile-management.js';
+import type { Profile, ProfileVersion } from '@dzb-cv/common';
 import type { CVStorageProvider } from '../cv-service.js';
 import type { Storage } from './storage.js';
 
@@ -12,19 +12,35 @@ export class MemoryStorage implements CVStorageProvider, Storage {
   private data: Map<string, unknown> = new Map();
 
   async saveProfile(profile: Profile): Promise<void> {
+    // Ensure required fields are present
+    if (!profile.name) {
+      (profile as any).name = profile.owner; // Use owner as name if not provided
+    }
+    
     this.profiles.set(profile.id, {
       ...profile,
-      versions: [...profile.versions],
+      metadata: profile.metadata || {}, // Ensure metadata exists
+      versions: [...(profile.versions || [])],
       currentVersion: { ...profile.currentVersion }
     });
   }
 
   async saveVersion(version: ProfileVersion): Promise<void> {
+    // Ensure required fields are present
+    if (!version.createdBy) {
+      (version as any).createdBy = 'system'; // Default creator if not provided
+    }
+    
     this.versions.set(version.id, { ...version });
     
     // Update the corresponding profile's versions array
     const profile = this.profiles.get(version.profileId);
     if (profile) {
+      // Create versions array if it doesn't exist
+      if (!profile.versions) {
+        profile.versions = [];
+      }
+      
       const existingVersionIndex = profile.versions.findIndex(v => v.id === version.id);
       if (existingVersionIndex >= 0) {
         profile.versions[existingVersionIndex] = version;

@@ -1,8 +1,9 @@
 import puppeteer, { PDFOptions } from 'puppeteer';
-import MarkdownIt from 'markdown-it';
+import type { MarkdownIt } from 'markdown-it';
 import { writeFile } from 'fs/promises';
-import type { CVData } from '../../../shared/types/cv-base.js';
-import { PDFGenerator, PDFGenerationOptions } from './pdf-generator.js';
+import type { CVData } from '../../types/cv-base.js';
+import type { PDFGenerationOptions as CVPDFOptions } from '../../types/cv-generation.js';
+import { PDFGenerator } from './pdf-generator.js';
 
 /**
  * Implementation of the PDFGenerator interface using Puppeteer
@@ -12,10 +13,10 @@ export class PDFGeneratorImpl extends PDFGenerator {
 
   constructor() {
     super();
-    this.markdown = new MarkdownIt();
+    this.markdown = require('markdown-it')();
   }
 
-  async generate(data: CVData, options?: Partial<PDFGenerationOptions>): Promise<Buffer> {
+  async generate(data: CVData, options?: Partial<CVPDFOptions>): Promise<Buffer> {
     const markdown = this.formatCVData(data);
     const html = this.generateHTML(data);
     const browser = await puppeteer.launch();
@@ -34,7 +35,7 @@ export class PDFGeneratorImpl extends PDFGenerator {
   async generateFromMarkdown(
     markdown: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<CVPDFOptions>,
   ): Promise<string> {
     const html = this.markdown.render(markdown);
     return this.generateFromHTML(html, outputPath, options);
@@ -43,7 +44,7 @@ export class PDFGeneratorImpl extends PDFGenerator {
   async generateFromHTML(
     html: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<CVPDFOptions>,
   ): Promise<string> {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -63,7 +64,7 @@ export class PDFGeneratorImpl extends PDFGenerator {
     templatePath: string,
     data: CVData,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<CVPDFOptions>,
   ): Promise<string> {
     throw new Error('Template-based generation not implemented');
   }
@@ -86,23 +87,26 @@ export class PDFGeneratorImpl extends PDFGenerator {
   }
 
   private formatCVData(data: CVData): string {
-    const { personalInfo, professionalSummary, education, experience, skills, certifications } =
-      data;
-    const { name, contact } = personalInfo;
+    const { personalInfo, education, experience, skills, certifications } = data;
+    const { name } = personalInfo;
+
+    // Safely access email and phone from either direct properties or contact object
+    const email = personalInfo.email || personalInfo.contact?.email || '';
+    const phone = personalInfo.phone || personalInfo.contact?.phone || '';
+    const address = personalInfo.address?.formatted || personalInfo.contact?.address || '';
 
     return `
-# ${name.full}
+# ${name.full || `${name.first} ${name.last}`}
 ${personalInfo.title ? `*${personalInfo.title}*` : ''}
 
-${contact.email} | ${contact.phone}
-${contact.address || ''}
-${personalInfo.citizenship ? `Citizenship: ${personalInfo.citizenship}` : ''}
+${email} | ${phone}
+${address}
 
 ${
-  professionalSummary
+  personalInfo.summary
     ? `
 ## Professional Summary
-${professionalSummary}
+${personalInfo.summary}
 `
     : ''
 }
@@ -113,7 +117,7 @@ ${education
     (edu) => `
 ### ${edu.institution}
 ${edu.degree}
-${edu.year}${edu.gpa ? `\nGPA: ${edu.gpa}` : ''}${edu.honors?.length ? `\nHonors: ${edu.honors.join(', ')}` : ''}
+${edu.year || edu.endDate || ''}${edu.gpa ? `\nGPA: ${edu.gpa}` : ''}${edu.honors?.length ? `\nHonors: ${edu.honors.join(', ')}` : ''}
 `,
   )
   .join('\n')}
@@ -122,11 +126,11 @@ ${edu.year}${edu.gpa ? `\nGPA: ${edu.gpa}` : ''}${edu.honors?.length ? `\nHonors
 ${experience
   .map(
     (exp) => `
-### ${exp.title} at ${exp.company}
+### ${exp.position} at ${exp.employer}
 ${exp.startDate} - ${exp.endDate || 'Present'}
 ${exp.location ? `Location: ${exp.location}` : ''}
 
-${exp.responsibilities.map((r) => `- ${r}`).join('\n')}
+${exp.responsibilities ? exp.responsibilities.map((r) => `- ${r}`).join('\n') : ''}
 ${
   exp.achievements?.length
     ? `
@@ -140,19 +144,19 @@ ${exp.achievements.map((a) => `- ${a}`).join('\n')}
   .join('\n')}
 
 ${
-  skills.length
+  skills?.length
     ? `
 ## Skills
-${skills.map((skill) => `- ${skill}`).join('\n')}
+${skills.map((skill) => typeof skill === 'string' ? `- ${skill}` : `- ${skill.name}${skill.level ? ` (${skill.level})` : ''}`).join('\n')}
 `
     : ''
 }
 
 ${
-  certifications.length
+  certifications?.length
     ? `
 ## Certifications
-${certifications.map((cert) => `- ${cert}`).join('\n')}
+${certifications.map((cert) => typeof cert === 'string' ? `- ${cert}` : `- ${cert.name}${cert.issuer ? ` - ${cert.issuer}` : ''}`).join('\n')}
 `
     : ''
 }
@@ -194,9 +198,9 @@ ${certifications.map((cert) => `- ${cert}`).join('\n')}
     `;
   }
 
-  private getPDFOptions(options?: Partial<PDFGenerationOptions>): PDFOptions {
+  private getPDFOptions(options?: Partial<CVPDFOptions>): PDFOptions {
     return {
-      format: options?.paperSize || 'A4',
+      format: (options?.paperSize || 'A4').toLowerCase() as any,
       margin: options?.margins || {
         top: 20,
         right: 20,

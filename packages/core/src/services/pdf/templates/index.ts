@@ -1,4 +1,5 @@
-export { BasicTemplate } from './basic-template.js';
-export { MinimalTemplate } from './minimal-template.js';
-export { AcademicTemplate } from './academic-template.js';
-export { FederalTemplate } from './federal-template.js';
+// Re-export all templates from the templates package
+export * from '@dzb-cv/templates';
+
+// Keep the base types and interfaces here for backwards compatibility
+export * from './base-template.js';
