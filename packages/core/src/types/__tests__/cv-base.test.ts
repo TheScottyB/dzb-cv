@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest';
+import type { CVData, Experience } from '../cv-base';
+
 describe('CV Base Types', () => {
     it('should validate a complete CVData object', () => {
-        const cvData = {
+        const cvData: CVData = {
             personalInfo: {
                 name: {
                     full: 'John Doe',
@@ -13,31 +15,31 @@ describe('CV Base Types', () => {
                     phone: '123-456-7890'
                 }
             },
-            skills: ['JavaScript', 'TypeScript'],
-            certifications: ['AWS Certified'],
-            education: [{
-                    degree: 'BS',
-                    institution: 'University',
-                    year: '2020'
-                }],
             experience: [{
-                    title: 'Developer',
-                    company: 'Tech Co',
-                    startDate: '2020-01',
-                    endDate: '2023-01',
-                    responsibilities: ['Coding', 'Testing']
-                }]
+                employer: 'Tech Co',
+                position: 'Developer',
+                startDate: '2020-01',
+                endDate: '2023-01',
+                highlights: ['Coding', 'Testing']
+            }],
+            education: [{
+                institution: 'University',
+                degree: 'BS',
+                startDate: '2016',
+                endDate: '2020'
+            }]
         };
         // TypeScript compilation ensures type safety
         expect(cvData).toBeDefined();
         expect(cvData.personalInfo.name.full).toBe('John Doe');
     });
     it('should validate Experience object', () => {
-        const experience = {
+        const experience: Experience = {
             employer: 'Tech Co',
             position: 'Senior Developer',
-            period: '2020-2023',
-            duties: ['Development', 'Team Lead']
+            startDate: '2020-01',
+            endDate: '2023-01',
+            highlights: ['Development', 'Team Lead']
         };
         expect(experience).toBeDefined();
         expect(experience.employer).toBe('Tech Co');
