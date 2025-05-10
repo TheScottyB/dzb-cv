@@ -2,23 +2,15 @@ import { cleanup } from '@testing-library/react';
 import { afterEach, vi, beforeEach } from 'vitest';
 
 import '@testing-library/jest-dom';
-import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
-
-// Extend expect matchers for Vitest
-declare global {
-  namespace Vi {
-    interface JestAssertion<T = unknown> extends TestingLibraryMatchers<T, void> {}
-  }
-}
 
 // Polyfill ResizeObserver for tests
-class MockResizeObserver {
+class MockResizeObserver implements ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-global.ResizeObserver = MockResizeObserver as any;
+global.ResizeObserver = MockResizeObserver as unknown as typeof ResizeObserver;
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
