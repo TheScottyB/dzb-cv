@@ -84,6 +84,7 @@ describe('createCVCommand', () => {
   it('handles errors and exits with code 1', async () => {
     // Force the CVService to throw
     const { CVService } = await import('@dzb-cv/core');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (CVService as any).mockImplementationOnce(() => ({
       createCV: vi.fn().mockRejectedValue(new Error('fail')),
       generatePDF: vi.fn(),

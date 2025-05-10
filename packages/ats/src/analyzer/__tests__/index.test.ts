@@ -1,15 +1,17 @@
+// cv-analyzer-tfidf.test.ts
+// Tests for the TF-IDF-based CVAnalyzer implementation
 import { describe, it, expect } from 'vitest';
-import { CVAnalyzer, createAnalyzer } from '@dzb-cv/ats/analyzer';
+import { CVAnalyzer, createAnalyzer } from '../cvAnalyzerTfidf';
 import {
   simpleSampleCV as sampleCV,
   simpleSampleJob as sampleJob,
   emptyCV,
   emptyJob,
   minimalJob,
-  expectNoJobSpecificSuggestions,
+  expectNoJobSpecificSuggestions as _expectNoJobSpecificSuggestions,
 } from '../../test-utils';
-import type { CVData } from '@dzb-cv/types';
-import type { JobPosting } from '@dzb-cv/types/job';
+import type { CVData as _CVData } from '@dzb-cv/types';
+import type { JobPosting as _JobPosting } from '@dzb-cv/types/job';
 
 describe('CVAnalyzer', () => {
   describe('analyze', () => {
@@ -104,5 +106,67 @@ describe('CVAnalyzer', () => {
       expect(result1.keywordMatches).toEqual(result2.keywordMatches);
       expect(result1.missingKeywords).toEqual(result2.missingKeywords);
     });
+  });
+});
+
+describe('CVAnalyzer - advanced', () => {
+  it('should tokenize and weight keywords using TF-IDF', () => {
+    const analyzer = new CVAnalyzer();
+    const job = { ...sampleJob, description: 'React React React TypeScript' };
+    const cv = { ...sampleCV, skills: [{ name: 'React' }, { name: 'TypeScript' }] };
+    const result = analyzer.analyze(cv, job);
+    expect(result.keywordMatches).toContain('react');
+    expect(result.keywordMatches).toContain('typescript');
+    expect(result.score).toBeGreaterThan(0);
+  });
+
+  it('should extract tech terms and experience phrases with regex', () => {
+    const analyzer = new CVAnalyzer();
+    const job = {
+      ...sampleJob,
+      description: 'Experience with Next.js, 3+ years of experience, and GraphQL.',
+    };
+    const result = analyzer.analyze(sampleCV, job);
+    expect(result.missingKeywords).toContain('next.js');
+    expect(result.missingKeywords.join(' ')).toMatch(/3\+ years/);
+    expect(result.missingKeywords).toContain('graphql');
+  });
+
+  it('should map lowercase to original case for keywords', () => {
+    const analyzer = new CVAnalyzer();
+    const job = { ...sampleJob, description: 'React TypeScript' };
+    const cv = { ...sampleCV, skills: [{ name: 'React' }, { name: 'TypeScript' }] };
+    const result = analyzer.analyze(cv, job);
+    expect(result.keywordMatches).toContain('react');
+    expect(result.keywordMatches).toContain('typescript');
+  });
+
+  it('should generate actionable suggestions for missing keywords', () => {
+    const analyzer = new CVAnalyzer();
+    const job = { ...sampleJob, description: 'Docker AWS' };
+    const cv = {
+      ...sampleCV,
+      skills: sampleCV.skills.filter((s) => s.name !== 'Docker' && s.name !== 'AWS'),
+    };
+    const result = analyzer.analyze(cv, job);
+    expect(result.suggestions.join(' ')).toMatch(/docker/i);
+    expect(result.suggestions.join(' ')).toMatch(/aws/i);
+  });
+
+  it('should handle job postings with only responsibilities', () => {
+    const analyzer = new CVAnalyzer();
+    const job = { ...emptyJob, responsibilities: ['Write code', 'Review PRs'] };
+    const result = analyzer.analyze(sampleCV, job);
+    expect(result.score).toBeGreaterThanOrEqual(0);
+    expect(result.keywordMatches.length + result.missingKeywords.length).toBeGreaterThan(0);
+  });
+
+  it('should handle job postings with only skills', () => {
+    const analyzer = new CVAnalyzer();
+    const job = { ...emptyJob, skills: ['React', 'TypeScript'] };
+    const result = analyzer.analyze(sampleCV, job);
+    expect(result.score).toBeGreaterThanOrEqual(0);
+    expect(result.keywordMatches).toContain('react');
+    expect(result.keywordMatches).toContain('typescript');
   });
 });

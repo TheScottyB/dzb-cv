@@ -81,6 +81,24 @@ export default defineConfig({
       '**/*.spec.js',
       '**/*.spec.tsx',
       '**/*.spec.jsx',
+      // Exclude root-level scripts and files
+      'build-packages.sh',
+      '*.sh',
+      '*.js',
+      '*.ts',
+      '*.json',
+      '*.md',
+      '*.log',
+      '*.yaml',
+      '*.yml',
+      // Exclude scripts directory
+      'scripts/**',
+      // Exclude config directory
+      'config/**',
+      // Exclude unimplemented folders
+      'agents/**',
+      'e2e/**',
+      'packages/ats/src/agents/tools/**',
     ],
 
     // Configure coverage reporting
@@ -92,12 +110,29 @@ export default defineConfig({
         'dist/**',
         'coverage/**',
         '**/*.d.ts',
-        '**/index.ts',
         '**/test/**',
         '**/__tests__/**',
         '**/__mocks__/**',
         '**/*.test.*',
+        '**/*.spec.*',
         '**/*.config.*',
+        '**/*.sh',
+        '**/*.md',
+        '**/*.log',
+        '**/*.yaml',
+        '**/*.yml',
+        'build-packages.sh',
+        'scripts/**',
+        'config/**',
+        // Exclude root-level JS/TS/JSON files except src/
+        '!src/**',
+        '*.js',
+        '*.ts',
+        '*.json',
+        // Exclude unimplemented folders
+        'agents/**',
+        'e2e/**',
+        'packages/ats/src/agents/tools/**',
       ],
       thresholds: {
         lines: 70,

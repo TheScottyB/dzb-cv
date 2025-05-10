@@ -1,9 +1,10 @@
 import type { CVData } from '@dzb-cv/types';
 import type { JobPosting } from '@dzb-cv/types/job';
 
-import { CVAnalyzer, type AnalysisResult } from '@dzb-cv/ats/analyzer';
+import { DefaultCVAnalyzer as CVAnalyzer } from '@dzb-cv/ats';
 import { ScoringEngine, type CVScore, type ScoringCriteria } from '@dzb-cv/ats/scoring';
 import { SkillMatcher, type SkillDefinition } from '@dzb-cv/ats/taxonomies';
+import { AnalysisResult } from '../analyzer/cvAnalyzerTfidf';
 
 export interface ATSResult {
   /** Overall match score */

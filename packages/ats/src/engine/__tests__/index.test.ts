@@ -5,12 +5,12 @@ import {
   sampleJob,
   emptyCV,
   emptyJob,
-  minimalJob,
+  minimalJob as _minimalJob,
   expectNoJobSpecificSuggestions,
 } from '../../test-utils';
 import { SkillCategory } from '@dzb-cv/ats/taxonomies';
 import type { CVData } from '@dzb-cv/types';
-import type { JobPosting } from '@dzb-cv/types/job';
+import type { JobPosting as _JobPosting } from '@dzb-cv/types/job';
 
 describe('ATSEngine', () => {
   describe('analyze', () => {

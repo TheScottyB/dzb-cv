@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { CVData } from '@dzb-cv/types';
+import type { CVData as _CVData } from '@dzb-cv/types';
 
 import { PDFGenerator } from '../pdf-generator.js';
 import { sampleCV } from '../../test-utils';

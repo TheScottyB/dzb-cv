@@ -2,7 +2,7 @@ import { render, screen, cleanup } from '@testing-library/react';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import '@testing-library/jest-dom';
 
-import type { CVData } from '@dzb-cv/types';
+import type { CVData as _CVData } from '@dzb-cv/types';
 
 import { ModernTemplate } from '../template.js';
 import { minimalCV, fullCV } from '../../test-utils';

@@ -1,7 +1,8 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi as _vi } from 'vitest';
 import { sampleCV, createMockStorage, createMockPdfGenerator } from '../test-utils';
 
 import { CVService } from '../index.js';
+import * as Core from '../index';
 
 describe('Package exports', () => {
   it('should properly export CVService', () => {
@@ -35,5 +36,12 @@ describe('Package exports', () => {
     // Test PDF generation
     await service.generatePDF(sampleCV);
     expect(mockPdfGenerator.generate).toHaveBeenCalledWith(sampleCV);
+  });
+});
+
+describe('core index exports', () => {
+  it('should export CVService from the root index', () => {
+    expect(Core).toHaveProperty('CVService');
+    expect(typeof Core.CVService).toBe('function');
   });
 });

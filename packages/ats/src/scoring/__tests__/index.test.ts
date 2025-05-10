@@ -8,8 +8,8 @@ import {
   minimalJob,
   expectNoJobSpecificSuggestions,
 } from '../../test-utils';
-import type { CVData } from '@dzb-cv/types';
-import type { JobPosting } from '@dzb-cv/types/job';
+import type { CVData as _CVData } from '@dzb-cv/types';
+import type { JobPosting as _JobPosting } from '@dzb-cv/types/job';
 
 describe('ScoringEngine', () => {
   describe('score', () => {
