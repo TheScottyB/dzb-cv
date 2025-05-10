@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ScoringEngine, createScoringEngine } from '../index.js';
+import { ScoringEngine, createScoringEngine } from '@dzb-cv/ats/scoring';
 import type { CVData } from '@dzb-cv/types';
 import type { JobPosting } from '@dzb-cv/types/job';
 

@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { ATSEngine, createATSEngine } from '../index.js';
+import { ATSEngine, createATSEngine } from '@dzb-cv/ats/engine';
 import type { CVData } from '@dzb-cv/types';
 import type { JobPosting } from '@dzb-cv/types/job';
-import { SkillCategory } from '../taxonomies/skills';
+import { SkillCategory } from '@dzb-cv/ats/taxonomies';
 
 describe('ATSEngine', () => {
   const sampleCV: CVData = {

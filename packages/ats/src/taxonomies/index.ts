@@ -1,1 +1,1 @@
-export * from './skills.js';
+export * from './skills';

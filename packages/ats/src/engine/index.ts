@@ -1,9 +1,9 @@
 import type { CVData } from '@dzb-cv/types';
 import type { JobPosting } from '@dzb-cv/types/job';
 
-import { CVAnalyzer, type AnalysisResult } from '../analyzer/index.js';
-import { ScoringEngine, type CVScore, type ScoringCriteria } from '../scoring/index.js';
-import { SkillMatcher, type SkillDefinition } from '../taxonomies/index.js';
+import { CVAnalyzer, type AnalysisResult } from '@dzb-cv/ats/analyzer';
+import { ScoringEngine, type CVScore, type ScoringCriteria } from '@dzb-cv/ats/scoring';
+import { SkillMatcher, type SkillDefinition } from '@dzb-cv/ats/taxonomies';
 
 export interface ATSResult {
   /** Overall match score */

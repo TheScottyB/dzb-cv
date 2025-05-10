@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { CVAnalyzer, createAnalyzer } from '../index.js';
+import { CVAnalyzer, createAnalyzer } from '@dzb-cv/ats/analyzer';
 import type { CVData } from '@dzb-cv/types';
 import type { JobPosting } from '@dzb-cv/types/job';
 
