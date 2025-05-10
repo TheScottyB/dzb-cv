@@ -17,11 +17,11 @@ module.exports = {
           {
             target: './packages/**/*', // Apply this rule to files within any package
             from: '../src', // Forbid imports resolving to the top-level src
-            message: 'Direct imports from the root \'src/\' directory are forbidden. Import from the appropriate package instead.',
+            message:
+              "Direct imports from the root 'src/' directory are forbidden. Import from the appropriate package instead.",
           },
         ],
       },
     ],
   },
 };
-

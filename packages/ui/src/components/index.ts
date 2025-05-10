@@ -6,13 +6,7 @@
 export * from './Typography/index.js';
 
 // Re-export specific components for convenience
-import { 
-  Heading, 
-  Text, 
-  List, 
-  ListItem,
-  Typography
-} from './Typography/index.js';
+import { Heading, Text, List, ListItem, Typography } from './Typography/index.js';
 
 // Export commonly used components directly
 export {
@@ -21,5 +15,5 @@ export {
   Text,
   List,
   ListItem,
-  Typography
+  Typography,
 };

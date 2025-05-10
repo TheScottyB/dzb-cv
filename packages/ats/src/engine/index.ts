@@ -52,13 +52,13 @@ export class ATSEngine {
   public async analyze(cv: CVData, posting: JobPosting): Promise<ATSResult> {
     // Run analysis
     const analysis = this.analyzer.analyze(cv, posting);
-    
+
     // Run scoring
     const scoring = this.scorer.score(cv, posting);
-    
+
     // Generate suggestions based on analysis and scoring
     const suggestions = this.generateSuggestions(cv, posting, analysis, scoring);
-    
+
     // Find missing skills and alternatives
     const missingSkills = this.findMissingSkills(cv, posting);
 
@@ -91,7 +91,7 @@ export class ATSEngine {
     const suggestions: Set<string> = new Set();
 
     // Add analysis suggestions
-    analysis.suggestions.forEach(s => suggestions.add(s));
+    analysis.suggestions.forEach((s) => suggestions.add(s));
 
     // Add scoring suggestions
     [
@@ -99,14 +99,16 @@ export class ATSEngine {
       scoring.experience.suggestions,
       scoring.education.suggestions,
       scoring.skills.suggestions,
-    ].flat().forEach(s => suggestions.add(s));
+    ]
+      .flat()
+      .forEach((s) => suggestions.add(s));
 
     // Add skill-specific suggestions
     const missingSkills = this.findMissingSkills(cv, posting);
     missingSkills.forEach(({ skill, alternatives }) => {
       if (alternatives?.length) {
         suggestions.add(
-          `Consider adding "${skill}" or related skills: ${alternatives.map(a => a.name).join(', ')}`
+          `Consider adding "${skill}" or related skills: ${alternatives.map((a) => a.name).join(', ')}`
         );
       }
     });
@@ -122,22 +124,26 @@ export class ATSEngine {
   /**
    * Find missing skills and potential alternatives
    */
-  private findMissingSkills(cv: CVData, posting: JobPosting): {
+  private findMissingSkills(
+    cv: CVData,
+    posting: JobPosting
+  ): {
     skill: string;
     alternatives?: SkillDefinition[] | undefined;
   }[] {
     const requiredSkills = posting.skills || [];
-    const cvSkills = new Set(cv.skills.map(s => s.name.toLowerCase()));
-    
+    const cvSkills = new Set(cv.skills.map((s) => s.name.toLowerCase()));
+
     return requiredSkills
-      .filter(skill => !cvSkills.has(skill.toLowerCase()))
-      .map(skill => {
+      .filter((skill) => !cvSkills.has(skill.toLowerCase()))
+      .map((skill) => {
         const skillDef = this.skillMatcher.findSkill(skill);
         const alternatives = skillDef
-          ? this.skillMatcher.getRelatedSkills(skill)
-              .filter(s => cvSkills.has(s.name.toLowerCase()))
+          ? this.skillMatcher
+              .getRelatedSkills(skill)
+              .filter((s) => cvSkills.has(s.name.toLowerCase()))
           : undefined;
-        
+
         return { skill, alternatives };
       });
   }
@@ -146,6 +152,4 @@ export class ATSEngine {
 /**
  * Create a new ATS engine instance
  */
-export const createATSEngine = (options?: ATSOptions): ATSEngine =>
-  new ATSEngine(options);
-
+export const createATSEngine = (options?: ATSOptions): ATSEngine => new ATSEngine(options);

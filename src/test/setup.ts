@@ -49,7 +49,7 @@ expect.extend({
     };
   },
   toContainEqual(received: any[], expected: any) {
-    const pass = received.some(item => JSON.stringify(item) === JSON.stringify(expected));
+    const pass = received.some((item) => JSON.stringify(item) === JSON.stringify(expected));
     return {
       pass,
       message: () => `expected ${received} to ${pass ? 'not ' : ''}contain equal ${expected}`,
@@ -63,9 +63,8 @@ expect.extend({
     };
   },
   toMatch(received: string, expected: string | RegExp) {
-    const pass = typeof expected === 'string' 
-      ? received.includes(expected)
-      : expected.test(received);
+    const pass =
+      typeof expected === 'string' ? received.includes(expected) : expected.test(received);
     return {
       pass,
       message: () => `expected ${received} to ${pass ? 'not ' : ''}match ${expected}`,
@@ -117,10 +116,10 @@ export const testUtils = {
     await mkdir(TEST_OUTPUT_DIR, { recursive: true });
     return { path: filePath, content };
   },
-  
+
   async cleanupTestFiles() {
     await rm(TEST_OUTPUT_DIR, { recursive: true, force: true });
-  }
+  },
 };
 
 // Make test utilities available globally
@@ -132,4 +131,3 @@ declare global {
   // eslint-disable-next-line no-var
   var __testUtils: typeof testUtils;
 }
-

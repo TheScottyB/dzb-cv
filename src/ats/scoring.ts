@@ -72,7 +72,7 @@ export interface ATSAnalysisResult {
 export function analyzeATS(
   resumeText: string,
   fileInfo: { format: string; size: number },
-  jobDescription?: string,
+  jobDescription?: string
 ): ATSAnalysisResult {
   return {
     score: 0,

@@ -16,11 +16,11 @@ const defaultOptions = {
     top: '0.5in',
     right: '0.5in',
     bottom: '0.5in',
-    left: '0.5in'
+    left: '0.5in',
   },
   printBackground: true,
   scale: 1.0,
-  pageRanges: '' // Empty string means all pages
+  pageRanges: '', // Empty string means all pages
 } satisfies PDFOptions;
 
 export class HTMLToPDFConverter {
@@ -35,38 +35,38 @@ export class HTMLToPDFConverter {
           '--disable-setuid-sandbox',
           '--disable-dev-shm-usage',
           '--disable-accelerated-2d-canvas',
-          '--disable-gpu'
-        ]
+          '--disable-gpu',
+        ],
       });
     }
   }
 
   async convertToPDF(html: string, options: PDFOptions = defaultOptions): Promise<Buffer> {
     let page: puppeteer.Page | null = null;
-    
+
     try {
       await this.init();
-      
+
       if (!this.browser) {
         throw new Error('Browser not initialized');
       }
 
       page = await this.browser.newPage();
-      
+
       // Set viewport to ensure proper rendering
       await page.setViewport({
         width: 1200,
         height: 800,
-        deviceScaleFactor: 1
+        deviceScaleFactor: 1,
       });
 
       // Set content with wait until option
       await page.setContent(html, {
-        waitUntil: ['load', 'networkidle0']
+        waitUntil: ['load', 'networkidle0'],
       });
 
       // Wait a bit to ensure all content is rendered
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Generate PDF with merged options
       const pdfOptions = {
@@ -74,8 +74,8 @@ export class HTMLToPDFConverter {
         ...options,
         margin: {
           ...defaultOptions.margin,
-          ...options.margin
-        }
+          ...options.margin,
+        },
       };
 
       const pdf = await page.pdf({
@@ -84,11 +84,10 @@ export class HTMLToPDFConverter {
         margin: pdfOptions.margin,
         printBackground: pdfOptions.printBackground,
         scale: pdfOptions.scale,
-        pageRanges: pdfOptions.pageRanges
+        pageRanges: pdfOptions.pageRanges,
       });
 
       return pdf as Buffer;
-
     } catch (error) {
       console.error('Error converting HTML to PDF:', error);
       throw error;
@@ -111,4 +110,4 @@ export class HTMLToPDFConverter {
       }
     }
   }
-} 
+}

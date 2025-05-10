@@ -11,18 +11,18 @@ async function main() {
   try {
     // Path to the tailored CV markdown file
     const inputPath = './cv-versions/dawn-tax-specialist-trainee-cv.md';
-    
+
     // Read the markdown content
     console.log(`Reading CV content from ${inputPath}...`);
     const markdownContent = await fs.readFile(inputPath, 'utf-8');
-    
+
     // Create output directory if needed
     const outputDir = './output/state';
     await fs.mkdir(outputDir, { recursive: true });
-    
+
     // Output file path
     const outputPath = path.join(outputDir, 'Dawn_Zurick_Beilfuss_Tax_Specialist_Trainee_CV.pdf');
-    
+
     // Configure PDF options with state-specific styling
     const pdfOptions = {
       paperSize: 'Letter',
@@ -30,7 +30,7 @@ async function main() {
         top: 0.75,
         right: 0.75,
         bottom: 0.75,
-        left: 0.75
+        left: 0.75,
       },
       fontFamily: 'Garamond, serif',
       fontSize: 11,
@@ -40,9 +40,9 @@ async function main() {
       orientation: 'portrait',
       pdfTitle: 'Dawn Zurick Beilfuss - Revenue Tax Specialist Trainee CV',
       pdfAuthor: 'Dawn Zurick Beilfuss',
-      pdfCreator: 'DZB CV Generator'
+      pdfCreator: 'DZB CV Generator',
     };
-    
+
     // Custom CSS styling for state applications
     const customCss = `
       h1 { 
@@ -72,28 +72,31 @@ async function main() {
         margin-bottom: 5px;
       }
     `;
-    
+
     pdfOptions.cssStylesheet = customCss;
-    
+
     // Generate the PDF
     console.log('Generating tailored PDF for Revenue Tax Specialist Trainee position...');
     await convertMarkdownToPdf(markdownContent, outputPath, pdfOptions);
-    
+
     console.log(`Successfully created PDF at: ${outputPath}`);
-    
+
     // Now generate the cover letter
     const coverLetterPath = './output/state/dawn-tax-specialist-trainee-cover-letter.md';
     const coverLetterContent = await fs.readFile(coverLetterPath, 'utf-8');
-    const coverLetterOutputPath = path.join(outputDir, 'Dawn_Zurick_Beilfuss_Tax_Specialist_Cover_Letter.pdf');
-    
+    const coverLetterOutputPath = path.join(
+      outputDir,
+      'Dawn_Zurick_Beilfuss_Tax_Specialist_Cover_Letter.pdf'
+    );
+
     // Configure PDF options for cover letter
     const coverLetterOptions = {
       ...pdfOptions,
       includeHeaderFooter: false,
       fontFamily: 'Garamond, serif',
-      fontSize: 12
+      fontSize: 12,
     };
-    
+
     // Custom CSS for cover letter
     const coverLetterCss = `
       body {
@@ -114,15 +117,14 @@ async function main() {
         color: #0d2240; 
       }
     `;
-    
+
     coverLetterOptions.cssStylesheet = coverLetterCss;
-    
+
     // Generate the cover letter PDF
     console.log('Generating cover letter PDF...');
     await convertMarkdownToPdf(coverLetterContent, coverLetterOutputPath, coverLetterOptions);
-    
+
     console.log(`Successfully created cover letter PDF at: ${coverLetterOutputPath}`);
-    
   } catch (error) {
     console.error('Error generating PDF:', error);
     process.exit(1);

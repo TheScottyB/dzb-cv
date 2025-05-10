@@ -4,9 +4,9 @@ export abstract class BaseTemplate implements Template {
   abstract id: string; // Add required id property
   abstract name: string;
   abstract description: string; // Add required description property
-  
+
   abstract render(data: CVData, options?: PDFGenerationOptions): string; // Remove Promise<string>
-  
+
   getStyles(): string {
     return '';
   }
@@ -28,29 +28,41 @@ export class DefaultTemplate extends BaseTemplate {
           <p>${data.personalInfo.contact.email}</p>
           
           <h2>Experience</h2>
-          ${data.experience.map(exp => `
+          ${data.experience
+            .map(
+              (exp) => `
             <div class="experience">
               <h3>${exp.position} at ${exp.employer}</h3>
               <p>${exp.startDate} - ${exp.endDate || 'Present'}</p>
-              ${exp.responsibilities ? `
+              ${
+                exp.responsibilities
+                  ? `
                 <ul>
-                  ${exp.responsibilities.map(r => `<li>${r}</li>`).join('')}
+                  ${exp.responsibilities.map((r) => `<li>${r}</li>`).join('')}
                 </ul>
-              ` : ''}
+              `
+                  : ''
+              }
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
           
           <h2>Education</h2>
-          ${data.education.map(edu => `
+          ${data.education
+            .map(
+              (edu) => `
             <div class="education">
               <h3>${edu.degree}</h3>
               <p>${edu.institution}, ${edu.graduationDate}</p>
             </div>
-          `).join('')}
+          `
+            )
+            .join('')}
           
           <h2>Skills</h2>
           <ul>
-            ${data.skills.map(skill => `<li>${skill.name}</li>`).join('')}
+            ${data.skills.map((skill) => `<li>${skill.name}</li>`).join('')}
           </ul>
         </body>
       </html>

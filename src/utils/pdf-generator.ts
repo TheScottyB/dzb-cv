@@ -26,7 +26,7 @@ export class PDFGenerator {
     secondaryColor: [0.2, 0.2, 0.2],
     fontSize: 12,
     lineHeight: 1.5,
-    accentColor: [0.8, 0.2, 0.2]
+    accentColor: [0.8, 0.2, 0.2],
   };
 
   private theme: PDFTheme = this.defaultTheme;
@@ -45,7 +45,18 @@ export class PDFGenerator {
     this.footer = footer;
   }
 
-  async generateFromMarkdown(markdown: string, _outputPath: string, _p0: { title: string; subtitle: string; theme: { primaryColor: number[]; secondaryColor: number[]; font: string; }; includeHeader: boolean; includeFooter: boolean; }, options: PDFOptions = {}): Promise<Uint8Array> {
+  async generateFromMarkdown(
+    markdown: string,
+    _outputPath: string,
+    _p0: {
+      title: string;
+      subtitle: string;
+      theme: { primaryColor: number[]; secondaryColor: number[]; font: string };
+      includeHeader: boolean;
+      includeFooter: boolean;
+    },
+    options: PDFOptions = {}
+  ): Promise<Uint8Array> {
     // Convert markdown to HTML
     const html = await marked(markdown);
     const dom = new JSDOM(html);
@@ -69,7 +80,7 @@ export class PDFGenerator {
         y: height - 50,
         size: 24,
         color: primaryColor,
-        font
+        font,
       });
 
       if (options.subtitle) {
@@ -78,7 +89,7 @@ export class PDFGenerator {
           y: height - 80,
           size: 14,
           color: secondaryColor,
-          font
+          font,
         });
       }
     }
@@ -91,7 +102,7 @@ export class PDFGenerator {
       size: theme.fontSize || 12,
       color: secondaryColor,
       font,
-      maxWidth: width - 100
+      maxWidth: width - 100,
     });
 
     // Add footer if requested
@@ -102,7 +113,7 @@ export class PDFGenerator {
         y: 30,
         size: 10,
         color: secondaryColor,
-        font
+        font,
       });
     }
 
@@ -110,49 +121,58 @@ export class PDFGenerator {
     return await pdfDoc.save();
   }
 
-  async generateFromJobMatches(matches: MatchResult[], outputPath: string, options: { title: string; subtitle: string; theme: { primaryColor: number[]; secondaryColor: number[]; font: string; }; includeHeader: boolean; includeFooter: boolean; }): Promise<Uint8Array> {
+  async generateFromJobMatches(
+    matches: MatchResult[],
+    outputPath: string,
+    options: {
+      title: string;
+      subtitle: string;
+      theme: { primaryColor: number[]; secondaryColor: number[]; font: string };
+      includeHeader: boolean;
+      includeFooter: boolean;
+    }
+  ): Promise<Uint8Array> {
     const markdown = this.formatMatchesForPDF(matches);
     return await this.generateFromMarkdown(markdown, outputPath, options);
   }
 
   private formatMatchesForPDF(matches: MatchResult[]): string {
-    const highMatches = matches.filter(m => m.confidence === 'high');
-    const mediumMatches = matches.filter(m => m.confidence === 'medium');
-    const lowMatches = matches.filter(m => m.confidence === 'low');
+    const highMatches = matches.filter((m) => m.confidence === 'high');
+    const mediumMatches = matches.filter((m) => m.confidence === 'medium');
+    const lowMatches = matches.filter((m) => m.confidence === 'low');
 
     let markdown = '# Job Match Analysis\n\n';
 
     if (highMatches.length > 0) {
       markdown += '## Strong Matches\n\n';
-      highMatches.forEach(match => {
+      highMatches.forEach((match) => {
         markdown += `- **${match.requirement}**\n`;
-        match.matches.forEach(m => markdown += `  - ${m}\n`);
-        match.evidence.forEach(e => markdown += `  - Evidence: ${e}\n`);
+        match.matches.forEach((m) => (markdown += `  - ${m}\n`));
+        match.evidence.forEach((e) => (markdown += `  - Evidence: ${e}\n`));
         markdown += '\n';
       });
     }
 
     if (mediumMatches.length > 0) {
       markdown += '## Moderate Matches\n\n';
-      mediumMatches.forEach(match => {
+      mediumMatches.forEach((match) => {
         markdown += `- **${match.requirement}**\n`;
-        match.matches.forEach(m => markdown += `  - ${m}\n`);
-        match.evidence.forEach(e => markdown += `  - Evidence: ${e}\n`);
+        match.matches.forEach((m) => (markdown += `  - ${m}\n`));
+        match.evidence.forEach((e) => (markdown += `  - Evidence: ${e}\n`));
         markdown += '\n';
       });
     }
 
     if (lowMatches.length > 0) {
       markdown += '## Weak Matches\n\n';
-      lowMatches.forEach(match => {
+      lowMatches.forEach((match) => {
         markdown += `- **${match.requirement}**\n`;
-        match.matches.forEach(m => markdown += `  - ${m}\n`);
-        match.evidence.forEach(e => markdown += `  - Evidence: ${e}\n`);
+        match.matches.forEach((m) => (markdown += `  - ${m}\n`));
+        match.evidence.forEach((e) => (markdown += `  - Evidence: ${e}\n`));
         markdown += '\n';
       });
     }
 
     return markdown;
   }
-
-} 
+}

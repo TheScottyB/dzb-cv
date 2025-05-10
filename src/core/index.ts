@@ -11,4 +11,3 @@ export * from './services/index.js';
 // Configure default exports for direct imports
 export { ServiceFactory } from './services/index.js';
 export { CVService } from './services/cv-service.js';
-

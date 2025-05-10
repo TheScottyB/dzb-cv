@@ -42,7 +42,7 @@ async function resolveJobDir(inputPath: string): Promise<{ jobDir: string; jobDa
       console.warn(
         chalk.yellow('⚠️  Warning:'),
         'Folder name does not match standardized convention. Expected:',
-        chalk.cyan(expectedDir),
+        chalk.cyan(expectedDir)
       );
     }
     const jobData = JSON.parse(await fs.readFile(jobDataPath, 'utf-8'));
@@ -286,7 +286,7 @@ async function generatePDFs(inputPath: string) {
             .replace(/<\/li>/g, '</div>')
             .replace(
               /My career has been built on a foundation of:/g,
-              '<div class="skills-intro">My career has been built on a foundation of:</div>',
+              '<div class="skills-intro">My career has been built on a foundation of:</div>'
             )}
         </div>
         <div class="timestamp">Generated: ${timestamp}</div>
@@ -317,7 +317,7 @@ async function generatePDFs(inputPath: string) {
 // Check if file path is provided
 if (process.argv.length < 3) {
   console.error(
-    'Usage: pnpm tsx src/scripts/generate-mercyhealth-pdf.ts <job-posting-directory|job-data.json>',
+    'Usage: pnpm tsx src/scripts/generate-mercyhealth-pdf.ts <job-posting-directory|job-data.json>'
   );
   process.exit(1);
 }

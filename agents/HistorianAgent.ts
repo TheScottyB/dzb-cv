@@ -25,12 +25,21 @@ export class HistorianAgent {
 
     // Subscribe to a wide range of topics for archiving
     const topics = [
-      'task:complete', 'task:error', 'task:start', 'artifact:complete', 'artifact:suggestedImprovement',
-      'blueprint:updated', 'plan:dispatch', 'teaching:lesson', 'remediation:suggested'
+      'task:complete',
+      'task:error',
+      'task:start',
+      'artifact:complete',
+      'artifact:suggestedImprovement',
+      'blueprint:updated',
+      'plan:dispatch',
+      'teaching:lesson',
+      'remediation:suggested',
       // Extend as needed for additional events
     ];
     topics.forEach((topic) =>
-      this.messageBus.subscribe(topic, (event) => this.record({ ...event, topic, time: new Date().toISOString() }))
+      this.messageBus.subscribe(topic, (event) =>
+        this.record({ ...event, topic, time: new Date().toISOString() })
+      )
     );
   }
 
@@ -52,9 +61,8 @@ export class HistorianAgent {
       return [...this.archive];
     }
     // Basic filter: match keys/values in filter obj
-    const filtered = this.archive.filter(entry =>
-      filter &&
-      Object.entries(filter).every(([k, v]) => (entry as any)[k] === v)
+    const filtered = this.archive.filter(
+      (entry) => filter && Object.entries(filter).every(([k, v]) => (entry as any)[k] === v)
     );
     console.info(`${this.logPrefix} getHistory: filtered (count=${filtered.length})`, filter);
     return filtered;
@@ -82,4 +90,3 @@ export class HistorianAgent {
   // TODO: Integrate with MemoryAgent for distributed/backup storage.
   // TODO: Import/export for multi-session/epoch/system join.
 }
-

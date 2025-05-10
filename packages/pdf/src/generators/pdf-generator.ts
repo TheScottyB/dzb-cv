@@ -34,7 +34,7 @@ export class PDFGenerator {
       y,
       font,
       size: 24,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
 
     y -= 30;
@@ -46,7 +46,7 @@ export class PDFGenerator {
       y,
       font,
       size: 12,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
 
     y -= 40;
@@ -57,7 +57,7 @@ export class PDFGenerator {
       y,
       font,
       size: 16,
-      color: rgb(0, 0, 0)
+      color: rgb(0, 0, 0),
     });
 
     y -= 20;
@@ -68,7 +68,7 @@ export class PDFGenerator {
         y,
         font,
         size: 14,
-        color: rgb(0, 0, 0)
+        color: rgb(0, 0, 0),
       });
 
       y -= 20;
@@ -78,7 +78,7 @@ export class PDFGenerator {
         y,
         font,
         size: 12,
-        color: rgb(0, 0, 0)
+        color: rgb(0, 0, 0),
       });
 
       y -= 20;
@@ -89,7 +89,7 @@ export class PDFGenerator {
           y,
           font,
           size: 12,
-          color: rgb(0, 0, 0)
+          color: rgb(0, 0, 0),
         });
         y -= 15;
       }
@@ -104,7 +104,7 @@ export class PDFGenerator {
         y,
         font,
         size: 16,
-        color: rgb(0, 0, 0)
+        color: rgb(0, 0, 0),
       });
 
       y -= 20;
@@ -115,7 +115,7 @@ export class PDFGenerator {
           y,
           font,
           size: 14,
-          color: rgb(0, 0, 0)
+          color: rgb(0, 0, 0),
         });
 
         y -= 20;
@@ -125,7 +125,7 @@ export class PDFGenerator {
           y,
           font,
           size: 12,
-          color: rgb(0, 0, 0)
+          color: rgb(0, 0, 0),
         });
 
         y -= 30;
@@ -139,7 +139,7 @@ export class PDFGenerator {
         y,
         font,
         size: 16,
-        color: rgb(0, 0, 0)
+        color: rgb(0, 0, 0),
       });
 
       y -= 20;
@@ -151,7 +151,7 @@ export class PDFGenerator {
           y,
           font,
           size: 12,
-          color: rgb(0, 0, 0)
+          color: rgb(0, 0, 0),
         });
         y -= 15;
       }

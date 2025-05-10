@@ -40,10 +40,10 @@ export const testUtils = {
     const filePath = join(TEST_OUTPUT_DIR, filename);
     return { path: filePath, content };
   },
-  
+
   async cleanupTestFiles() {
     await rm(TEST_OUTPUT_DIR, { recursive: true, force: true });
-  }
+  },
 };
 
 // Global test utilities
@@ -55,4 +55,3 @@ declare global {
   // eslint-disable-next-line no-var
   var __testUtils: typeof testUtils;
 }
-

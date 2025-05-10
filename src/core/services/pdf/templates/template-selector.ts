@@ -29,28 +29,28 @@ export class TemplateSelector {
       id: 'basic',
       name: 'Basic Resume',
       description: 'Clean, professional format suitable for most industries',
-      suitableFor: ['General', 'Industry']
+      suitableFor: ['General', 'Industry'],
     });
-    
+
     this.metadata.set('minimal', {
       id: 'minimal',
       name: 'Minimal Resume',
       description: 'Modern, minimalist design for technology and creative fields',
-      suitableFor: ['Technology', 'Creative', 'Startup']
+      suitableFor: ['Technology', 'Creative', 'Startup'],
     });
-    
+
     this.metadata.set('federal', {
       id: 'federal',
       name: 'Federal Resume',
       description: 'Detailed format following US government guidelines',
-      suitableFor: ['Government', 'Federal Positions']
+      suitableFor: ['Government', 'Federal Positions'],
     });
-    
+
     this.metadata.set('academic', {
       id: 'academic',
       name: 'Academic CV',
       description: 'Comprehensive curriculum vitae format for academic and research positions',
-      suitableFor: ['Academia', 'Research', 'Higher Education']
+      suitableFor: ['Academia', 'Research', 'Higher Education'],
     });
 
     // Register default templates
@@ -75,7 +75,7 @@ export class TemplateSelector {
     // Try to get the template directly by name/id
     const template = this.templates.get(id);
     if (template) return template;
-    
+
     // If not found directly, try to match by metadata id
     // This allows looking up templates by their metadata id (e.g., 'basic', 'minimal')
     for (const [name, template] of this.templates.entries()) {
@@ -84,10 +84,10 @@ export class TemplateSelector {
         return template;
       }
     }
-    
+
     return undefined;
   }
-  
+
   getTemplateMetadata(id: string): TemplateMetadata | undefined {
     return this.metadata.get(id);
   }
@@ -98,7 +98,7 @@ export class TemplateSelector {
   getAvailableTemplates(): Template[] {
     return Array.from(this.templates.values());
   }
-  
+
   getTemplates(): Template[] {
     return this.getAvailableTemplates();
   }
@@ -122,7 +122,7 @@ export class TemplateSelector {
       const academic = this.templates.get('academic');
       if (academic) suggestions.unshift(academic);
     }
-    
+
     // Add federal template if government experience is detected
     if (experienceTypes.hasGovernmentExperience) {
       const federal = this.templates.get('federal');
@@ -142,7 +142,7 @@ export class TemplateSelector {
    * @param data CV data to analyze
    * @returns Object indicating presence of different types of experience
    */
-  private analyzeExperience(data: CVData): { 
+  private analyzeExperience(data: CVData): {
     hasTechExperience: boolean;
     hasAcademicExperience: boolean;
     hasGovernmentExperience: boolean;
@@ -151,62 +151,68 @@ export class TemplateSelector {
       return {
         hasTechExperience: false,
         hasAcademicExperience: false,
-        hasGovernmentExperience: false
+        hasGovernmentExperience: false,
       };
     }
 
     // Check for academic experience
-    const hasAcademicExperience = data.experience.some(exp => {
+    const hasAcademicExperience = data.experience.some((exp) => {
       const testData = exp as any; // For test data access
       const position = (testData.title || exp.position || '').toLowerCase();
       const employer = (testData.company || exp.employer || '').toLowerCase();
       const employmentType = testData.employment_type || exp.employmentType;
-      
-      return position.includes('professor') || 
-             position.includes('lecturer') || 
-             position.includes('academic') || 
-             position.includes('research') ||
-             employer.includes('university') || 
-             employer.includes('college') ||
-             employer.includes('academia') ||
-             employmentType === 'academic' ||
-             employmentType === 'research' ||
-             employmentType === 'teaching';
+
+      return (
+        position.includes('professor') ||
+        position.includes('lecturer') ||
+        position.includes('academic') ||
+        position.includes('research') ||
+        employer.includes('university') ||
+        employer.includes('college') ||
+        employer.includes('academia') ||
+        employmentType === 'academic' ||
+        employmentType === 'research' ||
+        employmentType === 'teaching'
+      );
     });
-    
+
     // Check for government experience
-    const hasGovernmentExperience = data.experience.some(exp => {
+    const hasGovernmentExperience = data.experience.some((exp) => {
       const testData = exp as any; // For test data access
       const position = (testData.title || exp.position || '').toLowerCase();
       const employer = (testData.company || exp.employer || '').toLowerCase();
       const employmentType = testData.employment_type || exp.employmentType;
       const gradeLevel = testData.grade_level || exp.gradeLevel;
-      
-      return position.includes('government') || 
-             position.includes('federal') || 
-             position.includes('policy') ||
-             employer.includes('department') || 
-             employer.includes('government') ||
-             employer.includes('agency') ||
-             employmentType === 'government' ||
-             gradeLevel?.toLowerCase?.()?.startsWith('gs-');
+
+      return (
+        position.includes('government') ||
+        position.includes('federal') ||
+        position.includes('policy') ||
+        employer.includes('department') ||
+        employer.includes('government') ||
+        employer.includes('agency') ||
+        employmentType === 'government' ||
+        gradeLevel?.toLowerCase?.()?.startsWith('gs-')
+      );
     });
     // Check for tech experience
-    const hasTechExperience = data.experience.some(exp => {
+    const hasTechExperience = data.experience.some((exp) => {
       const testData = exp as any; // For test data access
       const position = (testData.title || exp.position || '').toLowerCase();
       const employmentType = testData.employment_type || exp.employmentType;
-      
-      return position.includes('developer') || 
-             position.includes('engineer') || 
-             position.includes('software') ||
-             employmentType === 'technology';
+
+      return (
+        position.includes('developer') ||
+        position.includes('engineer') ||
+        position.includes('software') ||
+        employmentType === 'technology'
+      );
     });
-    
+
     return {
       hasTechExperience,
       hasAcademicExperience,
-      hasGovernmentExperience
+      hasGovernmentExperience,
     };
   }
 }

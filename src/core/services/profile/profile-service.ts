@@ -73,7 +73,7 @@ export class ProfileService {
     newData: CVData,
     changeReason: string,
     createdBy: string,
-    importSourceId?: string,
+    importSourceId?: string
   ): Promise<ProfileVersion> {
     const profile = await this.getProfile(profileId);
     if (!profile) {
@@ -146,7 +146,7 @@ export class ProfileService {
     const certChanges = this.compareArrays(
       oldData.certifications,
       newData.certifications,
-      'certifications',
+      'certifications'
     );
     changes.push(...certChanges);
 

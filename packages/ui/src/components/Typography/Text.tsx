@@ -19,46 +19,46 @@ export interface TextProps extends React.HTMLAttributes<HTMLElement> {
    * The content of the text element
    */
   children: React.ReactNode;
-  
+
   /**
    * The HTML element to render
    * @default 'p'
    */
   as?: TextElement;
-  
+
   /**
    * The size of the text
    * @default 'md'
    */
   size?: TextSize;
-  
+
   /**
    * The font weight of the text
    */
   weight?: 'light' | 'normal' | 'medium' | 'semibold' | 'bold';
-  
+
   /**
    * Whether the text should be italic
    * @default false
    */
   italic?: boolean;
-  
+
   /**
    * Whether the text should be truncated with an ellipsis if it overflows
    * @default false
    */
   truncate?: boolean;
-  
+
   /**
    * The maximum number of lines to display before truncating with an ellipsis
    */
   lineClamp?: number;
-  
+
   /**
    * Text alignment
    */
   align?: 'left' | 'center' | 'right' | 'justify';
-  
+
   /**
    * Text color variant
    */
@@ -67,7 +67,7 @@ export interface TextProps extends React.HTMLAttributes<HTMLElement> {
 
 /**
  * Text component for paragraphs, spans, and other text elements.
- * 
+ *
  * @example
  * ```tsx
  * <Text size="lg" weight="medium">Regular paragraph text</Text>
@@ -93,7 +93,7 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
     ref
   ) => {
     const TextTag = as;
-    
+
     const textClasses = [
       styles.text,
       styles[`size-${size}`],
@@ -104,17 +104,16 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
       align ? styles[`align-${align}`] : '',
       color ? styles[`color-${color}`] : '',
       className,
-    ].filter(Boolean).join(' ');
-    
-    const textStyle = lineClamp ? { '--line-clamp': lineClamp } as React.CSSProperties : undefined;
-    
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    const textStyle = lineClamp
+      ? ({ '--line-clamp': lineClamp } as React.CSSProperties)
+      : undefined;
+
     return (
-      <TextTag 
-        ref={ref as any} 
-        className={textClasses}
-        style={textStyle}
-        {...props}
-      >
+      <TextTag ref={ref as any} className={textClasses} style={textStyle} {...props}>
         {children}
       </TextTag>
     );
@@ -122,4 +121,3 @@ export const Text = React.forwardRef<HTMLElement, TextProps>(
 );
 
 Text.displayName = 'Text';
-

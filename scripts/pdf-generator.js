@@ -9,7 +9,7 @@ export const DEFAULT_PDF_OPTIONS = {
     top: 0.75,
     right: 0.75,
     bottom: 0.75,
-    left: 0.75
+    left: 0.75,
   },
   fontFamily: 'Georgia, serif',
   fontSize: 11,
@@ -20,7 +20,7 @@ export const DEFAULT_PDF_OPTIONS = {
   pdfTitle: '',
   pdfAuthor: '',
   pdfCreator: '',
-  customCss: ''
+  customCss: '',
 };
 
 /**
@@ -31,9 +31,9 @@ export function convertMarkdownToHtml(markdownContent) {
     html: true,
     breaks: true,
     linkify: true,
-    typographer: true
+    typographer: true,
   });
-  
+
   return md.render(markdownContent);
 }
 
@@ -72,19 +72,27 @@ async function applyHtmlStyling(htmlContent, options) {
       </style>
     </head>
     <body>
-      ${options.includeHeaderFooter ? `
+      ${
+        options.includeHeaderFooter
+          ? `
         <div class="page-header">
           ${options.headerText || ''}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
       
       ${htmlContent}
       
-      ${options.includeHeaderFooter ? `
+      ${
+        options.includeHeaderFooter
+          ? `
         <div class="page-footer">
           ${options.footerText || ''}
         </div>
-      ` : ''}
+      `
+          : ''
+      }
     </body>
     </html>
   `;
@@ -93,35 +101,33 @@ async function applyHtmlStyling(htmlContent, options) {
 /**
  * Enhanced PDF generation with sector-specific options
  */
-export async function convertMarkdownToPdf(
-  markdownContent,
-  outputPath,
-  options = {}
-) {
+export async function convertMarkdownToPdf(markdownContent, outputPath, options = {}) {
   const pdfOptions = {
     ...DEFAULT_PDF_OPTIONS,
     ...options,
     margins: {
       ...DEFAULT_PDF_OPTIONS.margins,
-      ...(options.margins || {})
-    }
+      ...(options.margins || {}),
+    },
   };
-  
+
   try {
     const htmlContent = convertMarkdownToHtml(markdownContent);
     const styledHtml = await applyHtmlStyling(htmlContent, pdfOptions);
-    
+
     // For now, we'll just save the HTML file
     const htmlPath = outputPath.replace(/\.pdf$/, '.html');
     await fs.mkdir(dirname(htmlPath), { recursive: true });
     await fs.writeFile(htmlPath, styledHtml, 'utf-8');
-    
+
     console.log(`Generated HTML file at: ${htmlPath}`);
-    console.log('Please use your browser to print this HTML file to PDF with the following settings:');
+    console.log(
+      'Please use your browser to print this HTML file to PDF with the following settings:'
+    );
     console.log('- Paper size: Letter');
     console.log('- Margins: 0.75 inches on all sides');
     console.log('- Print background colors and images');
-    
+
     return htmlPath;
   } catch (error) {
     console.error('HTML generation error:', error);

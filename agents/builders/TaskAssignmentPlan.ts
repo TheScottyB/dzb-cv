@@ -2,12 +2,12 @@
  * Task status options for tracking progress of atomic work units.
  */
 export enum TaskStatus {
-  Unassigned = "UNASSIGNED",
-  Assigned = "ASSIGNED",
-  InReview = "IN_REVIEW",
-  Complete = "COMPLETE",
-  Blocked = "BLOCKED",
-  NeedsRevision = "NEEDS_REVISION"
+  Unassigned = 'UNASSIGNED',
+  Assigned = 'ASSIGNED',
+  InReview = 'IN_REVIEW',
+  Complete = 'COMPLETE',
+  Blocked = 'BLOCKED',
+  NeedsRevision = 'NEEDS_REVISION',
 }
 
 /**
@@ -38,7 +38,7 @@ export class TaskAssignmentPlan {
     if (blueprintInfoOrInitial && Array.isArray(blueprintInfoOrInitial)) {
       this.tasks = blueprintInfoOrInitial.map((data, i) => ({
         id: data.id || `t_${Date.now()}_${i}`,
-        description: data.description || "",
+        description: data.description || '',
         status: data.status || TaskStatus.Unassigned,
         createdAt: data.createdAt || new Date().toISOString(),
         ...data,
@@ -67,14 +67,14 @@ export class TaskAssignmentPlan {
    * Returns an array of all unassigned tasks.
    */
   getUnassigned(): Task[] {
-    return this.tasks.filter(t => t.status === TaskStatus.Unassigned);
+    return this.tasks.filter((t) => t.status === TaskStatus.Unassigned);
   }
 
   /**
    * Assigns a task to an agent by name.
    */
   assignTask(taskId: string, agentName: string): void {
-    const task = this.tasks.find(t => t.id === taskId);
+    const task = this.tasks.find((t) => t.id === taskId);
     if (task) {
       task.assignee = agentName;
       task.status = TaskStatus.Assigned;
@@ -85,7 +85,7 @@ export class TaskAssignmentPlan {
    * Marks a task as complete, recording completion time.
    */
   markComplete(taskId: string): void {
-    const task = this.tasks.find(t => t.id === taskId);
+    const task = this.tasks.find((t) => t.id === taskId);
     if (task) {
       task.status = TaskStatus.Complete;
       task.completedAt = new Date().toISOString();
@@ -96,7 +96,7 @@ export class TaskAssignmentPlan {
    * Marks a task as requiring review.
    */
   markNeedsReview(taskId: string): void {
-    const task = this.tasks.find(t => t.id === taskId);
+    const task = this.tasks.find((t) => t.id === taskId);
     if (task) {
       task.status = TaskStatus.InReview;
     }
@@ -106,7 +106,7 @@ export class TaskAssignmentPlan {
    * Marks a task as blocked, optionally providing a reason.
    */
   markBlocked(taskId: string, reason: string): void {
-    const task = this.tasks.find(t => t.id === taskId);
+    const task = this.tasks.find((t) => t.id === taskId);
     if (task) {
       task.status = TaskStatus.Blocked;
       task.blockedReason = reason;
@@ -117,7 +117,7 @@ export class TaskAssignmentPlan {
    * Returns all tasks currently assigned to a given agent.
    */
   getTasksByAssignee(agentName: string): Task[] {
-    return this.tasks.filter(t => t.assignee === agentName);
+    return this.tasks.filter((t) => t.assignee === agentName);
   }
 
   /**
@@ -169,4 +169,3 @@ export class TaskAssignmentPlan {
 
 // TODO: Add method to parse blueprint.md directives and auto-populate task plan.
 // TODO: Add support for agent priority queues and batch assignment.
-

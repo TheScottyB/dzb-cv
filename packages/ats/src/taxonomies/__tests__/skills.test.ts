@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  SkillCategory,
-  SkillDefinition,
-  SkillMatcher,
-  createSkillMatcher,
-} from '../skills.js';
+import { SkillCategory, SkillDefinition, SkillMatcher, createSkillMatcher } from '../skills.js';
 
 describe('SkillMatcher', () => {
   const testSkills: SkillDefinition[] = [
@@ -65,8 +60,8 @@ describe('SkillMatcher', () => {
     it('should return related skills', () => {
       const related = matcher.getRelatedSkills('JavaScript');
       expect(related).toHaveLength(2);
-      expect(related.map(s => s.name)).toContain('TypeScript');
-      expect(related.map(s => s.name)).toContain('Node.js');
+      expect(related.map((s) => s.name)).toContain('TypeScript');
+      expect(related.map((s) => s.name)).toContain('Node.js');
     });
 
     it('should return empty array for skill with no relations', () => {
@@ -84,9 +79,9 @@ describe('SkillMatcher', () => {
     it('should return all skills in category', () => {
       const programming = matcher.findByCategory(SkillCategory.Programming);
       expect(programming).toHaveLength(3);
-      expect(programming.map(s => s.name)).toContain('JavaScript');
-      expect(programming.map(s => s.name)).toContain('TypeScript');
-      expect(programming.map(s => s.name)).toContain('Node.js');
+      expect(programming.map((s) => s.name)).toContain('JavaScript');
+      expect(programming.map((s) => s.name)).toContain('TypeScript');
+      expect(programming.map((s) => s.name)).toContain('Node.js');
     });
 
     it('should return empty array for category with no skills', () => {
@@ -128,4 +123,3 @@ describe('SkillMatcher', () => {
     });
   });
 });
-

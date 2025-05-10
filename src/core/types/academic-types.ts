@@ -74,4 +74,3 @@ export interface AcademicCVData extends CVData {
     description?: string;
   }>;
 }
-

@@ -10,7 +10,7 @@ import React from 'react';
  */
 export const List = ({ children, variant = 'unordered', className = '', ...props }) => {
   const ListComponent = variant === 'ordered' ? 'ol' : 'ul';
-  
+
   return (
     <ListComponent className={`list ${className}`} {...props}>
       {children}
@@ -32,4 +32,3 @@ export const ListItem = ({ children, className = '', ...props }) => {
     </li>
   );
 };
-

@@ -11,12 +11,12 @@ describe('BasicTemplate', () => {
       name: {
         first: 'John',
         last: 'Doe',
-        full: 'John Doe'
+        full: 'John Doe',
       },
       contact: {
         email: 'john@example.com',
-        phone: '123-456-7890'
-      }
+        phone: '123-456-7890',
+      },
     },
     experience: [
       {
@@ -25,23 +25,23 @@ describe('BasicTemplate', () => {
         startDate: '2020-01',
         endDate: '2023-12',
         responsibilities: ['Development', 'Testing'],
-        employmentType: 'full-time'
-      }
+        employmentType: 'full-time',
+      },
     ],
     education: [
       {
         degree: 'BS',
         field: 'Computer Science',
         institution: 'Test University',
-        graduationDate: '2019'
-      }
+        graduationDate: '2019',
+      },
     ],
     skills: [
       {
         name: 'TypeScript',
-        level: 'expert'
-      }
-    ]
+        level: 'expert',
+      },
+    ],
   };
 
   it('should have correct name', () => {
@@ -90,29 +90,29 @@ describe('BasicTemplate', () => {
         name: {
           first: '',
           last: '',
-          full: ''
+          full: '',
         },
         contact: {
           email: '',
-          phone: '' // Changed from null to empty string to match type definition
-        }
+          phone: '', // Changed from null to empty string to match type definition
+        },
       },
       experience: [],
       education: [],
-      skills: []
+      skills: [],
     };
-    
+
     const output = template.render(cvWithEmptyFields);
-    
+
     // Should not throw errors
     expect(() => template.render(cvWithEmptyFields)).not.toThrow();
-    
+
     // Should still render something even with empty data
     expect(output).toBeTruthy();
-    
+
     // Should include at least a title section (even if empty)
     expect(output).toContain('#');
-    
+
     // Should include section headers for main sections
     expect(output).toContain('## Experience');
     expect(output).toContain('## Education');
@@ -127,13 +127,13 @@ describe('BasicTemplate', () => {
         contact: {
           ...sampleCV.personalInfo.contact,
           address: '123 Main St, Anytown, USA',
-          linkedin: 'linkedin.com/in/johndoe'
-        }
-      }
+          linkedin: 'linkedin.com/in/johndoe',
+        },
+      },
     };
-    
+
     const output = template.render(cvWithOptionalContact);
-    
+
     expect(output).toContain('123 Main St, Anytown, USA');
     expect(output).toContain('linkedin.com/in/johndoe');
   });
@@ -148,7 +148,7 @@ describe('BasicTemplate', () => {
           startDate: 'Jan 2021',
           endDate: 'Present',
           responsibilities: ['Leadership'],
-          employmentType: 'full-time'
+          employmentType: 'full-time',
         },
         {
           position: 'Junior Developer',
@@ -156,13 +156,13 @@ describe('BasicTemplate', () => {
           startDate: '2018',
           endDate: '2020',
           responsibilities: ['Coding'],
-          employmentType: 'full-time'
-        }
-      ]
+          employmentType: 'full-time',
+        },
+      ],
     };
-    
+
     const output = template.render(cvWithVariousDateFormats);
-    
+
     expect(output).toContain('Jan 2021');
     expect(output).toContain('Present');
     expect(output).toContain('2018');
@@ -179,48 +179,50 @@ describe('BasicTemplate', () => {
           startDate: '2020',
           endDate: '2023',
           responsibilities: [],
-          employmentType: 'full-time'
+          employmentType: 'full-time',
         },
         {
           position: 'Intern',
           employer: 'Small Shop',
           startDate: '2019',
           endDate: '2019',
-          responsibilities: ['Very long responsibility description that goes into significant detail about the tasks performed and projects completed during the internship period'],
-          employmentType: 'internship'
-        }
-      ]
+          responsibilities: [
+            'Very long responsibility description that goes into significant detail about the tasks performed and projects completed during the internship period',
+          ],
+          employmentType: 'internship',
+        },
+      ],
     };
-    
+
     const output = template.render(cvWithResponsibilitiesEdgeCases);
-    
+
     // Empty responsibilities should not cause errors
     expect(output).toContain('Manager');
     expect(output).toContain('Big Corp');
-    
+
     // Long responsibility text should be included
     expect(output).toContain('Very long responsibility description');
   });
 
   it('should validate complete Markdown structure', () => {
     const output = template.render(sampleCV);
-    
+
     // Check for proper Markdown structure
     expect(output).toContain('# John Doe');
-    
+
     // Check for contact information
     expect(output).toContain('john@example.com');
     expect(output).toContain('123-456-7890');
-    
+
     // Check for main document sections (using Markdown headers)
     expect(output).toContain('## Experience');
     expect(output).toContain('## Education');
     expect(output).toContain('## Skills');
-    
+
     // Check for experience details
     expect(output).toContain('### Software Engineer at Tech Corp');
     expect(output).toContain('2020-01 - 2023-12');
-    
+
     // Check for list items using Markdown syntax
     expect(output).toContain('- Development');
     expect(output).toContain('- Testing');

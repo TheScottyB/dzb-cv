@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Main CLI Entry Point
- * 
+ *
  * This is the central entry point for the refactored CLI application.
  * It integrates all command modules and provides a unified interface.
  */
@@ -25,7 +25,7 @@ program
   .addHelpCommand(true)
   .helpOption('-h, --help', 'Display help information')
   .configureOutput({
-    outputError: (str, write) => write(chalk.red(str))
+    outputError: (str, write) => write(chalk.red(str)),
   });
 
 /**
@@ -44,12 +44,12 @@ try {
   const generateCvCommand = new GenerateCvCommand();
   const analyzeJobCommand = new AnalyzeJobCommand();
   const manageProfileCommand = new ManageProfileCommand();
-  
+
   // Register commands with the main program
   generateCvCommand.register(program);
   analyzeJobCommand.register(program);
   manageProfileCommand.register(program);
-  
+
   // Add a test command for verifying the CLI is working
   program
     .command('test')
@@ -62,7 +62,7 @@ try {
       console.log('   - profile: Manage CV profiles');
       console.log(chalk.yellow('\nFor more details, use --help with any command.'));
     });
-  
+
   /**
    * Custom event handlers
    */
@@ -76,9 +76,12 @@ try {
       process.env.VERBOSE = 'true';
       console.log(chalk.yellow('Verbose mode enabled'));
     });
-  
 } catch (error) {
-  console.error(chalk.red(`Failed to initialize commands: ${error instanceof Error ? error.message : String(error)}`));
+  console.error(
+    chalk.red(
+      `Failed to initialize commands: ${error instanceof Error ? error.message : String(error)}`
+    )
+  );
   process.exit(1);
 }
 
@@ -87,13 +90,14 @@ try {
  */
 try {
   program.parse(process.argv);
-  
+
   // Show help if no command specified
   if (process.argv.length <= 2) {
     program.outputHelp();
   }
 } catch (error) {
-  console.error(chalk.red(`Unexpected error: ${error instanceof Error ? error.message : String(error)}`));
+  console.error(
+    chalk.red(`Unexpected error: ${error instanceof Error ? error.message : String(error)}`)
+  );
   process.exit(1);
 }
-

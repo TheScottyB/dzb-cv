@@ -5,7 +5,7 @@ import path from 'path';
 
 /**
  * Asset Manager for CV Documents
- * 
+ *
  * This utility manages CV-related assets:
  * 1. Processes incoming files in assets directory
  * 2. Updates system data when relevant information is found
@@ -21,7 +21,7 @@ const NAMING_CONVENTIONS = {
   cv: 'Dawn_Zurick_Beilfuss_{position}_{employer}_CV.docx',
   federal: 'Dawn_Zurick_Beilfuss_Federal_Resume.docx',
   certification: 'Dawn_Zurick_Beilfuss_{cert_name}_Certification.pdf',
-  reference: 'Dawn_Zurick_Beilfuss_Reference_{person}.pdf'
+  reference: 'Dawn_Zurick_Beilfuss_Reference_{person}.pdf',
 };
 
 /**
@@ -51,8 +51,8 @@ async function listAssetFiles() {
         return { name: file, path: filePath, isDirectory: stats.isDirectory() };
       })
     );
-    
-    return fileStats.filter(file => !file.isDirectory);
+
+    return fileStats.filter((file) => !file.isDirectory);
   } catch (error) {
     console.error(`❌ Error listing assets: ${error.message}`);
     throw error;
@@ -65,9 +65,9 @@ async function listAssetFiles() {
 async function processFile(filePath) {
   const fileName = path.basename(filePath);
   const fileExt = path.extname(filePath).toLowerCase();
-  
+
   console.log(`\nProcessing file: ${fileName}`);
-  
+
   try {
     // Determine file type and process accordingly
     if (fileExt === '.docx') {
@@ -91,10 +91,10 @@ async function processFile(filePath) {
  */
 async function processResumeFile(filePath) {
   const fileName = path.basename(filePath);
-  
+
   // Detect employer or context from filename
   let employer = 'Unknown';
-  
+
   if (fileName.includes('BHGRE')) {
     employer = 'BHGRE';
   } else if (fileName.includes('Federal')) {
@@ -106,11 +106,11 @@ async function processResumeFile(filePath) {
       employer = match[1].trim();
     }
   }
-  
+
   // Generate a standardized filename
   const newFileName = NAMING_CONVENTIONS.resume.replace('{employer}', employer);
   const newFilePath = path.join(ASSETS_DIR, newFileName);
-  
+
   // Rename the file if it doesn't already have the standardized name
   if (fileName !== newFileName) {
     // Check if destination already exists to avoid overwriting
@@ -121,10 +121,10 @@ async function processResumeFile(filePath) {
     } catch (error) {
       // File doesn't exist, which is what we want
     }
-    
+
     await fs.rename(filePath, newFilePath);
     console.log(`✅ Renamed file to: ${newFileName}`);
-    
+
     // Record the processing
     await recordProcessedFile(fileName, newFileName, employer);
   } else {
@@ -139,7 +139,7 @@ async function recordProcessedFile(originalName, newName, context) {
   const logFilePath = path.join(ASSETS_DIR, 'asset-processing-log.txt');
   const timestamp = new Date().toISOString();
   const logEntry = `[${timestamp}] Renamed "${originalName}" to "${newName}" (Context: ${context})\n`;
-  
+
   try {
     await fs.appendFile(logFilePath, logEntry);
   } catch (error) {
@@ -153,17 +153,17 @@ async function recordProcessedFile(originalName, newName, context) {
 async function main() {
   try {
     console.log('🚀 Starting Asset Manager...');
-    
+
     // Ensure directories exist
     await ensureDirectories();
-    
+
     // List files
     const files = await listAssetFiles();
     console.log(`\nFound ${files.length} files in assets directory.`);
-    
+
     // Check if any command line arguments were provided
     const args = process.argv.slice(2);
-    
+
     if (args.length > 0) {
       // Process specific files mentioned in arguments
       for (const arg of args) {
@@ -183,9 +183,8 @@ async function main() {
         await processFile(file.path);
       }
     }
-    
+
     console.log('\n✅ Asset processing complete!');
-    
   } catch (error) {
     console.error(`❌ Error in main process: ${error.message}`);
     process.exit(1);

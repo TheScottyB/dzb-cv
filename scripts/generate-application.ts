@@ -117,13 +117,13 @@ async function generateCV(jobData: JobData): Promise<string> {
   const relevantSkills = Object.values(dawnTemplate.coreStrengths)
     .flat()
     .filter((skill) =>
-      jobData.skills.some((jobSkill) => jobSkill.toLowerCase().includes(skill.toLowerCase())),
+      jobData.skills.some((jobSkill) => jobSkill.toLowerCase().includes(skill.toLowerCase()))
     );
 
   const relevantExperience = Object.values(dawnTemplate.experiencePatterns).filter((exp) =>
     jobData.requirements.some((req) =>
-      exp.keyDuties.some((duty) => req.toLowerCase().includes(duty.toLowerCase())),
-    ),
+      exp.keyDuties.some((duty) => req.toLowerCase().includes(duty.toLowerCase()))
+    )
   );
 
   const education: Education[] = [
@@ -157,7 +157,7 @@ ${relevantExperience
 ### ${exp.title}
 ${exp.period}
 ${exp.keyDuties.map((duty) => `- ${duty}`).join('\n')}
-`,
+`
   )
   .join('\n')}
 
@@ -168,7 +168,7 @@ ${education
 ### ${edu.degree}
 ${edu.institution} | ${edu.period}
 ${edu.achievements ? edu.achievements.map((achievement) => `- ${achievement}`).join('\n') : ''}
-`,
+`
   )
   .join('\n')}
 `;
@@ -181,7 +181,7 @@ async function generateCoverLetter(jobData: JobData): Promise<string> {
   const relevantSkills = Object.values(dawnTemplate.coreStrengths)
     .flat()
     .filter((skill) =>
-      jobData.skills.some((jobSkill) => jobSkill.toLowerCase().includes(skill.toLowerCase())),
+      jobData.skills.some((jobSkill) => jobSkill.toLowerCase().includes(skill.toLowerCase()))
     )
     .slice(0, 5);
 
@@ -263,7 +263,7 @@ async function generatePDFs(
   coverLetterPath: string,
   outputDir: string,
   jobData: JobData,
-  options: Partial<PDFGenerationOptions>,
+  options: Partial<PDFGenerationOptions>
 ) {
   const pdfGenerator = new PDFGeneratorImpl();
 
@@ -314,7 +314,7 @@ async function generatePDFs(
   await pdfGenerator.generateFromHTML(
     coverLetterHtml,
     join(outputDir, 'cover-letter.pdf'),
-    pdfOptions,
+    pdfOptions
   );
 }
 

@@ -25,7 +25,7 @@ export {
   Profile,
   TemplateOptions,
   CVTemplate,
-  ATSImprovement
+  ATSImprovement,
 } from '@dzb-cv/core/types';
 
 /**

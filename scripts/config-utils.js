@@ -11,11 +11,11 @@ export async function processConfig(options) {
   if (!options.headless) {
     console.log('Running in non-headless mode');
   }
-  
+
   if (options.waitTime) {
     console.log(`Waiting ${options.waitTime}ms before scraping`);
   }
-  
+
   // Process other options...
 }
 
@@ -26,4 +26,4 @@ export async function processConfig(options) {
  */
 export function validateConfig(options) {
   return options.url !== undefined;
-} 
+}

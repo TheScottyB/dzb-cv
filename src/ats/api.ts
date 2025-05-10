@@ -67,7 +67,7 @@ export class ATSApiError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public response?: any,
+    public response?: any
   ) {
     super(message);
     this.name = 'ATSApiError';
@@ -96,7 +96,7 @@ export class ATSApiClient {
   private async makeRequest<T>(
     endpoint: string,
     method: 'GET' | 'POST' = 'GET',
-    body?: unknown,
+    body?: unknown
   ): Promise<T> {
     try {
       const response = await fetch(`${this.options.baseUrl}${endpoint}`, {
@@ -114,7 +114,7 @@ export class ATSApiClient {
         throw new ATSApiError(
           `API request failed: ${response.statusText}`,
           response.status,
-          await response.json().catch(() => null),
+          await response.json().catch(() => null)
         );
       }
 
@@ -142,7 +142,7 @@ export class ATSApiClient {
    */
   async analyzeResumeForJob(
     resumeData: string,
-    jobId: string,
+    jobId: string
   ): Promise<ExternalATSAnalysisResponse> {
     return this.makeRequest<ExternalATSAnalysisResponse>('/analyze', 'POST', {
       resume: resumeData,
@@ -194,7 +194,7 @@ export class ATSApiClient {
    * @param externalAnalysis Analysis result from external API
    */
   convertExternalAnalysis(
-    externalAnalysis: ExternalATSAnalysisResponse,
+    externalAnalysis: ExternalATSAnalysisResponse
   ): Partial<ATSAnalysisResult> {
     const formatIssues: ATSIssue[] = externalAnalysis.format.issues.map((issue) => ({
       type: issue.type as ATSIssueType,

@@ -23,4 +23,3 @@ export class TemplateProvider {
     this.templates.set(template.name, template);
   }
 }
-

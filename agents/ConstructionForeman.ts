@@ -10,11 +10,17 @@ export class ConstructionForeman {
   private builders: { [role: string]: any };
   private logger: Console;
 
-  constructor(options: { builders: { [role: string]: any }, taskPlan: TaskAssignmentPlan, logger?: Console }) {
+  constructor(options: {
+    builders: { [role: string]: any };
+    taskPlan: TaskAssignmentPlan;
+    logger?: Console;
+  }) {
     this.taskPlan = options.taskPlan;
     this.builders = options.builders || {};
     this.logger = options.logger || console;
-    this.logger.info('[ConstructionForeman] Initialized.', { builders: Object.keys(this.builders) });
+    this.logger.info('[ConstructionForeman] Initialized.', {
+      builders: Object.keys(this.builders),
+    });
     this.seedInitialTasks();
   }
 
@@ -26,9 +32,15 @@ export class ConstructionForeman {
     console.log('[ConstructionForeman] seedInitialTasks() running...');
     // TODO: Auto-parse blueprint.md for seed list.
     const seeds = [
-      { role: 'ToolWrapperAgent', desc: 'Wrap 1 dummy utility (extract_text()) as Open Agent SDK tool.' },
+      {
+        role: 'ToolWrapperAgent',
+        desc: 'Wrap 1 dummy utility (extract_text()) as Open Agent SDK tool.',
+      },
       { role: 'AgentScaffolderAgent', desc: 'Create base template for a "basic research agent."' },
-      { role: 'MemoryDesignerAgent', desc: 'Define first shared memory schema (agent_memory object).' }
+      {
+        role: 'MemoryDesignerAgent',
+        desc: 'Define first shared memory schema (agent_memory object).',
+      },
     ];
 
     seeds.forEach(({ role, desc }) => {

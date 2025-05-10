@@ -31,25 +31,25 @@ export interface ParsedCV {
 export function parseCvMarkdown(markdown: string): ParsedCV {
   // Basic implementation
   const sections = markdown.split(/\n#{1,2}\s+/);
-  
+
   const parsedCV: ParsedCV = {
     personalInfo: {
       name: {
-        full: ''
+        full: '',
       },
       contact: {
         email: '',
-        phone: ''
-      }
+        phone: '',
+      },
     },
     experience: [],
     education: [],
     skills: [],
-    certifications: []
+    certifications: [],
   };
 
   // Extract sections based on headers
-  sections.forEach(section => {
+  sections.forEach((section) => {
     if (section.toLowerCase().includes('experience')) {
       // Parse experience section
       parsedCV.experience = parseExperienceSection(section);
@@ -69,15 +69,15 @@ export function parseCvMarkdown(markdown: string): ParsedCV {
 }
 
 function parseExperienceSection(section: string): ParsedCV['experience'] {
-  const items = section.split('\n').filter(line => line.trim().startsWith('-'));
-  return items.map(item => {
+  const items = section.split('\n').filter((line) => line.trim().startsWith('-'));
+  return items.map((item) => {
     const match = item.match(/^-\s*(.+?)\s+at\s+(.+?)\s+\((.+?)(?:\s*-\s*(.+))?\)$/);
     if (match?.[1] && match?.[2] && match?.[3]) {
       const exp = {
         title: match[1].trim(),
         company: match[2].trim(),
         startDate: match[3].trim(),
-        responsibilities: [] as string[]
+        responsibilities: [] as string[],
       } as const;
       const endDate = match[4]?.trim();
       if (endDate) {
@@ -89,7 +89,7 @@ function parseExperienceSection(section: string): ParsedCV['experience'] {
       title: item.substring(1).trim(),
       company: 'Unknown',
       startDate: 'Unknown',
-      responsibilities: [] as string[]
+      responsibilities: [] as string[],
     };
   }) as ParsedCV['experience'];
 }
@@ -107,4 +107,4 @@ function parseSkillsSection(_section: string): string[] {
 function parseCertificationsSection(_section: string): string[] {
   // Basic implementation
   return [];
-} 
+}

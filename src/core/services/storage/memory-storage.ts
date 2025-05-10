@@ -15,17 +15,17 @@ export class MemoryStorage implements CVStorageProvider, Storage {
     this.profiles.set(profile.id, {
       ...profile,
       versions: [...profile.versions],
-      currentVersion: { ...profile.currentVersion }
+      currentVersion: { ...profile.currentVersion },
     });
   }
 
   async saveVersion(version: ProfileVersion): Promise<void> {
     this.versions.set(version.id, { ...version });
-    
+
     // Update the corresponding profile's versions array
     const profile = this.profiles.get(version.profileId);
     if (profile) {
-      const existingVersionIndex = profile.versions.findIndex(v => v.id === version.id);
+      const existingVersionIndex = profile.versions.findIndex((v) => v.id === version.id);
       if (existingVersionIndex >= 0) {
         profile.versions[existingVersionIndex] = version;
       } else {
@@ -38,18 +38,18 @@ export class MemoryStorage implements CVStorageProvider, Storage {
   async getProfile(id: string): Promise<Profile | null> {
     const profile = this.profiles.get(id);
     if (!profile) return null;
-    
+
     return {
       ...profile,
       versions: [...profile.versions],
-      currentVersion: { ...profile.currentVersion }
+      currentVersion: { ...profile.currentVersion },
     };
   }
 
   async getVersion(id: string): Promise<ProfileVersion | null> {
     const version = this.versions.get(id);
     if (!version) return null;
-    
+
     return { ...version };
   }
 
@@ -90,4 +90,3 @@ export class MemoryStorage implements CVStorageProvider, Storage {
     return this.versions.size;
   }
 }
-

@@ -1,5 +1,5 @@
 /**
- * MemoryAgent: Provides in-memory and stubbed long-term memory to agents, 
+ * MemoryAgent: Provides in-memory and stubbed long-term memory to agents,
  * including event history and key-value context.
  *
  * TODO: Integrate persistent backend (DB, file, etc.).
@@ -73,4 +73,3 @@ export class MemoryAgent {
   // TODO: Add persistent memory layer; augment with TTL, schema.
   // TODO: Subscribe to agent events/messages for auto-memory updates.
 }
-

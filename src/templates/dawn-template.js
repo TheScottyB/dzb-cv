@@ -18,14 +18,14 @@ export const dawnTemplate = {
         'team supervision',
         'customer service',
         'Fox Lake',
-        'Midwest Sports'
+        'Midwest Sports',
       ],
       relevance: {
         patientAccess: 'high',
         supervision: 'high',
-        systems: 'medium'
-      }
-    }
+        systems: 'medium',
+      },
+    },
     // Add more jobs here if needed for additional test cases
-  }
+  },
 };

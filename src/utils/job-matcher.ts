@@ -37,7 +37,7 @@ export class JobMatcher {
 
   matchRequirements(jobData: JobData): MatchResult[] {
     const requirements = this.extractRequirements(jobData);
-    return requirements.map(req => this.findMatches(req));
+    return requirements.map((req) => this.findMatches(req));
   }
 
   private extractRequirements(jobData: JobData): JobRequirement[] {
@@ -50,7 +50,7 @@ export class JobMatcher {
         requirements.push({
           category: 'responsibilities',
           requirement: resp,
-          importance: 'high'
+          importance: 'high',
         });
       });
     }
@@ -61,7 +61,7 @@ export class JobMatcher {
         requirements.push({
           category: 'qualifications',
           requirement: req,
-          importance: 'high'
+          importance: 'high',
         });
       });
     }
@@ -74,7 +74,10 @@ export class JobMatcher {
     const evidence: string[] = [];
 
     // Split requirement string by comma (for multi-keyword requirements)
-    const segments = requirement.requirement.split(',').map(s => s.trim()).filter(Boolean);
+    const segments = requirement.requirement
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
 
     // Check core strengths
     Object.entries(this.template.coreStrengths).forEach(([category, strengths]) => {
@@ -107,7 +110,7 @@ export class JobMatcher {
       requirement: requirement.requirement,
       matches,
       confidence: this.calculateConfidence(matches.length),
-      evidence
+      evidence,
     };
   }
 
@@ -124,34 +127,37 @@ export class JobMatcher {
 
   generateTailoredContent(matches: MatchResult[]): string {
     // Group matches by confidence level
-    const groupedMatches = matches.reduce((acc, match) => {
-      acc[match.confidence].push(match);
-      return acc;
-    }, {
-      high: [] as MatchResult[],
-      medium: [] as MatchResult[],
-      low: [] as MatchResult[]
-    });
+    const groupedMatches = matches.reduce(
+      (acc, match) => {
+        acc[match.confidence].push(match);
+        return acc;
+      },
+      {
+        high: [] as MatchResult[],
+        medium: [] as MatchResult[],
+        low: [] as MatchResult[],
+      }
+    );
 
     // Format the content
     let content = '';
-    
+
     // Add high confidence matches
     if (groupedMatches.high.length > 0) {
       content += '\n## Strong Matches\n';
-      content += groupedMatches.high.map(match => 
-        `### ${match.requirement}\n${match.evidence.join('\n')}`
-      ).join('\n\n');
+      content += groupedMatches.high
+        .map((match) => `### ${match.requirement}\n${match.evidence.join('\n')}`)
+        .join('\n\n');
     }
-    
+
     // Add medium confidence matches
     if (groupedMatches.medium.length > 0) {
       content += '\n## Good Matches\n';
-      content += groupedMatches.medium.map(match => 
-        `### ${match.requirement}\n${match.evidence.join('\n')}`
-      ).join('\n\n');
+      content += groupedMatches.medium
+        .map((match) => `### ${match.requirement}\n${match.evidence.join('\n')}`)
+        .join('\n\n');
     }
-    
+
     return content;
   }
-} 
+}

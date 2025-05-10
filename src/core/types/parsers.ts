@@ -8,4 +8,4 @@ export interface TextParser {
    * @returns A promise that resolves to the extracted text
    */
   extractText(buffer: Buffer): Promise<string>;
-} 
+}

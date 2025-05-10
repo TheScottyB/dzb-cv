@@ -31,4 +31,3 @@ export interface JobScraperOptions {
   retries?: number;
   delay?: number;
 }
-

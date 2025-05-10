@@ -5,10 +5,7 @@ import { createCVCommand } from './commands/create.js';
 
 const program = new Command();
 
-program
-  .name('cv')
-  .description('CV management tool')
-  .version('1.0.0');
+program.name('cv').description('CV management tool').version('1.0.0');
 
 createCVCommand(program);
 

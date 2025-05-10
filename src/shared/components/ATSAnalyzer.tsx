@@ -13,30 +13,27 @@ interface ATSAnalyzerProps {
 const getIssueColor = (category: string): string => {
   switch (category.toLowerCase()) {
     case 'critical':
-      return '#dc3545';  // Red
+      return '#dc3545'; // Red
     case 'high':
-      return '#fd7e14';  // Orange
+      return '#fd7e14'; // Orange
     case 'medium':
-      return '#ffc107';  // Yellow
+      return '#ffc107'; // Yellow
     case 'low':
-      return '#28a745';  // Green
+      return '#28a745'; // Green
     default:
-      return '#6c757d';  // Gray
+      return '#6c757d'; // Gray
   }
 };
 
 // Utility function to get color based on score
 const getScoreColor = (score: number): string => {
-  if (score >= 90) return '#28a745';  // Green
-  if (score >= 70) return '#ffc107';  // Yellow
-  if (score >= 50) return '#fd7e14';  // Orange
-  return '#dc3545';  // Red
+  if (score >= 90) return '#28a745'; // Green
+  if (score >= 70) return '#ffc107'; // Yellow
+  if (score >= 50) return '#fd7e14'; // Orange
+  return '#dc3545'; // Red
 };
 
-export const ATSAnalyzer: React.FC<ATSAnalyzerProps> = ({ 
-  analysisResult, 
-  jobDescription 
-}) => {
+export const ATSAnalyzer: React.FC<ATSAnalyzerProps> = ({ analysisResult, jobDescription }) => {
   return (
     <div className={styles['ats-analyzer']}>
       {analysisResult.issues.length > 0 && (
@@ -44,8 +41,8 @@ export const ATSAnalyzer: React.FC<ATSAnalyzerProps> = ({
           <h3>Detected Issues</h3>
           <ul className={styles['ats-issues-list']}>
             {analysisResult.issues.map((issue, index) => (
-              <li 
-                key={`issue-${index}`} 
+              <li
+                key={`issue-${index}`}
                 className={styles['ats-issue-item']}
                 style={{ borderLeft: `4px solid ${getIssueColor(issue.category)}` }}
               >
@@ -72,8 +69,8 @@ export const ATSAnalyzer: React.FC<ATSAnalyzerProps> = ({
               <h4>Keywords Found</h4>
               <div className={styles['keyword-tags']}>
                 {analysisResult.keywords.found.map((keyword, index) => (
-                  <span 
-                    key={`found-${index}`} 
+                  <span
+                    key={`found-${index}`}
                     className={`${styles['keyword-tag']} ${styles['found']}`}
                   >
                     {keyword}
@@ -88,8 +85,8 @@ export const ATSAnalyzer: React.FC<ATSAnalyzerProps> = ({
               <h4>Missing Keywords</h4>
               <div className={styles['keyword-tags']}>
                 {analysisResult.keywords.missing.map((keyword, index) => (
-                  <span 
-                    key={`missing-${index}`} 
+                  <span
+                    key={`missing-${index}`}
                     className={`${styles['keyword-tag']} ${styles['missing']}`}
                   >
                     {keyword}
@@ -109,8 +106,8 @@ export const ATSAnalyzer: React.FC<ATSAnalyzerProps> = ({
               <div className={styles['section-name']}>
                 {section.charAt(0).toUpperCase() + section.slice(1)}
               </div>
-              <div 
-                className={styles['section-score']} 
+              <div
+                className={styles['section-score']}
                 style={{ color: getScoreColor(score as number) }}
               >
                 {score}/100
@@ -126,11 +123,11 @@ export const ATSAnalyzer: React.FC<ATSAnalyzerProps> = ({
           {analysisResult.improvements
             .sort((a, b) => {
               const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-              return (priorityOrder[a.priority ?? 'low'] - priorityOrder[b.priority ?? 'low']);
+              return priorityOrder[a.priority ?? 'low'] - priorityOrder[b.priority ?? 'low'];
             })
             .map((improvement, index) => (
-              <li 
-                key={`improvement-${index}`} 
+              <li
+                key={`improvement-${index}`}
                 className={`${styles['ats-improvement-item']} ${styles[`priority-${improvement.priority}`]}`}
               >
                 <div className={styles['improvement-priority']}>{improvement.priority}</div>
@@ -146,4 +143,4 @@ export const ATSAnalyzer: React.FC<ATSAnalyzerProps> = ({
   );
 };
 
-export default ATSAnalyzer; 
+export default ATSAnalyzer;

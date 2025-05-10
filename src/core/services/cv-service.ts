@@ -48,44 +48,38 @@ export class CVService {
       profileId: id,
       versionNumber: 1,
       timestamp: new Date().toISOString(),
-      data
+      data,
     };
-    
+
     const profile: Profile = {
       id,
       owner,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       versions: [version],
-      currentVersion: version
+      currentVersion: version,
     };
 
     await this.storage.saveProfile(profile);
     await this.storage.saveVersion(version);
-    
+
     return profile;
   }
 
   /**
    * Generate CV in specified format
    */
-  async generateCV(
-    profileId: string, 
-    options: CVGenerationOptions
-  ): Promise<Buffer> {
+  async generateCV(profileId: string, options: CVGenerationOptions): Promise<Buffer> {
     const profile = await this.storage.getProfile(profileId);
     if (!profile) {
       throw new Error(`Profile ${profileId} not found`);
     }
 
     if (options.format === 'pdf') {
-      return this.pdfGenerator.generate(
-        profile.currentVersion.data,
-        {
-          includeHeaderFooter: true,
-          ...options.pdfOptions
-        }
-      );
+      return this.pdfGenerator.generate(profile.currentVersion.data, {
+        includeHeaderFooter: true,
+        ...options.pdfOptions,
+      });
     }
 
     throw new Error(`Format ${options.format} not supported`);
@@ -115,7 +109,7 @@ export class CVService {
       timestamp: new Date().toISOString(),
       data: newData,
       changes,
-      ...(reason ? { changeReason: reason } : {})
+      ...(reason ? { changeReason: reason } : {}),
     };
 
     profile.versions.push(version);
@@ -145,45 +139,40 @@ export class CVService {
 
   private calculateChanges(oldData: CVData, newData: CVData): ProfileChange[] {
     const changes: ProfileChange[] = [];
-    
+
     // Compare experience entries
     if (oldData.experience.length !== newData.experience.length) {
       changes.push({
         field: 'experience.length',
         oldValue: oldData.experience.length,
         newValue: newData.experience.length,
-        resolutionNote: `Changed number of experience entries from ${oldData.experience.length} to ${newData.experience.length}`
+        resolutionNote: `Changed number of experience entries from ${oldData.experience.length} to ${newData.experience.length}`,
       });
     }
-    
+
     // Compare individual experience entries
-    const robustKey = (exp: ExperienceEntry) => [
-      exp.position,
-      exp.employer,
-      exp.startDate,
-      exp.endDate || '',
-      exp.location || ''
-    ].join('|');
+    const robustKey = (exp: ExperienceEntry) =>
+      [exp.position, exp.employer, exp.startDate, exp.endDate || '', exp.location || ''].join('|');
 
     const oldExperienceMap = new Map<string, ExperienceEntry>(
-      oldData.experience.map(exp => [robustKey(exp), exp])
+      oldData.experience.map((exp) => [robustKey(exp), exp])
     );
     const newExperienceMap = new Map<string, ExperienceEntry>(
-      newData.experience.map(exp => [robustKey(exp), exp])
+      newData.experience.map((exp) => [robustKey(exp), exp])
     );
-    
+
     this.detectExperienceChanges(oldExperienceMap, newExperienceMap, changes);
-    
+
     // Compare personal info
     if (JSON.stringify(oldData.personalInfo) !== JSON.stringify(newData.personalInfo)) {
       changes.push({
         field: 'personalInfo',
         oldValue: oldData.personalInfo,
         newValue: newData.personalInfo,
-        resolutionNote: 'Updated personal information'
+        resolutionNote: 'Updated personal information',
       });
     }
-    
+
     return changes;
   }
 
@@ -199,7 +188,7 @@ export class CVService {
           field: 'experience.remove',
           oldValue: oldExp,
           newValue: null,
-          resolutionNote: `Removed experience: ${oldExp.position} at ${oldExp.employer}`
+          resolutionNote: `Removed experience: ${oldExp.position} at ${oldExp.employer}`,
         });
       }
     }
@@ -211,7 +200,7 @@ export class CVService {
           field: 'experience.add',
           oldValue: null,
           newValue: newExp,
-          resolutionNote: `Added experience: ${newExp.position} at ${newExp.employer}`
+          resolutionNote: `Added experience: ${newExp.position} at ${newExp.employer}`,
         });
       }
     }
@@ -234,4 +223,3 @@ export interface CVStorageProvider {
 export interface PDFGenerationProvider {
   generate(data: CVData, options?: PDFGenerationOptions): Promise<Buffer>;
 }
-

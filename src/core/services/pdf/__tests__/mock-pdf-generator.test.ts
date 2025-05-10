@@ -5,35 +5,39 @@ import type { PDFOptions } from '../../../types/cv-generation.js';
 
 describe('MockPDFGenerator', () => {
   const generator = new MockPDFGenerator();
-  
+
   const testData: CVData = {
     personalInfo: {
       name: { full: 'Test User' },
       contact: {
         email: 'test@example.com',
-        phone: '123-456-7890'
-      }
+        phone: '123-456-7890',
+      },
     },
-    experience: [{
-      title: 'Software Engineer',
-      company: 'Tech Co',
-      startDate: '2020-01',
-      endDate: '2023-01',
-      responsibilities: ['Development', 'Testing']
-    }],
-    education: [{
-      degree: 'BS Computer Science',
-      institution: 'Test University',
-      year: '2020'
-    }],
+    experience: [
+      {
+        title: 'Software Engineer',
+        company: 'Tech Co',
+        startDate: '2020-01',
+        endDate: '2023-01',
+        responsibilities: ['Development', 'Testing'],
+      },
+    ],
+    education: [
+      {
+        degree: 'BS Computer Science',
+        institution: 'Test University',
+        year: '2020',
+      },
+    ],
     skills: ['JavaScript', 'TypeScript'],
-    certifications: ['AWS Certified']
+    certifications: ['AWS Certified'],
   };
 
   it('should generate a PDF buffer from CV data', async () => {
     const options: PDFOptions = {
       includeHeaderFooter: true,
-      paperSize: 'Letter'
+      paperSize: 'Letter',
     };
 
     const result = await generator.generate(testData, options);
@@ -56,12 +60,14 @@ describe('MockPDFGenerator', () => {
   it('should handle missing end date in experience', async () => {
     const dataWithCurrentJob: CVData = {
       ...testData,
-      experience: [{
-        title: 'Current Job',
-        company: 'Current Co',
-        startDate: '2023-01',
-        responsibilities: ['Current work']
-      }]
+      experience: [
+        {
+          title: 'Current Job',
+          company: 'Current Co',
+          startDate: '2023-01',
+          responsibilities: ['Current work'],
+        },
+      ],
     };
 
     const result = await generator.generate(dataWithCurrentJob);
@@ -70,11 +76,10 @@ describe('MockPDFGenerator', () => {
 
   it('should generate consistent format regardless of options', async () => {
     const result1 = await generator.generate(testData);
-    const result2 = await generator.generate(testData, { 
-      includeHeaderFooter: false 
+    const result2 = await generator.generate(testData, {
+      includeHeaderFooter: false,
     });
 
     expect(result1.toString()).toBe(result2.toString());
   });
 });
-

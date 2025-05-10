@@ -1,7 +1,7 @@
 /**
  * PlannerAgent: Accepts goals, breaks them into atomic subtasks, and coordinates plan/blueprint generation.
  * Integrates with BlueprintAgent and ForemanAgent for orchestrated distributed execution.
- * 
+ *
  * TODO: Advanced LLM/AI planning, feedback loops, iterative/task-aware replanning, tool/skill registry integration.
  */
 
@@ -35,7 +35,7 @@ export class PlannerAgent {
       subtasks = [
         { step: 1, description: `Analyze goal: ${goal}` },
         { step: 2, description: `Decompose "${goal}" into atomic tasks` },
-        { step: 3, description: `Dispatch tasks for "${goal}" to BlueprintAgent` }
+        { step: 3, description: `Dispatch tasks for "${goal}" to BlueprintAgent` },
       ];
     } else if (goal && typeof goal === 'object') {
       subtasks = [{ step: 1, description: `Process complex goal`, details: goal }];
@@ -50,9 +50,9 @@ export class PlannerAgent {
    */
   generateBlueprint(): object {
     const blueprint = {
-      version: "auto-generated-0.1",
+      version: 'auto-generated-0.1',
       tasks: this.currentPlan,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     console.info(`${this.logPrefix} Generated blueprint:`, blueprint);
     return blueprint;
@@ -83,4 +83,3 @@ export class PlannerAgent {
   // TODO: Advanced AI/LLM agent breakdown strategies; iterative improvement.
   // TODO: Handle agent feedback and track success/failures for dynamic replanning.
 }
-

@@ -44,18 +44,18 @@ export abstract class PDFGenerator {
   abstract generateFromMarkdown(
     markdown: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string>;
   abstract generateFromHTML(
     html: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string>;
   abstract generateFromTemplate(
     templatePath: string,
     data: CVData,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string>;
   protected abstract generateHTML(data: CVData): string;
 }
@@ -98,7 +98,7 @@ export class DefaultPDFGenerator extends PDFGenerator {
   async generateFromMarkdown(
     markdown: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string> {
     const fs = await import('fs');
     const path = await import('path');
@@ -111,7 +111,7 @@ export class DefaultPDFGenerator extends PDFGenerator {
   async generateFromHTML(
     html: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string> {
     const fs = await import('fs');
     const path = await import('path');
@@ -143,7 +143,7 @@ export class DefaultPDFGenerator extends PDFGenerator {
     templatePath: string,
     data: CVData,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string> {
     const templateContent = readFileSync(templatePath, 'utf-8');
     const template = handlebars.compile(templateContent);
@@ -184,7 +184,7 @@ export class DefaultPDFGenerator extends PDFGenerator {
                   ${exp.responsibilities.map((r) => `<li>${r}</li>`).join('')}
                 </ul>
               </div>
-            `,
+            `
               )
               .join('')}
           </div>
@@ -198,7 +198,7 @@ export class DefaultPDFGenerator extends PDFGenerator {
                 <h3>${edu.degree} - ${edu.institution}</h3>
                 <p>${edu.year}</p>
               </div>
-            `,
+            `
               )
               .join('')}
           </div>

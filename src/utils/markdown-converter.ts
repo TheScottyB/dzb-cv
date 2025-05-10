@@ -49,7 +49,7 @@ export class MarkdownConverter {
           const language = hljs.getLanguage(lang) ? lang : 'plaintext';
           return hljs.highlight(code, { language }).value;
         },
-      }),
+      })
     );
 
     // Set options
@@ -70,7 +70,7 @@ export class MarkdownConverter {
     markdown: string,
     title?: string,
     subtitle?: string,
-    opts: { suppressHeadings?: boolean; pdfMode?: boolean } = {},
+    opts: { suppressHeadings?: boolean; pdfMode?: boolean } = {}
   ): string {
     let content = markdown;
     let suppressHeadings = opts.suppressHeadings ?? false;

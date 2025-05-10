@@ -136,10 +136,10 @@ export class SkillMatcher {
   constructor(skills: SkillDefinition[] = AllSkills) {
     this.skillMap = new Map();
     this.aliasMap = new Map();
-    
-    skills.forEach(skill => {
+
+    skills.forEach((skill) => {
       this.skillMap.set(skill.name.toLowerCase(), skill);
-      skill.aliases?.forEach(alias => {
+      skill.aliases?.forEach((alias) => {
         this.aliasMap.set(alias.toLowerCase(), skill.name.toLowerCase());
       });
     });
@@ -150,10 +150,7 @@ export class SkillMatcher {
    */
   public findSkill(name: string): SkillDefinition | undefined {
     const lowerName = name.toLowerCase();
-    return (
-      this.skillMap.get(lowerName) ||
-      this.skillMap.get(this.aliasMap.get(lowerName) || '')
-    );
+    return this.skillMap.get(lowerName) || this.skillMap.get(this.aliasMap.get(lowerName) || '');
   }
 
   /**
@@ -162,9 +159,9 @@ export class SkillMatcher {
   public getRelatedSkills(name: string): SkillDefinition[] {
     const skill = this.findSkill(name);
     if (!skill?.related) return [];
-    
+
     return skill.related
-      .map(related => this.findSkill(related))
+      .map((related) => this.findSkill(related))
       .filter((s): s is SkillDefinition => s !== undefined);
   }
 
@@ -172,8 +169,7 @@ export class SkillMatcher {
    * Find skills by category
    */
   public findByCategory(category: SkillCategory): SkillDefinition[] {
-    return Array.from(this.skillMap.values())
-      .filter(skill => skill.category === category);
+    return Array.from(this.skillMap.values()).filter((skill) => skill.category === category);
   }
 
   /**
@@ -182,16 +178,12 @@ export class SkillMatcher {
   public areRelated(skill1: string, skill2: string): boolean {
     const s1 = this.findSkill(skill1);
     const s2 = this.findSkill(skill2);
-    
+
     if (!s1 || !s2) return false;
-    
-    return Boolean(
-      s1.related?.includes(s2.name) ||
-      s2.related?.includes(s1.name)
-    );
+
+    return Boolean(s1.related?.includes(s2.name) || s2.related?.includes(s1.name));
   }
 }
 
 export const createSkillMatcher = (skills?: SkillDefinition[]): SkillMatcher =>
   new SkillMatcher(skills);
-

@@ -26,4 +26,4 @@ export interface Storage {
    * Check if a key exists in storage
    */
   exists(key: string): Promise<boolean>;
-} 
+}

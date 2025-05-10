@@ -34,10 +34,7 @@ describe('ScoringEngine', () => {
         employer: 'Dev Inc',
         startDate: '2018-01',
         endDate: '2019-12',
-        responsibilities: [
-          'Developed React applications',
-          'Worked with TypeScript and Node.js',
-        ],
+        responsibilities: ['Developed React applications', 'Worked with TypeScript and Node.js'],
       },
     ],
     education: [
@@ -61,7 +58,7 @@ describe('ScoringEngine', () => {
     company: 'Innovation Labs',
     description: 'Looking for a senior developer with 5 years of experience in web development.',
     qualifications: [
-      'Bachelor\'s degree in Computer Science or related field',
+      "Bachelor's degree in Computer Science or related field",
       'Strong experience with TypeScript and React',
       '5+ years of professional experience',
     ],
@@ -70,13 +67,7 @@ describe('ScoringEngine', () => {
       'Mentor junior developers',
       'Implement best practices and CI/CD',
     ],
-    skills: [
-      'TypeScript',
-      'React',
-      'Node.js',
-      'Docker',
-      'Kubernetes',
-    ],
+    skills: ['TypeScript', 'React', 'Node.js', 'Docker', 'Kubernetes'],
   };
 
   describe('score', () => {
@@ -197,4 +188,3 @@ describe('ScoringEngine', () => {
     });
   });
 });
-

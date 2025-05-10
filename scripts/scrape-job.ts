@@ -25,7 +25,7 @@ const REQUIRED_SELECTORS = {
 class ScrapingError extends Error {
   constructor(
     message: string,
-    public readonly details?: unknown,
+    public readonly details?: unknown
   ) {
     super(message);
     this.name = 'ScrapingError';
@@ -63,7 +63,7 @@ async function extractJobDetails(page: Page): Promise<JobDetails> {
     } catch (error) {
       console.warn(
         `Failed to extract ${key} using selector ${selector}:`,
-        error instanceof Error ? error.message : String(error),
+        error instanceof Error ? error.message : String(error)
       );
     }
   }
@@ -146,7 +146,7 @@ async function scrapeWithPuppeteer(url: string, retryCount = 0): Promise<void> {
     } else {
       console.error(
         '\n❌ Unexpected error:',
-        error instanceof Error ? error.message : String(error),
+        error instanceof Error ? error.message : String(error)
       );
     }
 

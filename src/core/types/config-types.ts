@@ -7,12 +7,12 @@ export interface AppConfig {
    * Base path for templates
    */
   templatesPath: string;
-  
+
   /**
    * Output directory for generated files
    */
   outputPath: string;
-  
+
   /**
    * Default file format for output
    */
@@ -24,7 +24,7 @@ export interface PDFConfig {
    * Default styling for PDF
    */
   defaultStyles?: string;
-  
+
   /**
    * Page size and margins
    */
@@ -38,4 +38,3 @@ export interface PDFConfig {
     };
   };
 }
-

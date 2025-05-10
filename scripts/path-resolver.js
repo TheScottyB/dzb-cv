@@ -11,7 +11,7 @@ const PROJECT_ROOT = join(__dirname, '..', '..');
  * @returns Absolute path to the requested resource
  */
 export function resolveDataPath(relPath) {
-    return join(PROJECT_ROOT, 'src', relPath);
+  return join(PROJECT_ROOT, 'src', relPath);
 }
 /**
  * Resolves an output path relative to the project's output directory
@@ -19,18 +19,18 @@ export function resolveDataPath(relPath) {
  * @returns Absolute path to the output location
  */
 export function resolveOutputPath(relPath) {
-    return join(PROJECT_ROOT, 'output', relPath);
+  return join(PROJECT_ROOT, 'output', relPath);
 }
 /**
  * Ensures that all required project directories exist
  */
 export async function ensureProjectDirectories() {
-    // Ensure output directory exists
-    await fs.mkdir(join(PROJECT_ROOT, 'output'), { recursive: true });
-    // Ensure sector-specific output directories exist
-    await fs.mkdir(join(PROJECT_ROOT, 'output', 'federal'), { recursive: true });
-    await fs.mkdir(join(PROJECT_ROOT, 'output', 'state'), { recursive: true });
-    await fs.mkdir(join(PROJECT_ROOT, 'output', 'private'), { recursive: true });
-    console.log('Project directories verified');
+  // Ensure output directory exists
+  await fs.mkdir(join(PROJECT_ROOT, 'output'), { recursive: true });
+  // Ensure sector-specific output directories exist
+  await fs.mkdir(join(PROJECT_ROOT, 'output', 'federal'), { recursive: true });
+  await fs.mkdir(join(PROJECT_ROOT, 'output', 'state'), { recursive: true });
+  await fs.mkdir(join(PROJECT_ROOT, 'output', 'private'), { recursive: true });
+  console.log('Project directories verified');
 }
 //# sourceMappingURL=path-resolver.js.map

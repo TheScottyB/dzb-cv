@@ -11,14 +11,14 @@ async function main() {
   try {
     // Path to the cover letter markdown file
     const inputPath = './output/state/dawn-recruitment-expert-cover-letter.md';
-    
+
     // Read the markdown content
     console.log(`Reading cover letter content from ${inputPath}...`);
     const markdownContent = await fs.readFile(inputPath, 'utf-8');
-    
+
     // Output file path
     const outputPath = './output/state/Dawn_Zurick_Beilfuss_Cover_Letter.pdf';
-    
+
     // Configure PDF options
     const pdfOptions = {
       paperSize: 'Letter',
@@ -26,7 +26,7 @@ async function main() {
         top: 1,
         right: 1,
         bottom: 1,
-        left: 1
+        left: 1,
       },
       fontFamily: 'Georgia, serif',
       fontSize: 12,
@@ -34,9 +34,9 @@ async function main() {
       orientation: 'portrait',
       pdfTitle: 'Dawn Zurick Beilfuss - Cover Letter',
       pdfAuthor: 'Dawn Zurick Beilfuss',
-      pdfCreator: 'DZB CV Generator'
+      pdfCreator: 'DZB CV Generator',
     };
-    
+
     // Custom CSS styling for cover letter
     const customCss = `
       body {
@@ -57,13 +57,13 @@ async function main() {
         color: #154360; 
       }
     `;
-    
+
     pdfOptions.cssStylesheet = customCss;
-    
+
     // Generate the PDF
     console.log('Generating PDF cover letter...');
     await convertMarkdownToPdf(markdownContent, outputPath, pdfOptions);
-    
+
     console.log(`Successfully created cover letter PDF at: ${outputPath}`);
   } catch (error) {
     console.error('Error generating cover letter PDF:', error);

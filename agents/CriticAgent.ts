@@ -37,7 +37,7 @@ export class CriticAgent {
       item: taskResult,
       score: this.score(taskResult),
       feedback: `Auto-review: Looks ${Math.random() > 0.5 ? 'good' : 'like it could use work'}.`,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
     this.reviewHistory.push(review);
     console.info(`${this.logPrefix} Reviewed item:`, review);
@@ -53,7 +53,7 @@ export class CriticAgent {
       message: 'Suggested improvement: Enhance quality or add missing features.',
       target: taskResult,
       critic: 'CriticAgent',
-      time: new Date().toISOString()
+      time: new Date().toISOString(),
     };
     if (this.messageBus) {
       this.messageBus.publish('artifact:suggestedImprovement', suggestion);
@@ -84,4 +84,3 @@ export class CriticAgent {
   // TODO: Expose reviewHistory to other agents or observer tools.
   // TODO: Plug into more feedback sources; support AI/LLM evaluation and report gen.
 }
-

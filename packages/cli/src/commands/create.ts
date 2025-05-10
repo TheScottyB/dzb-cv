@@ -20,16 +20,16 @@ export function createCVCommand(program: Command): void {
           name: {
             first: firstName,
             last: lastName,
-            full: options.name
+            full: options.name,
           },
           contact: {
             email: options.email,
-            phone: '' // Add missing required property
-          }
+            phone: '', // Add missing required property
+          },
         },
         experience: [],
         education: [],
-        skills: []
+        skills: [],
       };
 
       const storage = {
@@ -44,7 +44,7 @@ export function createCVCommand(program: Command): void {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         delete: async (_id: string): Promise<void> => {
           throw new Error('Not implemented');
-        }
+        },
       };
 
       const pdfGenerator = createPDFGenerator();

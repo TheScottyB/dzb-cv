@@ -11,18 +11,21 @@ async function main() {
   try {
     // Path to the tailored CV markdown file
     const inputPath = './cv-versions/dawn-executive-secretary-ii-dhs-tailored-cv.md';
-    
+
     // Read the markdown content
     console.log(`Reading CV content from ${inputPath}...`);
     const markdownContent = await fs.readFile(inputPath, 'utf-8');
-    
+
     // Create output directory if needed
     const outputDir = './output/state';
     await fs.mkdir(outputDir, { recursive: true });
-    
+
     // Output file path
-    const outputPath = path.join(outputDir, 'dawn-executive-secretary-ii-upward-mobility-department-of-human-services-cv.pdf');
-    
+    const outputPath = path.join(
+      outputDir,
+      'dawn-executive-secretary-ii-upward-mobility-department-of-human-services-cv.pdf'
+    );
+
     // Configure PDF options with state-specific styling
     const pdfOptions = {
       paperSize: 'Letter',
@@ -30,7 +33,7 @@ async function main() {
         top: 0.75,
         right: 0.75,
         bottom: 0.75,
-        left: 0.75
+        left: 0.75,
       },
       fontFamily: 'Georgia, serif',
       fontSize: 11,
@@ -40,9 +43,9 @@ async function main() {
       orientation: 'portrait',
       pdfTitle: 'Dawn Zurick Beilfuss - Executive Secretary II CV',
       pdfAuthor: 'Dawn Zurick Beilfuss',
-      pdfCreator: 'DZB CV Generator'
+      pdfCreator: 'DZB CV Generator',
     };
-    
+
     // Custom CSS styling for state applications
     const customCss = `
       h1 { 
@@ -72,13 +75,13 @@ async function main() {
         margin-bottom: 5px;
       }
     `;
-    
+
     pdfOptions.cssStylesheet = customCss;
-    
+
     // Generate the PDF
     console.log('Generating tailored PDF for Executive Secretary II position at DHS...');
     await convertMarkdownToPdf(markdownContent, outputPath, pdfOptions);
-    
+
     console.log(`Successfully created PDF at: ${outputPath}`);
   } catch (error) {
     console.error('Error generating PDF:', error);
@@ -87,4 +90,3 @@ async function main() {
 }
 
 main();
-

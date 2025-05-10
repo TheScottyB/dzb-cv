@@ -5,4 +5,3 @@ import './css.js';
 
 // Export any other shared types
 export * from './theme.js';
-

@@ -29,19 +29,19 @@ describe('Heading Component', () => {
   it('renders different heading levels', () => {
     const { rerender } = render(<Heading level={1}>Heading 1</Heading>);
     expect(screen.getByText('Heading 1').tagName).toBe('H1');
-    
+
     rerender(<Heading level={2}>Heading 2</Heading>);
     expect(screen.getByText('Heading 2').tagName).toBe('H2');
-    
+
     rerender(<Heading level={3}>Heading 3</Heading>);
     expect(screen.getByText('Heading 3').tagName).toBe('H3');
-    
+
     rerender(<Heading level={4}>Heading 4</Heading>);
     expect(screen.getByText('Heading 4').tagName).toBe('H4');
-    
+
     rerender(<Heading level={5}>Heading 5</Heading>);
     expect(screen.getByText('Heading 5').tagName).toBe('H5');
-    
+
     rerender(<Heading level={6}>Heading 6</Heading>);
     expect(screen.getByText('Heading 6').tagName).toBe('H6');
   });
@@ -50,35 +50,43 @@ describe('Heading Component', () => {
     const { rerender } = render(<Heading level={1}>H1 Heading</Heading>);
     let heading = screen.getByText('H1 Heading');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-3xl'));
-    
+
     rerender(<Heading level={2}>H2 Heading</Heading>);
     heading = screen.getByText('H2 Heading');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-2xl'));
-    
+
     rerender(<Heading level={3}>H3 Heading</Heading>);
     heading = screen.getByText('H3 Heading');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-xl'));
-    
+
     rerender(<Heading level={4}>H4 Heading</Heading>);
     heading = screen.getByText('H4 Heading');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-lg'));
-    
+
     rerender(<Heading level={5}>H5 Heading</Heading>);
     heading = screen.getByText('H5 Heading');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-md'));
-    
+
     rerender(<Heading level={6}>H6 Heading</Heading>);
     heading = screen.getByText('H6 Heading');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-sm'));
   });
 
   it('applies custom size overriding the default', () => {
-    const { rerender } = render(<Heading level={1} size="md">Small H1</Heading>);
+    const { rerender } = render(
+      <Heading level={1} size="md">
+        Small H1
+      </Heading>
+    );
     let heading = screen.getByText('Small H1');
     expect(heading.tagName).toBe('H1');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-md'));
-    
-    rerender(<Heading level={6} size="4xl">Large H6</Heading>);
+
+    rerender(
+      <Heading level={6} size="4xl">
+        Large H6
+      </Heading>
+    );
     heading = screen.getByText('Large H6');
     expect(heading.tagName).toBe('H6');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-4xl'));
@@ -87,16 +95,18 @@ describe('Heading Component', () => {
   it('applies weight correctly', () => {
     render(<Heading weight="light">Light Heading</Heading>);
     expect(screen.getByText('Light Heading')).toHaveClass(getStyleClass(styles, 'weight-light'));
-    
+
     render(<Heading weight="normal">Normal Heading</Heading>);
     expect(screen.getByText('Normal Heading')).toHaveClass(getStyleClass(styles, 'weight-normal'));
-    
+
     render(<Heading weight="medium">Medium Heading</Heading>);
     expect(screen.getByText('Medium Heading')).toHaveClass(getStyleClass(styles, 'weight-medium'));
-    
+
     render(<Heading weight="semibold">Semibold Heading</Heading>);
-    expect(screen.getByText('Semibold Heading')).toHaveClass(getStyleClass(styles, 'weight-semibold'));
-    
+    expect(screen.getByText('Semibold Heading')).toHaveClass(
+      getStyleClass(styles, 'weight-semibold')
+    );
+
     render(<Heading weight="bold">Bold Heading</Heading>);
     expect(screen.getByText('Bold Heading')).toHaveClass(getStyleClass(styles, 'weight-bold'));
   });
@@ -110,7 +120,7 @@ describe('Heading Component', () => {
   it('forwards ref correctly', () => {
     const ref = React.createRef<HTMLHeadingElement>();
     render(<Heading ref={ref}>Referenced Heading</Heading>);
-    
+
     expect(ref.current).not.toBeNull();
     expect(ref.current?.tagName).toBe('H2');
     expect(ref.current?.textContent).toBe('Referenced Heading');
@@ -118,7 +128,7 @@ describe('Heading Component', () => {
 
   it('passes custom props correctly', () => {
     render(
-      <Heading 
+      <Heading
         data-testid="custom-heading"
         aria-label="Important heading"
         role="heading"
@@ -127,7 +137,7 @@ describe('Heading Component', () => {
         Custom Props Heading
       </Heading>
     );
-    
+
     const heading = screen.getByTestId('custom-heading');
     expect(heading).toHaveAttribute('aria-label', 'Important heading');
     expect(heading).toHaveAttribute('role', 'heading');
@@ -142,17 +152,11 @@ describe('Heading Component', () => {
 
   it('combines multiple styling props correctly', () => {
     render(
-      <Heading 
-        level={2}
-        size="3xl" 
-        weight="bold"
-        truncate
-        className="custom-heading"
-      >
+      <Heading level={2} size="3xl" weight="bold" truncate className="custom-heading">
         Complex Heading
       </Heading>
     );
-    
+
     const heading = screen.getByText('Complex Heading');
     expect(heading.tagName).toBe('H2');
     expect(heading).toHaveClass(getStyleClass(styles, 'size-3xl'));
@@ -163,18 +167,18 @@ describe('Heading Component', () => {
 
   it('has correct accessibility semantics by default', () => {
     render(<Heading level={1}>Accessible Heading</Heading>);
-    
+
     const heading = screen.getByRole('heading', { level: 1 });
     expect(heading).toHaveTextContent('Accessible Heading');
   });
-  
+
   it('has accessibility semantics with aria attributes', () => {
     render(
       <Heading level={1} aria-labelledby="subtitle">
         Accessible Heading
       </Heading>
     );
-    
+
     const heading = screen.getByText('Accessible Heading');
     expect(heading).toHaveAttribute('aria-labelledby', 'subtitle');
     expect(heading.tagName).toBe('H1');

@@ -30,9 +30,8 @@ describe('Simple Component Tests', () => {
     render(<SimpleComponent />);
     const heading = screen.getByRole('heading');
     const paragraph = screen.getByText(/This is a simple component/);
-    
+
     expect(heading).toHaveClass('heading');
     expect(paragraph).toHaveClass('paragraph');
   });
 });
-

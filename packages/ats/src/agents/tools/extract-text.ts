@@ -8,15 +8,12 @@ import { load } from 'cheerio';
  */
 export function extractText(html: string): string {
   const $ = load(html);
-  
+
   // Remove script and style elements
   $('script, style').remove();
-  
+
   // Get text content and clean it up
-  return $('body')
-    .text()
-    .replace(/\s+/g, ' ')
-    .trim();
+  return $('body').text().replace(/\s+/g, ' ').trim();
 }
 
 /**
@@ -37,4 +34,3 @@ export function extractSections(posting: JobPosting): {
     responsibilities: posting.responsibilities || [],
   };
 }
-

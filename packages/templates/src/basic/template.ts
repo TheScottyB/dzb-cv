@@ -10,7 +10,6 @@ interface MarkdownTemplate {
   getStyles?(): string;
 }
 
-
 export class BasicTemplate implements MarkdownTemplate {
   readonly name = 'basic';
   readonly description = 'A basic, clean Markdown template.'; // Corrected syntax
@@ -20,20 +19,20 @@ export class BasicTemplate implements MarkdownTemplate {
   render(cv: CVData, _options?: Record<string, unknown>): string {
     let output = '';
     output += `# ${cv?.personalInfo?.name?.full || ''}\n\n`;
-    
+
     if (cv?.personalInfo?.contact) {
       const contact = cv.personalInfo.contact;
       const contactParts = [];
-      
+
       // Add email and phone with proper handling for empty/null values
       if (contact.email) contactParts.push(contact.email);
       if (contact.phone) contactParts.push(contact.phone);
-      
+
       // Only add the contact line if we have at least one contact method
       if (contactParts.length > 0) {
         output += `${contactParts.join(' | ')}\n`;
       }
-      
+
       // Optional contact fields
       if (contact.address) output += `${contact.address}\n`;
       if (contact.linkedin) output += `LinkedIn: ${contact.linkedin}\n`;
@@ -42,19 +41,21 @@ export class BasicTemplate implements MarkdownTemplate {
 
     // Experience - always include section header
     output += '## Experience\n\n';
-    if (cv?.experience?.length > 0) { // Changed data to cv
-      for (const exp of cv.experience) { // Changed data to cv
+    if (cv?.experience?.length > 0) {
+      // Changed data to cv
+      for (const exp of cv.experience) {
+        // Changed data to cv
         // Safely access properties
         const position = exp?.position || 'Position';
         const employer = exp?.employer || 'Employer';
         const startDate = exp?.startDate || '';
         const endDate = exp?.endDate || 'Present';
-        
+
         output += `### ${position} at ${employer}\n`;
         if (startDate || endDate) {
           output += `${startDate}${startDate ? ' - ' : ''}${endDate}\n\n`;
         }
-        
+
         if (exp.responsibilities && exp.responsibilities.length > 0) {
           output += exp.responsibilities.map((r: string) => `- ${r}`).join('\n');
           output += '\n\n';
@@ -69,14 +70,16 @@ export class BasicTemplate implements MarkdownTemplate {
 
     // Education - always include section header
     output += '## Education\n\n';
-    if (cv?.education?.length > 0) { // Changed data to cv
-      for (const edu of cv.education) { // Changed data to cv
+    if (cv?.education?.length > 0) {
+      // Changed data to cv
+      for (const edu of cv.education) {
+        // Changed data to cv
         // Safely access properties
         const degree = edu?.degree || 'Degree';
         const field = edu?.field ? ` (${edu.field})` : '';
         const institution = edu?.institution || 'Institution';
         const graduationDate = edu?.graduationDate || '';
-        
+
         output += `### ${degree}${field}\n`;
         if (institution || graduationDate) {
           output += `${institution}${institution && graduationDate ? ', ' : ''}${graduationDate}\n\n`;
@@ -91,7 +94,8 @@ export class BasicTemplate implements MarkdownTemplate {
 
     // Skills - always include section header
     output += '## Skills\n\n';
-    if (cv?.skills?.length > 0) { // Changed data to cv
+    if (cv?.skills?.length > 0) {
+      // Changed data to cv
       output += cv.skills // Changed data to cv
         .filter((skill: { name?: string }) => skill?.name) // Filter out skills without names
         .map((skill: { name: string }) => `- ${skill.name}`)

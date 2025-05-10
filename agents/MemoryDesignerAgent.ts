@@ -6,4 +6,3 @@ export class MemoryDesignerAgent {
     console.info(`[MemoryDesignerAgent] Initial task assigned: ${task}`);
   }
 }
-

@@ -8,19 +8,14 @@ describe('TemplateSelector', () => {
   describe('template registration', () => {
     it('should have all default templates registered', () => {
       const templates = selector.getAvailableTemplates();
-      
+
       expect(templates).toHaveLength(4);
-      expect(templates.map(t => t.id)).toEqual([
-        'basic',
-        'minimal',
-        'federal',
-        'academic'
-      ]);
+      expect(templates.map((t) => t.id)).toEqual(['basic', 'minimal', 'federal', 'academic']);
     });
 
     it('should provide template metadata', () => {
       const academic = selector.getTemplateMetadata('academic');
-      
+
       expect(academic).toBeDefined();
       expect(academic?.suitableFor).toContain('Academia');
       expect(academic?.description).toContain('curriculum vitae');
@@ -32,62 +27,65 @@ describe('TemplateSelector', () => {
       const data: CVData = {
         personalInfo: {
           name: { full: 'Test' },
-          contact: { email: 'test@test.com', phone: '123' }
+          contact: { email: 'test@test.com', phone: '123' },
         },
-        experience: [{
-          title: 'Professor',
-          company: 'University',
-          startDate: '2020',
-          responsibilities: [],
-          employment_type: 'academic'
-        }],
+        experience: [
+          {
+            title: 'Professor',
+            company: 'University',
+            startDate: '2020',
+            responsibilities: [],
+            employment_type: 'academic',
+          },
+        ],
         education: [],
         skills: [],
-        certifications: []
+        certifications: [],
       };
 
       const suggestions = selector.suggestTemplates(data);
-      expect(suggestions.map(s => s.id)).toContain('academic');
+      expect(suggestions.map((s) => s.id)).toContain('academic');
     });
 
     it('should suggest federal template for government experience', () => {
       const data: CVData = {
         personalInfo: {
           name: { full: 'Test' },
-          contact: { email: 'test@test.com', phone: '123' }
+          contact: { email: 'test@test.com', phone: '123' },
         },
-        experience: [{
-          title: 'Analyst',
-          company: 'Department of State',
-          startDate: '2020',
-          responsibilities: [],
-          employment_type: 'government',
-          grade_level: 'GS-13'
-        }],
+        experience: [
+          {
+            title: 'Analyst',
+            company: 'Department of State',
+            startDate: '2020',
+            responsibilities: [],
+            employment_type: 'government',
+            grade_level: 'GS-13',
+          },
+        ],
         education: [],
         skills: [],
-        certifications: []
+        certifications: [],
       };
 
       const suggestions = selector.suggestTemplates(data);
-      expect(suggestions.map(s => s.id)).toContain('federal');
+      expect(suggestions.map((s) => s.id)).toContain('federal');
     });
 
     it('should always include basic template as fallback', () => {
       const data: CVData = {
         personalInfo: {
           name: { full: 'Test' },
-          contact: { email: 'test@test.com', phone: '123' }
+          contact: { email: 'test@test.com', phone: '123' },
         },
         experience: [],
         education: [],
         skills: [],
-        certifications: []
+        certifications: [],
       };
 
       const suggestions = selector.suggestTemplates(data);
-      expect(suggestions.map(s => s.id)).toContain('basic');
+      expect(suggestions.map((s) => s.id)).toContain('basic');
     });
   });
 });
-

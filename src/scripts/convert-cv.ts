@@ -9,10 +9,10 @@ async function main() {
 
     // Convert markdown to styled HTML
     const markdownConverter = new MarkdownConverter({
-      primaryColor: '#006633',  // Forest green
-      accentColor: '#cc3333',   // Red
+      primaryColor: '#006633', // Forest green
+      accentColor: '#cc3333', // Red
       fontSize: '14px',
-      lineHeight: '1.6'
+      lineHeight: '1.6',
     });
 
     const html = markdownConverter.convertToHTML(
@@ -34,11 +34,11 @@ async function main() {
         top: '0.75in',
         right: '0.75in',
         bottom: '0.75in',
-        left: '0.75in'
+        left: '0.75in',
       },
       printBackground: true,
       scale: 1.0,
-      pageRanges: ''
+      pageRanges: '',
     });
 
     // Save the PDF
@@ -47,11 +47,10 @@ async function main() {
 
     // Clean up
     await pdfConverter.close();
-
   } catch (error) {
     console.error('Error generating CV:', error);
     process.exit(1);
   }
 }
 
-main(); 
+main();

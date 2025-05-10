@@ -1,13 +1,13 @@
 /**
  * @deprecated Import from @dzb-cv/core/types instead
  */
-import { 
+import {
   CVData as BaseCVData,
   Experience as BaseExperience,
   CVTypeConfiguration as BaseCVTypeConfiguration,
   PDFGenerationOptions as BasePDFOptions,
   TemplateOptions as BaseTemplateOptions,
-  CVGenerationOptions as BaseCVGenerationOptions
+  CVGenerationOptions as BaseCVGenerationOptions,
 } from '@dzb-cv/core/types';
 
 export type CVData = BaseCVData;
@@ -55,11 +55,13 @@ export interface JobPostingAnalysis {
   keyTerms: string[];
   jobType?: string | undefined;
   experienceLevel?: string | undefined;
-  salaryRange?: {
-    min?: number | undefined;
-    max?: number | undefined;
-    period?: string | undefined;
-  } | undefined;
+  salaryRange?:
+    | {
+        min?: number | undefined;
+        max?: number | undefined;
+        period?: string | undefined;
+      }
+    | undefined;
   educationRequirements?: string[] | undefined;
   source: {
     url: string;

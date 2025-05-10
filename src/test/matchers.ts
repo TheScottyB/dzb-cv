@@ -47,9 +47,7 @@ expect.extend({
     };
   },
   toContainEqual(received: any[], expected: any) {
-    const pass = received.some(item => 
-      JSON.stringify(item) === JSON.stringify(expected)
-    );
+    const pass = received.some((item) => JSON.stringify(item) === JSON.stringify(expected));
     return {
       pass,
       message: () => `expected ${received} to contain ${expected}`,
@@ -62,9 +60,8 @@ expect.extend({
     };
   },
   toMatch(received: string, expected: string | RegExp) {
-    const pass = typeof expected === 'string' 
-      ? received.includes(expected)
-      : expected.test(received);
+    const pass =
+      typeof expected === 'string' ? received.includes(expected) : expected.test(received);
     return {
       pass,
       message: () => `expected ${received} to match ${expected}`,
@@ -85,4 +82,3 @@ expect.extend({
     };
   },
 });
-

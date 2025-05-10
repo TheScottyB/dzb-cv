@@ -1,6 +1,13 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import type { CVData, Template, PDFGenerationOptions, Education, Experience, Skill } from '@dzb-cv/types';
+import type {
+  CVData,
+  Template,
+  PDFGenerationOptions,
+  Education,
+  Experience,
+  Skill,
+} from '@dzb-cv/types';
 import { Heading } from '@dzb-cv/ui/Heading';
 import { Text } from '@dzb-cv/ui/Text';
 import { List, ListItem } from '@dzb-cv/ui/List';
@@ -42,19 +49,20 @@ interface ExtendedCVData {
 /**
  * ModernTemplate implements a clean, contemporary CV layout
  * using @dzb-cv/ui Typography components.
- * 
+ *
  * Features:
  * - Responsive design for both screen and print media
  * - Two-column layout for optimal content organization
  * - Visual hierarchy using consistent typography
  * - Print-optimized styling
- * 
+ *
  * @implements {Template}
  */
 export class ModernTemplate implements Template {
   readonly id = 'modern';
   readonly name = 'modern';
-  readonly description = 'A clean, modern CV template with professional styling and optimized typography.';
+  readonly description =
+    'A clean, modern CV template with professional styling and optimized typography.';
 
   /**
    * Renders the CV data as HTML string
@@ -72,7 +80,10 @@ export class ModernTemplate implements Template {
    * @param options Optional PDF generation options
    * @returns React element with the rendered CV
    */
-  private renderComponent(data: CVData & Partial<ExtendedCVData>, _options?: PDFGenerationOptions): React.ReactElement {
+  private renderComponent(
+    data: CVData & Partial<ExtendedCVData>,
+    _options?: PDFGenerationOptions
+  ): React.ReactElement {
     return (
       <div className="modern-cv">
         {/* Header Section */}
@@ -81,38 +92,38 @@ export class ModernTemplate implements Template {
             <Heading level={1} size="3xl" weight="bold">
               {data.personalInfo.name?.full || ''}
             </Heading>
-            
+
             {data.personalInfo.professionalTitle && (
               <Text size="lg" color="primary" className="professional-title">
                 {data.personalInfo.professionalTitle}
               </Text>
             )}
-            
+
             <div className="contact-info">
               {data.personalInfo.contact?.email && (
                 <Text size="sm" color="muted">
                   {data.personalInfo.contact.email}
                 </Text>
               )}
-              
+
               {data.personalInfo.contact?.phone && (
                 <Text size="sm" color="muted">
                   {data.personalInfo.contact.phone}
                 </Text>
               )}
-              
+
               {data.personalInfo.contact?.address && (
                 <Text size="sm" color="muted">
                   {data.personalInfo.contact.address}
                 </Text>
               )}
-              
+
               {data.personalInfo.contact?.linkedin && (
                 <Text size="sm" color="muted">
                   {data.personalInfo.contact.linkedin}
                 </Text>
               )}
-              
+
               {data.personalInfo.contact?.github && (
                 <Text size="sm" color="muted">
                   {data.personalInfo.contact.github}
@@ -121,7 +132,7 @@ export class ModernTemplate implements Template {
             </div>
           </div>
         </header>
-        
+
         <div className="cv-content">
           <div className="main-column">
             {/* Professional Summary Section */}
@@ -133,14 +144,14 @@ export class ModernTemplate implements Template {
                 <Text>{data.personalInfo.summary}</Text>
               </section>
             )}
-            
+
             {/* Experience Section */}
             {data.experience?.length > 0 && (
               <section className="cv-section">
                 <Heading level={2} size="xl" weight="semibold">
                   Experience
                 </Heading>
-                
+
                 {data.experience.map((exp: Experience, index: number) => (
                   <div key={index} className="experience-item">
                     <div className="item-header">
@@ -151,11 +162,12 @@ export class ModernTemplate implements Template {
                         {exp.startDate} - {exp.endDate || 'Present'}
                       </Text>
                     </div>
-                    
+
                     <Text weight="medium">
-                      {exp.employer}{exp.location ? `, ${exp.location}` : ''}
+                      {exp.employer}
+                      {exp.location ? `, ${exp.location}` : ''}
                     </Text>
-                    
+
                     {exp.responsibilities?.length > 0 && (
                       <List type="unordered" marker="disc" className="responsibilities-list">
                         {exp.responsibilities?.map((item: string, i: number) => (
@@ -165,7 +177,7 @@ export class ModernTemplate implements Template {
                         ))}
                       </List>
                     )}
-                    
+
                     {Boolean(exp.achievements?.length) && (
                       <>
                         <Text size="sm" weight="medium" className="achievements-header">
@@ -184,25 +196,27 @@ export class ModernTemplate implements Template {
                 ))}
               </section>
             )}
-            
+
             {/* Projects Section - if data includes projects */}
             {Boolean(data.projects?.length) && (
               <section className="cv-section">
                 <Heading level={2} size="xl" weight="semibold">
                   Projects
                 </Heading>
-                
+
                 {data.projects?.map((project: any, index: number) => (
                   <div key={index} className="project-item">
                     <Heading level={3} size="lg" weight="semibold">
                       {project.name}
                     </Heading>
-                    
+
                     <Text>{project.description}</Text>
-                    
+
                     {project.technologies?.length > 0 && (
                       <div className="technologies">
-                        <Text size="sm" weight="medium">Technologies:</Text>
+                        <Text size="sm" weight="medium">
+                          Technologies:
+                        </Text>
                         <div className="tech-tags">
                           {project.technologies?.map((tech: string, i: number) => (
                             <span key={i} className="tech-tag">
@@ -212,7 +226,7 @@ export class ModernTemplate implements Template {
                         </div>
                       </div>
                     )}
-                    
+
                     {project.url && (
                       <Text size="sm" className="project-url">
                         <a href={project.url} target="_blank" rel="noopener noreferrer">
@@ -225,7 +239,7 @@ export class ModernTemplate implements Template {
               </section>
             )}
           </div>
-          
+
           <div className="side-column">
             {/* Education Section */}
             {data.education?.length > 0 && (
@@ -233,32 +247,32 @@ export class ModernTemplate implements Template {
                 <Heading level={2} size="xl" weight="semibold">
                   Education
                 </Heading>
-                
+
                 {data.education?.map((edu: ExtendedEducation, index: number) => (
                   <div key={index} className="education-item">
                     <Heading level={3} size="md" weight="semibold">
-                      {edu.degree}{edu.field ? ` in ${edu.field}` : ''}
+                      {edu.degree}
+                      {edu.field ? ` in ${edu.field}` : ''}
                     </Heading>
-                    
+
                     <Text weight="medium">{edu.institution}</Text>
-                    
+
                     <Text size="sm" color="muted">
-                      {edu.graduationDate || (
-                        edu.startDate && edu.endDate 
-                          ? `${edu.startDate} - ${edu.endDate || 'Present'}` 
-                          : ''
-                      )}
+                      {edu.graduationDate ||
+                        (edu.startDate && edu.endDate
+                          ? `${edu.startDate} - ${edu.endDate || 'Present'}`
+                          : '')}
                     </Text>
-                    
-                    {edu.gpa && (
-                      <Text size="sm">GPA: {edu.gpa}</Text>
-                    )}
-                    
+
+                    {edu.gpa && <Text size="sm">GPA: {edu.gpa}</Text>}
+
                     {Boolean(edu.honors?.length) && (
                       <List type="unordered" marker="none" className="honors-list">
                         {edu.honors?.map((honor: string, i: number) => (
                           <ListItem key={i}>
-                            <Text size="sm" italic>{honor}</Text>
+                            <Text size="sm" italic>
+                              {honor}
+                            </Text>
                           </ListItem>
                         ))}
                       </List>
@@ -267,24 +281,24 @@ export class ModernTemplate implements Template {
                 ))}
               </section>
             )}
-            
+
             {/* Skills Section */}
             {data.skills?.length > 0 && (
               <section className="cv-section">
                 <Heading level={2} size="xl" weight="semibold">
                   Skills
                 </Heading>
-                
+
                 <div className="skills-container">
                   {/* Group skills by category if present */}
                   {(() => {
                     // Check if skills have categories
                     const hasCategories = data.skills.some((skill: Skill) => skill.category);
-                    
+
                     if (hasCategories) {
                       // Group skills by category
                       const skillsByCategory: Record<string, typeof data.skills> = {};
-                      
+
                       data.skills.forEach((skill: Skill) => {
                         const category = skill.category || 'Other';
                         if (!skillsByCategory[category]) {
@@ -292,7 +306,7 @@ export class ModernTemplate implements Template {
                         }
                         skillsByCategory[category].push(skill);
                       });
-                      
+
                       return Object.entries(skillsByCategory).map(([category, skills]) => (
                         <div key={category} className="skill-category">
                           <Heading level={3} size="md" weight="semibold">
@@ -300,8 +314,8 @@ export class ModernTemplate implements Template {
                           </Heading>
                           <div className="skill-tags">
                             {skills.map((skill: Skill, i: number) => (
-                              <span 
-                                key={i} 
+                              <span
+                                key={i}
                                 className={`skill-tag ${skill.level ? `level-${skill.level}` : ''}`}
                               >
                                 <Text size="sm">{skill.name}</Text>
@@ -315,8 +329,8 @@ export class ModernTemplate implements Template {
                       return (
                         <div className="skill-tags">
                           {data.skills.map((skill: Skill, i: number) => (
-                            <span 
-                              key={i} 
+                            <span
+                              key={i}
                               className={`skill-tag ${skill.level ? `level-${skill.level}` : ''}`}
                             >
                               <Text size="sm">{skill.name}</Text>
@@ -329,14 +343,14 @@ export class ModernTemplate implements Template {
                 </div>
               </section>
             )}
-            
+
             {/* Languages Section - if data includes languages */}
             {Boolean(data.languages?.length) && (
               <section className="cv-section">
                 <Heading level={2} size="xl" weight="semibold">
                   Languages
                 </Heading>
-                
+
                 <List type="unordered" marker="none" className="languages-list">
                   {data.languages?.map((lang: any, index: number) => (
                     <ListItem key={index} className="language-item" data-testid="language-item">
@@ -351,17 +365,21 @@ export class ModernTemplate implements Template {
                 </List>
               </section>
             )}
-            
+
             {/* Certifications Section - if data includes certifications */}
             {Boolean(data.certifications?.length) && (
               <section className="cv-section">
                 <Heading level={2} size="xl" weight="semibold">
                   Certifications
                 </Heading>
-                
+
                 <List type="unordered" marker="none" className="certifications-list">
                   {data.certifications?.map((cert: any, index: number) => (
-                    <ListItem key={index} className="certification-item" data-testid="certification-item">
+                    <ListItem
+                      key={index}
+                      className="certification-item"
+                      data-testid="certification-item"
+                    >
                       <Text size="sm" weight="medium">
                         {cert.name}
                       </Text>

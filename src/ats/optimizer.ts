@@ -1,9 +1,9 @@
 /**
  * Example Usage:
- * 
+ *
  * import { createATSOptimizedPDF } from './src/utils/ats/optimizer';
  * import { DEFAULT_PDF_OPTIONS } from './src/utils/pdf-generator';
- * 
+ *
  * const markdownContent = "# ATS Test CV\nDawn Zurick Beilfuss\nemail@example.com | 123-456-7890\nChicago, IL\n## Professional Experience\nCompany | 2023 - Present\nRole\n- Did things.\n";
  * const outputPath = 'output/ats-test.pdf';
  * createATSOptimizedPDF(markdownContent, outputPath, DEFAULT_PDF_OPTIONS)
@@ -42,7 +42,7 @@ export async function optimizeForATS(markdown: string): Promise<OptimizationResu
   // Get initial ATS analysis
   const analysis = await analyzeForATS(markdown);
   const optimizedMarkdown = markdown;
-  
+
   // Apply recommendations from analysis
   analysis.suggestions.forEach(() => {
     // TODO: Implement specific optimization logic for each recommendation
@@ -52,7 +52,7 @@ export async function optimizeForATS(markdown: string): Promise<OptimizationResu
     // - Improving keyword density
     // - Enhancing readability
   });
-  
+
   // Fix identified issues
   analysis.formattingIssues.forEach(() => {
     // TODO: Implement specific fixes for each issue type
@@ -61,7 +61,7 @@ export async function optimizeForATS(markdown: string): Promise<OptimizationResu
     // - Fixing contact information layout
     // - Standardizing section structure
   });
-  
+
   return {
     content: optimizedMarkdown,
     analysis: {
@@ -69,9 +69,9 @@ export async function optimizeForATS(markdown: string): Promise<OptimizationResu
       keywordMatches: [],
       missingKeywords: [],
       suggestions: [],
-      formattingIssues: []
+      formattingIssues: [],
     },
-    appliedOptimizations: analysis.suggestions
+    appliedOptimizations: analysis.suggestions,
   };
 }
 
@@ -89,7 +89,7 @@ export async function createATSOptimizedPDF(
 ): Promise<OptimizationResult> {
   // Optimize the content
   const result = await optimizeForATS(content);
-  
+
   // Add optimization metadata as a comment
   const contentWithMeta = `${result.content}
 
@@ -100,14 +100,10 @@ ${result.appliedOptimizations.map((opt: string) => `- ${opt}`).join('\n')}
 -->`;
 
   // Generate the PDF
-  const pdfPath = await convertMarkdownToPdf(
-    contentWithMeta,
-    outputPath,
-    options
-  );
+  const pdfPath = await convertMarkdownToPdf(contentWithMeta, outputPath, options);
 
   return {
     ...result,
-    pdfPath
+    pdfPath,
   };
 }

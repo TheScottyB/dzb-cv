@@ -54,7 +54,7 @@ const config: Config = {
 class DocumentGenerationError extends Error {
   constructor(
     message: string,
-    public readonly code: string,
+    public readonly code: string
   ) {
     super(message);
     this.name = 'DocumentGenerationError';
@@ -84,7 +84,7 @@ async function resolveJobDir(jobDir: string): Promise<string> {
         const expectedPath = path.join('job-postings', expectedFolderName);
         if (path.resolve(jobDir) !== path.resolve(expectedPath)) {
           logger.warn(
-            `Folder name does not match standardized convention. Expected: ${expectedPath}`,
+            `Folder name does not match standardized convention. Expected: ${expectedPath}`
           );
         }
       }
@@ -99,7 +99,7 @@ async function resolveJobDir(jobDir: string): Promise<string> {
     }
     throw new DocumentGenerationError(
       `Failed to resolve job directory: ${error.message}`,
-      'DIR_RESOLVE_ERROR',
+      'DIR_RESOLVE_ERROR'
     );
   }
 }
@@ -157,7 +157,7 @@ async function convertMarkdownToHTML(markdownPath: string): Promise<string> {
   } catch (error) {
     throw new DocumentGenerationError(
       `Failed to convert markdown to HTML: ${error.message}`,
-      'MARKDOWN_CONVERSION_ERROR',
+      'MARKDOWN_CONVERSION_ERROR'
     );
   }
 }
@@ -166,7 +166,7 @@ async function convertHTMLToPDF(
   browser: Browser,
   html: string,
   outputPath: string,
-  pdfOptions = config.pdfOptions,
+  pdfOptions = config.pdfOptions
 ): Promise<void> {
   const page = await browser.newPage();
   try {
@@ -175,7 +175,7 @@ async function convertHTMLToPDF(
   } catch (error) {
     throw new DocumentGenerationError(
       `Failed to convert HTML to PDF: ${error.message}`,
-      'PDF_CONVERSION_ERROR',
+      'PDF_CONVERSION_ERROR'
     );
   } finally {
     await page.close();
@@ -215,7 +215,7 @@ async function generatePDFsForJob(jobDir: string): Promise<void> {
     // Process Cover Letter
     const coverLetterPath = await findSourceFile(
       resolvedJobDir,
-      config.sourceFileNames.coverLetter,
+      config.sourceFileNames.coverLetter
     );
     if (coverLetterPath) {
       logger.info(`Found Cover Letter at: ${coverLetterPath}`);

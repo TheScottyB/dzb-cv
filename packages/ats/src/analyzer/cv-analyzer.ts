@@ -23,11 +23,11 @@ const DEFAULT_WEIGHTS: ScoringWeights = {
  */
 const EDUCATION_LEVELS: Record<string, number> = {
   'high school': 1,
-  'associate': 2,
-  'bachelor': 3,
-  'master': 4,
-  'phd': 5,
-  'doctorate': 5,
+  associate: 2,
+  bachelor: 3,
+  master: 4,
+  phd: 5,
+  doctorate: 5,
 };
 
 /**
@@ -43,14 +43,77 @@ export class CVAnalyzer {
   constructor(weights?: Partial<ScoringWeights>) {
     this.weights = { ...DEFAULT_WEIGHTS, ...weights };
     this.stopWords = new Set([
-      'a', 'an', 'the', 'and', 'or', 'but', 'of', 'for', 'with', 'in', 'on', 'at',
-      'to', 'from', 'by', 'as', 'is', 'are', 'was', 'were', 'be', 'been', 'being',
-      'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'shall', 'should',
-      'can', 'could', 'may', 'might', 'must', 'this', 'that', 'these', 'those',
-      'job', 'work', 'role', 'position', 'candidate', 'applicant', 'required', 
-      'preferred', 'qualification', 'experience', 'skill', 'ability', 'about',
-      'our', 'we', 'us', 'you', 'your', 'their', 'they', 'it', 'its',
-      'company', 'team', 'opportunity', 'looking', 'join', 'working', 'responsibilities'
+      'a',
+      'an',
+      'the',
+      'and',
+      'or',
+      'but',
+      'of',
+      'for',
+      'with',
+      'in',
+      'on',
+      'at',
+      'to',
+      'from',
+      'by',
+      'as',
+      'is',
+      'are',
+      'was',
+      'were',
+      'be',
+      'been',
+      'being',
+      'have',
+      'has',
+      'had',
+      'do',
+      'does',
+      'did',
+      'will',
+      'would',
+      'shall',
+      'should',
+      'can',
+      'could',
+      'may',
+      'might',
+      'must',
+      'this',
+      'that',
+      'these',
+      'those',
+      'job',
+      'work',
+      'role',
+      'position',
+      'candidate',
+      'applicant',
+      'required',
+      'preferred',
+      'qualification',
+      'experience',
+      'skill',
+      'ability',
+      'about',
+      'our',
+      'we',
+      'us',
+      'you',
+      'your',
+      'their',
+      'they',
+      'it',
+      'its',
+      'company',
+      'team',
+      'opportunity',
+      'looking',
+      'join',
+      'working',
+      'responsibilities',
     ]);
   }
 
@@ -59,13 +122,19 @@ export class CVAnalyzer {
    */
   public analyze(cv: CVData, posting: JobPosting): ATSAnalysis {
     // Handle edge cases
-    if (!posting || (!posting.description && !posting.responsibilities?.length && !posting.qualifications?.length && !posting.skills?.length)) {
+    if (
+      !posting ||
+      (!posting.description &&
+        !posting.responsibilities?.length &&
+        !posting.qualifications?.length &&
+        !posting.skills?.length)
+    ) {
       return {
         score: 0,
         keywordMatches: [],
         missingKeywords: [],
-        suggestions: posting ? ["The job posting is empty. Add job details for analysis."] : [],
-        formattingIssues: []
+        suggestions: posting ? ['The job posting is empty. Add job details for analysis.'] : [],
+        formattingIssues: [],
       };
     }
 
@@ -75,8 +144,8 @@ export class CVAnalyzer {
         score: 0,
         keywordMatches: [],
         missingKeywords: Array.from(new Set(this.extractKeywords(this.extractJobText(posting)))),
-        suggestions: ["CV is empty or missing critical sections."],
-        formattingIssues: []
+        suggestions: ['CV is empty or missing critical sections.'],
+        formattingIssues: [],
       };
     }
 
@@ -89,19 +158,21 @@ export class CVAnalyzer {
     const cvKeywords = this.extractKeywords(cvText);
 
     // Find keyword matches and missing keywords
-    const keywordMatchesLower = jobKeywords.filter(k => 
-      cvKeywords.some(cvKeyword => cvKeyword.toLowerCase() === k.toLowerCase())
+    const keywordMatchesLower = jobKeywords.filter((k) =>
+      cvKeywords.some((cvKeyword) => cvKeyword.toLowerCase() === k.toLowerCase())
     );
 
     // Get the original case for matched keywords
-    const keywordMatches = keywordMatchesLower.map(keyword => {
+    const keywordMatches = keywordMatchesLower.map((keyword) => {
       // Find the original case from the CV text
-      const match = cvKeywords.find(cvKeyword => cvKeyword.toLowerCase() === keyword.toLowerCase());
+      const match = cvKeywords.find(
+        (cvKeyword) => cvKeyword.toLowerCase() === keyword.toLowerCase()
+      );
       return match || keyword; // Fallback to the job keyword if not found
     });
 
-    const missingKeywords = jobKeywords.filter(k => 
-      !cvKeywords.some(cvKeyword => cvKeyword.toLowerCase() === k.toLowerCase())
+    const missingKeywords = jobKeywords.filter(
+      (k) => !cvKeywords.some((cvKeyword) => cvKeyword.toLowerCase() === k.toLowerCase())
     );
 
     // Calculate scores
@@ -110,9 +181,12 @@ export class CVAnalyzer {
     const educationScore = this.calculateEducationScore(cv, posting);
 
     // Overall score (ensure no NaN)
-    const score = !isNaN(keywordScore) && !isNaN(experienceScore) && !isNaN(educationScore) 
-      ? (keywordScore * this.weights.keywords) + (experienceScore * this.weights.experience) + (educationScore * this.weights.education)
-      : 0;
+    const score =
+      !isNaN(keywordScore) && !isNaN(experienceScore) && !isNaN(educationScore)
+        ? keywordScore * this.weights.keywords +
+          experienceScore * this.weights.experience +
+          educationScore * this.weights.education
+        : 0;
 
     // Generate suggestions
     const suggestions = this.generateSuggestions(cv, posting, missingKeywords);
@@ -122,7 +196,7 @@ export class CVAnalyzer {
       keywordMatches,
       missingKeywords,
       suggestions,
-      formattingIssues: []
+      formattingIssues: [],
     };
   }
 
@@ -133,9 +207,11 @@ export class CVAnalyzer {
     if (!text) return [];
 
     // Technical terms regex patterns
-    const techTermsRegex = /\b(React|TypeScript|JavaScript|Vue\.js|Angular|Node\.js|Next\.js|HTML5|CSS3|jQuery|Express\.js|MongoDB|SQL|AWS|Azure|Docker|Kubernetes|Git|Jest|Webpack|Babel|Gulp|Grunt|Redux|Vuex|GraphQL|REST|API|JSON|XML|SASS|SCSS|LESS|Tailwind|Bootstrap|Material-UI|Storybook|Cypress|Selenium|Jenkins|Travis|CircleCI|Github Actions)\b/gi;
+    const techTermsRegex =
+      /\b(React|TypeScript|JavaScript|Vue\.js|Angular|Node\.js|Next\.js|HTML5|CSS3|jQuery|Express\.js|MongoDB|SQL|AWS|Azure|Docker|Kubernetes|Git|Jest|Webpack|Babel|Gulp|Grunt|Redux|Vuex|GraphQL|REST|API|JSON|XML|SASS|SCSS|LESS|Tailwind|Bootstrap|Material-UI|Storybook|Cypress|Selenium|Jenkins|Travis|CircleCI|Github Actions)\b/gi;
 
-    const specificTechRegex = /\b(jest|webpack|docker|typescript|node\.js|react\.js|vue\.js|next\.js)\b/gi;
+    const specificTechRegex =
+      /\b(jest|webpack|docker|typescript|node\.js|react\.js|vue\.js|next\.js)\b/gi;
 
     // Split text into words
     const words = text.split(/\s+/);
@@ -144,19 +220,19 @@ export class CVAnalyzer {
     // Process each word
     for (const word of words) {
       const cleanWord = word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '');
-      
+
       // Skip stop words
       if (cleanWord.length < 3 || this.stopWords.has(cleanWord)) {
         continue;
       }
-      
+
       keywords.add(word);
     }
 
     // Extract technical terms with correct casing
     let match;
     const technicalTerms = new Set<string>();
-    
+
     while ((match = techTermsRegex.exec(text)) !== null) {
       technicalTerms.add(match[0]);
     }
@@ -186,22 +262,22 @@ export class CVAnalyzer {
     if (!posting) return '';
 
     const parts: string[] = [];
-    
+
     if (posting.title) parts.push(posting.title);
     if (posting.description) parts.push(posting.description);
-    
+
     if (posting.skills && posting.skills.length) {
       parts.push(posting.skills.join(' '));
     }
-    
+
     if (posting.qualifications && posting.qualifications.length) {
       parts.push(posting.qualifications.join(' '));
     }
-    
+
     if (posting.responsibilities && posting.responsibilities.length) {
       parts.push(posting.responsibilities.join(' '));
     }
-    
+
     return parts.join(' ');
   }
 
@@ -212,36 +288,36 @@ export class CVAnalyzer {
     if (!cv) return '';
 
     const parts: string[] = [];
-    
+
     if (cv.personalInfo?.summary) {
       parts.push(cv.personalInfo.summary);
     }
-    
+
     for (const exp of cv.experience) {
       parts.push(exp.position);
       parts.push(exp.employer);
-      
+
       if (exp.responsibilities && exp.responsibilities.length) {
         parts.push(exp.responsibilities.join(' '));
       }
-      
+
       if (exp.achievements && exp.achievements.length) {
         parts.push(exp.achievements.join(' '));
       }
     }
-    
+
     for (const edu of cv.education) {
       parts.push(edu.degree);
       parts.push(edu.field);
       parts.push(edu.institution);
     }
-    
+
     if (cv.skills && cv.skills.length) {
       for (const skill of cv.skills) {
         parts.push(skill.name);
       }
     }
-    
+
     return parts.join(' ');
   }
 
@@ -250,48 +326,56 @@ export class CVAnalyzer {
    */
   private calculateExperienceScore(cv: CVData, posting: JobPosting): number {
     if (!cv.experience.length) return 0;
-    
+
     // Calculate total years of experience from CV
     const totalYears = cv.experience.reduce((total, exp) => {
       if (!exp.startDate) return total;
-      
+
       const startDate = new Date(exp.startDate);
       const endDate = exp.endDate ? new Date(exp.endDate) : new Date();
-      
-      const years = (endDate.getFullYear() - startDate.getFullYear()) + 
-                   (endDate.getMonth() - startDate.getMonth()) / 12;
-      
+
+      const years =
+        endDate.getFullYear() -
+        startDate.getFullYear() +
+        (endDate.getMonth() - startDate.getMonth()) / 12;
+
       return total + Math.max(0, years);
     }, 0);
-    
+
     // Extract experience requirement from job posting
     let requiredYears = 0;
     let foundExperienceReq = false;
-    
+
     if (posting.description) {
       // Use regex to find experience requirements
-      const expMatch = posting.description.match(/(\d+)(?:\+|\s+to\s+\d+)?\s+years?(?:\s+of)?\s+experience/i);
-      
+      const expMatch = posting.description.match(
+        /(\d+)(?:\+|\s+to\s+\d+)?\s+years?(?:\s+of)?\s+experience/i
+      );
+
       if (expMatch && expMatch[1]) {
         requiredYears = parseInt(expMatch[1], 10);
         foundExperienceReq = true;
       }
     }
-    
+
     // If explicit experience array in job posting
     if (posting.experience && posting.experience.length) {
       for (const exp of posting.experience) {
         const expMatch = exp.match(/(\d+)(?:\+|\s+to\s+\d+)?\s+years?/i);
-        
+
         if (expMatch && expMatch[1]) {
           requiredYears = Math.max(requiredYears, parseInt(expMatch[1], 10));
           foundExperienceReq = true;
         }
       }
     }
-    
+
     // Experience score (default to 0.5 if no requirement)
-    return !foundExperienceReq ? 0.5 : (totalYears >= requiredYears ? 1.0 : totalYears / requiredYears);
+    return !foundExperienceReq
+      ? 0.5
+      : totalYears >= requiredYears
+        ? 1.0
+        : totalYears / requiredYears;
   }
 
   /**
@@ -299,20 +383,20 @@ export class CVAnalyzer {
    */
   private calculateEducationScore(cv: CVData, posting: JobPosting): number {
     if (!cv.education.length) return 0;
-    
+
     // Calculate highest education level in CV
     let highestCVEducation = 0;
-    
+
     for (const edu of cv.education) {
       let level = 0;
-      
+
       // Check education degree against known levels
       for (const [keyword, value] of Object.entries(EDUCATION_LEVELS)) {
         if (edu.degree.toLowerCase().includes(keyword)) {
           level = Math.max(level, value);
         }
       }
-      
+
       highestCVEducation = Math.max(highestCVEducation, level);
     }
 
@@ -359,7 +443,11 @@ export class CVAnalyzer {
   /**
    * Generates suggestions for improving CV match
    */
-  private generateSuggestions(cv: CVData, posting: JobPosting, missingKeywords: string[]): string[] {
+  private generateSuggestions(
+    cv: CVData,
+    posting: JobPosting,
+    missingKeywords: string[]
+  ): string[] {
     const suggestions: string[] = [];
 
     // Suggest adding missing keywords

@@ -156,16 +156,17 @@ ${[personalInfo.contact.email, personalInfo.contact.phone, personalInfo.contact.
     return `
 ## Experience
 
-${experience.map(exp => {
-      // Handle test data format vs actual CV data format
-      // TypeScript doesn't know about the test data structure with title/company
-      const testData = exp as any;
-      const position = testData.title || exp.position || '';
-      const employer = testData.company || exp.employer || '';
-      const location = exp.location || '';
-      const dateRange = `${exp.startDate}${exp.endDate ? ` - ${exp.endDate}` : ''}`;
+${experience
+  .map((exp) => {
+    // Handle test data format vs actual CV data format
+    // TypeScript doesn't know about the test data structure with title/company
+    const testData = exp as any;
+    const position = testData.title || exp.position || '';
+    const employer = testData.company || exp.employer || '';
+    const location = exp.location || '';
+    const dateRange = `${exp.startDate}${exp.endDate ? ` - ${exp.endDate}` : ''}`;
 
-      return `
+    return `
 ### ${position} · ${employer}
 
 <div class="job-details">
@@ -173,13 +174,18 @@ ${experience.map(exp => {
 ${location ? `<span class="location">${location}</span>` : ''}
 </div>
 
-${exp.responsibilities?.map(r => `- ${r}`).join('\n') || ''}
+${exp.responsibilities?.map((r) => `- ${r}`).join('\n') || ''}
 
-${exp.achievements?.length ? `
+${
+  exp.achievements?.length
+    ? `
 <div class="achievements">
-${exp.achievements.map(a => `- ${a}`).join('\n')}
-</div>` : ''}`;
-    }).join('\n')}
+${exp.achievements.map((a) => `- ${a}`).join('\n')}
+</div>`
+    : ''
+}`;
+  })
+  .join('\n')}
     `.trim();
   }
 
@@ -190,7 +196,7 @@ ${exp.achievements.map(a => `- ${a}`).join('\n')}
 ## Skills
 
 <div class="skills-list">
-${data.skills.map(skill => `<span class="skill-item">${skill}</span>`).join('\n')}
+${data.skills.map((skill) => `<span class="skill-item">${skill}</span>`).join('\n')}
 </div>
     `.trim();
   }
@@ -201,14 +207,21 @@ ${data.skills.map(skill => `<span class="skill-item">${skill}</span>`).join('\n'
     return `
 ## Education
 
-${data.education.map(edu => `
+${data.education
+  .map(
+    (edu) => `
 ### ${edu.degree} - ${edu.institution}
 ${edu.completionDate || edu.year}
-`).join('\n')}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 
-  private orderExperienceEntries(experience: CVData['experience'], order: string[]): CVData['experience'] {
+  private orderExperienceEntries(
+    experience: CVData['experience'],
+    order: string[]
+  ): CVData['experience'] {
     return experience.sort((a, b) => {
       // Handle both formats for position/title
       const testDataA = a as any;

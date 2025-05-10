@@ -14,24 +14,24 @@ export interface ListProps extends React.HTMLAttributes<HTMLUListElement | HTMLO
    * The list items
    */
   children: React.ReactNode;
-  
+
   /**
    * The type of list
    * @default 'unordered'
    */
   type?: ListType;
-  
+
   /**
    * Marker type for the list items
    */
   marker?: 'disc' | 'circle' | 'square' | 'decimal' | 'none';
-  
+
   /**
    * Whether list items should be spaced apart
    * @default false
    */
   spaced?: boolean;
-  
+
   /**
    * Whether the list should be rendered horizontally
    * @default false
@@ -51,7 +51,7 @@ export interface ListItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
 
 /**
  * List component for ordered and unordered lists
- * 
+ *
  * @example
  * ```tsx
  * <List type="unordered" marker="disc" spaced>
@@ -75,21 +75,19 @@ export const List = React.forwardRef<HTMLUListElement | HTMLOListElement, ListPr
     ref
   ) => {
     const ListTag = type === 'ordered' ? 'ol' : 'ul';
-    
+
     const listClasses = [
       styles.list,
       marker ? styles[`marker-${marker}`] : '',
       spaced ? styles.spaced : '',
       horizontal ? styles.horizontal : '',
       className,
-    ].filter(Boolean).join(' ');
-    
+    ]
+      .filter(Boolean)
+      .join(' ');
+
     return (
-      <ListTag 
-        ref={ref as any} 
-        className={listClasses}
-        {...props}
-      >
+      <ListTag ref={ref as any} className={listClasses} {...props}>
         {children}
       </ListTag>
     );
@@ -100,25 +98,11 @@ export const List = React.forwardRef<HTMLUListElement | HTMLOListElement, ListPr
  * List item component
  */
 export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
-  (
-    {
-      children,
-      className = '',
-      ...props
-    },
-    ref
-  ) => {
-    const itemClasses = [
-      styles.item,
-      className,
-    ].filter(Boolean).join(' ');
-    
+  ({ children, className = '', ...props }, ref) => {
+    const itemClasses = [styles.item, className].filter(Boolean).join(' ');
+
     return (
-      <li 
-        ref={ref} 
-        className={itemClasses}
-        {...props}
-      >
+      <li ref={ref} className={itemClasses} {...props}>
         {children}
       </li>
     );

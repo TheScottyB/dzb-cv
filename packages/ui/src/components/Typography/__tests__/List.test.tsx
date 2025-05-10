@@ -17,18 +17,18 @@ describe('List Component', () => {
   });
 });
 
-import React from "react";
-import { render, screen } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { List, ListItem } from "../List";
+import { List, ListItem } from '../List';
 
-describe("List and ListItem Components", () => {
+describe('List and ListItem Components', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("renders unordered list by default", () => {
+  it('renders unordered list by default', () => {
     render(
       <List>
         <ListItem>Item 1</ListItem>
@@ -36,14 +36,14 @@ describe("List and ListItem Components", () => {
       </List>
     );
 
-    const list = screen.getByRole("list");
+    const list = screen.getByRole('list');
     expect(list).toBeInTheDocument();
-    expect(list.tagName).toBe("UL");
+    expect(list.tagName).toBe('UL');
 
-    const items = screen.getAllByRole("listitem");
+    const items = screen.getAllByRole('listitem');
     expect(items).toHaveLength(2);
-    expect(items[0]).toHaveTextContent("Item 1");
-    expect(items[1]).toHaveTextContent("Item 2");
+    expect(items[0]).toHaveTextContent('Item 1');
+    expect(items[1]).toHaveTextContent('Item 2');
   });
 
   it('renders ordered list when type is "ordered"', () => {
@@ -54,56 +54,56 @@ describe("List and ListItem Components", () => {
       </List>
     );
 
-    const list = screen.getByRole("list");
-    expect(list.tagName).toBe("OL");
+    const list = screen.getByRole('list');
+    expect(list.tagName).toBe('OL');
 
-    const items = screen.getAllByRole("listitem");
+    const items = screen.getAllByRole('listitem');
     expect(items).toHaveLength(2);
   });
 
-  it("applies marker type correctly", () => {
+  it('applies marker type correctly', () => {
     const { rerender } = render(
       <List marker="disc">
         <ListItem>Disc marker</ListItem>
       </List>
     );
-    expect(screen.getByRole("list").className.length).toBeGreaterThan(0);
+    expect(screen.getByRole('list').className.length).toBeGreaterThan(0);
 
     rerender(
       <List marker="circle">
         <ListItem>Circle marker</ListItem>
       </List>
     );
-    expect(screen.getByRole("list").className.length).toBeGreaterThan(0);
+    expect(screen.getByRole('list').className.length).toBeGreaterThan(0);
 
     rerender(
       <List marker="none">
         <ListItem>No marker</ListItem>
       </List>
     );
-    expect(screen.getByRole("list").className.length).toBeGreaterThan(0);
+    expect(screen.getByRole('list').className.length).toBeGreaterThan(0);
   });
 
-  it("applies spaced property correctly", () => {
+  it('applies spaced property correctly', () => {
     render(
       <List spaced>
         <ListItem>Spaced item</ListItem>
       </List>
     );
-    expect(screen.getByRole("list").className.length).toBeGreaterThan(0);
+    expect(screen.getByRole('list').className.length).toBeGreaterThan(0);
   });
 
-  it("applies horizontal property correctly", () => {
+  it('applies horizontal property correctly', () => {
     render(
       <List horizontal>
         <ListItem>Horizontal item 1</ListItem>
         <ListItem>Horizontal item 2</ListItem>
       </List>
     );
-    expect(screen.getByRole("list").className.length).toBeGreaterThan(0);
+    expect(screen.getByRole('list').className.length).toBeGreaterThan(0);
   });
 
-  it("forwards ref correctly for List component", () => {
+  it('forwards ref correctly for List component', () => {
     const ref = React.createRef<HTMLUListElement>();
     render(
       <List ref={ref}>
@@ -112,10 +112,10 @@ describe("List and ListItem Components", () => {
     );
 
     expect(ref.current).not.toBeNull();
-    expect(ref.current?.tagName).toBe("UL");
+    expect(ref.current?.tagName).toBe('UL');
   });
 
-  it("forwards ref correctly for ListItem component", () => {
+  it('forwards ref correctly for ListItem component', () => {
     const ref = React.createRef<HTMLLIElement>();
     render(
       <List>
@@ -124,31 +124,31 @@ describe("List and ListItem Components", () => {
     );
 
     expect(ref.current).not.toBeNull();
-    expect(ref.current?.tagName).toBe("LI");
-    expect(ref.current?.textContent).toBe("Referenced item");
+    expect(ref.current?.tagName).toBe('LI');
+    expect(ref.current?.textContent).toBe('Referenced item');
   });
 
-  it("applies custom className to List", () => {
+  it('applies custom className to List', () => {
     render(
       <List className="custom-list">
         <ListItem>Item</ListItem>
       </List>
     );
-    expect(screen.getByRole("list")).toHaveClass("custom-list");
+    expect(screen.getByRole('list')).toHaveClass('custom-list');
   });
 
-  it("applies custom className to ListItem", () => {
+  it('applies custom className to ListItem', () => {
     render(
       <List>
         <ListItem className="custom-item">Custom Item</ListItem>
       </List>
     );
 
-    const item = screen.getByText("Custom Item");
-    expect(item).toHaveClass("custom-item");
+    const item = screen.getByText('Custom Item');
+    expect(item).toHaveClass('custom-item');
   });
 
-  it("passes additional props to ListItem", () => {
+  it('passes additional props to ListItem', () => {
     render(
       <List>
         <ListItem data-testid="custom-item" aria-hidden="true">
@@ -157,11 +157,11 @@ describe("List and ListItem Components", () => {
       </List>
     );
 
-    const item = screen.getByTestId("custom-item");
-    expect(item).toHaveAttribute("aria-hidden", "true");
+    const item = screen.getByTestId('custom-item');
+    expect(item).toHaveAttribute('aria-hidden', 'true');
   });
 
-  it("renders nested lists correctly", () => {
+  it('renders nested lists correctly', () => {
     render(
       <List>
         <ListItem>Parent item</ListItem>
@@ -175,32 +175,32 @@ describe("List and ListItem Components", () => {
       </List>
     );
 
-    const lists = screen.getAllByRole("list");
+    const lists = screen.getAllByRole('list');
     expect(lists).toHaveLength(2);
 
-    const items = screen.getAllByRole("listitem");
+    const items = screen.getAllByRole('listitem');
     expect(items).toHaveLength(4);
 
-    expect(screen.getByText("Nested item 1")).toBeInTheDocument();
-    expect(screen.getByText("Nested item 2")).toBeInTheDocument();
+    expect(screen.getByText('Nested item 1')).toBeInTheDocument();
+    expect(screen.getByText('Nested item 2')).toBeInTheDocument();
   });
 
-  it("supports List.Item syntax for nested components", () => {
+  it('supports List.Item syntax for nested components', () => {
     render(
       <List data-testid="parent-list">
         <List.Item>Using List.Item syntax</List.Item>
       </List>
     );
 
-    const list = screen.getByTestId("parent-list");
+    const list = screen.getByTestId('parent-list');
     expect(list).toBeInTheDocument();
 
-    const item = screen.getByText("Using List.Item syntax");
+    const item = screen.getByText('Using List.Item syntax');
     expect(item).toBeInTheDocument();
-    expect(item.tagName).toBe("LI");
+    expect(item.tagName).toBe('LI');
   });
 
-  it("has proper accessibility attributes", () => {
+  it('has proper accessibility attributes', () => {
     render(
       <List aria-labelledby="list-title" aria-describedby="list-desc">
         <ListItem aria-current="true">Current item</ListItem>
@@ -208,11 +208,11 @@ describe("List and ListItem Components", () => {
       </List>
     );
 
-    const list = screen.getByRole("list");
-    expect(list).toHaveAttribute("aria-labelledby", "list-title");
-    expect(list).toHaveAttribute("aria-describedby", "list-desc");
+    const list = screen.getByRole('list');
+    expect(list).toHaveAttribute('aria-labelledby', 'list-title');
+    expect(list).toHaveAttribute('aria-describedby', 'list-desc');
 
-    expect(screen.getByText("Current item")).toHaveAttribute("aria-current", "true");
-    expect(screen.getByText("Disabled item")).toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByText('Current item')).toHaveAttribute('aria-current', 'true');
+    expect(screen.getByText('Disabled item')).toHaveAttribute('aria-disabled', 'true');
   });
 });

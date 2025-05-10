@@ -72,7 +72,7 @@ export function auditDependencies(): string {
 
   // Find potentially duplicate libraries (e.g., multiple PDF libraries)
   const pdfLibraries = [...Object.keys(dependencies), ...Object.keys(devDependencies)].filter(
-    (dep) => dep.includes('pdf') || dep.includes('puppeteer'),
+    (dep) => dep.includes('pdf') || dep.includes('puppeteer')
   );
 
   if (pdfLibraries.length > 1) {
@@ -88,7 +88,7 @@ export function auditDependencies(): string {
   }
 
   const markdownLibraries = [...Object.keys(dependencies), ...Object.keys(devDependencies)].filter(
-    (dep) => dep.includes('markdown') || dep.includes('marked') || dep.includes('remark'),
+    (dep) => dep.includes('markdown') || dep.includes('marked') || dep.includes('remark')
   );
 
   if (markdownLibraries.length > 1) {

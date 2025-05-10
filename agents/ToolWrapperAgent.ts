@@ -39,5 +39,3 @@ export class ToolWrapperAgent {
 
   // TODO: Agent lifecycle hooks, message handlers, integration with event bus.
 }
-
-

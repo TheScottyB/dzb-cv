@@ -16,7 +16,6 @@ interface AgentRegistry {
   [name: string]: any; // TODO: Replace 'any' with shared agent interface
 }
 
-
 // Helper to load blueprint file as string
 async function loadBlueprint(filePath: string): Promise<string> {
   return await fs.readFile(filePath, 'utf-8');
@@ -39,13 +38,25 @@ async function main() {
   // Initialize builder agents and wire for ConstructionForeman task assignment
   const builders = {
     ToolWrapperAgent: new ToolWrapperAgent({ blueprint: blueprintRaw, registry, projectRoot }),
-    AgentScaffolderAgent: new AgentScaffolderAgent({ blueprint: blueprintRaw, registry, projectRoot }),
-    MemoryDesignerAgent: new MemoryDesignerAgent({ blueprint: blueprintRaw, registry, projectRoot }),
+    AgentScaffolderAgent: new AgentScaffolderAgent({
+      blueprint: blueprintRaw,
+      registry,
+      projectRoot,
+    }),
+    MemoryDesignerAgent: new MemoryDesignerAgent({
+      blueprint: blueprintRaw,
+      registry,
+      projectRoot,
+    }),
   };
   registry['ToolWrapperAgent'] = builders.ToolWrapperAgent;
   registry['AgentScaffolderAgent'] = builders.AgentScaffolderAgent;
   registry['MemoryDesignerAgent'] = builders.MemoryDesignerAgent;
-  registry['RuntimeOrchestratorAgent'] = new RuntimeOrchestratorAgent({ blueprint: blueprintRaw, registry, projectRoot });
+  registry['RuntimeOrchestratorAgent'] = new RuntimeOrchestratorAgent({
+    blueprint: blueprintRaw,
+    registry,
+    projectRoot,
+  });
 
   // Pass builders, taskPlan, and logger to the ConstructionForeman
   console.log('[BOOTSTRAP] Instantiating ConstructionForeman...');
@@ -55,33 +66,51 @@ async function main() {
     logger: console,
   });
   console.log('[BOOTSTRAP] ConstructionForeman instantiation complete.');
-  registry['DocumentationAgent'] = new DocumentationAgent({ blueprint: blueprintRaw, registry, projectRoot });
+  registry['DocumentationAgent'] = new DocumentationAgent({
+    blueprint: blueprintRaw,
+    registry,
+    projectRoot,
+  });
 
   console.info('[Foreman] Agents instantiated.');
 
-  // ConstructionForeman with beginInitialAssignments hooks up the plan: 
+  // ConstructionForeman with beginInitialAssignments hooks up the plan:
   // initial atomic tasks, assignment, builder invocation.
-  if (typeof registry['Foreman'].beginInitialAssignments === "function") {
+  if (typeof registry['Foreman'].beginInitialAssignments === 'function') {
     registry['Foreman'].beginInitialAssignments();
   } else {
     // Fallback: Seed and assign atomic blueprint startup tasks here, then call setInitialTask on agents
     const atomicTasks = [
-      { description: 'Wrap 1 dummy utility (extract_text()) as Open Agent SDK tool.', assignee: 'ToolWrapperAgent' },
-      { description: 'Create base template for a “basic research agent.”', assignee: 'AgentScaffolderAgent' },
-      { description: 'Sketch a trivial 2-agent workflow using the new SDK format.', assignee: 'RuntimeOrchestratorAgent' },
-      { description: 'Define first shared memory schema (agent_memory object).', assignee: 'MemoryDesignerAgent' },
+      {
+        description: 'Wrap 1 dummy utility (extract_text()) as Open Agent SDK tool.',
+        assignee: 'ToolWrapperAgent',
+      },
+      {
+        description: 'Create base template for a “basic research agent.”',
+        assignee: 'AgentScaffolderAgent',
+      },
+      {
+        description: 'Sketch a trivial 2-agent workflow using the new SDK format.',
+        assignee: 'RuntimeOrchestratorAgent',
+      },
+      {
+        description: 'Define first shared memory schema (agent_memory object).',
+        assignee: 'MemoryDesignerAgent',
+      },
       { description: 'Draft a skeleton README.md.', assignee: 'DocumentationAgent' },
     ];
     for (const { description, assignee } of atomicTasks) {
       const task = taskPlan.addTask(description);
       taskPlan.assignTask(task.id, assignee);
-      if (registry[assignee] && typeof registry[assignee].setInitialTask === "function") {
+      if (registry[assignee] && typeof registry[assignee].setInitialTask === 'function') {
         registry[assignee].setInitialTask(description);
-        console.info(`[Foreman] Assigned task "${description}" to ${assignee} (taskId: ${task.id})`);
+        console.info(
+          `[Foreman] Assigned task "${description}" to ${assignee} (taskId: ${task.id})`
+        );
       }
     }
     // Summary/output
-    console.info("[Foreman] Task plan seeded:");
+    console.info('[Foreman] Task plan seeded:');
     console.info(taskPlan.summarize());
   }
 

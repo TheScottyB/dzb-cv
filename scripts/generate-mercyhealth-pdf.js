@@ -11,7 +11,7 @@ async function main() {
   try {
     const jobId = '37949';
     const baseDir = `./job-postings/mercy-health-${jobId}`;
-    
+
     // Configure PDF options with Mercyhealth-specific styling
     const pdfOptions = {
       paperSize: 'Letter',
@@ -19,7 +19,7 @@ async function main() {
         top: 0.75,
         right: 0.75,
         bottom: 0.75,
-        left: 0.75
+        left: 0.75,
       },
       fontFamily: 'Georgia, serif',
       fontSize: 11,
@@ -29,9 +29,9 @@ async function main() {
       orientation: 'portrait',
       pdfTitle: 'Dawn Zurick Beilfuss - Patient Access Supervisor Application',
       pdfAuthor: 'Dawn Zurick Beilfuss',
-      pdfCreator: 'DZB CV Generator'
+      pdfCreator: 'DZB CV Generator',
     };
-    
+
     // Custom CSS styling for Mercyhealth application
     const customCss = `
       body {
@@ -99,7 +99,7 @@ async function main() {
         }
       }
     `;
-    
+
     pdfOptions.cssStylesheet = customCss;
 
     // Generate CV PDF
@@ -115,11 +115,10 @@ async function main() {
     const coverOutputPath = path.join(baseDir, 'Dawn_Zurick_Beilfuss_Cover_Letter.pdf');
     await convertMarkdownToPdf(coverMarkdown, coverOutputPath, pdfOptions);
     console.log(`Successfully created Cover Letter PDF at: ${coverOutputPath}`);
-
   } catch (error) {
     console.error('Error generating PDFs:', error);
     process.exit(1);
   }
 }
 
-main(); 
+main();

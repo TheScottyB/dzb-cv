@@ -39,4 +39,4 @@ export interface ScraperResult {
     duration: number;
     url: string;
   };
-} 
+}

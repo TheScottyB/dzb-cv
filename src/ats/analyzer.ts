@@ -1,4 +1,10 @@
-import { ATSIssueType, ATSIssueCategory, ATSIssue, ATSAnalysisResult, ATS_SCORING } from './scoring.js';
+import {
+  ATSIssueType,
+  ATSIssueCategory,
+  ATSIssue,
+  ATSAnalysisResult,
+  ATS_SCORING,
+} from './scoring.js';
 import type { CVData } from '../core/types/cv-base.js';
 import type { ATSImprovement } from '../core/types/ats-types.js';
 
@@ -16,14 +22,14 @@ export class ATSAnalyzer {
     'certifications',
     'projects',
     'publications',
-    'awards'
+    'awards',
   ];
 
   private readonly datePatterns = {
     standard: /^(0[1-9]|1[0-2])\/\d{4}$/,
     yearOnly: /^\d{4}$/,
     textDate: /^[A-Za-z]+\s+\d{4}$/,
-    present: /^(Present|Current)$/i
+    present: /^(Present|Current)$/i,
   };
 
   private readonly specialCharPattern = /[^\x20-\x7E]/g;
@@ -56,13 +62,13 @@ export class ATSAnalyzer {
     score += bonuses;
 
     // Generate improvements
-    const improvements = issues.map(issue => ({
+    const improvements = issues.map((issue) => ({
       type: issue.type,
       score: issue.score,
       message: issue.message,
       fix: issue.fix,
       examples: issue.examples,
-      priority: this.getPriorityFromCategory(issue.category)
+      priority: this.getPriorityFromCategory(issue.category),
     }));
 
     // Calculate parse rate
@@ -75,13 +81,13 @@ export class ATSAnalyzer {
       keywords: this.analyzeKeywords(content),
       parseRate,
       sectionScores,
-      recommendation: this.generateRecommendation(score, issues)
+      recommendation: this.generateRecommendation(score, issues),
     };
   }
 
   private analyzeDates(cvData: CVData): ATSIssue[] {
     const issues: ATSIssue[] = [];
-    
+
     cvData.experience?.forEach((exp: ExperienceEntry, index: number) => {
       if (!exp.startDate) {
         issues.push({
@@ -91,7 +97,7 @@ export class ATSAnalyzer {
           message: `Missing start date in experience entry ${index + 1}`,
           fix: 'Add start date in MM/YYYY format',
           examples: ['01/2020', '05/2019'],
-          location: `experience[${index}].startDate`
+          location: `experience[${index}].startDate`,
         });
       } else if (!this.datePatterns.standard.test(exp.startDate)) {
         issues.push({
@@ -102,7 +108,7 @@ export class ATSAnalyzer {
           fix: 'Use MM/YYYY format for dates',
           examples: ['01/2020', '05/2019'],
           detected: exp.startDate,
-          location: `experience[${index}].startDate`
+          location: `experience[${index}].startDate`,
         });
       }
     });
@@ -123,7 +129,7 @@ export class ATSAnalyzer {
         message: 'Special characters detected',
         fix: 'Replace special characters with standard ASCII alternatives',
         examples: ['• → *', '→ → ->', '© → (c)'],
-        detected: specialChars.join(', ')
+        detected: specialChars.join(', '),
       });
     }
 
@@ -135,7 +141,7 @@ export class ATSAnalyzer {
         score: ATS_SCORING.HIGH.TABLE_LAYOUTS,
         message: 'Table layout detected',
         fix: 'Convert tables to bullet points or paragraphs',
-        examples: ['• Skill 1\n• Skill 2', 'Achievement 1\nAchievement 2']
+        examples: ['• Skill 1\n• Skill 2', 'Achievement 1\nAchievement 2'],
       });
     }
 
@@ -149,23 +155,23 @@ export class ATSAnalyzer {
         message: 'Complex formatting detected',
         fix: 'Use simple text formatting without HTML or special markup',
         examples: ['Plain text with standard bullet points'],
-        detected: complexFormatting.join(', ')
+        detected: complexFormatting.join(', '),
       });
     }
 
     return issues;
   }
 
-  private analyzeSections(content: string): { 
-    issues: ATSIssue[],
-    sectionScores: { [key: string]: number }
+  private analyzeSections(content: string): {
+    issues: ATSIssue[];
+    sectionScores: { [key: string]: number };
   } {
     const issues: ATSIssue[] = [];
     const sectionScores: { [key: string]: number } = {};
     const sections = this.extractSections(content);
 
     // Check for non-standard section headers
-    sections.forEach(section => {
+    sections.forEach((section) => {
       const normalizedHeader = section.header.toLowerCase();
       if (!this.standardSections.includes(normalizedHeader)) {
         issues.push({
@@ -175,7 +181,7 @@ export class ATSAnalyzer {
           message: `Non-standard section header: "${section.header}"`,
           fix: 'Use standard section headers',
           examples: this.standardSections,
-          detected: section.header
+          detected: section.header,
         });
       }
 
@@ -190,9 +196,12 @@ export class ATSAnalyzer {
     let bonus = 0;
 
     // Check for consistent date formatting
-    const hasConsistentDates = cvData.experience?.every((exp: ExperienceEntry) => 
-      this.datePatterns.standard.test(exp.startDate || '') &&
-      (!exp.endDate || this.datePatterns.standard.test(exp.endDate) || this.datePatterns.present.test(exp.endDate))
+    const hasConsistentDates = cvData.experience?.every(
+      (exp: ExperienceEntry) =>
+        this.datePatterns.standard.test(exp.startDate || '') &&
+        (!exp.endDate ||
+          this.datePatterns.standard.test(exp.endDate) ||
+          this.datePatterns.present.test(exp.endDate))
     );
     if (hasConsistentDates) {
       bonus += ATS_SCORING.BONUSES.CONSISTENT_DATES;
@@ -222,7 +231,7 @@ export class ATSAnalyzer {
     return {
       found: [],
       missing: [],
-      relevanceScore: 0
+      relevanceScore: 0,
     };
   }
 
@@ -238,7 +247,9 @@ export class ATSAnalyzer {
     }
   }
 
-  private getPriorityFromCategory(category: ATSIssueCategory): 'critical' | 'high' | 'medium' | 'low' {
+  private getPriorityFromCategory(
+    category: ATSIssueCategory
+  ): 'critical' | 'high' | 'medium' | 'low' {
     switch (category) {
       case ATSIssueCategory.CRITICAL:
         return 'critical';
@@ -253,7 +264,7 @@ export class ATSAnalyzer {
 
   private extractSections(content: string): Array<{ header: string; content: string }> {
     const sections: Array<{ header: string; content: string }> = [];
-    
+
     // Match headers (# Header or ## Header or ### Header)
     const headerPattern = /^(#{1,3})\s+(.+?)(?:\n|\r\n?)([\s\S]*?)(?=^#{1,3}\s|\Z)/gm;
     let match;
@@ -262,7 +273,7 @@ export class ATSAnalyzer {
       const [, , header = '', sectionContent = ''] = match;
       sections.push({
         header: header.trim(),
-        content: sectionContent.trim()
+        content: sectionContent.trim(),
       });
     }
 
@@ -273,18 +284,18 @@ export class ATSAnalyzer {
 
       for (const line of lines) {
         const trimmedLine = line.trim();
-        
+
         // Check if line is a potential header (all caps, or first letter capitalized)
         if (trimmedLine === trimmedLine.toUpperCase() || /^[A-Z][a-z\s]*$/.test(trimmedLine)) {
           if (currentSection) {
             sections.push({
               header: currentSection.header,
-              content: currentSection.content.join('\n')
+              content: currentSection.content.join('\n'),
             });
           }
           currentSection = {
             header: trimmedLine,
-            content: []
+            content: [],
           };
         } else if (currentSection && trimmedLine) {
           currentSection.content.push(trimmedLine);
@@ -295,7 +306,7 @@ export class ATSAnalyzer {
       if (currentSection) {
         sections.push({
           header: currentSection.header,
-          content: currentSection.content.join('\n')
+          content: currentSection.content.join('\n'),
         });
       }
     }
@@ -305,23 +316,23 @@ export class ATSAnalyzer {
 
   private calculateSectionScore(content: string): number {
     let score = 100;
-    
+
     // Check for formatting issues
     if (this.complexFormattingPattern.test(content)) {
       score -= 10;
     }
-    
+
     // Check for special characters
     const specialChars = content.match(this.specialCharPattern);
     if (specialChars) {
       score -= 5 * Math.min(specialChars.length, 5); // Cap penalty at -25
     }
-    
+
     // Check for tables
     if (this.tablePattern.test(content)) {
       score -= 15;
     }
-    
+
     // Check for content length (too short or too long)
     const words = content.split(/\s+/).length;
     if (words < 10) {
@@ -329,14 +340,14 @@ export class ATSAnalyzer {
     } else if (words > 500) {
       score -= 15; // Too long
     }
-    
+
     // Check for bullet points consistency
     const bulletPoints = content.match(/^[•\-\*]\s/gm);
     const differentBullets = new Set(bulletPoints).size;
     if (bulletPoints && differentBullets > 1) {
       score -= 5; // Inconsistent bullet points
     }
-    
+
     return Math.max(0, Math.min(100, score));
   }
-} 
+}

@@ -26,7 +26,7 @@ export class ImportService {
     options: {
       format?: string;
       validateOnly?: boolean;
-    } = {},
+    } = {}
   ) {
     // Read the file
     const buffer = await fs.readFile(filePath);
@@ -61,12 +61,12 @@ export class ImportService {
   private findParser(
     filePath: string,
     content: string,
-    preferredFormat?: string,
+    preferredFormat?: string
   ): DocumentParser | null {
     // If format specified, try to find exact match
     if (preferredFormat) {
       const parser = this.parsers.find(
-        (p) => p.getFormat().toLowerCase() === preferredFormat.toLowerCase(),
+        (p) => p.getFormat().toLowerCase() === preferredFormat.toLowerCase()
       );
       if (parser) return parser;
     }

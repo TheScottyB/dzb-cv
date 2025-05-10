@@ -10,23 +10,23 @@ export const mockPage = {
   $eval: vi.fn().mockImplementation(async (selector: string, callback: Function) => {
     const element = {
       textContent: 'Test content',
-      innerHTML: 'Test content'
+      innerHTML: 'Test content',
     };
     return callback(element);
   }),
   $$eval: vi.fn().mockImplementation(async (selector: string, callback: Function) => {
     const elements = [
       { textContent: 'Test item 1', innerHTML: 'Test item 1' },
-      { textContent: 'Test item 2', innerHTML: 'Test item 2' }
+      { textContent: 'Test item 2', innerHTML: 'Test item 2' },
     ];
     return callback(elements);
-  })
+  }),
 };
 
 // Create mock browser
 export const mockBrowser = {
   newPage: vi.fn().mockResolvedValue(mockPage),
-  close: vi.fn().mockResolvedValue(null)
+  close: vi.fn().mockResolvedValue(null),
 };
 
 // Export mocked functions
@@ -38,6 +38,5 @@ export default {
   launch,
   connect,
   mockPage,
-  mockBrowser
+  mockBrowser,
 };
-

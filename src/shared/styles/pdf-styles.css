@@ -7,12 +7,12 @@
   --text-secondary: #2c3e50;
   --text-accent: #2980b9;
   --text-muted: #7f8c8d;
-  
+
   /* Backgrounds */
   --bg-state: #e8f4fc;
   --bg-federal: #e8fcf1;
   --bg-private: #fcf8e8;
-  
+
   /* Spacing */
   --spacing-xs: 0.2em;
   --spacing-sm: 0.5em;
@@ -57,7 +57,8 @@ p {
   margin: var(--spacing-sm) 0;
 }
 
-ul, ol {
+ul,
+ol {
   margin: var(--spacing-sm) 0;
   padding-left: var(--spacing-lg);
 }
@@ -90,7 +91,8 @@ li {
   font-weight: normal;
 }
 
-.job-period, .job-location {
+.job-period,
+.job-location {
   color: var(--text-muted);
 }
 
@@ -144,17 +146,20 @@ li {
     font-size: 11pt;
     line-height: 1.4;
   }
-  
+
   a {
     text-decoration: none;
     color: var(--text-primary);
   }
-  
-  h1, h2, h3 {
+
+  h1,
+  h2,
+  h3 {
     page-break-after: avoid;
   }
-  
-  .experience-item, .education-item {
+
+  .experience-item,
+  .education-item {
     page-break-inside: avoid;
   }
 }

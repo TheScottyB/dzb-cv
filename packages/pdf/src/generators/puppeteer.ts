@@ -13,7 +13,7 @@ export class PuppeteerGenerator implements RichPDFGenerator {
   constructor() {
     this.markdown = new MarkdownIt();
   }
-  
+
   async generate(data: CVData, options?: PDFGenerationOptions): Promise<Buffer> {
     const html = this.generateHTML(data);
     return this.generateFromHTML(html, options);
@@ -72,7 +72,7 @@ export class PuppeteerGenerator implements RichPDFGenerator {
                   ${exp.responsibilities.map((r) => `<li>${r}</li>`).join('')}
                 </ul>
               </div>
-            `,
+            `
               )
               .join('')}
           </div>
@@ -86,7 +86,7 @@ export class PuppeteerGenerator implements RichPDFGenerator {
                 <h3>${edu.degree} in ${edu.field}</h3>
                 <p>${edu.institution}, ${edu.graduationDate}</p>
               </div>
-            `,
+            `
               )
               .join('')}
           </div>
@@ -139,4 +139,3 @@ export class PuppeteerGenerator implements RichPDFGenerator {
     `;
   }
 }
-

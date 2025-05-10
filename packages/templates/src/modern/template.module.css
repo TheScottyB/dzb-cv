@@ -1,5 +1,14 @@
 .modernCv {
-  font-family: var(--font-primary, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif);
+  font-family: var(
+    --font-primary,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif
+  );
   color: var(--color-text-default, #1a202c);
   line-height: 1.5;
   background-color: var(--color-background-default, #ffffff);
@@ -151,11 +160,11 @@
   .cvContent {
     grid-template-columns: 1fr;
   }
-  
+
   .itemHeader {
     flex-direction: column;
   }
-  
+
   .contactInfo {
     flex-direction: column;
     gap: 0.5rem;
@@ -167,21 +176,21 @@
   .modernCv {
     font-size: 11pt;
   }
-  
+
   .cvHeader {
     margin-bottom: 1rem;
     padding-bottom: 0.75rem;
   }
-  
+
   .cvContent {
     gap: 1.5rem;
   }
-  
+
   .cvSection {
     margin-bottom: 1rem;
     page-break-inside: avoid;
   }
-  
+
   .experienceItem,
   .educationItem,
   .projectItem {
@@ -189,33 +198,34 @@
     margin-bottom: 1rem;
     padding-bottom: 1rem;
   }
-  
+
   /* Ensures white background for printing */
   body {
     background-color: white !important;
     color: black !important;
   }
-  
+
   /* Hide URLs when printing unless it's a link */
-  a:link:after, a:visited:after {
-    content: "" !important;
+  a:link:after,
+  a:visited:after {
+    content: '' !important;
   }
-  
+
   /* Adjust font sizes for print */
   h1 {
     font-size: 16pt !important;
   }
-  
+
   h2 {
     font-size: 14pt !important;
   }
-  
+
   h3 {
     font-size: 12pt !important;
   }
-  
-  p, li {
+
+  p,
+  li {
     font-size: 11pt !important;
   }
 }
-

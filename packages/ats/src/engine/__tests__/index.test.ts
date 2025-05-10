@@ -34,10 +34,7 @@ describe('ATSEngine', () => {
         employer: 'Startup Inc',
         startDate: '2018-01',
         endDate: '2019-12',
-        responsibilities: [
-          'Developed full stack applications',
-          'Worked with React and Node.js',
-        ],
+        responsibilities: ['Developed full stack applications', 'Worked with React and Node.js'],
       },
     ],
     education: [
@@ -61,7 +58,7 @@ describe('ATSEngine', () => {
     company: 'Enterprise Corp',
     description: 'Looking for a senior developer with strong TypeScript and React experience.',
     qualifications: [
-      'Master\'s degree in Computer Science or related field',
+      "Master's degree in Computer Science or related field",
       '5+ years of development experience',
       'Strong knowledge of TypeScript and React',
     ],
@@ -70,13 +67,7 @@ describe('ATSEngine', () => {
       'Write clean, maintainable TypeScript code',
       'Implement automated testing',
     ],
-    skills: [
-      'TypeScript',
-      'React',
-      'Node.js',
-      'Jest',
-      'Docker',
-    ],
+    skills: ['TypeScript', 'React', 'Node.js', 'Jest', 'Docker'],
   };
 
   describe('analyze', () => {
@@ -84,7 +75,7 @@ describe('ATSEngine', () => {
 
     it('should return comprehensive analysis results', async () => {
       const result = await engine.analyze(sampleCV, sampleJob);
-      
+
       // Check score
       expect(result.score).toBeGreaterThan(0);
       expect(result.score).toBeLessThanOrEqual(1);
@@ -105,7 +96,7 @@ describe('ATSEngine', () => {
 
     it('should identify missing skills with alternatives', async () => {
       const result = await engine.analyze(sampleCV, sampleJob);
-      
+
       expect(result.missingSkills).toContainEqual(
         expect.objectContaining({
           skill: 'Docker',
@@ -173,9 +164,11 @@ describe('ATSEngine', () => {
       });
 
       const result = await engine.analyze(sampleCV, sampleJob);
-      expect(result.missingSkills.some(s => 
-        s.skill === 'Docker' && s.alternatives?.some(a => a.name === 'React')
-      )).toBe(false);
+      expect(
+        result.missingSkills.some(
+          (s) => s.skill === 'Docker' && s.alternatives?.some((a) => a.name === 'React')
+        )
+      ).toBe(false);
     });
   });
 
@@ -231,4 +224,3 @@ describe('ATSEngine', () => {
     });
   });
 });
-

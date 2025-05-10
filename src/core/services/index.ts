@@ -43,4 +43,3 @@ export * from './cv-service.js';
 export * from './storage/memory-storage.js';
 export * from './pdf/pdf-generator-impl.js';
 export type { PDFGenerationOptions };
-

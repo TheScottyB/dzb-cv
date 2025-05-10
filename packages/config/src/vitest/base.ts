@@ -13,5 +13,5 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
     },
   },
-  plugins: [tsconfigPaths()]
+  plugins: [tsconfigPaths()],
 });

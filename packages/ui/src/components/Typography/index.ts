@@ -9,23 +9,11 @@ export { Text } from './Text.js';
 export { List, ListItem } from './List.js';
 
 // Type exports
-export type {
-  HeadingProps,
-  HeadingLevel,
-  HeadingSize,
-} from './Heading.js';
+export type { HeadingProps, HeadingLevel, HeadingSize } from './Heading.js';
 
-export type {
-  TextProps,
-  TextElement,
-  TextSize,
-} from './Text.js';
+export type { TextProps, TextElement, TextSize } from './Text.js';
 
-export type {
-  ListProps,
-  ListItemProps,
-  ListType,
-} from './List.js';
+export type { ListProps, ListItemProps, ListType } from './List.js';
 
 // Define Typography object type
 export interface TypographyComponents {

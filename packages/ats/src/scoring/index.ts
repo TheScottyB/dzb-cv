@@ -53,7 +53,7 @@ export class ScoringEngine {
     const educationScore = this.scoreEducation(cv, posting);
     const skillsScore = this.scoreSkills(cv, posting);
 
-    const overall = 
+    const overall =
       keywordScore.score * this.weights.keywordWeight +
       experienceScore.score * this.weights.experienceWeight +
       educationScore.score * this.weights.educationWeight +
@@ -71,23 +71,28 @@ export class ScoringEngine {
   private scoreKeywords(cv: CVData, posting: JobPosting): SectionScore {
     const cvText = [
       cv.personalInfo.name.full,
-      ...cv.experience.map(e => `${e.position} ${e.employer} ${e.responsibilities.join(' ')}`),
-      ...cv.education.map(e => `${e.degree} ${e.field}`),
-      ...cv.skills.map(s => s.name),
-    ].join(' ').toLowerCase();
+      ...cv.experience.map((e) => `${e.position} ${e.employer} ${e.responsibilities.join(' ')}`),
+      ...cv.education.map((e) => `${e.degree} ${e.field}`),
+      ...cv.skills.map((s) => s.name),
+    ]
+      .join(' ')
+      .toLowerCase();
 
     const jobText = [
       posting.title,
       posting.description,
       ...(posting.responsibilities || []),
       ...(posting.qualifications || []),
-    ].filter(Boolean).join(' ').toLowerCase();
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLowerCase();
 
     const cvTokens = new Set(this.tokenizer.tokenize(cvText));
     const jobTokens = new Set(this.tokenizer.tokenize(jobText));
 
-    const matches = [...jobTokens].filter(token => cvTokens.has(token));
-    const missing = [...jobTokens].filter(token => !cvTokens.has(token));
+    const matches = [...jobTokens].filter((token) => cvTokens.has(token));
+    const missing = [...jobTokens].filter((token) => !cvTokens.has(token));
 
     return {
       score: matches.length / (matches.length + missing.length),
@@ -100,78 +105,82 @@ export class ScoringEngine {
   private scoreExperience(cv: CVData, posting: JobPosting): SectionScore {
     const requiredYears = this.extractYearsFromPosting(posting);
     const actualYears = this.calculateTotalExperience(cv);
-    
+
     const score = Math.min(actualYears / requiredYears, 1);
     const suggestions: string[] = [];
 
     if (actualYears < requiredYears) {
-      suggestions.push(`Job requires ${requiredYears} years of experience, you have ${actualYears}`);
+      suggestions.push(
+        `Job requires ${requiredYears} years of experience, you have ${actualYears}`
+      );
     }
 
     return {
       score,
       matches: [`${actualYears} years of experience`],
-      missing: actualYears < requiredYears ? [`${requiredYears - actualYears} more years needed`] : [],
+      missing:
+        actualYears < requiredYears ? [`${requiredYears - actualYears} more years needed`] : [],
       suggestions,
     };
   }
 
   private scoreEducation(cv: CVData, posting: JobPosting): SectionScore {
     const requiredDegrees = this.extractRequiredDegrees(posting);
-    const matches = cv.education
-      .filter(edu => requiredDegrees.some(req => 
-        edu.degree.toLowerCase().includes(req.toLowerCase())
-      ));
+    const matches = cv.education.filter((edu) =>
+      requiredDegrees.some((req) => edu.degree.toLowerCase().includes(req.toLowerCase()))
+    );
 
-    const missing = requiredDegrees.filter(req =>
-      !cv.education.some(edu => edu.degree.toLowerCase().includes(req.toLowerCase()))
+    const missing = requiredDegrees.filter(
+      (req) => !cv.education.some((edu) => edu.degree.toLowerCase().includes(req.toLowerCase()))
     );
 
     return {
       score: matches.length / requiredDegrees.length,
-      matches: matches.map(m => m.degree),
+      matches: matches.map((m) => m.degree),
       missing,
-      suggestions: missing.map(deg => `Missing required degree: ${deg}`),
+      suggestions: missing.map((deg) => `Missing required degree: ${deg}`),
     };
   }
 
   private scoreSkills(cv: CVData, posting: JobPosting): SectionScore {
     const requiredSkills = posting.skills || [];
-    const cvSkills = cv.skills.map(s => s.name.toLowerCase());
-    
-    const matches = requiredSkills.filter(skill => 
-      cvSkills.some(cvSkill => cvSkill.includes(skill.toLowerCase()))
+    const cvSkills = cv.skills.map((s) => s.name.toLowerCase());
+
+    const matches = requiredSkills.filter((skill) =>
+      cvSkills.some((cvSkill) => cvSkill.includes(skill.toLowerCase()))
     );
 
-    const missing = requiredSkills.filter(skill =>
-      !cvSkills.some(cvSkill => cvSkill.includes(skill.toLowerCase()))
+    const missing = requiredSkills.filter(
+      (skill) => !cvSkills.some((cvSkill) => cvSkill.includes(skill.toLowerCase()))
     );
 
     return {
       score: matches.length / requiredSkills.length,
       matches,
       missing,
-      suggestions: missing.map(skill => `Add missing skill: ${skill}`),
+      suggestions: missing.map((skill) => `Add missing skill: ${skill}`),
     };
   }
 
   private extractYearsFromPosting(posting: JobPosting): number {
     // Default to 2 years if no experience requirement is found
     const defaultYears = 2;
-    
+
     if (!posting.description) return defaultYears;
 
     const yearPattern = /(\d+)[\s-]*years?/i;
     const match = posting.description.match(yearPattern);
-    
-    return (match && match[1]) ? parseInt(match[1], 10) : defaultYears;
+
+    return match && match[1] ? parseInt(match[1], 10) : defaultYears;
   }
 
   private calculateTotalExperience(cv: CVData): number {
     return cv.experience.reduce((total, exp) => {
       const endDate = exp.endDate ? new Date(exp.endDate) : new Date();
       const startDate = new Date(exp.startDate);
-      const years = (endDate.getFullYear() - startDate.getFullYear()) +
+      const years =
+        endDate.getFullYear() -
+        startDate.getFullYear() +
         (endDate.getMonth() - startDate.getMonth()) / 12;
       return total + years;
     }, 0);
@@ -187,12 +196,11 @@ export class ScoringEngine {
       /mba/i,
     ];
 
-    const textToSearch = [
-      posting.description,
-      ...(posting.qualifications || []),
-    ].filter(Boolean).join(' ');
+    const textToSearch = [posting.description, ...(posting.qualifications || [])]
+      .filter(Boolean)
+      .join(' ');
 
-    degreePatterns.forEach(pattern => {
+    degreePatterns.forEach((pattern) => {
       const match = textToSearch.match(pattern);
       if (match) {
         degrees.add(match[0]);
@@ -203,6 +211,5 @@ export class ScoringEngine {
   }
 }
 
-export const createScoringEngine = (criteria?: ScoringCriteria): ScoringEngine => 
+export const createScoringEngine = (criteria?: ScoringCriteria): ScoringEngine =>
   new ScoringEngine(criteria);
-

@@ -31,12 +31,12 @@ async function resolveJobDir(inputPath: string): Promise<{ jobDir: string; jobDa
       console.warn(
         chalk.yellow('⚠️  Warning:'),
         'Folder name does not match standardized convention. Expected:',
-        chalk.cyan(expectedDir),
+        chalk.cyan(expectedDir)
       );
     }
   } catch {
     console.warn(
-      chalk.yellow('⚠️  Warning: No job-data.json found in folder. Cannot verify standardization.'),
+      chalk.yellow('⚠️  Warning: No job-data.json found in folder. Cannot verify standardization.')
     );
   }
   return { jobDir: inputPath, jobDataPath };
@@ -48,7 +48,7 @@ async function main() {
     const [, , inputPath] = process.argv;
     if (!inputPath) {
       console.error(
-        'Usage: pnpm tsx src/scripts/analyze-job.ts <job-posting-directory|job-data.json>',
+        'Usage: pnpm tsx src/scripts/analyze-job.ts <job-posting-directory|job-data.json>'
       );
       process.exit(1);
     }
@@ -75,7 +75,7 @@ async function main() {
     const html = markdownConverter.convertToHTML(
       content,
       `Tailored CV for ${jobData.title}`,
-      `${jobData.company}${jobData.location && jobData.location.city ? ' - ' + jobData.location.city : ''}${jobData.location && jobData.location.state ? ', ' + jobData.location.state : ''}`,
+      `${jobData.company}${jobData.location && jobData.location.city ? ' - ' + jobData.location.city : ''}${jobData.location && jobData.location.state ? ', ' + jobData.location.state : ''}`
     );
 
     // Save the HTML for inspection in generated/

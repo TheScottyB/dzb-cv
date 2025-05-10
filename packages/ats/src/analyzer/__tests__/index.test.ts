@@ -60,13 +60,7 @@ describe('CVAnalyzer', () => {
       'Implement responsive designs',
       'Optimize application performance',
     ],
-    skills: [
-      'React',
-      'TypeScript',
-      'CSS',
-      'Jest',
-      'Webpack',
-    ],
+    skills: ['React', 'TypeScript', 'CSS', 'Jest', 'Webpack'],
   };
 
   describe('analyze', () => {
@@ -185,4 +179,3 @@ describe('CVAnalyzer', () => {
     });
   });
 });
-

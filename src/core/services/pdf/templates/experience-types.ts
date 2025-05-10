@@ -16,4 +16,4 @@ export type ModernExperience = Experience & {
   responsibilities: string[];
 };
 
-export type ExperienceUnion = LegacyExperience | ModernExperience; 
+export type ExperienceUnion = LegacyExperience | ModernExperience;
