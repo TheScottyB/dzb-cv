@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["node", "react", "react-dom", "vitest/globals", "@testing-library/jest-dom"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+  }
+} 

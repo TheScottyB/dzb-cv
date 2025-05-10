@@ -1,66 +1,36 @@
-# Dependencies
+# Node dependencies
 node_modules/
 .pnpm-store/
-__pycache__/
-*.py[cod]
-*$py.class
-.Python
-env/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-*.egg-info/
-.installed.cfg
-*.egg
 
-# IDE
-.idea/
+# Build output
+dist/
+coverage/
+.turbo/
+
+# Python virtual environment
+.venv/
+
+# IDE/editor
 .vscode/
+.idea/
 *.swp
 *.swo
 .DS_Store
 
-# Build output
-dist/
-build/
-coverage/
-output/
-# Ignore JS files when TS source exists (compiled output)
-src/**/*.js
-src/**/*.js.map
-src/**/*.d.ts
-
-# Environment
+# Environment files
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env.*
 
 # Logs
-logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 
-# Testing
-coverage/
-.nyc_output/
+# TypeScript build info
+*.tsbuildinfo
 
-# Volta
-.volta/
+# Backup archives
+archive/*.tar.gz
 
-# Project-specific files
-job-posting.txt
-*-cv.pdf
-*-cv.html
+# Misc
+*.local

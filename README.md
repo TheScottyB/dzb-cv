@@ -1,597 +1,284 @@
 # dzb-cv
 
-[![CI](https://img.shields.io/github/actions/workflow/status/TheScottyB/dzb-cv/ci.yml?branch=main&label=CI)](https://github.com/TheScottyB/dzb-cv/actions/workflows/ci.yml)
-[![Lint Status](https://img.shields.io/github/actions/workflow/status/TheScottyB/dzb-cv/ci.yml?label=lint)](https://github.com/TheScottyB/dzb-cv/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/codecov/c/github/TheScottyB/dzb-cv?logo=codecov)](https://codecov.io/gh/TheScottyB/dzb-cv)
-
-A modular CV management system with job analysis capabilities. This tool helps create, manage, and tailor CVs for specific job applications.
-
-> **Note:** This project is uniquely designed for a single user: Dawn Zurick Beilfuss. All features, templates, and workflows are tailored specifically for Dawn's career journey.
+A powerful, modular curriculum vitae management system built with TypeScript. Generate and maintain professional CVs with customizable templates and multiple export formats.
 
 ## Features
 
-- **CV Generation**: Generate CVs for different sectors (federal, state, private, academic)
-- **Job Analysis**: Analyze job postings to extract key requirements for CV tailoring
-- **Profile Management**: Import, export, and manage CV profiles
-- **Multiple Output Formats**: Export as PDF, Markdown, or JSON
-- **ATS Optimization**: Tailor CVs to pass Applicant Tracking Systems with scoring and improvement suggestions
-- **Multiple Templates**: Support for various CV templates including Basic, Minimal, Federal, and Academic
-- **Verification System**: Track and verify content sources
-- **Modular CLI**: Extensible command structure
+- 📄 Modular CV data management
+- 🎨 Customizable templates
+- 📱 CLI interface for easy CV creation and updates
+- 🔄 Type-safe data structures
+- 📦 PDF export support
+- 🏗️ Extensible architecture
 
-## Project Focus: A Personalized Career Toolkit for Dawn
+## Project Structure
 
-DZB-CV is not a generic CV generator. It is a deeply personalized, automated, and organized system for managing one person's (Dawn's) job search materials. Every feature, template, and workflow is tailored to Dawn's background, goals, and job search journey. All CVs, cover letters, and application materials are generated from a centralized data source, ensuring consistency and efficiency. The system automates tailoring, scoring, and cataloging of application materials, making it a powerful, personal career management toolkit—far beyond a generic CV generator.
+The project is organized as a monorepo using pnpm workspaces:
 
-## Pluggable, User-First Design
+```
+packages/
+├── types/     # Shared type definitions for CV data structures
+├── core/      # Core CV management functionality and services
+├── pdf/       # PDF generation and rendering capabilities
+├── templates/ # CV templates (basic, academic, etc.)
+└── cli/       # Command-line interface for CV operations
+```
 
-While DZB-CV is tailored for a single user at a time, its architecture is intentionally pluggable. By simply replacing the `base-info.json` file and using the provided advanced markdown templates, anyone can create a fully personalized CV management system.
+### Package Details
 
-This "one repo per user" model is like using templated abstract classes: the templates define the structure, and the user's data fills in the details. To onboard a new user, just start with a fresh repo and their own `base-info.json`—no code changes required.
+- **@dzb-cv/types**: Foundation of the type system, containing shared interfaces and type definitions used across all packages. Includes CV data structures, PDF configuration types, and more.
 
-This approach ensures privacy, full data ownership, and maximum flexibility, making DZB-CV a unique, user-first alternative to generic, multi-user CV platforms.
+- **@dzb-cv/core**: The heart of the system, providing CV management services, data handling, and integration with storage solutions. Depends on @dzb-cv/types.
+
+- **@dzb-cv/pdf**: PDF generation functionality with different layout options and styling capabilities. Uses pdf-lib for document creation and depends on @dzb-cv/types.
+
+- **@dzb-cv/templates**: Collection of customizable CV templates, including basic and academic formats. Templates define both structure and styling. Depends on @dzb-cv/types.
+
+- **@dzb-cv/cli**: Command-line interface for interacting with the CV system. Provides commands for creating, updating, and exporting CVs. Depends on all other packages.
 
 ## Installation
 
-### Prerequisites
+### Requirements
 
-- [Node.js](https://nodejs.org/) 20.10.0 or higher
-- [Volta](https://volta.sh/) (recommended for managing Node.js and pnpm versions)
-- [pnpm](https://pnpm.io/) 8.12.1 or higher
-- Git for version control
+- Node.js >= 20.10.0
+- pnpm >= 10.9.0
 
-### Quick Start
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-username/dzb-cv.git
-   cd dzb-cv
-   ```
-
-2. Install Volta (if not already installed):
-   ```bash
-   curl https://get.volta.sh | bash
-   ```
-
-3. Let Volta install the correct Node.js and pnpm versions:
-   ```bash
-   # Volta will automatically use versions from package.json
-   volta install node@20.10.0
-   volta install pnpm@8.12.1
-   ```
-
-4. Run the setup script:
-   ```bash
-   chmod +x setup.sh
-   ./setup.sh
-   ```
-
-5. Build the CLI:
-   ```bash
-   pnpm build
-   ```
-
-6. Link the CLI globally (optional):
-   ```bash
-   pnpm link-cli
-   ```
-
-The setup script will:
-- Install dependencies
-- Set up TypeScript configurations
-- Configure Git hooks for code quality
-
-## Command Documentation
-
-The CLI provides a modular command structure with several key command groups.
-
-### Global Options
-
-The following options are available for all commands:
+### Global Installation (coming soon)
 
 ```bash
--v, --verbose       # Enable verbose output
---no-color          # Disable color output
--c, --config <path> # Path to configuration file
--h, --help          # Display help information
+# Install globally
+npm install -g @dzb-cv/cli
+
+# Use the CLI
+cv create --name "John Doe" --email "john@example.com"
 ```
 
-### CV Generation
-
-Generate CVs for different sectors:
+### Local Development Installation
 
 ```bash
-dzb-cv generate <sector> [options]
+# Clone the repository
+git clone https://github.com/yourusername/dzb-cv.git
+cd dzb-cv
+
+# Install dependencies
+pnpm install
+
+# Build packages
+pnpm run build
+
+# Run CLI commands locally
+pnpm cv create --name "John Doe" --email "john@example.com"
 ```
 
-Arguments:
-- `<sector>`: The sector to generate for (`federal`, `state`, `private`, or `academic`)
+## Quick Start
 
-Options:
-- `-f, --format <format>`: Output format (`markdown` or `pdf`, default: `pdf`)
-- `-o, --output <path>`: Output directory for the generated CV (default: `output`)
-- `--filename <name>`: Base filename for the generated CV
-- `--template <name>`: Specify template to use (default varies by sector)
-- `--ats-optimize`: Apply ATS optimization to the generated CV
+### Create Your First CV
 
-Examples:
-```bash
-# Generate a federal CV in PDF format
-dzb-cv generate federal
-
-# Generate a state CV in markdown format
-dzb-cv generate state --format markdown
-
-# Generate a private CV with a custom filename
-dzb-cv generate private --filename my-custom-cv --output ./my-output
-
-# Generate an academic CV with ATS optimization
-dzb-cv generate academic --ats-optimize
-```
-
-### Job Analysis
-
-Analyze job postings to extract key requirements:
+1. **Initialize a new CV**:
 
 ```bash
-dzb-cv analyze <source> [options]
+pnpm cv create --name "John Doe" --email "john@example.com"
 ```
 
-Arguments:
-- `<source>`: URL of the job posting or path to a file containing the job description
-
-Options:
-- `-o, --output <path>`: Path to save the analysis output
-- `-f, --format <format>`: Output format (`json`, `text`, `markdown`, default: `text`)
-- `--file`: Treat the source as a local file path instead of URL
-- `--force-generic`: Force using the generic parser for any site
-- `--no-rate-limit`: Disable rate limiting (use with caution)
-- `--extract-keywords`: Extract and prioritize keywords from the job posting
-- `--match-skills`: Match job requirements with your existing skill set
-- `--generate-suggestions`: Generate suggestions for CV customization
-
-Examples:
-```bash
-# Analyze a job posting from a URL
-dzb-cv analyze https://example.com/jobs/12345
-
-# Analyze a job posting from a local file
-dzb-cv analyze ./job-descriptions/analyst.txt --file
-
-# Save analysis output to a JSON file
-dzb-cv analyze https://example.com/jobs/12345 --output ./analysis.json --format json
-
-# Analyze a job posting and match with your skills
-dzb-cv analyze https://example.com/jobs/12345 --match-skills --profile-id profile-123
-```
-
-### Profile Management
-
-Manage CV profiles with various subcommands:
-
-#### Import Profiles
+2. **Export to PDF** (coming soon):
 
 ```bash
-dzb-cv profile import <file> [options]
+pnpm cv export --id "your-cv-id" --format pdf --output "my-cv.pdf"
 ```
 
-Arguments:
-- `<file>`: Path to the CV document file
-
-Options:
-- `-o, --owner <name>`: Name of the profile owner (default: `Dawn Zurick Beilfuss`)
-- `-v, --validate`: Validate the profile data
-- `--output <path>`: Save the imported profile to a file
-- `-f, --format <format>`: Format for output (`json`, `markdown`, default: `json`)
-
-Examples:
-```bash
-# Import a profile from a markdown file
-dzb-cv profile import ./my-cv.md
-
-# Import with validation and custom owner
-dzb-cv profile import ./my-cv.md --validate --owner "John Doe"
-
-# Import and save to a specific location
-dzb-cv profile import ./my-cv.md --output ./profiles/imported.json
-```
-
-#### Export Profiles
+3. **Update your CV** (coming soon):
 
 ```bash
-dzb-cv profile export [options]
+pnpm cv update --id "your-cv-id" --add-experience "Company Name" --title "Job Title" --start "2022-01" --end "Present"
 ```
 
-Options:
-- `-p, --profile-id <id>`: ID of the profile to export
-- `-f, --format <format>`: Export format (`json`, `markdown`, `pdf`, default: `json`)
-- `-o, --output <path>`: Output file path (default: `output/profiles/exported-profile.json`)
+## Development Setup
 
-Examples:
-```bash
-# Export a profile to JSON
-dzb-cv profile export --profile-id profile-123
-
-# Export a profile to markdown
-dzb-cv profile export --profile-id profile-123 --format markdown --output ./my-cv.md
-```
-
-#### Validate Profiles
-
-```bash
-dzb-cv profile validate <file> [options]
-```
-
-Arguments:
-- `<file>`: Path to the profile file to validate
-
-Options:
-- `-t, --type <type>`: Validation type (`basic`, `strict`, `federal`, default: `basic`)
-
-Examples:
-```bash
-# Validate a profile with basic validation
-dzb-cv profile validate ./my-cv.json
-
-# Validate a profile with federal requirements
-dzb-cv profile validate ./my-cv.json --type federal
-```
-
-#### List Profiles
-
-```bash
-dzb-cv profile list [options]
-```
-
-Options:
-- `-v, --verbose`: Show detailed information
-
-Example:
-```bash
-# List all profiles with detailed information
-dzb-cv profile list --verbose
-```
-
-## Templates
-
-The system supports multiple CV templates for different purposes:
-
-### Basic Template
-
-A clean, professional layout suitable for most industries with balanced content presentation.
-
-### Minimal Template
-
-A modern, minimalist design focusing on essential information, perfect for technology and creative industries.
-
-### Federal Template
-
-Detailed format following US government guidelines for applications to federal positions.
-
-### Academic Template
-
-Comprehensive format for academic and research positions, with sections for:
-
-- Publications
-- Conference presentations
-- Grants and funding
-- Research interests
-- Academic service
-
-## ATS Optimization
-
-The system includes built-in ATS (Applicant Tracking System) optimization features:
-
-### ATS Analysis
-
-```bash
-dzb-cv ats analyze <file> [options]
-```
-
-Analyzes your CV for ATS compatibility, checking for:
-
-- Complex formatting that may confuse ATS parsers
-- Non-standard section headings
-- Missing or unclear dates
-- Graphics or special characters
-- Contact information formatting
-
-The analysis provides a compatibility score and specific improvement suggestions.
-
-### ATS Optimization
-
-```bash
-dzb-cv ats optimize <input-file> <output-file> [options]
-```
-
-Automatically optimizes your CV for ATS compatibility by:
-
-- Standardizing headings
-- Fixing date formats
-- Improving keyword density
-- Enhancing readability
-- Removing complex formatting
-
-## Configuration Options
-
-The CLI supports configuration through:
-
-1. **Command-line options**: As shown in the command documentation
-2. **Environment variables**: Prefixed with `DZB_CV_`
-3. **Configuration files**: JSON format, path specified with the `-c, --config` option
-
-Example configuration file (`config.json`):
-
-```json
-{
-  "output": "./my-output-dir",
-  "format": "pdf",
-  "verbose": true,
-  "profile": {
-    "defaultOwner": "Dawn Zurick Beilfuss",
-    "storage": "./profiles"
-  },
-  "analyze": {
-    "noRateLimit": false,
-    "forceGeneric": false
-  },
-  "ats": {
-    "optimize": true,
-    "targetScore": 90
-  },
-  "templates": {
-    "default": "basic",
-    "federal": "federal",
-    "academic": "academic"
-  }
-}
-```
-
-Usage with config file:
-```bash
-dzb-cv -c ./config.json generate federal
-```
-
-## Development
-
-### Project Structure
-
-```
-```
-.
-├── src/                      # Source code
-│   ├── ats/                  # ATS optimization tools
-│   │   ├── analyzer.ts       # ATS compatibility analysis
-│   │   └── optimizer.ts      # CV optimization for ATS
-│   ├── cli/                  # CLI implementation
-│   │   ├── commands/         # Command modules
-│   │   └── index.ts          # CLI entry point
-│   ├── core/                 # Business logic
-│   │   ├── services/         # Core services
-│   │   │   ├── pdf/          # PDF generation
-│   │   │   │   ├── templates/  # CV templates
-│   │   │   └── storage/      # Data storage
-│   │   └── types/            # Type definitions
-│   ├── shared/               # Shared utilities and types
-│   │   ├── components/       # Reusable components
-│   │   ├── templates/        # Markdown templates
-│   │   ├── tools/            # Shared tools
-│   │   └── utils/            # Utility functions
-│   ├── templates/            # Template definitions
-│   ├── tools/                # Core functionality
-│   └── utils/                # Utility functions
-├── dist/                     # Compiled JavaScript
-├── job-postings/             # Sample job postings
-├── docs/                     # Documentation
-└── scripts/                  # Utility scripts
-```
-### Development Workflow
+### Workspace Setup
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Start development server with watch mode
-pnpm dev
-
-# Run the CLI in development mode
-dzb-cv [commands...]
-
-# Debug the CLI
-pnpm dev:debug
-
-# Build for production
-pnpm build
+# Build all packages
+pnpm run build
 
 # Run tests
 pnpm test
-```
-
-### Adding New Commands
-
-1. Create a new file in `src/cli/commands/` that extends `BaseCommand`
-2. Implement the required methods
-3. Register the command in `src/cli/index.ts`
-
-Example:
-```typescript
-import { BaseCommand } from './base-command.js';
-
-export class MyNewCommand extends BaseCommand {
-  constructor() {
-    super('new-command', 'Description of my new command');
-  }
-
-  configure(): void {
-    this.program
-      .name(this.name)
-      .description(this.description)
-      .option('-o, --option <value>', 'Description of option')
-      .action(this.execute.bind(this));
-  }
-
-  async execute(options: any): Promise<void> {
-    // Command implementation
-  }
-}
-```
-
-### Testing
-
-The project uses Vitest for testing:
-
-```bash
-# Run all tests
-pnpm test
-
-# Run CLI-specific tests
-pnpm test:cli
-
-# Run command module tests
-pnpm test:commands
 
 # Run tests in watch mode
 pnpm test:watch
 
-# Run tests with coverage
-pnpm test:coverage
+# Type checking
+pnpm run typecheck
 
-# Run tests with UI
-pnpm test:ui
+# Clean build artifacts
+pnpm run clean
 ```
 
-## Troubleshooting
+### IDE Recommendations
 
-### Common Issues
+- **VSCode**: Recommended for TypeScript development with the following extensions:
+  - ESLint
+  - Prettier
+  - TypeScript Hero
+  - Jest Runner
 
-#### Command Not Found
+### Package Development
 
-If `dzb-cv` command is not found:
-
-1. Ensure you've built the project with `pnpm build`
-2. Link the CLI globally with `pnpm link-cli`
-3. Check that the `dist/cli/index.js` file has execute permissions
-
-#### Permission Errors
-
-If you encounter permission errors:
+Each package can be developed independently:
 
 ```bash
-# Make the CLI executable
-chmod +x dist/cli/index.js
+# Build a specific package
+cd packages/core
+pnpm run build
 
-# Link with sudo if needed
-sudo pnpm link-cli
+# Test a specific package
+cd packages/pdf
+pnpm test
 ```
 
-#### TypeScript Compilation Errors
+## Package Documentation
 
-If you encounter compilation errors:
+### @dzb-cv/types
 
-1. Ensure TypeScript is installed: `pnpm add -D typescript`
-2. Check your `tsconfig.json` is correctly configured
-3. Run `pnpm typecheck` to verify types
+Contains all type definitions used throughout the system:
 
-### Getting Help
+```typescript
+import { CVData, PersonalInfo, ExperienceItem } from '@dzb-cv/types';
 
-If you encounter issues:
+// Create a CV data structure
+const myCV: CVData = {
+  personalInfo: {
+    name: {
+      first: 'John',
+      last: 'Doe',
+      full: 'John Doe'
+    },
+    contact: {
+      email: 'john@example.com'
+    }
+  },
+  experience: [],
+  education: [],
+  skills: []
+};
+```
 
-1. Run the command with `--verbose` flag for detailed logging
-2. Check the error messages for specific issues
-3. File an issue on GitHub with detailed information
+### @dzb-cv/core
+
+Provides the CVService for managing CV data:
+
+```typescript
+import { CVService } from '@dzb-cv/core';
+import type { CVData } from '@dzb-cv/types';
+
+// Example CV service usage
+const service = new CVService(storageProvider, pdfGenerator);
+await service.createCV(cvData);
+```
+
+### @dzb-cv/pdf
+
+PDF generation capabilities:
+
+```typescript
+import { StandardPDFGenerator } from '@dzb-cv/pdf';
+import type { CVData } from '@dzb-cv/types';
+
+const generator = new StandardPDFGenerator();
+const pdfBytes = await generator.generatePDF(cvData);
+```
+
+### @dzb-cv/templates
+
+Template system for CV rendering:
+
+```typescript
+import { BasicTemplate } from '@dzb-cv/templates/basic';
+import type { CVData } from '@dzb-cv/types';
+
+const template = new BasicTemplate();
+const renderedCV = template.render(cvData);
+```
+
+### @dzb-cv/cli
+
+Command-line interface:
+
+```bash
+# Available commands
+pnpm cv create --name "John Doe" --email "john@example.com"
+```
+
+## Configuration
+
+### CV Data Structure
+
+The core CV data structure includes:
+
+- Personal Information (name, contact details)
+- Work Experience
+- Education
+- Skills
+- Projects (coming soon)
+- Publications (coming soon)
+- References (coming soon)
+
+### Template Configuration
+
+Templates can be configured with various options:
+
+```typescript
+// Coming soon
+const template = new BasicTemplate({
+  fontFamily: 'Arial',
+  primaryColor: '#2D3748',
+  fontSize: 11
+});
+```
 
 ## Contributing
 
-### Getting Started
+Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/your-username/dzb-cv.git`
-3. Create a feature branch: `git checkout -b feature/my-feature`
-4. Make your changes
-5. Ensure code quality:
-   - Run tests: `pnpm test`
-   - Run linter: `pnpm lint`
-   - Run type check: `pnpm typecheck`
-6. Commit with a descriptive message
-7. Push to your branch: `git push origin feature/my-feature`
-8. Create a pull request
+2. Create a feature branch
+3. Make your changes
+4. Run tests and ensure they pass
+5. Submit a pull request
 
-### Code Style
+For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md) (coming soon).
 
-The project follows these code style guidelines:
+## Project Status
 
-- Use ESLint and Prettier for code formatting
-- Follow TypeScript best practices
-- Document public APIs with JSDoc comments
-- Write unit tests for new functionality
+The project is currently in alpha stage with core functionality implemented. Planned features include:
 
-### Commit Messages
+- More CV templates
+- Web interface
+- Extended data fields
+- Additional export formats (HTML, Markdown)
 
-Please use conventional commit messages:
-
-- `feat:` for new features
-- `fix:` for bug fixes
-- `docs:` for documentation changes
-- `style:` for code style changes
-- `refactor:` for code refactoring
-- `test:` for adding or modifying tests
-- `chore:` for maintenance tasks
-
-## PDF Generation and Templates
-
-The system includes robust PDF generation capabilities with multiple templates:
-
-```bash
-dzb-cv generate pdf <input> <output> --template <template-name>
-```
-
-Options:
-- `--template <name>`: Template to use (basic, minimal, federal, academic)
-- `--paper-size <size>`: Paper size (letter, a4, legal)
-- `--font <font>`: Primary font family
-- `--font-size <size>`: Base font size
-- `--margins <value>`: Page margins
-- `--header <text>`: Custom header text
-- `--footer <text>`: Custom footer text
-
-The PDF generator supports:
-
-- Full Markdown syntax
-- Custom CSS styling
-- Headers and footers
-- Page numbers
-- Custom fonts
-- Template inheritance and customization
-
-## Markdown Templates
-
-The system uses Markdown templates for generating different CV formats:
-
-- **Federal Templates**: Detailed templates following federal resume guidelines
-- **Private Templates**: Various templates for private sector applications
-- **State Templates**: Templates for state government positions
-- **Academic Templates**: Comprehensive templates for academic positions
-
-Templates support variables and conditional sections using Handlebars syntax:
-
-```markdown
-# {{personalInfo.name.full}}
-
-{{#if personalInfo.title}}
-*{{personalInfo.title}}*
-{{/if}}
-
-{{#each experience}}
-## {{position}} at {{employer}}
-{{startDate}} - {{endDate}}
-
-{{#each responsibilities}}
-- {{this}}
-{{/each}}
-{{/each}}
-```
-
-Templates are stored in the `src/shared/templates` directory and can be customized or extended.
+See the [project roadmap](ROADMAP.md) (coming soon) for more details.
 
 ## License
 
-This project is licensed under the ISC License - see the LICENSE file for details.
+MIT (coming soon)
+
+## Testing Best Practices
+
+- All packages use a shared `test-utils.ts` for DRY sample data, factories, and helpers.
+- ESM-compatible mocking is done with `vi.mock` and `importActual` for robust, future-proof tests.
+- Example robust test file using these patterns:
+
+```typescript
+vi.mock('@dzb-cv/pdf', async (importActual) => {
+  const actual = await importActual<typeof import('@dzb-cv/pdf')>();
+  return {
+    ...actual,
+    createPDFGenerator: vi.fn().mockImplementation(() => ({ generate: vi.fn() })),
+  };
+});
+```
+
+- See `TESTING.md` for more details and patterns.

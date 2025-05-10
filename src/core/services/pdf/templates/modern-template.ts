@@ -109,14 +109,11 @@ ${personalInfo.title ? `<span style="color:#666;font-size:18px;">${personalInfo.
 
 <div class="contact-info">
 
-${[
-  personalInfo.contact.email,
-  personalInfo.contact.phone,
-  personalInfo.contact.address
-].filter(Boolean).join(' | ')}
+${[personalInfo.contact.email, personalInfo.contact.phone, personalInfo.contact.address]
+  .filter(Boolean)
+  .join(' | ')}
 
 </div>
     `.trim();
   }
 }
-

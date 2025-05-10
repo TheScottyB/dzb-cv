@@ -11,23 +11,27 @@ describe('TemplateProvider', () => {
       name: { full: 'Test User' },
       contact: {
         email: 'test@example.com',
-        phone: '123-456-7890'
-      }
+        phone: '123-456-7890',
+      },
     },
-    experience: [{
-      title: 'Developer',
-      company: 'Tech Co',
-      startDate: '2020-01',
-      endDate: '2023-01',
-      responsibilities: ['Coding']
-    }],
-    education: [{
-      degree: 'BS',
-      institution: 'University',
-      year: '2020'
-    }],
+    experience: [
+      {
+        title: 'Developer',
+        company: 'Tech Co',
+        startDate: '2020-01',
+        endDate: '2023-01',
+        responsibilities: ['Coding'],
+      },
+    ],
+    education: [
+      {
+        degree: 'BS',
+        institution: 'University',
+        year: '2020',
+      },
+    ],
     skills: ['JavaScript'],
-    certifications: ['AWS']
+    certifications: ['AWS'],
   };
 
   describe('BasicTemplate', () => {
@@ -45,7 +49,7 @@ describe('TemplateProvider', () => {
       const template = new BasicTemplate();
       const markdown = template.generateMarkdown(testData, {
         includeEducation: false,
-        includeSkills: false
+        includeSkills: false,
       });
 
       expect(markdown).not.toContain('## Education');
@@ -75,15 +79,15 @@ describe('TemplateProvider', () => {
 
       const customTemplate = new CustomTemplate();
       provider.registerTemplate(customTemplate);
-      
+
       const template = provider.getTemplate('custom');
       expect(template).toBe(customTemplate);
     });
 
     it('should throw error for non-existent template', () => {
-      expect(() => provider.getTemplate('non-existent'))
-        .toThrow("Template 'non-existent' not found");
+      expect(() => provider.getTemplate('non-existent')).toThrow(
+        "Template 'non-existent' not found"
+      );
     });
   });
 });
-

@@ -161,7 +161,7 @@ async function parseJobPage(htmlPath: string, jobId: string): Promise<void> {
   } catch (error) {
     console.error(
       'Error parsing job page:',
-      error instanceof Error ? error.message : String(error),
+      error instanceof Error ? error.message : String(error)
     );
     throw error;
   }

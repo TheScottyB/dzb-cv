@@ -34,7 +34,7 @@ export function formatUSDate(date: string): string {
   return new Date(date).toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
-    year: 'numeric'
+    year: 'numeric',
   });
 }
 
@@ -59,7 +59,7 @@ export function formatSalary(amount: number): string {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   }).format(amount);
 }
 
@@ -79,4 +79,4 @@ export async function loadTemplate(path: string): Promise<HandlebarsTemplateDele
 export async function loadCVData(path: string): Promise<CVData> {
   const data = await fs.readFile(path, 'utf-8');
   return JSON.parse(data);
-} 
+}

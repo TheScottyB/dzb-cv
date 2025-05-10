@@ -65,4 +65,3 @@ export class WatcherAgent {
   // TODO: Subscribe more broadly for full pipeline/agent monitoring.
   // TODO: Optionally act as batch QA/report generator.
 }
-

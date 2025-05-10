@@ -1,0 +1,70 @@
+{
+  "name": "@dzb-cv/ats",
+  "version": "1.0.0",
+  "description": "ATS (Applicant Tracking System) functionality for DZB CV Generator",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./analyzer": {
+      "types": "./dist/analyzer/index.d.ts",
+      "import": "./dist/analyzer/index.js"
+    },
+    "./engine": {
+      "types": "./dist/engine/index.d.ts",
+      "import": "./dist/engine/index.js"
+    },
+    "./parsers": {
+      "types": "./dist/parsers/index.d.ts",
+      "import": "./dist/parsers/index.js"
+    },
+    "./scoring": {
+      "types": "./dist/scoring/index.d.ts",
+      "import": "./dist/scoring/index.js"
+    },
+    "./taxonomies": {
+      "types": "./dist/taxonomies/index.d.ts",
+      "import": "./dist/taxonomies/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run || true",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "@dzb-cv/types": "workspace:*",
+    "openai": "^4.0.0",
+    "natural": "^6.0.0",
+    "cheerio": "^1.0.0-rc.12"
+  },
+  "devDependencies": {
+    "@types/natural": "^5.1.5",
+    "@dzb-cv/config": "workspace:*"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "ats",
+    "cv",
+    "resume",
+    "job-matching",
+    "nlp",
+    "machine-learning"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

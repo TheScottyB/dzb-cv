@@ -3,7 +3,7 @@
  * Agents can subscribe to topics, publish events, or send direct messages.
  * One instance should be shared among all agents.
  *
- * TODO: Persistent queue, async delivery, 
+ * TODO: Persistent queue, async delivery,
  * TODO: Wildcard and pattern subscriptions.
  */
 
@@ -60,4 +60,3 @@ export class AgentMessageBus {
   // TODO: Support async/queued delivery for reliability at scale.
   // TODO: Add "once" subscription for one-shot handlers.
 }
-

@@ -1,0 +1,134 @@
+/* Base button styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-weight: 500;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  text-decoration: none;
+}
+
+/* Button sizes */
+.size-small {
+  font-size: 0.875rem;
+  padding: 0.25rem 0.5rem;
+  min-height: 32px;
+}
+
+.size-medium {
+  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  min-height: 40px;
+}
+
+.size-large {
+  font-size: 1.125rem;
+  padding: 0.75rem 1rem;
+  min-height: 48px;
+}
+
+/* Button variants */
+.variant-primary {
+  background-color: #3182ce;
+  color: white;
+  border-color: #3182ce;
+}
+
+.variant-primary:hover:not(.disabled) {
+  background-color: #2b6cb0;
+  border-color: #2b6cb0;
+}
+
+.variant-secondary {
+  background-color: #718096;
+  color: white;
+  border-color: #718096;
+}
+
+.variant-secondary:hover:not(.disabled) {
+  background-color: #4a5568;
+  border-color: #4a5568;
+}
+
+.variant-success {
+  background-color: #38a169;
+  color: white;
+  border-color: #38a169;
+}
+
+.variant-success:hover:not(.disabled) {
+  background-color: #2f855a;
+  border-color: #2f855a;
+}
+
+.variant-danger {
+  background-color: #e53e3e;
+  color: white;
+  border-color: #e53e3e;
+}
+
+.variant-danger:hover:not(.disabled) {
+  background-color: #c53030;
+  border-color: #c53030;
+}
+
+.variant-outline {
+  background-color: transparent;
+  color: #3182ce;
+  border-color: #3182ce;
+}
+
+.variant-outline:hover:not(.disabled) {
+  background-color: rgba(49, 130, 206, 0.1);
+}
+
+.variant-link {
+  background-color: transparent;
+  color: #3182ce;
+  border-color: transparent;
+  padding-left: 0;
+  padding-right: 0;
+  text-decoration: none;
+}
+
+.variant-link:hover:not(.disabled) {
+  text-decoration: underline;
+}
+
+/* Full width button */
+.fullWidth {
+  width: 100%;
+  display: flex;
+}
+
+/* Active state */
+.active {
+  transform: translateY(1px);
+}
+
+/* Disabled state */
+.disabled,
+.button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Focus state */
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.3);
+}
+
+/* Active/pressed state */
+.button:active:not(.disabled) {
+  transform: translateY(1px);
+}

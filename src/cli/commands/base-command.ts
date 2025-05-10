@@ -1,6 +1,6 @@
 /**
  * Base Command Class
- * 
+ *
  * Provides common functionality and types for all CLI commands.
  * Command modules should extend this base class for consistency
  * and to benefit from shared utilities.
@@ -12,11 +12,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 // Import shared types
-import { 
-  RunConfiguration, 
-  VerifiedClaim, 
-  SectorType
-} from '../../shared/types/index.js';
+import { RunConfiguration, VerifiedClaim, SectorType } from '../../shared/types/index';
 
 export type { RunConfiguration, VerifiedClaim, SectorType };
 
@@ -35,13 +31,13 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to validate the sector type
-   * 
+   *
    * @param sector The sector to validate
    * @returns The validated sector or default
    */
   protected validateSector(sector: string): SectorType {
     const validSectors: SectorType[] = ['federal', 'state', 'private'];
-    
+
     if (!validSectors.includes(sector as SectorType)) {
       this.logWarning(`Invalid sector "${sector}", defaulting to "private"`);
       return 'private';
@@ -64,7 +60,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to log success messages
-   * 
+   *
    * @param message The success message to log
    */
   protected logSuccess(message: string): void {
@@ -73,7 +69,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to log info messages
-   * 
+   *
    * @param message The info message to log
    */
   protected logInfo(message: string): void {
@@ -82,7 +78,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to log warning messages
-   * 
+   *
    * @param message The warning message to log
    */
   protected logWarning(message: string): void {
@@ -91,14 +87,14 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to log error messages
-   * 
+   *
    * @param error The error to log
    * @param exit Whether to exit the process with error code
    */
   protected logError(error: unknown, exit: boolean = false): void {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error(chalk.red(`❌ Error: ${errorMessage}`));
-    
+
     if (exit) {
       process.exit(1);
     }
@@ -106,7 +102,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to create a directory if it doesn't exist
-   * 
+   *
    * @param dirPath The directory path to create
    */
   protected async ensureDirectory(dirPath: string): Promise<void> {
@@ -120,7 +116,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to resolve paths relative to the command file
-   * 
+   *
    * @param relativePath The relative path to resolve
    * @returns The absolute path
    */
@@ -132,7 +128,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to read JSON files
-   * 
+   *
    * @param filePath The path to the JSON file
    * @returns The parsed JSON content
    */
@@ -144,9 +140,9 @@ export abstract class BaseCommand {
       } catch {
         throw new Error(`File does not exist: ${filePath}`);
       }
-      
+
       const content = await fs.readFile(filePath, 'utf-8');
-      
+
       try {
         return JSON.parse(content) as T;
       } catch (parseError) {
@@ -160,7 +156,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to write JSON files
-   * 
+   *
    * @param filePath The path to write the JSON file
    * @param data The data to write
    */
@@ -176,7 +172,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper to record a complete run configuration for documentation
-   * 
+   *
    * @param config The run configuration to record
    * @param outputPath Optional output path for the configuration
    */
@@ -198,7 +194,7 @@ export abstract class BaseCommand {
           this.logSuccess(`Run configuration saved to ${outputPath}`);
         } catch (saveError) {
           this.logWarning(`Could not save run configuration to ${outputPath}: ${saveError}`);
-          
+
           // Try saving to default location as fallback
           const fallbackPath = path.join('output', 'run-configs', `run-config-${Date.now()}.json`);
           await this.ensureDirectory(path.dirname(fallbackPath));
@@ -210,9 +206,11 @@ export abstract class BaseCommand {
       // Log configuration summary
       this.logInfo('Run configuration recorded with:');
       if (config.jobPosting) this.logInfo(`- Job posting: ${config.jobPosting.url}`);
-      if (config.verification?.claims.length) this.logInfo(`- ${config.verification.claims.length} verified claims`);
+      if (config.verification?.claims.length)
+        this.logInfo(`- ${config.verification.claims.length} verified claims`);
       if (config.outputs?.cv) this.logInfo(`- Generated CV: ${config.outputs.cv}`);
-      if (config.outputs?.coverLetter) this.logInfo(`- Generated cover letter: ${config.outputs.coverLetter}`);
+      if (config.outputs?.coverLetter)
+        this.logInfo(`- Generated cover letter: ${config.outputs.coverLetter}`);
     } catch (error) {
       this.logError(`Failed to record run configuration: ${error}`, false);
     }
@@ -220,7 +218,7 @@ export abstract class BaseCommand {
 
   /**
    * Helper method to prompt for confirmation
-   * 
+   *
    * @param message The confirmation message to display
    * @returns True if confirmed, false otherwise
    */
@@ -231,4 +229,3 @@ export abstract class BaseCommand {
     return Promise.resolve(true);
   }
 }
-

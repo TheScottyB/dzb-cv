@@ -34,7 +34,7 @@ export class PDFGeneratorImpl extends PDFGenerator {
   async generateFromMarkdown(
     markdown: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string> {
     const html = this.markdown.render(markdown);
     return this.generateFromHTML(html, outputPath, options);
@@ -43,7 +43,7 @@ export class PDFGeneratorImpl extends PDFGenerator {
   async generateFromHTML(
     html: string,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string> {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
@@ -63,7 +63,7 @@ export class PDFGeneratorImpl extends PDFGenerator {
     templatePath: string,
     data: CVData,
     outputPath: string,
-    options?: Partial<PDFGenerationOptions>,
+    options?: Partial<PDFGenerationOptions>
   ): Promise<string> {
     throw new Error('Template-based generation not implemented');
   }
@@ -114,7 +114,7 @@ ${education
 ### ${edu.institution}
 ${edu.degree}
 ${edu.year}${edu.gpa ? `\nGPA: ${edu.gpa}` : ''}${edu.honors?.length ? `\nHonors: ${edu.honors.join(', ')}` : ''}
-`,
+`
   )
   .join('\n')}
 
@@ -135,7 +135,7 @@ ${exp.achievements.map((a) => `- ${a}`).join('\n')}
 `
     : ''
 }
-`,
+`
   )
   .join('\n')}
 

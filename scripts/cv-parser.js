@@ -7,6 +7,6 @@ import { createProfileFromMarkdown } from '../.tmp/artefacts/utils/markdown-prof
  * @returns Structured ProfileData object
  */
 export function parseCvMarkdown(markdownContent) {
-    return createProfileFromMarkdown(markdownContent);
+  return createProfileFromMarkdown(markdownContent);
 }
 //# sourceMappingURL=cv-parser.js.map

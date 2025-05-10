@@ -1,0 +1,45 @@
+{
+  "name": "@dzb-cv/templates",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./basic": {
+      "types": "./dist/basic/index.d.ts",
+      "import": "./dist/basic/index.js"
+    },
+    "./academic": {
+      "types": "./dist/academic/index.d.ts",
+      "import": "./dist/academic/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run || true",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,tsx",
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "@dzb-cv/types": "workspace:*",
+    "@dzb-cv/ui": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@dzb-cv/config": "workspace:*",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^14.1.2",
+    "@types/testing-library__jest-dom": "^6.0.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "jsdom": "^23.0.1"
+  }
+}

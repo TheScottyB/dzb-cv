@@ -1,7 +1,7 @@
 /**
  * BlueprintAgent: Receives blueprint uploads, parses build instructions, and coordinates agent tasks accordingly.
  * Internal state: Current blueprint content as string (expand later to structured plans).
- * 
+ *
  * TODO: Blueprint validation, schema evolution, audit/change log, richer agent notifications.
  */
 
@@ -47,9 +47,12 @@ export class BlueprintAgent {
       return;
     }
     // Example/demo parse: log lines with "task", "tool", or "agent"
-    const importantLines = this.blueprint.split('\n')
-      .filter(line => /(task|tool|agent)/i.test(line));
-    console.info(`${this.logPrefix} Parsed blueprint; found directives:\n${importantLines.join('\n') || '[none found]'}`);
+    const importantLines = this.blueprint
+      .split('\n')
+      .filter((line) => /(task|tool|agent)/i.test(line));
+    console.info(
+      `${this.logPrefix} Parsed blueprint; found directives:\n${importantLines.join('\n') || '[none found]'}`
+    );
     // TODO: Actually emit parsed plan, update task registry, etc.
   }
 
@@ -78,4 +81,3 @@ export class BlueprintAgent {
   // TODO: Add methods for schema upgrade, audit trails, task/phase waves.
   // TODO: Support agent message handlers for real-time coordination.
 }
-

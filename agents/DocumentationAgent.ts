@@ -6,4 +6,3 @@ export class DocumentationAgent {
     console.info(`[DocumentationAgent] Initial task assigned: ${task}`);
   }
 }
-

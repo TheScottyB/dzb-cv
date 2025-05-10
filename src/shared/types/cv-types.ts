@@ -1,134 +1,31 @@
 /**
- * Core CV data structure
+ * @deprecated Import from @dzb-cv/core/types instead
  */
-export interface CVData {
-  personalInfo: {
-    name: {
-      full: string;
-      first?: string;
-      last?: string;
-    };
-    title?: string;
-    contact: {
-      email: string;
-      phone: string;
-      address?: string;
-    };
-    citizenship?: string;
-  };
-  profiles?: {
-    linkedIn?: string;
-    github?: string;
-    twitter?: string;
-    website?: string;
-    [key: string]: string | undefined;
-  };
-  professionalSummary?: string;
-  education: Array<{
-    degree: string;
-    institution: string;
-    year: string;
-    field?: string;
-    degree_type?: string;
-    completion_date?: string;
-    status?: string;
-    notes?: string;
-  }>;
-  skills: string[];
-  certifications: string[];
-  professionalAffiliations?: Array<{
-    organization: string;
-    roles?: string[];
-    activities?: string[];
-  }>;
-  workExperience?: {
-    healthcare?: Experience[];
-    realEstate?: Experience[];
-    foodIndustry?: Experience[];
-    [key: string]: Experience[] | undefined;
-  };
-  volunteerWork?: Array<{
-    organization?: string;
-    year?: string;
-    position?: string;
-    duties?: string[];
-    activities?: string[];
-    location?: string;
-    while?: string;
-  }>;
-  awards?: Array<{
-    title: string;
-    organization?: string;
-    period?: string;
-    notes?: string;
-    achievement?: string;
-    description?: string;
-  }>;
-  cvTypes?: {
-    federal?: CVTypeConfiguration;
-    state?: CVTypeConfiguration;
-    private?: CVTypeConfiguration;
-    [key: string]: CVTypeConfiguration | undefined;
-  };
-  experience: Array<{
-    title: string;
-    company: string;
-    startDate: string;
-    endDate?: string;
-    responsibilities: string[];
-  }>;
-}
+import {
+  CVData as BaseCVData,
+  Experience as BaseExperience,
+  CVTypeConfiguration as BaseCVTypeConfiguration,
+  PDFGenerationOptions as BasePDFOptions,
+  TemplateOptions as BaseTemplateOptions,
+  CVGenerationOptions as BaseCVGenerationOptions,
+} from '@dzb-cv/core/types';
+
+export type CVData = BaseCVData;
 
 /**
- * Experience entry structure for work history
+ * @deprecated Import from @dzb-cv/core/types instead
  */
-export interface Experience {
-  employer: string;
-  position: string;
-  period: string;
-  address?: string;
-  location?: string;
-  duties?: string[];
-  hours?: string;
-  employmentType: string;
-  supervisor?: string;
-  mayContact?: boolean;
-  achievements?: string[];
-  grade_level?: string;
-  salary?: string;
-  career_progression?: string[];
-}
+export type Experience = BaseExperience;
 
 /**
- * CV type-specific configuration
+ * @deprecated Import from @dzb-cv/core/types instead
  */
-export interface CVTypeConfiguration {
-  requirements?: string[];
-  format?: string;
-  emphasizedExperience?: string[];
-  additionalDetails?: Record<string, unknown>;
-  highlights?: string[];
-}
+export type CVTypeConfiguration = BaseCVTypeConfiguration;
 
 /**
- * PDF generation options
+ * @deprecated Use PDFGenerationOptions from @dzb-cv/core/types instead
  */
-export interface PDFOptions {
-  includeHeaderFooter: boolean;
-  headerText?: string;
-  footerText?: string;
-  paperSize?: 'Letter' | 'A4' | 'Legal';
-  margins?: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
-  };
-  pdfTitle?: string;
-  pdfAuthor?: string;
-  orientation?: 'portrait' | 'landscape';
-  fontFamily?: string;
-}
+export type PDFOptions = BasePDFOptions;
 
 /**
  * Job posting analysis interfaces
@@ -158,11 +55,13 @@ export interface JobPostingAnalysis {
   keyTerms: string[];
   jobType?: string | undefined;
   experienceLevel?: string | undefined;
-  salaryRange?: {
-    min?: number | undefined;
-    max?: number | undefined;
-    period?: string | undefined;
-  } | undefined;
+  salaryRange?:
+    | {
+        min?: number | undefined;
+        max?: number | undefined;
+        period?: string | undefined;
+      }
+    | undefined;
   educationRequirements?: string[] | undefined;
   source: {
     url: string;
@@ -194,32 +93,12 @@ export interface CVMatchResult {
 }
 
 /**
- * Template rendering options
+/**
+ * @deprecated Use TemplateOptions from @dzb-cv/core/types instead
  */
-export interface TemplateOptions {
-  includePersonalInfo?: boolean;
-  includeProfessionalSummary?: boolean;
-  includeEducation?: boolean;
-  includeSkills?: boolean;
-  includeExperience?: boolean;
-  includeVolunteerWork?: boolean;
-  includeAwards?: boolean;
-  includeAffiliations?: boolean;
-  customSections?: Array<{
-    title: string;
-    content: string;
-  }>;
-  experienceOrder?: string[];
-  experienceFilter?: (exp: Experience) => boolean;
-  customFooter?: string;
-  customHeader?: string;
-}
+export type TemplateOptions = BaseTemplateOptions;
 
 /**
- * CV Generation options for both markdown and PDF
+ * @deprecated Use CVGenerationOptions from @dzb-cv/core/types instead
  */
-export interface CVGenerationOptions {
-  format: 'markdown' | 'pdf';
-  pdfOptions?: Partial<PDFOptions>;
-  filename?: string;
-}
+export type CVGenerationOptions = BaseCVGenerationOptions;

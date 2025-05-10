@@ -22,10 +22,11 @@ const AGENT_CLASSES: Record<string, any> = {
 export function spawnAgent(role: string, options: object): any {
   const AgentClass = AGENT_CLASSES[role];
   if (!AgentClass) {
-    throw new Error(`[spawnAgent] Unknown agent role: '${role}'. Please add it to AGENT_CLASSES mapping.`);
+    throw new Error(
+      `[spawnAgent] Unknown agent role: '${role}'. Please add it to AGENT_CLASSES mapping.`
+    );
   }
   return new AgentClass(options);
 }
 
 // TODO: Support dynamic import for plugin/extension agents.
-

@@ -5,42 +5,43 @@ import path from 'path';
 import { convertMarkdownToPdf } from './pdf-generator.js';
 
 // Job-specific configuration
-const JOB_TITLE = "Medical Laboratory Scientist/Medical Laboratory Technician";
-const JOB_DEPARTMENT = "Mercyhealth";
-const JOB_ID = "39454";
-const _OUTPUT_SUBDIR = "mercyhealth";
-const _SECTOR = "healthcare";
-const PRIMARY_COLOR = "#005A9C";  // Mercyhealth blue
-const SECONDARY_COLOR = "#2E7D32";
-const ACCENT_COLOR = "#1B5E20";
-const BG_COLOR = "#F5F5F5";
+const JOB_TITLE = 'Medical Laboratory Scientist/Medical Laboratory Technician';
+const JOB_DEPARTMENT = 'Mercyhealth';
+const JOB_ID = '39454';
+const _OUTPUT_SUBDIR = 'mercyhealth';
+const _SECTOR = 'healthcare';
+const PRIMARY_COLOR = '#005A9C'; // Mercyhealth blue
+const SECONDARY_COLOR = '#2E7D32';
+const ACCENT_COLOR = '#1B5E20';
+const BG_COLOR = '#F5F5F5';
 
 async function main() {
   try {
     // Create output directory if needed
     const outputDir = `./job-postings/careers.mercyhealthsystem.org-39454`;
     await fs.mkdir(outputDir, { recursive: true });
-    
+
     // Read the template and job data
     const templatePath = './data/templates/private/private-template.md';
     const jobDataPath = './job-postings/careers.mercyhealthsystem.org-39454/job-data.json';
-    
+
     console.log(`Reading template from ${templatePath}...`);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
-    
+
     console.log(`Reading job data from ${jobDataPath}...`);
     const jobData = JSON.parse(await fs.readFile(jobDataPath, 'utf-8'));
-    
+
     // Generate CV content from template
-    const cvContent = templateContent.replace(/{{JOB_TITLE}}/g, JOB_TITLE)
-                                   .replace(/{{COMPANY}}/g, JOB_DEPARTMENT)
-                                   .replace(/{{JOB_ID}}/g, JOB_ID);
-    
+    const cvContent = templateContent
+      .replace(/{{JOB_TITLE}}/g, JOB_TITLE)
+      .replace(/{{COMPANY}}/g, JOB_DEPARTMENT)
+      .replace(/{{JOB_ID}}/g, JOB_ID);
+
     // Save CV markdown
     const cvMarkdownPath = path.join(outputDir, 'cv-draft.md');
     await fs.writeFile(cvMarkdownPath, cvContent);
     console.log(`Saved CV markdown to: ${cvMarkdownPath}`);
-    
+
     // Configure PDF options with styling
     const pdfOptions = {
       paperSize: 'Letter',
@@ -48,7 +49,7 @@ async function main() {
         top: 0.75,
         right: 0.75,
         bottom: 0.75,
-        left: 0.75
+        left: 0.75,
       },
       fontFamily: 'Georgia, serif',
       fontSize: 11,
@@ -58,9 +59,9 @@ async function main() {
       orientation: 'portrait',
       pdfTitle: `Dawn Zurick Beilfuss - ${JOB_TITLE} CV`,
       pdfAuthor: 'Dawn Zurick Beilfuss',
-      pdfCreator: 'DZB CV Generator'
+      pdfCreator: 'DZB CV Generator',
     };
-    
+
     // Custom CSS styling
     const customCss = `
       h1 { 
@@ -90,9 +91,9 @@ async function main() {
         margin-bottom: 5px;
       }
     `;
-    
+
     pdfOptions.cssStylesheet = customCss;
-    
+
     // Generate CV PDF
     console.log('Generating CV PDF...');
     const cvOutputPath = path.join(outputDir, 'Dawn_Zurick_Beilfuss_CV.pdf');
@@ -128,16 +129,15 @@ Dawn Zurick Beilfuss`;
     // Generate cover letter PDF
     console.log('Generating cover letter PDF...');
     const coverLetterOutputPath = path.join(outputDir, 'Dawn_Zurick_Beilfuss_Cover_Letter.pdf');
-    
+
     const coverLetterOptions = {
       ...pdfOptions,
       headerText: 'Dawn Zurick Beilfuss - Cover Letter',
-      pdfTitle: `Dawn Zurick Beilfuss - ${JOB_TITLE} Cover Letter`
+      pdfTitle: `Dawn Zurick Beilfuss - ${JOB_TITLE} Cover Letter`,
     };
-    
+
     await convertMarkdownToPdf(coverLetterContent, coverLetterOutputPath, coverLetterOptions);
     console.log(`Successfully created cover letter PDF at: ${coverLetterOutputPath}`);
-    
   } catch (error) {
     console.error('Error generating documents:', error);
     process.exit(1);

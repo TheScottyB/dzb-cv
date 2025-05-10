@@ -1,7 +1,7 @@
 /**
  * ML-based resume parser with advanced matching capabilities
  */
-import { SKILLS_SET, SKILL_CATEGORIES } from './taxonomies/skills.js';
+import { SKILLS_SET, SKILL_CATEGORIES } from './taxonomies/skills';
 
 /**
  * Structure of parsed resume data
@@ -102,7 +102,7 @@ export class MLResumeParser {
       taxonomyPath: './data/taxonomies',
       confidenceThreshold: 0.8,
       maxTokens: 1024,
-      ...options
+      ...options,
     };
     this.skillsSet = SKILLS_SET;
   }
@@ -142,7 +142,8 @@ export class MLResumeParser {
     const sections: Record<string, string[]> = {};
 
     // Identify section headings (case-insensitive, leading lines)
-    const headingPattern = /^(SUMMARY|TECHNICAL SKILLS?|SKILLS?|WORK EXPERIENCE|EDUCATION|CERTIFICATIONS?|PROJECTS?)\s*$/i;
+    const headingPattern =
+      /^(SUMMARY|TECHNICAL SKILLS?|SKILLS?|WORK EXPERIENCE|EDUCATION|CERTIFICATIONS?|PROJECTS?)\s*$/i;
     let foundFirstSection = false;
     for (const line of lines) {
       if (!foundFirstSection && !headingPattern.test(line) && line.trim() !== '') {
@@ -169,15 +170,18 @@ export class MLResumeParser {
     // Extract personal info
     const personalInfoText = personalInfoLines.join('\n');
     const emailMatch = personalInfoText.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
-    const phoneMatch = personalInfoText.match(/(\(\d{3}\)\s*\d{3}-\d{4})|(\d{3}[-.\s]\d{3}[-.\s]\d{4})/);
+    const phoneMatch = personalInfoText.match(
+      /(\(\d{3}\)\s*\d{3}-\d{4})|(\d{3}[-.\s]\d{3}[-.\s]\d{4})/
+    );
     const nameMatch = personalInfoLines.length > 0 ? personalInfoLines[0].trim() : '';
     // Simplistic: "123 Main St" as location if found
     const locationMatch = personalInfoText.match(/\d{1,4}\s+\w+\s+\w+/);
 
     // Extract skills
-    const skillsSection = sections['TECHNICAL SKILL'] || sections['TECHNICAL SKILLS'] || sections['SKILLS'] || [];
-    const skillWords = skillsSection.flatMap(l => l.split(/[,;]+/).map(w => w.trim()));
-    const technicalSkills = skillWords.filter(w => w && w.match(/[A-Za-z0-9]/));
+    const skillsSection =
+      sections['TECHNICAL SKILL'] || sections['TECHNICAL SKILLS'] || sections['SKILLS'] || [];
+    const skillWords = skillsSection.flatMap((l) => l.split(/[,;]+/).map((w) => w.trim()));
+    const technicalSkills = skillWords.filter((w) => w && w.match(/[A-Za-z0-9]/));
 
     // Work Experience
     const workSection = sections['WORK EXPERIENCE'] || [];
@@ -194,11 +198,14 @@ export class MLResumeParser {
       }
     }
     if (block.length) workBlocks.push(block);
-    const workExperience = workBlocks.map(blockLines => {
+    const workExperience = workBlocks.map((blockLines) => {
       const title = (blockLines[0] || '').trim();
       const companyLine = blockLines[1] || '';
-      const dateLine = blockLines.find(l => l.match(/\d{4}/)) || '';
-      const bullets = blockLines.slice(2).filter(l => l.startsWith('-')).map(l => l.slice(1).trim());
+      const dateLine = blockLines.find((l) => l.match(/\d{4}/)) || '';
+      const bullets = blockLines
+        .slice(2)
+        .filter((l) => l.startsWith('-'))
+        .map((l) => l.slice(1).trim());
       return {
         title,
         company: companyLine.trim(),
@@ -222,7 +229,7 @@ export class MLResumeParser {
       }
     }
     if (block.length) educationBlocks.push(block);
-    const education = educationBlocks.map(b => ({
+    const education = educationBlocks.map((b) => ({
       degree: b[0] || '',
       institution: b[1] || '',
       achievements: [],
@@ -230,13 +237,13 @@ export class MLResumeParser {
 
     // Certifications
     const certSection = sections['CERTIFICATIONS'] || [];
-    const certifications = certSection.filter(Boolean).map(l => ({
+    const certifications = certSection.filter(Boolean).map((l) => ({
       name: l.trim(),
     }));
 
     // Projects
     const projSection = sections['PROJECTS'] || [];
-    const projects = projSection.filter(Boolean).map(l => ({
+    const projects = projSection.filter(Boolean).map((l) => ({
       name: l.trim().split(' - ')[0],
       description: [l.trim()],
       technologies: [],
@@ -265,8 +272,8 @@ export class MLResumeParser {
         fileName: 'resume',
         fileSize: buffer.length,
         parseDate: new Date().toISOString(),
-        confidence: 0.8
-      }
+        confidence: 0.8,
+      },
     };
   }
 
@@ -284,14 +291,8 @@ export class MLResumeParser {
    * @param resume Parsed resume data
    * @param jobDescription Job description text
    */
-  async analyzeResume(
-    resume: ParsedResume,
-    jobDescription: string
-  ): Promise<MLAnalysisResult> {
-    const skillsMatch = this.calculateSkillsMatch(
-      resume.structuredData.skills,
-      jobDescription
-    );
+  async analyzeResume(resume: ParsedResume, jobDescription: string): Promise<MLAnalysisResult> {
+    const skillsMatch = this.calculateSkillsMatch(resume.structuredData.skills, jobDescription);
 
     const experienceMatch = this.calculateExperienceMatch(
       resume.structuredData.workExperience,
@@ -304,11 +305,7 @@ export class MLResumeParser {
     );
 
     // Calculate overall match with weighted scores
-    const overallMatch = (
-      skillsMatch * 0.4 +
-      experienceMatch * 0.4 +
-      educationMatch * 0.2
-    ) * 100;
+    const overallMatch = (skillsMatch * 0.4 + experienceMatch * 0.4 + educationMatch * 0.2) * 100;
 
     // Extract missing skills
     const missingSkills = this.extractMissingSkills(
@@ -317,28 +314,24 @@ export class MLResumeParser {
     );
 
     // Calculate experience relevance
-    const relevantExperience = resume.structuredData.workExperience.map(exp => ({
+    const relevantExperience = resume.structuredData.workExperience.map((exp) => ({
       role: exp.title,
-      relevance: this.calculateRoleRelevance(exp, jobDescription)
+      relevance: this.calculateRoleRelevance(exp, jobDescription),
     }));
 
     // Generate improvement suggestions
-    const suggestions = this.generateSuggestions(
-      resume,
-      jobDescription,
-      missingSkills
-    );
+    const suggestions = this.generateSuggestions(resume, jobDescription, missingSkills);
 
     return {
       overallMatch,
       categoryMatches: {
         skills: skillsMatch * 100,
         experience: experienceMatch * 100,
-        education: educationMatch * 100
+        education: educationMatch * 100,
       },
       missingSkills,
       relevantExperience,
-      suggestions
+      suggestions,
     };
   }
 
@@ -375,8 +368,8 @@ export class MLResumeParser {
       return 0.5; // Neutral if no explicit skills in job desc
     }
 
-    const resumeSkills = skills.technical.map(skill => skill.toLowerCase());
-    const matchedSkills = requiredSkills.filter(skill => 
+    const resumeSkills = skills.technical.map((skill) => skill.toLowerCase());
+    const matchedSkills = requiredSkills.filter((skill) =>
       resumeSkills.includes(skill.toLowerCase())
     );
 
@@ -384,10 +377,7 @@ export class MLResumeParser {
     let score = matchedSkills.length / requiredSkills.length;
 
     // Add bonus for having skills in the same categories
-    const categoryBonus = this.calculateCategoryBonus(
-      skills.technical,
-      requiredSkills
-    );
+    const categoryBonus = this.calculateCategoryBonus(skills.technical, requiredSkills);
 
     return Math.min(1, score + categoryBonus);
   }
@@ -395,17 +385,14 @@ export class MLResumeParser {
   /**
    * Calculates bonus score for having skills in the same categories
    */
-  private calculateCategoryBonus(
-    resumeSkills: string[],
-    requiredSkills: string[]
-  ): number {
+  private calculateCategoryBonus(resumeSkills: string[], requiredSkills: string[]): number {
     const resumeCategories = new Set<string>();
     const requiredCategories = new Set<string>();
 
     // Find categories for resume skills
     for (const skill of resumeSkills) {
       for (const category of SKILL_CATEGORIES) {
-        if (category.skills.some(s => s.toLowerCase() === skill.toLowerCase())) {
+        if (category.skills.some((s) => s.toLowerCase() === skill.toLowerCase())) {
           resumeCategories.add(category.name);
         }
       }
@@ -414,14 +401,14 @@ export class MLResumeParser {
     // Find categories for required skills
     for (const skill of requiredSkills) {
       for (const category of SKILL_CATEGORIES) {
-        if (category.skills.some(s => s.toLowerCase() === skill.toLowerCase())) {
+        if (category.skills.some((s) => s.toLowerCase() === skill.toLowerCase())) {
           requiredCategories.add(category.name);
         }
       }
     }
 
     // Calculate category overlap
-    const matchedCategories = Array.from(requiredCategories).filter(cat =>
+    const matchedCategories = Array.from(requiredCategories).filter((cat) =>
       resumeCategories.has(cat)
     );
 
@@ -457,21 +444,15 @@ export class MLResumeParser {
       }
 
       // Description match (40%)
-      const descriptionMatch = exp.description.some(desc =>
-        jobDoc.includes(desc.toLowerCase())
-      );
+      const descriptionMatch = exp.description.some((desc) => jobDoc.includes(desc.toLowerCase()));
       if (descriptionMatch) {
         expScore += 0.4;
       }
 
       // Skills match bonus
-      const expSkills = this.extractSkillsFromText(
-        exp.description.join(' ')
-      );
+      const expSkills = this.extractSkillsFromText(exp.description.join(' '));
       const jobSkills = this.extractSkillsFromText(jobDescription);
-      const skillsOverlap = expSkills.filter(skill =>
-        jobSkills.includes(skill)
-      ).length;
+      const skillsOverlap = expSkills.filter((skill) => jobSkills.includes(skill)).length;
 
       if (skillsOverlap > 0) {
         expScore += Math.min(0.2, skillsOverlap * 0.05);
@@ -516,7 +497,7 @@ export class MLResumeParser {
       }
 
       // Achievement match bonus
-      const achievementMatch = edu.achievements.some(achievement =>
+      const achievementMatch = edu.achievements.some((achievement) =>
         jobDoc.includes(achievement.toLowerCase())
       );
       if (achievementMatch) {
@@ -532,10 +513,7 @@ export class MLResumeParser {
   /**
    * Extracts skills mentioned in job description but missing from resume
    */
-  private extractMissingSkills(
-    resumeSkills: string[],
-    jobDescription: string
-  ): string[] {
+  private extractMissingSkills(resumeSkills: string[], jobDescription: string): string[] {
     // TODO: Implement skill extraction from job description
     // This would involve:
     // 1. Using NLP to extract skill keywords from job description
@@ -555,9 +533,7 @@ export class MLResumeParser {
     const relevanceFactors = [
       lowerJobDesc.includes(experience.title.toLowerCase()) ? 0.4 : 0,
       lowerJobDesc.includes(experience.company.toLowerCase()) ? 0.2 : 0,
-      experience.description.some(desc => 
-        lowerJobDesc.includes(desc.toLowerCase())
-      ) ? 0.4 : 0
+      experience.description.some((desc) => lowerJobDesc.includes(desc.toLowerCase())) ? 0.4 : 0,
     ];
 
     return relevanceFactors.reduce((sum, factor) => sum + factor, 0);
@@ -575,9 +551,7 @@ export class MLResumeParser {
 
     // Add suggestions based on missing skills
     if (missingSkills.length > 0) {
-      suggestions.push(
-        `Consider adding these relevant skills: ${missingSkills.join(', ')}`
-      );
+      suggestions.push(`Consider adding these relevant skills: ${missingSkills.join(', ')}`);
     }
 
     // Add suggestions based on experience
@@ -592,4 +566,4 @@ export class MLResumeParser {
 
     return suggestions;
   }
-} 
+}

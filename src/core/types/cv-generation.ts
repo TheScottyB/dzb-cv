@@ -27,4 +27,3 @@ export interface CVGenerationOptions {
   filename?: string;
   templateOptions?: TemplateOptions;
 }
-

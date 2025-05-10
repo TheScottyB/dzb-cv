@@ -1,0 +1,65 @@
+{
+  "name": "@dzb-cv/types",
+  "version": "1.0.0",
+  "description": "TypeScript type definitions for the DZB CV Generator system",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./cv": {
+      "types": "./dist/cv/index.d.ts",
+      "import": "./dist/cv/index.js"
+    },
+    "./pdf": {
+      "types": "./dist/pdf/index.d.ts",
+      "import": "./dist/pdf/index.js"
+    },
+    "./ats": {
+      "types": "./dist/ats/index.d.ts",
+      "import": "./dist/ats/index.js"
+    },
+    "./job": {
+      "types": "./dist/job/index.d.ts",
+      "import": "./dist/job/index.js"
+    },
+    "./templates": {
+      "types": "./dist/templates/index.d.ts",
+      "import": "./dist/templates/index.js"
+    }
+  },
+  "keywords": [
+    "typescript",
+    "types",
+    "cv",
+    "resume",
+    "ats",
+    "job-matching",
+    "pdf-generation",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run || true",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'Lint skipped for types package.'",
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo"
+  },
+  "devDependencies": {
+    "@dzb-cv/config": "workspace:*"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

@@ -2,7 +2,7 @@ import type { CVData, Experience } from './cv-base.js';
 
 /**
  * Options for template customization and CV generation
- * 
+ *
  * This interface defines all available options for customizing CV templates
  * and controlling the generation process.
  */
@@ -64,4 +64,4 @@ export interface BaseTemplate {
   generateCertifications(data: CVData, options?: TemplateOptions): string;
   /** Generate projects section */
   generateProjects(data: CVData, options?: TemplateOptions): string;
-} 
+}

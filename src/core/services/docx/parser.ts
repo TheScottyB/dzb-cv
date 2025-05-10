@@ -7,4 +7,4 @@ export class DOCXParser implements TextParser {
     const textContent = await doc.getText();
     return textContent.trim();
   }
-} 
+}

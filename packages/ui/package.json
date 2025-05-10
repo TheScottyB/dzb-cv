@@ -1,0 +1,91 @@
+{
+  "name": "@dzb-cv/ui",
+  "version": "1.0.0",
+  "description": "UI components for DZB CV Generator",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./Heading": {
+      "types": "./dist/components/Typography/Heading.d.ts",
+      "import": "./dist/components/Typography/Heading.js"
+    },
+    "./Text": {
+      "types": "./dist/components/Typography/Text.d.ts",
+      "import": "./dist/components/Typography/Text.js"
+    },
+    "./List": {
+      "types": "./dist/components/Typography/List.d.ts",
+      "import": "./dist/components/Typography/List.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
+    },
+    "./components/Typography": {
+      "types": "./dist/components/Typography/index.d.ts",
+      "import": "./dist/components/Typography/index.js"
+    },
+    "./components/*": {
+      "types": "./dist/components/*/index.d.ts",
+      "import": "./dist/components/*/index.js"
+    },
+    "./hooks": {
+      "types": "./dist/hooks/index.d.ts",
+      "import": "./dist/hooks/index.js"
+    },
+    "./styles": {
+      "types": "./dist/styles/index.d.ts",
+      "import": "./dist/styles/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc && pnpm run copy-files",
+    "copy-files": "cp -R src/components/**/*.module.css dist/components/",
+    "test": "vitest run || true",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf dist coverage tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "@dzb-cv/types": "workspace:*",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@dzb-cv/config": "workspace:*",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/user-event": "^14.0.0",
+    "jsdom": "^22.1.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "ui",
+    "components",
+    "react",
+    "cv",
+    "resume",
+    "generator",
+    "frontend"
+  ],
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "sideEffects": false
+}

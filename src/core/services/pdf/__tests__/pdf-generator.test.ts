@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { PDFGenerator } from '../pdf-generator.js';
+import { DefaultPDFGenerator } from '../pdf-generator.js';
 import type { CVData } from '../../../types/cv-base.js';
 import type { CVGenerationOptions } from '../../../types/cv-generation.js';
 
@@ -7,59 +7,60 @@ import type { CVGenerationOptions } from '../../../types/cv-generation.js';
 vi.mock('puppeteer', () => {
   const pdfMock = vi.fn().mockResolvedValue(Buffer.from('PDF content'));
   const setContentMock = vi.fn().mockResolvedValue(undefined);
-  
+
   return {
     default: {
       launch: vi.fn().mockResolvedValue({
         newPage: vi.fn().mockResolvedValue({
           setContent: setContentMock,
-          pdf: pdfMock
+          pdf: pdfMock,
         }),
-        close: vi.fn().mockResolvedValue(undefined)
-      })
-    }
+        close: vi.fn().mockResolvedValue(undefined),
+      }),
+    },
   };
 });
 
 describe('PDFGenerator', () => {
-  let generator: PDFGenerator;
+  let generator: DefaultPDFGenerator;
   let testData: CVData;
 
   beforeEach(() => {
-    generator = new PDFGenerator();
+    generator = new DefaultPDFGenerator();
     testData = {
       personalInfo: {
         name: { full: 'Test User' },
         contact: {
           email: 'test@example.com',
-          phone: '123-456-7890'
-        }
+          phone: '123-456-7890',
+        },
       },
-      experience: [{
-        title: 'Developer',
-        company: 'Tech Co',
-        startDate: '2020-01',
-        endDate: '2023-01',
-        responsibilities: ['Coding', 'Testing']
-      }],
-      education: [{
-        degree: 'BS Computer Science',
-        institution: 'Test University',
-        year: '2020'
-      }],
+      experience: [
+        {
+          title: 'Developer',
+          company: 'Tech Co',
+          startDate: '2020-01',
+          endDate: '2023-01',
+          responsibilities: ['Coding', 'Testing'],
+        },
+      ],
+      education: [
+        {
+          degree: 'BS Computer Science',
+          institution: 'Test University',
+          year: '2020',
+        },
+      ],
       skills: ['JavaScript', 'TypeScript'],
-      certifications: ['AWS Certified']
+      certifications: ['AWS Certified'],
     };
   });
 
   describe('generate', () => {
     it('should generate PDF with default template', async () => {
-      const options: CVGenerationOptions = {
-        format: 'pdf',
-        pdfOptions: {
-          includeHeaderFooter: false,
-          paperSize: 'Letter'
-        }
+      const options = {
+        includeHeaderFooter: false,
+        paperSize: 'Letter',
       };
 
       const result = await generator.generate(testData, options);
@@ -67,13 +68,10 @@ describe('PDFGenerator', () => {
     });
 
     it('should generate PDF with minimal template', async () => {
-      const options: CVGenerationOptions & { template: string } = {
-        format: 'pdf',
+      const options = {
         template: 'minimal',
-        pdfOptions: {
-          includeHeaderFooter: false,
-          paperSize: 'Letter'
-        }
+        includeHeaderFooter: false,
+        paperSize: 'Letter',
       };
 
       const result = await generator.generate(testData, options);
@@ -86,13 +84,13 @@ describe('PDFGenerator', () => {
           name: { full: 'Minimal User' },
           contact: {
             email: 'minimal@example.com',
-            phone: '555-1234'
-          }
+            phone: '555-1234',
+          },
         },
         experience: [],
         education: [],
         skills: [],
-        certifications: []
+        certifications: [],
       };
 
       const result = await generator.generate(minimalData);
@@ -102,12 +100,11 @@ describe('PDFGenerator', () => {
 
   it('should throw error for invalid template', async () => {
     const options = {
-      format: 'pdf' as const,
-      template: 'non-existent'
+      template: 'non-existent',
     };
 
-    await expect(generator.generate(testData, options))
-      .rejects.toThrow("Template 'non-existent' not found");
+    await expect(generator.generate(testData, options)).rejects.toThrow(
+      "Template 'non-existent' not found"
+    );
   });
 });
-

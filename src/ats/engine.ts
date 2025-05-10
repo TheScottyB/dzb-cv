@@ -1,9 +1,9 @@
 /**
  * Unified resume analysis engine combining ML parsing and ATS API integration
  */
-import { ATSApiClient, JobBoardAPIOptions } from './api.js';
-import { MLResumeParser, MLParserOptions, ParsedResume, MLAnalysisResult } from './ml-parser.js';
-import { ATSAnalysisResult } from './scoring.js';
+import { ATSApiClient, JobBoardAPIOptions } from './api';
+import { MLResumeParser, MLParserOptions, ParsedResume, MLAnalysisResult } from './ml-parser';
+import { ATSAnalysisResult } from './scoring';
 
 export interface ResumeAnalysisOptions {
   ml?: MLParserOptions;
@@ -41,7 +41,7 @@ export class ResumeAnalysisEngine {
   async analyzeResume(
     buffer: Buffer,
     mimeType: string,
-    jobId?: string,
+    jobId?: string
   ): Promise<ResumeAnalysisResult> {
     // Parse resume using ML parser
     const parsed = await this.mlParser.parseResume(buffer, mimeType);
@@ -58,7 +58,7 @@ export class ResumeAnalysisEngine {
         // Get ATS analysis from external API
         const externalAnalysis = await this.atsApiClient.analyzeResumeForJob(
           buffer.toString('base64'),
-          jobId,
+          jobId
         );
 
         // Convert external analysis to our format
@@ -124,7 +124,7 @@ export class ResumeAnalysisEngine {
    */
   private calculateCombinedScore(
     mlAnalysis: MLAnalysisResult,
-    atsAnalysis?: ATSAnalysisResult,
+    atsAnalysis?: ATSAnalysisResult
   ): number {
     if (!atsAnalysis) {
       return mlAnalysis.overallMatch;

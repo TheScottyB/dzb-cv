@@ -1,6 +1,6 @@
 /**
  * Profile Management Command
- * 
+ *
  * Handles importing, exporting, and validating CV profiles.
  */
 
@@ -39,7 +39,7 @@ interface ExportProfileOptions {
  */
 export class ManageProfileCommand extends BaseCommand {
   private profileService: ProfileService;
-  
+
   constructor() {
     super('profile', 'Manage CV profiles');
     this.profileService = new ProfileService();
@@ -49,10 +49,8 @@ export class ManageProfileCommand extends BaseCommand {
    * Configure the command
    */
   configure(): void {
-    this.program
-      .name(this.name)
-      .description(this.description);
-    
+    this.program.name(this.name).description(this.description);
+
     // Sub-command to import a profile
     this.program
       .command('import')
@@ -63,7 +61,7 @@ export class ManageProfileCommand extends BaseCommand {
       .option('--output <path>', 'Save the imported profile to a file')
       .option('-f, --format <format>', 'Format for output (json, markdown)', 'json')
       .action(this.executeImport.bind(this));
-    
+
     // Sub-command to export a profile
     this.program
       .command('export')
@@ -72,7 +70,7 @@ export class ManageProfileCommand extends BaseCommand {
       .option('-f, --format <format>', 'Export format (json, markdown, pdf)', 'json')
       .option('-o, --output <path>', 'Output file path', 'output/profiles/exported-profile.json')
       .action(this.executeExport.bind(this));
-    
+
     // Sub-command to validate a profile
     this.program
       .command('validate')
@@ -80,7 +78,7 @@ export class ManageProfileCommand extends BaseCommand {
       .argument('<file>', 'Path to the profile file to validate')
       .option('-t, --type <type>', 'Validation type (basic, strict, federal)', 'basic')
       .action(this.executeValidate.bind(this));
-    
+
     // Sub-command to list profiles
     this.program
       .command('list')
@@ -108,7 +106,7 @@ export class ManageProfileCommand extends BaseCommand {
       let sourceData: string;
 
       this.logInfo(`Importing profile from ${file}...`);
-      
+
       if (fileExt === '.md' || fileExt === '.markdown') {
         // Read and parse markdown file
         sourceData = await fs.readFile(file, 'utf-8');
@@ -118,7 +116,10 @@ export class ManageProfileCommand extends BaseCommand {
         sourceData = await fs.readFile(file, 'utf-8');
         cvData = JSON.parse(sourceData) as CVData;
       } else {
-        this.logError(`Unsupported file format: ${fileExt}. Please use .md, .markdown, or .json files.`, true);
+        this.logError(
+          `Unsupported file format: ${fileExt}. Please use .md, .markdown, or .json files.`,
+          true
+        );
         return;
       }
 
@@ -126,15 +127,17 @@ export class ManageProfileCommand extends BaseCommand {
       if (options.validate) {
         this.logInfo('Validating profile data...');
         const validationResult = this.validateProfileData(cvData);
-        
+
         if (!validationResult.valid) {
           this.logWarning('Profile validation issues:');
-          validationResult.issues.forEach(issue => {
+          validationResult.issues.forEach((issue) => {
             console.log(`- ${issue}`);
           });
-          
+
           // Prompt for confirmation to continue
-          const proceed = await this.promptForConfirmation('Continue with import despite validation issues?');
+          const proceed = await this.promptForConfirmation(
+            'Continue with import despite validation issues?'
+          );
           if (!proceed) {
             this.logError('Import cancelled.', false);
             return;
@@ -147,19 +150,19 @@ export class ManageProfileCommand extends BaseCommand {
       // Create profile using profile service
       this.logInfo(`Creating profile for ${options.owner}...`);
       const profile = await this.profileService.createProfile(options.owner, cvData);
-      
+
       // Display summary of imported data
       this.displayProfileSummary(cvData);
-      
+
       this.logSuccess(`Profile created successfully!`);
       this.logInfo(`Profile ID: ${profile.id}`);
-      
+
       // Save profile to file if output is specified
       if (options.output) {
         await this.saveProfileToFile(profile, options.output, options.format || 'json');
         this.logSuccess(`Profile saved to ${options.output}`);
       }
-      
+
       // Create verification claims
       const claims: VerifiedClaim[] = [
         {
@@ -167,31 +170,33 @@ export class ManageProfileCommand extends BaseCommand {
           sourceReference: {
             file: path.basename(file),
             path: [options.owner],
-            context: 'Profile import operation'
-          }
-        }
+            context: 'Profile import operation',
+          },
+        },
       ];
-      
+
       // Record the operation in run configuration
       const runConfig: RunConfiguration = {
         verification: {
           claims,
-          sourceData
+          sourceData,
         },
         outputs: {
-          format: options.format || 'json'
-        }
+          format: options.format || 'json',
+        },
       };
-      
+
       // Save the run configuration
-      const configPath = options.output 
+      const configPath = options.output
         ? path.join(path.dirname(options.output), 'import-run-config.json')
         : path.join('output', 'profiles', `profile-import-${Date.now()}.json`);
-        
+
       await this.recordRunConfiguration(runConfig, configPath);
-      
     } catch (error) {
-      this.logError(`Error importing profile: ${error instanceof Error ? error.message : String(error)}`, true);
+      this.logError(
+        `Error importing profile: ${error instanceof Error ? error.message : String(error)}`,
+        true
+      );
     }
   }
 
@@ -202,7 +207,7 @@ export class ManageProfileCommand extends BaseCommand {
   async executeExport(options: ExportProfileOptions): Promise<void> {
     try {
       this.logInfo('Exporting profile...');
-      
+
       // This would fetch from a real database in a full implementation
       // For now, create a mock profile
       const mockCvData: CVData = {
@@ -210,16 +215,17 @@ export class ManageProfileCommand extends BaseCommand {
           name: {
             first: 'Dawn',
             last: 'Beilfuss',
-            full: 'Dawn Zurick Beilfuss'
+            full: 'Dawn Zurick Beilfuss',
           },
           contact: {
             email: 'dawn.beilfuss@example.com',
             phone: '555-1234',
-            address: '123 Main St, Chicago, IL 60601'
+            address: '123 Main St, Chicago, IL 60601',
           },
-          title: 'Administrative Professional'
+          title: 'Administrative Professional',
         },
-        professionalSummary: 'Experienced administrative professional with a background in real estate and healthcare management.',
+        professionalSummary:
+          'Experienced administrative professional with a background in real estate and healthcare management.',
         experience: [
           {
             title: 'Managing Broker',
@@ -228,8 +234,8 @@ export class ManageProfileCommand extends BaseCommand {
             responsibilities: [
               'Managed real estate operations for Chicago metropolitan area',
               'Led team of 20+ real estate agents',
-              'Ensured compliance with licensing requirements'
-            ]
+              'Ensured compliance with licensing requirements',
+            ],
           },
           {
             title: 'Director of Operations',
@@ -239,32 +245,26 @@ export class ManageProfileCommand extends BaseCommand {
             responsibilities: [
               'Oversaw operations for 12 healthcare clinics',
               'Managed staffing and scheduling',
-              'Implemented new health records system'
-            ]
-          }
+              'Implemented new health records system',
+            ],
+          },
         ],
         education: [
           {
             institution: 'University of Illinois',
             degree: 'Bachelor of Science, Business Administration',
             year: '2005',
-            field: 'Business Administration'
-          }
+            field: 'Business Administration',
+          },
         ],
-        skills: [
-          'Operations Management',
-          'Team Leadership',
-          'Real Estate'
-        ],
-        certifications: [
-          'Real Estate Managing Broker'
-        ]
+        skills: ['Operations Management', 'Team Leadership', 'Real Estate'],
+        certifications: ['Real Estate Managing Broker'],
       };
-      
+
       // Ensure output directory exists
       const outputDir = path.dirname(options.output);
       await this.ensureDirectory(outputDir);
-      
+
       // Export based on format
       if (options.format.toLowerCase() === 'json') {
         await this.writeJsonFile(options.output, mockCvData);
@@ -278,21 +278,23 @@ export class ManageProfileCommand extends BaseCommand {
         this.logError(`Unsupported export format: ${options.format}. Using JSON instead.`, false);
         await this.writeJsonFile(options.output, mockCvData);
       }
-      
+
       this.logSuccess(`Profile exported to ${options.output}`);
-      
+
       // Record the operation
       const runConfig: RunConfiguration = {
         outputs: {
-          format: options.format
-        }
+          format: options.format,
+        },
       };
-      
+
       const configPath = path.join(path.dirname(options.output), 'export-run-config.json');
       await this.recordRunConfiguration(runConfig, configPath);
-      
     } catch (error) {
-      this.logError(`Error exporting profile: ${error instanceof Error ? error.message : String(error)}`, true);
+      this.logError(
+        `Error exporting profile: ${error instanceof Error ? error.message : String(error)}`,
+        true
+      );
     }
   }
 
@@ -322,17 +324,20 @@ export class ManageProfileCommand extends BaseCommand {
         const content = await fs.readFile(file, 'utf-8');
         cvData = JSON.parse(content) as CVData;
       } else {
-        this.logError(`Unsupported file format: ${fileExt}. Please use .md, .markdown, or .json files.`, true);
+        this.logError(
+          `Unsupported file format: ${fileExt}. Please use .md, .markdown, or .json files.`,
+          true
+        );
         return;
       }
 
       // Validate the profile
       this.logInfo(`Validating profile with ${options.type} validation type...`);
       const validationResult = this.validateProfileData(cvData, options.type);
-      
+
       if (!validationResult.valid) {
         this.logWarning('Profile validation issues:');
-        validationResult.issues.forEach(issue => {
+        validationResult.issues.forEach((issue) => {
           console.log(`- ${issue}`);
         });
         this.logError('Profile validation failed.', false);
@@ -340,9 +345,11 @@ export class ManageProfileCommand extends BaseCommand {
         this.logSuccess('Profile validation successful!');
         this.displayProfileSummary(cvData);
       }
-      
     } catch (error) {
-      this.logError(`Error validating profile: ${error instanceof Error ? error.message : String(error)}`, true);
+      this.logError(
+        `Error validating profile: ${error instanceof Error ? error.message : String(error)}`,
+        true
+      );
     }
   }
 
@@ -353,7 +360,7 @@ export class ManageProfileCommand extends BaseCommand {
   async executeList(options: { verbose: boolean }): Promise<void> {
     try {
       this.logInfo('Listing available profiles...');
-      
+
       // In a real implementation, this would fetch from a database
       // For demonstration, show mock profiles
       const mockProfiles = [
@@ -362,37 +369,39 @@ export class ManageProfileCommand extends BaseCommand {
           owner: 'Dawn Zurick Beilfuss',
           createdAt: '2023-01-15T12:30:00Z',
           updatedAt: '2023-03-20T15:45:00Z',
-          versions: 3
+          versions: 3,
         },
         {
           id: 'profile-2',
           owner: 'Alternative Profile',
           createdAt: '2023-02-10T09:15:00Z',
           updatedAt: '2023-02-10T09:15:00Z',
-          versions: 1
-        }
+          versions: 1,
+        },
       ];
-      
+
       console.log('\nAvailable Profiles:');
       console.log('------------------');
-      
+
       for (const profile of mockProfiles) {
         console.log(`ID: ${profile.id}`);
         console.log(`Owner: ${profile.owner}`);
-        
+
         if (options.verbose) {
           console.log(`Created: ${new Date(profile.createdAt).toLocaleString()}`);
           console.log(`Updated: ${new Date(profile.updatedAt).toLocaleString()}`);
           console.log(`Versions: ${profile.versions}`);
         }
-        
+
         console.log('------------------');
       }
-      
+
       this.logSuccess(`Found ${mockProfiles.length} profiles.`);
-      
     } catch (error) {
-      this.logError(`Error listing profiles: ${error instanceof Error ? error.message : String(error)}`, true);
+      this.logError(
+        `Error listing profiles: ${error instanceof Error ? error.message : String(error)}`,
+        true
+      );
     }
   }
 
@@ -408,9 +417,12 @@ export class ManageProfileCommand extends BaseCommand {
     console.log(`Phone: ${cvData.personalInfo.contact.phone || 'Not specified'}`);
   }
 
-  private validateProfileData(cvData: CVData, type: string = 'basic'): { valid: boolean; issues: string[] } {
+  private validateProfileData(
+    cvData: CVData,
+    type: string = 'basic'
+  ): { valid: boolean; issues: string[] } {
     const issues: string[] = [];
-    
+
     // Basic validation
     if (!cvData.personalInfo?.name?.full) {
       issues.push('Full name is required');
@@ -421,7 +433,7 @@ export class ManageProfileCommand extends BaseCommand {
     if (!cvData.personalInfo?.contact?.phone) {
       issues.push('Phone number is required');
     }
-    
+
     // Type-specific validation
     if (type === 'strict') {
       if (!cvData.experience?.length) {
@@ -431,20 +443,20 @@ export class ManageProfileCommand extends BaseCommand {
         issues.push('At least one education entry is required');
       }
     }
-    
+
     return {
       valid: issues.length === 0,
-      issues
+      issues,
     };
   }
 
   protected override async promptForConfirmation(message: string): Promise<boolean> {
     const readline = require('readline').createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       readline.question(`${message} (y/n) `, (answer: string) => {
         readline.close();
         resolve(answer.toLowerCase() === 'y');
@@ -452,7 +464,11 @@ export class ManageProfileCommand extends BaseCommand {
     });
   }
 
-  private async saveProfileToFile(profile: Profile, outputPath: string, format: string): Promise<void> {
+  private async saveProfileToFile(
+    profile: Profile,
+    outputPath: string,
+    format: string
+  ): Promise<void> {
     await this.ensureDirectory(path.dirname(outputPath));
     if (format.toLowerCase() === 'json') {
       await this.writeJsonFile(outputPath, profile);
@@ -467,10 +483,10 @@ export class ManageProfileCommand extends BaseCommand {
     markdown += `${cvData.personalInfo.contact.email} | ${cvData.personalInfo.contact.phone}\n\n`;
     markdown += `## Professional Summary\n${cvData.professionalSummary}\n\n`;
     markdown += `## Experience\n\n`;
-    cvData.experience.forEach(exp => {
+    cvData.experience.forEach((exp) => {
       markdown += `### ${exp.title} at ${exp.company}\n`;
       markdown += `${exp.startDate} - ${exp.endDate || 'Present'}\n\n`;
-      exp.responsibilities.forEach(resp => {
+      exp.responsibilities.forEach((resp) => {
         markdown += `- ${resp}\n`;
       });
       markdown += '\n';
@@ -478,4 +494,3 @@ export class ManageProfileCommand extends BaseCommand {
     return markdown;
   }
 }
-

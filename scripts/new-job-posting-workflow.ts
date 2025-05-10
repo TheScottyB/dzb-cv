@@ -88,7 +88,7 @@ const generateTemplate: WorkflowPlugin = {
     const templatePath = path.join(ctx.jobDir, 'cv-template.md');
     await writeFile(
       templatePath,
-      `# CV Template for ${ctx.jobData.title || ctx.jobData.position}\n\nBased on ${ctx.baseInfo.name}`,
+      `# CV Template for ${ctx.jobData.title || ctx.jobData.position}\n\nBased on ${ctx.baseInfo.name}`
     );
     ctx.outputs.templatePath = templatePath;
     console.log(chalk.green('📝 Generated CV template at:'), chalk.yellow(templatePath));

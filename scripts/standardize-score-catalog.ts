@@ -124,7 +124,7 @@ async function scoreFiles(jobDir: string, catalog: CatalogEntry[]) {
       await fs.mkdir(analysisDir, { recursive: true });
       await fs.writeFile(
         path.join(analysisDir, `${type}_score.json`),
-        JSON.stringify(result, null, 2),
+        JSON.stringify(result, null, 2)
       );
       logScore(filePath);
       logWrite(path.join(analysisDir, `${type}_score.json`));
@@ -152,7 +152,7 @@ async function main() {
   } else {
     await fs.writeFile(
       path.join(JOB_POSTINGS_DIR, 'catalog.json'),
-      JSON.stringify(catalog, null, 2),
+      JSON.stringify(catalog, null, 2)
     );
     logWrite(path.join(JOB_POSTINGS_DIR, 'catalog.json'));
     logAction('Catalog written to job-postings/catalog.json');

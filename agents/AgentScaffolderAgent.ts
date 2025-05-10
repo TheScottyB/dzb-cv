@@ -6,4 +6,3 @@ export class AgentScaffolderAgent {
     console.info(`[AgentScaffolderAgent] Initial task assigned: ${task}`);
   }
 }
-

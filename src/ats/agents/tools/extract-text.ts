@@ -1,7 +1,7 @@
-import { Tool } from '../types.js';
-import { PDFParser } from '../../../core/services/pdf/parser.js';
-import { DOCXParser } from '../../../core/services/docx/parser.js';
-import { TXTParser } from '../../../core/services/txt/parser.js';
+import { Tool } from '../types';
+import { PDFParser } from '../../../core/services/pdf/parser';
+import { DOCXParser } from '../../../core/services/docx/parser';
+import { TXTParser } from '../../../core/services/txt/parser';
 
 interface ExtractTextInput {
   fileBuffer: Buffer;
@@ -32,17 +32,17 @@ export const extractTextTool: Tool<ExtractTextInput, ExtractTextOutput> = {
     properties: {
       fileBuffer: {
         type: 'object',
-        description: 'Binary buffer of the resume file'
+        description: 'Binary buffer of the resume file',
       },
       mimeType: {
         type: 'string',
-        description: 'MIME type of the file (e.g. application/pdf)'
+        description: 'MIME type of the file (e.g. application/pdf)',
       },
       fileName: {
         type: 'string',
-        description: 'Original filename of the resume'
-      }
-    }
+        description: 'Original filename of the resume',
+      },
+    },
   },
   async execute(input: ExtractTextInput): Promise<ExtractTextOutput> {
     let extractedText = '';
@@ -75,8 +75,8 @@ export const extractTextTool: Tool<ExtractTextInput, ExtractTextOutput> = {
         fileName: input.fileName,
         fileSize: input.fileBuffer.length,
         extractionDate: new Date().toISOString(),
-        confidence
-      }
+        confidence,
+      },
     };
-  }
-}; 
+  },
+};

@@ -1,6 +1,6 @@
 export const mockJobPostings = {
-    linkedin: {
-        html: `
+  linkedin: {
+    html: `
             <!DOCTYPE html>
             <html>
             <head>
@@ -66,10 +66,10 @@ export const mockJobPostings = {
                 </div>
             </body>
             </html>
-        `
-    },
-    indeed: {
-        html: `
+        `,
+  },
+  indeed: {
+    html: `
             <!DOCTYPE html>
             <html>
             <head>
@@ -126,10 +126,10 @@ export const mockJobPostings = {
                 </div>
             </body>
             </html>
-        `
-    }
+        `,
+  },
 };
 
 export function getMockJobHtml(site) {
-    return mockJobPostings[site]?.html || null;
-} 
+  return mockJobPostings[site]?.html || null;
+}

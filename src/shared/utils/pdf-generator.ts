@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import MarkdownIt from 'markdown-it';
-import type { PDFOptions } from '../types/cv-types.js';
+import type { PDFOptions } from '../types/cv-types';
 
 // Define a type that ensures margins are always defined
 type PDFOptionsWithRequiredMargins = Omit<PDFOptions, 'margins'> & {
@@ -19,9 +19,9 @@ export const DEFAULT_PDF_OPTIONS: PDFOptionsWithRequiredMargins = {
     top: 1,
     right: 1,
     bottom: 1,
-    left: 1
+    left: 1,
   },
-  orientation: 'portrait'
+  orientation: 'portrait',
 };
 
 export async function convertMarkdownToPdf(
@@ -31,7 +31,7 @@ export async function convertMarkdownToPdf(
 ): Promise<string> {
   const md = new MarkdownIt();
   const html = md.render(markdown);
-  
+
   // Apply PDF options with proper type handling
   const mergedOptions: PDFOptionsWithRequiredMargins = {
     ...DEFAULT_PDF_OPTIONS,
@@ -40,10 +40,10 @@ export async function convertMarkdownToPdf(
       top: options.margins?.top ?? DEFAULT_PDF_OPTIONS.margins.top,
       right: options.margins?.right ?? DEFAULT_PDF_OPTIONS.margins.right,
       bottom: options.margins?.bottom ?? DEFAULT_PDF_OPTIONS.margins.bottom,
-      left: options.margins?.left ?? DEFAULT_PDF_OPTIONS.margins.left
-    }
+      left: options.margins?.left ?? DEFAULT_PDF_OPTIONS.margins.left,
+    },
   };
-  
+
   // Generate HTML with applied options
   const styledHtml = `
     <!DOCTYPE html>
@@ -66,9 +66,9 @@ export async function convertMarkdownToPdf(
     </body>
     </html>
   `;
-  
+
   // Basic PDF conversion (you might want to use a proper PDF library)
   await fs.writeFile(outputPath, styledHtml);
-  
+
   return outputPath;
-} 
+}

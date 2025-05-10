@@ -5,7 +5,11 @@ import path from 'path';
 function runCommand(command: string): string {
   try {
     return execSync(command, { encoding: 'utf8' });
-  } catch (error) {
+  } catch (error: any) {
+    // If the command fails but produces stdout, return it
+    if (error && error.stdout) {
+      return error.stdout;
+    }
     console.error(`Error running command: ${command}`, error);
     return '';
   }
@@ -72,7 +76,7 @@ export function auditDependencies(): string {
 
   // Find potentially duplicate libraries (e.g., multiple PDF libraries)
   const pdfLibraries = [...Object.keys(dependencies), ...Object.keys(devDependencies)].filter(
-    (dep) => dep.includes('pdf') || dep.includes('puppeteer'),
+    (dep) => dep.includes('pdf') || dep.includes('puppeteer')
   );
 
   if (pdfLibraries.length > 1) {
@@ -88,7 +92,7 @@ export function auditDependencies(): string {
   }
 
   const markdownLibraries = [...Object.keys(dependencies), ...Object.keys(devDependencies)].filter(
-    (dep) => dep.includes('markdown') || dep.includes('marked') || dep.includes('remark'),
+    (dep) => dep.includes('markdown') || dep.includes('marked') || dep.includes('remark')
   );
 
   if (markdownLibraries.length > 1) {
@@ -107,36 +111,57 @@ export function auditDependencies(): string {
   output += '### Outdated Dependencies\n\n';
   output += '> Note: This is a list of dependencies that might have newer versions available.\n\n';
 
+  let outdatedOutput = '';
   try {
-    const outdatedOutput = runCommand('pnpm outdated --format json');
-
-    if (outdatedOutput && outdatedOutput.trim() !== '') {
-      try {
-        const outdatedDeps = JSON.parse(outdatedOutput);
-
-        if (Object.keys(outdatedDeps).length > 0) {
-          output += '| Package | Current | Latest | Type |\n';
-          output += '|---------|---------|--------|------|\n';
-
-          Object.entries(outdatedDeps).forEach(([pkg, info]: [string, any]) => {
-            const current = info.current || 'unknown';
-            const latest = info.latest || 'unknown';
-            const type = info.type || 'unknown';
-
-            output += `| ${pkg} | ${current} | ${latest} | ${type} |\n`;
-          });
-        } else {
-          output += '> No outdated dependencies found.\n';
-        }
-      } catch (error) {
-        output += '> Error parsing outdated dependencies output.\n';
-      }
-    } else {
-      output += '> Could not check for outdated dependencies.\n';
-    }
+    // Use the correct flag for pnpm
+    outdatedOutput = runCommand('pnpm outdated --json');
   } catch (error) {
-    output += '> Error checking for outdated dependencies.\n';
+    // If the command fails, still try to use stdout if available
+    if (error && error.stdout) {
+      outdatedOutput = error.stdout;
+    }
+  }
+
+  if (outdatedOutput && outdatedOutput.trim() !== '') {
+    try {
+      const outdatedDeps = JSON.parse(outdatedOutput);
+      if (Array.isArray(outdatedDeps) && outdatedDeps.length > 0) {
+        output += '| Package | Current | Latest | Type |\n';
+        output += '|---------|---------|--------|------|\n';
+        outdatedDeps.forEach((dep: any) => {
+          const pkg = dep.name || 'unknown';
+          const current = dep.current || 'unknown';
+          const latest = dep.latest || 'unknown';
+          const type = dep.dependencyType || 'unknown';
+          output += `| ${pkg} | ${current} | ${latest} | ${type} |\n`;
+        });
+      } else if (typeof outdatedDeps === 'object' && Object.keys(outdatedDeps).length > 0) {
+        output += '| Package | Current | Latest | Type |\n';
+        output += '|---------|---------|--------|------|\n';
+        Object.entries(outdatedDeps).forEach(([pkg, info]: [string, any]) => {
+          const current = info.current || 'unknown';
+          const latest = info.latest || 'unknown';
+          const type = info.dependencyType || info.type || 'unknown';
+          output += `| ${pkg} | ${current} | ${latest} | ${type} |\n`;
+        });
+      } else {
+        output += '> No outdated dependencies found.\n';
+      }
+    } catch (error) {
+      output += '> Error parsing outdated dependencies output.\n';
+    }
+  } else {
+    output += '> Could not check for outdated dependencies.\n';
   }
 
   return output;
+}
+
+// ESM-compatible CLI entry point
+const thisFile = import.meta.url.replace(/^file:\/\//, '');
+const expectedTs = path.resolve(process.cwd(), 'scripts/audit.ts');
+const expectedJs = path.resolve(process.cwd(), 'scripts/audit.js');
+if (thisFile === expectedTs || thisFile === expectedJs) {
+  // eslint-disable-next-line no-console
+  console.log(auditDependencies());
 }

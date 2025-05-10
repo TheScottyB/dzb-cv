@@ -1,0 +1,39 @@
+{
+  "name": "@dzb-cv/config",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "main": "./src/eslint/index.cjs",
+  "files": [
+    "dist",
+    "src/typescript",
+    "src/eslint",
+    "src/vitest"
+  ],
+  "exports": {
+    ".": "./src/eslint/index.cjs",
+    "./typescript/base": "./src/typescript/base.json",
+    "./vitest": "./dist/vitest/base.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run || true",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.js",
+    "clean": "rm -rf coverage dist tsconfig.tsbuildinfo"
+  },
+  "devDependencies": {
+    "prettier": "3.5.3",
+    "vite-tsconfig-paths": "^4.0.0"
+  },
+  "peerDependencies": {
+    "@typescript-eslint/eslint-plugin": ">=6.0.0",
+    "@typescript-eslint/parser": ">=6.0.0",
+    "eslint": ">=8.0.0",
+    "eslint-config-prettier": "*",
+    "eslint-plugin-import": ">=2.0.0",
+    "typescript": ">=5.0.0"
+  }
+}

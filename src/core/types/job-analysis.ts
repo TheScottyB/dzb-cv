@@ -58,4 +58,3 @@ export interface CVMatchResult {
   overallMatch: 'high' | 'medium' | 'low';
   jobAnalysis: JobPostingAnalysis;
 }
-

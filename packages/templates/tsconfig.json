@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.react.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist",
+    "jsx": "react-jsx",
+    "types": ["node", "@testing-library/jest-dom"]
+  },
+  "references": [{ "path": "../types" }, { "path": "../ui" }],
+  "include": ["src/**/*", "src/vitest.setup.ts"]
+}

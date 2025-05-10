@@ -1,4 +1,4 @@
-import { CVData } from '../shared/types/cv-base.js';
+import { CVData } from '../shared/types/cv-base';
 
 export enum ATSIssueCategory {
   CRITICAL = 'CRITICAL',
@@ -72,7 +72,7 @@ export interface ATSAnalysisResult {
 export function analyzeATS(
   resumeText: string,
   fileInfo: { format: string; size: number },
-  jobDescription?: string,
+  jobDescription?: string
 ): ATSAnalysisResult {
   return {
     score: 0,

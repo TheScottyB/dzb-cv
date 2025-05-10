@@ -24,7 +24,9 @@ export class TeacherAgent {
     console.info(`${this.logPrefix} Initialized.`, options);
 
     // Listen for CriticAgent improvement suggestions and reviews
-    this.messageBus.subscribe('artifact:suggestedImprovement', (feedback) => this.learnFromFeedback(feedback));
+    this.messageBus.subscribe('artifact:suggestedImprovement', (feedback) =>
+      this.learnFromFeedback(feedback)
+    );
     this.messageBus.subscribe('artifact:reviewed', (review) => this.learnFromFeedback(review));
     // TODO: Listen to CriticAgent/WatcherAgent more generally for systematic learning.
   }
@@ -71,4 +73,3 @@ export class TeacherAgent {
   // TODO: Add persistent storage for knowledgeBase, TTL/pruning for obsolete lessons.
   // TODO: Automated role updates, curriculum optimization, agent protocol evolution.
 }
-

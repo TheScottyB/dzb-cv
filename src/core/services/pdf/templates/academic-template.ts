@@ -22,11 +22,9 @@ export class AcademicTemplate extends BaseTemplate {
 ${personalInfo.title ? `<div style="color:#666;font-size:18px;">${personalInfo.title}</div>` : ''}
 
 <div class="contact-info">
-${[
-  personalInfo.contact.email,
-  personalInfo.contact.phone,
-  personalInfo.contact.address
-].filter(Boolean).join(' | ')}${website}
+${[personalInfo.contact.email, personalInfo.contact.phone, personalInfo.contact.address]
+  .filter(Boolean)
+  .join(' | ')}${website}
 </div>
     `.trim();
   }
@@ -58,15 +56,19 @@ ${data.professionalSummary}
     return `
 ## Academic Appointments
 
-${experiences.map(exp => `
+${experiences
+  .map(
+    (exp) => `
 <div class="experience-item">
 <div class="position">${exp.position}</div>
 <div class="employer">${exp.employer}</div>
 <div class="dates">${exp.startDate} - ${exp.endDate || 'Present'}</div>
-${exp.responsibilities.length ? `<div class="responsibilities">${exp.responsibilities.map(r => `- ${r}`).join('\n')}</div>` : ''}
-${exp.achievements?.length ? `<div class="achievements">${exp.achievements.map(a => `- ${a}`).join('\n')}</div>` : ''}
+${exp.responsibilities.length ? `<div class="responsibilities">${exp.responsibilities.map((r) => `- ${r}`).join('\n')}</div>` : ''}
+${exp.achievements?.length ? `<div class="achievements">${exp.achievements.map((a) => `- ${a}`).join('\n')}</div>` : ''}
 </div>
-`).join('\n')}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 
@@ -81,7 +83,9 @@ ${exp.achievements?.length ? `<div class="achievements">${exp.achievements.map(a
     return `
 ## Education
 
-${education.map(edu => `
+${education
+  .map(
+    (edu) => `
 <div class="education-item">
 <div class="degree">${edu.degree}</div>
 <div class="institution">${edu.institution}</div>
@@ -89,7 +93,9 @@ ${education.map(edu => `
 ${edu.field ? `<div class="field">${edu.field}</div>` : ''}
 ${edu.notes ? `<div class="notes">${edu.notes}</div>` : ''}
 </div>
-`).join('\n')}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 
@@ -103,7 +109,7 @@ ${edu.notes ? `<div class="notes">${edu.notes}</div>` : ''}
 ## Skills
 
 <div class="skills-list">
-${data.skills.map(skill => `<div class="skill-item">${skill}</div>`).join('\n')}
+${data.skills.map((skill) => `<div class="skill-item">${skill}</div>`).join('\n')}
 </div>
     `.trim();
   }
@@ -116,7 +122,7 @@ ${data.skills.map(skill => `<div class="skill-item">${skill}</div>`).join('\n')}
     return `
 ## Research Expertise
 
-${data.skills.map(s => `- ${s}`).join('\n')}
+${data.skills.map((s) => `- ${s}`).join('\n')}
     `.trim();
   }
 
@@ -127,21 +133,23 @@ ${data.skills.map(s => `- ${s}`).join('\n')}
     if (!data.publications?.length) return '';
 
     const publications = data.publications.sort((a, b) => b.year.localeCompare(a.year));
-    
+
     // Markdown academic citation style: Authors (Year). Title. *Journal*, vol(issue), pages.
     return `
 ## Publications
 
-${publications.map(pub => {
-  let volIssue = '';
-  if (pub.volume && pub.issue) {
-    volIssue = `${pub.volume}(${pub.issue})`;
-  } else if (pub.volume) {
-    volIssue = `${pub.volume}`;
-  }
-  let pages = pub.pages ? `, ${pub.pages}` : '';
-  return `- ${pub.authors} (${pub.year}). ${pub.title}. *${pub.journal}*${volIssue ? `, ${volIssue}` : ''}${pages}`;
-}).join('\n')}
+${publications
+  .map((pub) => {
+    let volIssue = '';
+    if (pub.volume && pub.issue) {
+      volIssue = `${pub.volume}(${pub.issue})`;
+    } else if (pub.volume) {
+      volIssue = `${pub.volume}`;
+    }
+    let pages = pub.pages ? `, ${pub.pages}` : '';
+    return `- ${pub.authors} (${pub.year}). ${pub.title}. *${pub.journal}*${volIssue ? `, ${volIssue}` : ''}${pages}`;
+  })
+  .join('\n')}
     `.trim();
   }
 
@@ -152,11 +160,13 @@ ${publications.map(pub => {
     if (!data.conferences?.length) return '';
 
     const conferences = data.conferences.sort((a, b) => b.year.localeCompare(a.year));
-    
+
     return `
 ## Conference Presentations
 
-${conferences.map(conf => `
+${conferences
+  .map(
+    (conf) => `
 <div class="conference-item">
 <div class="title">${conf.title}</div>
 <div class="authors">${conf.authors}</div>
@@ -164,7 +174,9 @@ ${conferences.map(conf => `
 <div class="location">${conf.location}</div>
 <div class="year">${conf.year}</div>
 </div>
-`).join('\n')}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 
@@ -175,18 +187,22 @@ ${conferences.map(conf => `
     if (!data.grants?.length) return '';
 
     const grants = data.grants.sort((a, b) => b.year.localeCompare(a.year));
-    
+
     return `
 ## Grants and Funding
 
-${grants.map(grant => `
+${grants
+  .map(
+    (grant) => `
 <div class="grant-item">
 <div class="title">${grant.title}</div>
 <div class="agency">${grant.agency}</div>
 <div class="amount">${grant.amount}</div>
 <div class="year">${grant.year}</div>
 </div>
-`).join('\n')}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 
@@ -197,20 +213,24 @@ ${grants.map(grant => `
     if (!data.awards?.length) return '';
 
     const awards = data.awards
-      .filter(award => award.year)
+      .filter((award) => award.year)
       .sort((a, b) => (b.year || '').localeCompare(a.year || ''));
-    
+
     return `
 ## Awards and Honors
 
-${awards.map(award => `
+${awards
+  .map(
+    (award) => `
 <div class="award-item">
 <div class="title">${award.title}</div>
 <div class="organization">${award.organization}</div>
 <div class="year">${award.year}</div>
 ${award.description ? `<div class="description">${award.description}</div>` : ''}
 </div>
-`).join('\n')}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 
@@ -223,7 +243,7 @@ ${award.description ? `<div class="description">${award.description}</div>` : ''
     return `
 ## Research Interests
 
-${data.researchInterests.map(interest => `- ${interest}`).join('\n')}
+${data.researchInterests.map((interest) => `- ${interest}`).join('\n')}
     `.trim();
   }
 
@@ -236,14 +256,18 @@ ${data.researchInterests.map(interest => `- ${interest}`).join('\n')}
     return `
 ## Academic Service
 
-${data.academicService.map(service => `
+${data.academicService
+  .map(
+    (service) => `
 <div class="service-item">
 <div class="role">${service.role}</div>
 <div class="organization">${service.organization}</div>
 <div class="period">${service.period}</div>
 ${service.description ? `<div class="description">${service.description}</div>` : ''}
 </div>
-`).join('\n')}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 
@@ -252,8 +276,12 @@ ${service.description ? `<div class="description">${service.description}</div>` 
     options: { includeEducation?: boolean; includeSkills?: boolean } = {}
   ): string {
     // Defensive: Ensure the required arrays exist for the type guard
-    (data as any).publications = Array.isArray((data as any).publications) ? (data as any).publications : [];
-    (data as any).conferences = Array.isArray((data as any).conferences) ? (data as any).conferences : [];
+    (data as any).publications = Array.isArray((data as any).publications)
+      ? (data as any).publications
+      : [];
+    (data as any).conferences = Array.isArray((data as any).conferences)
+      ? (data as any).conferences
+      : [];
     (data as any).grants = Array.isArray((data as any).grants) ? (data as any).grants : [];
     (data as any).awards = Array.isArray((data as any).awards) ? (data as any).awards : [];
     const { includeEducation = true, includeSkills = true } = options;

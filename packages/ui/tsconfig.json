@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.react.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "references": [{ "path": "../types" }],
+  "include": ["src/**/*", "src/types/css.d.ts"]
+}

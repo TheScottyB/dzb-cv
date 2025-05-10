@@ -1,0 +1,231 @@
+.modernCv {
+  font-family: var(
+    --font-primary,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif
+  );
+  color: var(--color-text-default, #1a202c);
+  line-height: 1.5;
+  background-color: var(--color-background-default, #ffffff);
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.cvHeader {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--color-primary-100, #e6f7ff);
+}
+
+.headerContent {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.professionalTitle {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.contactInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.cvContent {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+.cvSection {
+  margin-bottom: 2rem;
+}
+
+.experienceItem,
+.educationItem,
+.projectItem {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border-default, #e5e5e5);
+}
+
+.experienceItem:last-child,
+.educationItem:last-child,
+.projectItem:last-child {
+  border-bottom: none;
+}
+
+.itemHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.responsibilitiesList,
+.achievementsList {
+  margin-top: 0.75rem;
+}
+
+.achievementsHeader {
+  margin-top: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.skillCategory {
+  margin-bottom: 1rem;
+}
+
+.skillTags,
+.techTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.skillTag,
+.techTag {
+  background-color: var(--color-background-muted, #f5f5f5);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  display: inline-block;
+}
+
+.levelExpert {
+  background-color: var(--color-primary-100, #e6f7ff);
+  border-left: 3px solid var(--color-primary, #1890ff);
+}
+
+.levelAdvanced {
+  background-color: var(--color-primary-50, #f0f9ff);
+  border-left: 3px solid var(--color-primary-400, #69c0ff);
+}
+
+.levelIntermediate {
+  background-color: var(--color-secondary-50, #f9fafb);
+  border-left: 3px solid var(--color-secondary-400, #a0aec0);
+}
+
+.levelBeginner {
+  background-color: var(--color-background-muted, #f5f5f5);
+  border-left: 3px solid var(--color-text-muted, #718096);
+}
+
+.technologies {
+  margin-top: 0.75rem;
+}
+
+.projectUrl {
+  margin-top: 0.5rem;
+}
+
+.projectUrl a {
+  color: var(--color-primary, #1890ff);
+  text-decoration: none;
+}
+
+.projectUrl a:hover {
+  text-decoration: underline;
+}
+
+.languageItem,
+.certificationItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.mainColumn {
+  /* Styles for the main content column */
+}
+
+.sideColumn {
+  /* Styles for the side column */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cvContent {
+    grid-template-columns: 1fr;
+  }
+
+  .itemHeader {
+    flex-direction: column;
+  }
+
+  .contactInfo {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Print Optimization */
+@media print {
+  .modernCv {
+    font-size: 11pt;
+  }
+
+  .cvHeader {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .cvContent {
+    gap: 1.5rem;
+  }
+
+  .cvSection {
+    margin-bottom: 1rem;
+    page-break-inside: avoid;
+  }
+
+  .experienceItem,
+  .educationItem,
+  .projectItem {
+    page-break-inside: avoid;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  /* Ensures white background for printing */
+  body {
+    background-color: white !important;
+    color: black !important;
+  }
+
+  /* Hide URLs when printing unless it's a link */
+  a:link:after,
+  a:visited:after {
+    content: '' !important;
+  }
+
+  /* Adjust font sizes for print */
+  h1 {
+    font-size: 16pt !important;
+  }
+
+  h2 {
+    font-size: 14pt !important;
+  }
+
+  h3 {
+    font-size: 12pt !important;
+  }
+
+  p,
+  li {
+    font-size: 11pt !important;
+  }
+}

@@ -1,6 +1,6 @@
 /**
  * Analyze Job Command
- * 
+ *
  * Handles analyzing job postings from URLs or files to extract structured
  * information that can be used for CV tailoring and job matching.
  */
@@ -23,11 +23,13 @@ interface JobPostingAnalysis {
   qualifications: string[];
   keyTerms: string[];
   educationRequirements?: string[] | undefined;
-  salaryRange?: {
-    min?: number | undefined;
-    max?: number | undefined;
-    period?: string | undefined;
-  } | undefined;
+  salaryRange?:
+    | {
+        min?: number | undefined;
+        max?: number | undefined;
+        period?: string | undefined;
+      }
+    | undefined;
   source: {
     url: string;
     site: string;
@@ -62,7 +64,10 @@ export class AnalyzeJobCommand extends BaseCommand {
     this.program
       .command('analyze')
       .description(this.description)
-      .argument('<source>', 'URL of the job posting or path to a file containing the job description')
+      .argument(
+        '<source>',
+        'URL of the job posting or path to a file containing the job description'
+      )
       .option('-o, --output <path>', 'Path to save the analysis output')
       .option('-f, --format <format>', 'Output format (json, text, markdown)', 'text')
       .option('--file', 'Treat the source as a local file path instead of URL', false)
@@ -83,14 +88,14 @@ export class AnalyzeJobCommand extends BaseCommand {
     // Simple implementation - extract capitalized words and phrases
     const words = text.split(/\s+/);
     const keyTerms = new Set<string>();
-    
+
     for (let i = 0; i < words.length; i++) {
       const word = words[i]?.replace(/[.,!?;:()]/g, '') ?? '';
       if (word.length > 3 && word.charAt(0) === word.charAt(0).toUpperCase()) {
         keyTerms.add(word);
       }
     }
-    
+
     return Array.from(keyTerms);
   }
 
@@ -102,7 +107,7 @@ export class AnalyzeJobCommand extends BaseCommand {
   async execute(source: string, options: AnalyzeJobCommandOptions): Promise<void> {
     try {
       this.logInfo(`Analyzing job posting from ${options.file ? 'file' : 'URL'}: ${source}`);
-      
+
       let jobAnalysis: JobPostingAnalysis;
       let rawContent: string = '';
 
@@ -115,54 +120,58 @@ export class AnalyzeJobCommand extends BaseCommand {
 
         rawContent = await fs.readFile(source, 'utf-8');
         this.logSuccess(`Successfully read job description from file: ${source}`);
-        
+
         // Parse job details from file content
         const lines = rawContent.split('\n');
-        
+
         // Find the job title line
-        const titleLine = lines.find(line => line.toLowerCase().includes('job title:'));
-        const title = titleLine && titleLine.includes(':')
-          ? titleLine.split(':').slice(1).join(':').trim()
-          : 'Unknown Position';
-        
+        const titleLine = lines.find((line) => line.toLowerCase().includes('job title:'));
+        const title =
+          titleLine && titleLine.includes(':')
+            ? titleLine.split(':').slice(1).join(':').trim()
+            : 'Unknown Position';
+
         // Find the agency/company line
-        const agencyLine = lines.find(line => 
-          line.toLowerCase().includes('agency:') || 
-          line.toLowerCase().includes('company:')
+        const agencyLine = lines.find(
+          (line) =>
+            line.toLowerCase().includes('agency:') || line.toLowerCase().includes('company:')
         );
-        const company = agencyLine && agencyLine.includes(':')
-          ? agencyLine.split(':').slice(1).join(':').trim()
-          : 'Unknown Company';
-        
+        const company =
+          agencyLine && agencyLine.includes(':')
+            ? agencyLine.split(':').slice(1).join(':').trim()
+            : 'Unknown Company';
+
         // Find the location line
-        const locationLine = lines.find(line => line.toLowerCase().includes('location:'));
-        const location = locationLine && locationLine.includes(':')
-          ? locationLine.split(':').slice(1).join(':').trim()
-          : undefined;
+        const locationLine = lines.find((line) => line.toLowerCase().includes('location:'));
+        const location =
+          locationLine && locationLine.includes(':')
+            ? locationLine.split(':').slice(1).join(':').trim()
+            : undefined;
 
         // Extract sections using helper function
         const getSection = (startMarker: string, endMarker: string): string[] => {
           const startIndex = rawContent.indexOf(startMarker);
           if (startIndex === -1) return [];
-          
+
           const endIndex = rawContent.indexOf(endMarker, startIndex);
-          const sectionContent = endIndex === -1 
-            ? rawContent.substring(startIndex + startMarker.length)
-            : rawContent.substring(startIndex + startMarker.length, endIndex);
-          
+          const sectionContent =
+            endIndex === -1
+              ? rawContent.substring(startIndex + startMarker.length)
+              : rawContent.substring(startIndex + startMarker.length, endIndex);
+
           return sectionContent
             .split('\n')
-            .filter(line => line.trim().startsWith('-'))
-            .map(line => line.replace(/^-\s*/, '').trim());
+            .filter((line) => line.trim().startsWith('-'))
+            .map((line) => line.replace(/^-\s*/, '').trim());
         };
 
         // Extract responsibilities and qualifications
         const responsibilities = getSection('Key Responsibilities:', 'Qualifications:');
         const qualifications = getSection('Qualifications:', 'Benefits:');
-        
+
         // Extract key terms
         const keyTerms = this.extractKeyTerms(rawContent);
-        
+
         // Create job analysis object
         jobAnalysis = {
           title,
@@ -175,18 +184,21 @@ export class AnalyzeJobCommand extends BaseCommand {
           source: {
             url: `file://${source}`,
             site: 'Local File',
-            fetchDate: new Date()
-          }
+            fetchDate: new Date(),
+          },
         };
       } else {
         // URL-based analysis
         try {
           jobAnalysis = await analyzeJobPosting(source);
         } catch (error) {
-          this.logError(`Error analyzing job posting: ${error instanceof Error ? error.message : String(error)}`, true);
+          this.logError(
+            `Error analyzing job posting: ${error instanceof Error ? error.message : String(error)}`,
+            true
+          );
           return;
         }
-        
+
         // For URL-based analysis, try to fetch the raw content if needed for record-keeping
         if (options.saveRawContent) {
           try {
@@ -202,34 +214,36 @@ export class AnalyzeJobCommand extends BaseCommand {
 
       // Display the analysis results
       this.displayResults(jobAnalysis, options.format || 'text');
-      
+
       // Save the analysis if an output path is provided
       if (options.output) {
         await this.saveAnalysis(jobAnalysis, options.output, options.format || 'json');
       }
-      
+
       // Record the operation in the run configuration
       const runConfig: RunConfiguration = {
         jobPosting: {
           url: jobAnalysis.source.url,
           content: rawContent,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         },
         verification: {
           claims: [],
-          sourceData: rawContent
-        }
+          sourceData: rawContent,
+        },
       };
-      
+
       // Save the run configuration for documentation
-      const configPath = options.output 
+      const configPath = options.output
         ? path.join(path.dirname(options.output), 'run-config.json')
         : path.join('output', 'job-analysis', `job-analysis-run-config-${Date.now()}.json`);
-        
+
       await this.recordRunConfiguration(runConfig, configPath);
-      
     } catch (error) {
-      this.logError(`Error analyzing job posting: ${error instanceof Error ? error.message : String(error)}`, true);
+      this.logError(
+        `Error analyzing job posting: ${error instanceof Error ? error.message : String(error)}`,
+        true
+      );
     }
   }
 
@@ -243,7 +257,7 @@ export class AnalyzeJobCommand extends BaseCommand {
       console.log(JSON.stringify(analysis, null, 2));
       return;
     }
-    
+
     // Default text output
     this.logInfo('\nJob Analysis Summary:');
     console.log('---------------------');
@@ -252,31 +266,33 @@ export class AnalyzeJobCommand extends BaseCommand {
     if (analysis.location) console.log(`Location: ${analysis.location}`);
     if (analysis.jobType) console.log(`Job Type: ${analysis.jobType}`);
     if (analysis.experienceLevel) console.log(`Experience Level: ${analysis.experienceLevel}`);
-    
+
     console.log('\nKey Terms for CV Tailoring:');
     console.log(analysis.keyTerms.join(', '));
-    
+
     if (analysis.salaryRange) {
       const min = analysis.salaryRange.min ? `$${analysis.salaryRange.min.toLocaleString()}` : '?';
       const max = analysis.salaryRange.max ? `$${analysis.salaryRange.max.toLocaleString()}` : '?';
       const period = analysis.salaryRange.period || 'yearly';
       console.log(`\nSalary Range: ${min} - ${max} (${period})`);
     }
-    
+
     console.log('\nResponsibilities:');
-    analysis.responsibilities.forEach(r => console.log(`- ${r}`));
-    
+    analysis.responsibilities.forEach((r) => console.log(`- ${r}`));
+
     console.log('\nQualifications:');
-    analysis.qualifications.forEach(q => console.log(`- ${q}`));
-    
+    analysis.qualifications.forEach((q) => console.log(`- ${q}`));
+
     if (analysis.educationRequirements && analysis.educationRequirements.length > 0) {
       console.log('\nEducation Requirements:');
-      analysis.educationRequirements.forEach(e => console.log(`- ${e}`));
+      analysis.educationRequirements.forEach((e) => console.log(`- ${e}`));
     }
-    
+
     this.logSuccess('\nCV Tailoring Suggestions:');
     console.log('1. Highlight matching skills in your professional summary');
-    console.log('2. Adjust your work experience descriptions to emphasize relevant responsibilities');
+    console.log(
+      '2. Adjust your work experience descriptions to emphasize relevant responsibilities'
+    );
     console.log('3. Use similar terminology/keywords throughout your CV');
     console.log('4. Update your skills section to prioritize the most relevant ones');
   }
@@ -288,13 +304,13 @@ export class AnalyzeJobCommand extends BaseCommand {
    * @param format Output format
    */
   private async saveAnalysis(
-    analysis: JobPostingAnalysis, 
-    outputPath: string, 
+    analysis: JobPostingAnalysis,
+    outputPath: string,
     format: string
   ): Promise<void> {
     try {
       await this.ensureDirectory(path.dirname(outputPath));
-      
+
       if (format.toLowerCase() === 'json') {
         await this.writeJsonFile(outputPath, analysis);
       } else if (format.toLowerCase() === 'markdown') {
@@ -305,7 +321,7 @@ export class AnalyzeJobCommand extends BaseCommand {
         const content = this.formatAsText(analysis);
         await fs.writeFile(outputPath, content);
       }
-      
+
       this.logSuccess(`Analysis saved to: ${outputPath}`);
     } catch (error) {
       this.logError(`Failed to save analysis: ${error}`, false);
@@ -319,44 +335,44 @@ export class AnalyzeJobCommand extends BaseCommand {
    */
   private formatAsMarkdown(analysis: JobPostingAnalysis): string {
     let content = `# Job Analysis: ${analysis.title}\n\n`;
-    
+
     content += `**Company:** ${analysis.company}\n`;
     if (analysis.location) content += `**Location:** ${analysis.location}\n`;
     if (analysis.jobType) content += `**Job Type:** ${analysis.jobType}\n`;
     if (analysis.experienceLevel) content += `**Experience Level:** ${analysis.experienceLevel}\n`;
-    
+
     content += `\n## Key Terms for CV Tailoring\n\n`;
     content += analysis.keyTerms.join(', ') + '\n';
-    
+
     if (analysis.salaryRange) {
       const min = analysis.salaryRange.min ? `$${analysis.salaryRange.min.toLocaleString()}` : '?';
       const max = analysis.salaryRange.max ? `$${analysis.salaryRange.max.toLocaleString()}` : '?';
       const period = analysis.salaryRange.period || 'yearly';
       content += `\n**Salary Range:** ${min} - ${max} (${period})\n`;
     }
-    
+
     content += `\n## Responsibilities\n\n`;
-    analysis.responsibilities.forEach(r => content += `- ${r}\n`);
-    
+    analysis.responsibilities.forEach((r) => (content += `- ${r}\n`));
+
     content += `\n## Qualifications\n\n`;
-    analysis.qualifications.forEach(q => content += `- ${q}\n`);
-    
+    analysis.qualifications.forEach((q) => (content += `- ${q}\n`));
+
     if (analysis.educationRequirements && analysis.educationRequirements.length > 0) {
       content += `\n## Education Requirements\n\n`;
-      analysis.educationRequirements.forEach(e => content += `- ${e}\n`);
+      analysis.educationRequirements.forEach((e) => (content += `- ${e}\n`));
     }
-    
+
     content += `\n## CV Tailoring Suggestions\n\n`;
     content += `1. Highlight matching skills in your professional summary\n`;
     content += `2. Adjust your work experience descriptions to emphasize relevant responsibilities\n`;
     content += `3. Use similar terminology/keywords throughout your CV\n`;
     content += `4. Update your skills section to prioritize the most relevant ones\n`;
-    
+
     content += `\n## Source\n\n`;
     content += `- URL: ${analysis.source.url}\n`;
     content += `- Site: ${analysis.source.site}\n`;
     content += `- Fetch Date: ${analysis.source.fetchDate.toISOString()}\n`;
-    
+
     return content;
   }
 
@@ -368,44 +384,44 @@ export class AnalyzeJobCommand extends BaseCommand {
   private formatAsText(analysis: JobPostingAnalysis): string {
     let content = `Job Analysis: ${analysis.title}\n`;
     content += `=================================\n\n`;
-    
+
     content += `Company: ${analysis.company}\n`;
     if (analysis.location) content += `Location: ${analysis.location}\n`;
     if (analysis.jobType) content += `Job Type: ${analysis.jobType}\n`;
     if (analysis.experienceLevel) content += `Experience Level: ${analysis.experienceLevel}\n`;
-    
+
     content += `\nKey Terms for CV Tailoring:\n`;
     content += `${analysis.keyTerms.join(', ')}\n`;
-    
+
     if (analysis.salaryRange) {
       const min = analysis.salaryRange.min ? `$${analysis.salaryRange.min.toLocaleString()}` : '?';
       const max = analysis.salaryRange.max ? `$${analysis.salaryRange.max.toLocaleString()}` : '?';
       const period = analysis.salaryRange.period || 'yearly';
       content += `\nSalary Range: ${min} - ${max} (${period})\n`;
     }
-    
+
     content += `\nResponsibilities:\n`;
-    analysis.responsibilities.forEach(r => content += `- ${r}\n`);
-    
+    analysis.responsibilities.forEach((r) => (content += `- ${r}\n`));
+
     content += `\nQualifications:\n`;
-    analysis.qualifications.forEach(q => content += `- ${q}\n`);
-    
+    analysis.qualifications.forEach((q) => (content += `- ${q}\n`));
+
     if (analysis.educationRequirements && analysis.educationRequirements.length > 0) {
       content += `\nEducation Requirements:\n`;
-      analysis.educationRequirements.forEach(e => content += `- ${e}\n`);
+      analysis.educationRequirements.forEach((e) => (content += `- ${e}\n`));
     }
-    
+
     content += `\nCV Tailoring Suggestions:\n`;
     content += `1. Highlight matching skills in your professional summary\n`;
     content += `2. Adjust your work experience descriptions to emphasize relevant responsibilities\n`;
     content += `3. Use similar terminology/keywords throughout your CV\n`;
     content += `4. Update your skills section to prioritize the most relevant ones\n`;
-    
+
     content += `\nSource Information:\n`;
     content += `URL: ${analysis.source.url}\n`;
     content += `Site: ${analysis.source.site}\n`;
     content += `Fetch Date: ${analysis.source.fetchDate.toISOString()}\n`;
-    
+
     return content;
   }
 

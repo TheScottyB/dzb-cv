@@ -3,8 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import chalk from 'chalk';
-import { ResumeAnalysisEngine } from '../ats/engine.js';
-import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
+import { ResumeAnalysisEngine } from '../ats/engine';
+import { getJobPostingFolderName } from '../shared/utils/job-metadata';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,7 +16,7 @@ type MimeTypeMap = {
 };
 
 async function resolveJobDirOrFile(
-  inputPath: string,
+  inputPath: string
 ): Promise<{ files: string[]; context: string }> {
   // If input is a job-data.json file, resolve the folder name and score all resumes in generated/
   if (inputPath.endsWith('job-data.json')) {
@@ -53,14 +53,14 @@ async function resolveJobDirOrFile(
         console.warn(
           chalk.yellow('⚠️  Warning:'),
           'Folder name does not match standardized convention. Expected:',
-          chalk.cyan(expectedDir),
+          chalk.cyan(expectedDir)
         );
       }
     } catch {
       console.warn(
         chalk.yellow(
-          '⚠️  Warning: No job-data.json found in folder. Cannot verify standardization.',
-        ),
+          '⚠️  Warning: No job-data.json found in folder. Cannot verify standardization.'
+        )
       );
     }
     const genDir = path.join(inputPath, 'generated');
@@ -91,7 +91,7 @@ async function scoreResume(filePath: string, jobId?: string) {
     const mimeType = mimeTypes[ext];
     if (!mimeType) {
       throw new Error(
-        `Unsupported file type: ${ext}. Supported types: ${Object.keys(mimeTypes).join(', ')}`,
+        `Unsupported file type: ${ext}. Supported types: ${Object.keys(mimeTypes).join(', ')}`
       );
     }
     const engine = new ResumeAnalysisEngine({});
@@ -104,7 +104,7 @@ async function scoreResume(filePath: string, jobId?: string) {
       console.log('\nML Analysis:');
       console.log(`- Skills Match: ${result.mlAnalysis.categoryMatches.skills.toFixed(2)}%`);
       console.log(
-        `- Experience Match: ${result.mlAnalysis.categoryMatches.experience.toFixed(2)}%`,
+        `- Experience Match: ${result.mlAnalysis.categoryMatches.experience.toFixed(2)}%`
       );
       console.log(`- Education Match: ${result.mlAnalysis.categoryMatches.education.toFixed(2)}%`);
       if (result.mlAnalysis.missingSkills.length > 0) {
@@ -119,13 +119,13 @@ async function scoreResume(filePath: string, jobId?: string) {
       if (result.atsAnalysis.issues.length > 0) {
         console.log('\nATS Issues:');
         result.atsAnalysis.issues.forEach((issue: { message: string }) =>
-          console.log(`- ${issue.message}`),
+          console.log(`- ${issue.message}`)
         );
       }
       if (result.atsAnalysis.keywords.missing.length > 0) {
         console.log('\nMissing Keywords:');
         result.atsAnalysis.keywords.missing.forEach((keyword: string) =>
-          console.log(`- ${keyword}`),
+          console.log(`- ${keyword}`)
         );
       }
     }
@@ -142,7 +142,7 @@ async function scoreResume(filePath: string, jobId?: string) {
 async function main() {
   if (process.argv.length < 3) {
     console.error(
-      'Usage: pnpm tsx src/scripts/score-resume.ts <resume-file|job-posting-folder|job-data.json> [job-id]',
+      'Usage: pnpm tsx src/scripts/score-resume.ts <resume-file|job-posting-folder|job-data.json> [job-id]'
     );
     process.exit(1);
   }

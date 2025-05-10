@@ -29,4 +29,4 @@ export interface ScraperResult {
   htmlPath: string | null;
   screenshotPath: string | null;
   metadata: Record<string, unknown>;
-} 
+}

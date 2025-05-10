@@ -41,4 +41,4 @@ export interface ATSCompatibilityReport {
   keywordAnalysis: ATSKeywordAnalysis;
   parseRate: number;
   recommendation: string;
-} 
+}

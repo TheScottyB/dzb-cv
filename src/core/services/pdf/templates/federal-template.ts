@@ -157,9 +157,9 @@ ${personalInfo.citizenship ? `Citizenship: ${personalInfo.citizenship}` : 'Citiz
   protected override generateExperience(data: CVData, options?: TemplateOptions): string {
     if (options?.includeExperience === false || !data.experience.length) return '';
 
-    const experiences = data.experience.map(exp => ({
+    const experiences = data.experience.map((exp) => ({
       ...exp,
-      period: `${exp.startDate} - ${exp.endDate || 'Present'}`
+      period: `${exp.startDate} - ${exp.endDate || 'Present'}`,
     }));
 
     if (options?.experienceOrder) {
@@ -173,7 +173,9 @@ ${personalInfo.citizenship ? `Citizenship: ${personalInfo.citizenship}` : 'Citiz
     return `
 ## Professional Experience
 
-${experiences.map(exp => `
+${experiences
+  .map(
+    (exp) => `
 ### ${exp.position} at ${exp.employer}
 
 <div class="job-details">
@@ -189,19 +191,29 @@ ${experiences.map(exp => `
 <p>Supervisor: ${exp.supervisor || 'Jane Smith'}${exp.mayContact === false ? ' (Contact me first)' : ' (May contact)'}</p>
 </div>
 
-${exp.responsibilities.map(r => `- ${r}`).join('\n')}
+${exp.responsibilities.map((r) => `- ${r}`).join('\n')}
 
-${exp.achievements?.length ? `
+${
+  exp.achievements?.length
+    ? `
 <div class="achievements">
 <h4>Key Achievements:</h4>
-${exp.achievements.map(a => `- ${a}`).join('\n')}
-</div>` : ''}
+${exp.achievements.map((a) => `- ${a}`).join('\n')}
+</div>`
+    : ''
+}
 
-${exp.careerProgression?.length ? `
+${
+  exp.careerProgression?.length
+    ? `
 <h4>Career Progression:</h4>
-${exp.careerProgression.map(p => `<p>${p}</p>`).join('\n')}
-` : ''}
-`).join('\n')}
+${exp.careerProgression.map((p) => `<p>${p}</p>`).join('\n')}
+`
+    : ''
+}
+`
+  )
+  .join('\n')}
     `.trim();
   }
 
@@ -212,7 +224,7 @@ ${exp.careerProgression.map(p => `<p>${p}</p>`).join('\n')}
 ## Technical Skills and Competencies
 
 <div class="skills-section">
-${data.skills.map(skill => `- ${skill}`).join('\n')}
+${data.skills.map((skill) => `- ${skill}`).join('\n')}
 </div>
     `.trim();
   }
@@ -223,14 +235,13 @@ ${data.skills.map(skill => `- ${skill}`).join('\n')}
     return `
 ## Education
 
-${data.education.map(edu => {
-        const completionDate = edu.completionDate || edu.year || '2019';
-        // Add month if not present in completion date
-        const formattedDate = completionDate?.includes(' ') 
-            ? completionDate 
-            : `May ${completionDate}`;
-            
-        return `
+${data.education
+  .map((edu) => {
+    const completionDate = edu.completionDate || edu.year || '2019';
+    // Add month if not present in completion date
+    const formattedDate = completionDate?.includes(' ') ? completionDate : `May ${completionDate}`;
+
+    return `
 <div class="education-item">
 <p><strong>${edu.degree} in ${edu.field || 'Public Policy'}</strong></p>
 <p>${edu.institution}</p>
@@ -240,7 +251,8 @@ ${data.education.map(edu => {
 ${edu.notes ? `<p>${edu.notes}</p>` : ''}
 ${edu.notes ? `<p>${edu.notes}</p>` : ''}
 </div>`;
-    }).join('\n')}
+  })
+  .join('\n')}
     `.trim();
   }
 }

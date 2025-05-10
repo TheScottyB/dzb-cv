@@ -17,7 +17,7 @@ const ASSET_MAPPING = [
   { src: 'src/templates', dest: 'dist/templates' },
   { src: 'src/components', dest: 'dist/components' },
   { src: 'src/data', dest: 'dist/data' },
-  { src: 'src/styles', dest: 'dist/styles' }
+  { src: 'src/styles', dest: 'dist/styles' },
 ];
 
 /**
@@ -26,15 +26,15 @@ const ASSET_MAPPING = [
 async function copyDir(src, dest) {
   // Ensure destination directory exists
   await fs.mkdir(dest, { recursive: true });
-  
+
   // Read source directory contents
   const entries = await fs.readdir(src, { withFileTypes: true });
-  
+
   // Process each entry
   for (const entry of entries) {
     const srcPath = join(src, entry.name);
     const destPath = join(dest, entry.name);
-    
+
     if (entry.isDirectory()) {
       // Recursively copy subdirectories
       await copyDir(srcPath, destPath);
@@ -52,11 +52,11 @@ async function copyAssets() {
   for (const { src, dest } of ASSET_MAPPING) {
     const srcPath = join(PROJECT_ROOT, src);
     const destPath = join(PROJECT_ROOT, dest);
-    
+
     try {
       // Check if source directory exists
       await fs.access(srcPath);
-      
+
       // Copy directory
       await copyDir(srcPath, destPath);
       console.log(`✓ Copied ${src} to ${dest}`);
@@ -71,7 +71,7 @@ async function copyAssets() {
 }
 
 // Run the copy operation
-copyAssets().catch(error => {
+copyAssets().catch((error) => {
   console.error('Asset copy failed:', error);
   process.exit(1);
 });
