@@ -20,10 +20,15 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"]
   },
   "include": ["src/**/*", "src/types/css.d.ts"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx", "node_modules"],
-  "references": [
-    { "path": "../config" },
-    { "path": "../types" }
-  ]
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "node_modules",
+    "dist",
+    "vitest.config.ts",
+    "vitest-setup.ts"
+  ],
+  "references": [{ "path": "../config" }, { "path": "../types" }]
 }
-

@@ -17,8 +17,12 @@
     "types": ["node", "vitest/globals"]
   },
   "include": ["src/**/*"],
-  "exclude": ["**/*.test.ts", "**/*.spec.ts", "node_modules"],
-  "references": [
-    { "path": "../types" }
-  ]
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "node_modules",
+    "dist",
+    "vitest.config.ts"
+  ],
+  "references": [{ "path": "../types" }]
 }
