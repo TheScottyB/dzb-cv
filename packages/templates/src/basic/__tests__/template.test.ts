@@ -3,47 +3,10 @@ import { describe, it, expect } from 'vitest';
 import type { CVData } from '@dzb-cv/types';
 
 import { BasicTemplate } from '../template.js';
+import { sampleCV } from '../../test-utils';
 
 describe('BasicTemplate', () => {
   const template = new BasicTemplate();
-
-  const sampleCV: CVData = {
-    personalInfo: {
-      name: {
-        first: 'John',
-        last: 'Doe',
-        full: 'John Doe',
-      },
-      contact: {
-        email: 'john@example.com',
-        phone: '123-456-7890',
-      },
-    },
-    experience: [
-      {
-        position: 'Software Engineer',
-        employer: 'Tech Corp',
-        startDate: '2020-01',
-        endDate: '2023-12',
-        responsibilities: ['Development', 'Testing'],
-        employmentType: 'full-time',
-      },
-    ],
-    education: [
-      {
-        degree: 'BS',
-        field: 'Computer Science',
-        institution: 'Test University',
-        graduationDate: '2019',
-      },
-    ],
-    skills: [
-      {
-        name: 'TypeScript',
-        level: 'expert',
-      },
-    ],
-  };
 
   it('should have correct name', () => {
     expect(template.name).toBe('basic');

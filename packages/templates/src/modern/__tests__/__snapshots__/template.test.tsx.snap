@@ -95,7 +95,8 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
               >
                 Jan 2020
-                 - 
+                 -
+                 
                 Present
               </p>
             </div>
@@ -179,7 +180,8 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
               >
                 Mar 2018
-                 - 
+                 -
+                 
                 Dec 2019
               </p>
             </div>
@@ -760,7 +762,8 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
               >
                 Jan 2020
-                 - 
+                 -
+                 
                 Present
               </p>
             </div>
@@ -844,7 +847,8 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
               >
                 Mar 2018
-                 - 
+                 -
+                 
                 Dec 2019
               </p>
             </div>

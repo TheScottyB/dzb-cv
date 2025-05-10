@@ -5,6 +5,7 @@ import {
   SkillMatcher,
   createSkillMatcher,
 } from '@dzb-cv/ats/taxonomies';
+import { expectNoJobSpecificSuggestions } from '../../test-utils';
 
 describe('SkillMatcher', () => {
   const testSkills: SkillDefinition[] = [

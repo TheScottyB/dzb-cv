@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 import type { CVData } from '@dzb-cv/types';
 
 import { ModernTemplate } from '../template.js';
+import { minimalCV, fullCV } from '../../test-utils';
 
 describe('ModernTemplate', () => {
   // Mock the window.matchMedia function for testing responsive layouts
@@ -26,161 +27,6 @@ describe('ModernTemplate', () => {
     });
   }
   const template = new ModernTemplate();
-
-  // Minimal CV data for basic tests
-  const minimalCVData: CVData = {
-    personalInfo: {
-      name: {
-        first: 'John',
-        last: 'Doe',
-        full: 'John Doe',
-      },
-      contact: {
-        email: 'john@example.com',
-        phone: '(555) 123-4567',
-      },
-    },
-    experience: [],
-    education: [],
-    skills: [],
-  };
-
-  // Full CV data for comprehensive tests
-  const fullCVData: CVData = {
-    personalInfo: {
-      name: {
-        first: 'Jane',
-        middle: 'Marie',
-        last: 'Smith',
-        full: 'Jane Marie Smith',
-      },
-      professionalTitle: 'Senior Software Engineer',
-      summary:
-        'Experienced software engineer with expertise in web development and distributed systems.',
-      contact: {
-        email: 'jane.smith@example.com',
-        phone: '(555) 987-6543',
-        address: '123 Tech Street, San Francisco, CA 94107',
-        linkedin: 'linkedin.com/in/janesmith',
-        github: 'github.com/janesmith',
-        website: 'janesmith.dev',
-      },
-    },
-    experience: [
-      {
-        position: 'Senior Software Engineer',
-        employer: 'Tech Solutions Inc.',
-        startDate: 'Jan 2020',
-        endDate: 'Present',
-        location: 'San Francisco, CA',
-        responsibilities: [
-          'Lead development of microservices architecture',
-          'Mentor junior developers and conduct code reviews',
-          'Implement CI/CD pipelines for automated testing and deployment',
-        ],
-        achievements: [
-          'Reduced API response time by 40% through optimized database queries',
-          'Implemented authentication system that increased security compliance by 100%',
-        ],
-        employmentType: 'full-time',
-      },
-      {
-        position: 'Software Developer',
-        employer: 'InnovateTech',
-        startDate: 'Mar 2018',
-        endDate: 'Dec 2019',
-        location: 'Seattle, WA',
-        responsibilities: [
-          'Developed front-end components using React and TypeScript',
-          'Created RESTful APIs using Node.js and Express',
-        ],
-        employmentType: 'full-time',
-      },
-    ],
-    education: [
-      {
-        institution: 'University of Washington',
-        degree: 'Master of Science',
-        field: 'Computer Science',
-        graduationDate: '2018',
-        gpa: '3.92',
-        honors: ['Magna Cum Laude', "Dean's List"],
-      },
-      {
-        institution: 'California State University',
-        degree: 'Bachelor of Science',
-        field: 'Software Engineering',
-        graduationDate: '2016',
-      },
-    ],
-    skills: [
-      {
-        name: 'React',
-        level: 'expert',
-        category: 'Frontend',
-      },
-      {
-        name: 'TypeScript',
-        level: 'expert',
-        category: 'Languages',
-      },
-      {
-        name: 'Node.js',
-        level: 'advanced',
-        category: 'Backend',
-      },
-      {
-        name: 'GraphQL',
-        level: 'intermediate',
-        category: 'API',
-      },
-      {
-        name: 'Docker',
-        level: 'beginner',
-        category: 'DevOps',
-      },
-    ],
-    // Extensions beyond the base type
-    projects: [
-      {
-        name: 'E-commerce Platform',
-        description: 'Built a scalable e-commerce platform with microservices architecture',
-        technologies: ['React', 'Node.js', 'MongoDB', 'Docker'],
-        url: 'https://github.com/janesmith/ecommerce',
-      },
-      {
-        name: 'Task Management App',
-        description: 'Developed a responsive task management application with real-time updates',
-        technologies: ['React', 'Firebase', 'Material-UI'],
-      },
-    ],
-    languages: [
-      {
-        language: 'English',
-        proficiency: 'Native',
-      },
-      {
-        language: 'Spanish',
-        proficiency: 'Fluent',
-      },
-      {
-        language: 'French',
-        proficiency: 'Intermediate',
-      },
-    ],
-    certifications: [
-      {
-        name: 'AWS Certified Solutions Architect',
-        issuer: 'Amazon Web Services',
-        date: '2022',
-      },
-      {
-        name: 'Google Cloud Professional Developer',
-        issuer: 'Google',
-        date: '2021',
-      },
-    ],
-  };
 
   beforeEach(() => {
     // Default to desktop viewport
@@ -206,7 +52,7 @@ describe('ModernTemplate', () => {
 
   // 1. Basic render test with minimal CV data
   it('should render with minimal CV data', () => {
-    const { container } = render(template.renderComponent(minimalCVData));
+    const { container } = render(template.renderComponent(minimalCV));
 
     // Debug: print the rendered HTML
     console.log('Minimal CV render output:', container.innerHTML);
@@ -230,7 +76,7 @@ describe('ModernTemplate', () => {
 
   // 2. Full CV data render test
   it('should render all sections with full CV data', () => {
-    const { container } = render(template.renderComponent(fullCVData));
+    const { container } = render(template.renderComponent(fullCV));
 
     // Check for professional summary
     expect(
@@ -346,7 +192,7 @@ describe('ModernTemplate', () => {
     // Mock mobile viewport
     mockMatchMedia(true);
 
-    const { container } = render(template.renderComponent(fullCVData));
+    const { container } = render(template.renderComponent(fullCV));
 
     // In the mockMatchMedia implementation, true would match media queries like (max-width: 768px)
     // We can verify this by checking computed styles, but since we can't access computed styles in JSDOM,
@@ -367,7 +213,7 @@ describe('ModernTemplate', () => {
 
   // 5.1 Test header with contact info
   it('should render header with all contact information', () => {
-    render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCV));
 
     // Check name and title
     expect(screen.getByText((content) => content.includes('Jane Marie Smith'))).toBeInTheDocument();
@@ -393,7 +239,7 @@ describe('ModernTemplate', () => {
 
   // 5.2 Test experience items
   it('should render experience items with all details', () => {
-    render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCV));
 
     // Check for both experience entries
     expect(
@@ -423,7 +269,7 @@ describe('ModernTemplate', () => {
 
   // 5.3 Test education items
   it('should render education items with all details', () => {
-    render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCV));
 
     // Check for both education entries
     expect(
@@ -448,7 +294,7 @@ describe('ModernTemplate', () => {
 
   // 5.4 Test skills with different levels
   it('should render skills with different levels and categories', () => {
-    render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCV));
 
     // Check for skill categories
     expect(screen.getAllByText((content) => content.includes('Frontend')).length).toBeGreaterThan(
@@ -474,7 +320,7 @@ describe('ModernTemplate', () => {
 
   // 5.5 Test projects
   it('should render projects with all details', () => {
-    render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCV));
 
     // Check for project names
     expect(
@@ -521,7 +367,7 @@ describe('ModernTemplate', () => {
 
   // 5.6 Test languages section
   it('should render languages with proficiency levels', () => {
-    render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCV));
 
     // Check for languages section header
     expect(screen.getAllByText((content) => content.includes('Languages')).length).toBeGreaterThan(
@@ -550,7 +396,7 @@ describe('ModernTemplate', () => {
 
   // 5.7 Test certifications section
   it('should render certifications with issuer and date', () => {
-    render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCV));
 
     // Check for certifications section header
     expect(screen.getByText((content) => content.includes('Certifications'))).toBeInTheDocument();
@@ -584,7 +430,7 @@ describe('ModernTemplate', () => {
 
   // 6. Test print media styles
   it('should include print-specific styles', () => {
-    render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCV));
 
     // Get the styles
     const styles = template.getStyles();

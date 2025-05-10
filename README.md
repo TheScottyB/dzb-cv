@@ -264,3 +264,21 @@ See the [project roadmap](ROADMAP.md) (coming soon) for more details.
 ## License
 
 MIT (coming soon)
+
+## Testing Best Practices
+
+- All packages use a shared `test-utils.ts` for DRY sample data, factories, and helpers.
+- ESM-compatible mocking is done with `vi.mock` and `importActual` for robust, future-proof tests.
+- Example robust test file using these patterns:
+
+```typescript
+vi.mock('@dzb-cv/pdf', async (importActual) => {
+  const actual = await importActual<typeof import('@dzb-cv/pdf')>();
+  return {
+    ...actual,
+    createPDFGenerator: vi.fn().mockImplementation(() => ({ generate: vi.fn() })),
+  };
+});
+```
+
+- See `TESTING.md` for more details and patterns.

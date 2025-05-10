@@ -75,50 +75,48 @@ export interface TextProps extends React.HTMLAttributes<HTMLElement> {
  * <Text lineClamp={2}>This text will be truncated after 2 lines with an ellipsis.</Text>
  * ```
  */
-export const Text = React.forwardRef<HTMLElement, TextProps & { as?: TextElement }>(
-  (
-    {
-      children,
-      as = 'p',
-      size = 'md',
-      weight,
-      italic = false,
-      truncate = false,
-      lineClamp,
-      align,
-      color = 'default',
-      className = '',
-      ...props
-    },
-    _ref
-  ) => {
-    const TextTag = as;
+const _Text = <T extends HTMLElement = HTMLParagraphElement>(
+  {
+    children,
+    as = 'p',
+    size = 'md',
+    weight,
+    italic = false,
+    truncate = false,
+    lineClamp,
+    align,
+    color = 'default',
+    className = '',
+    ...props
+  }: TextProps & { as?: TextElement },
+  ref: React.ForwardedRef<T>
+) => {
+  const TextTag = as as React.ElementType;
 
-    const textClasses = [
-      styles.text,
-      styles[`size-${size}`],
-      weight ? styles[`weight-${weight}`] : '',
-      italic ? styles.italic : '',
-      truncate ? styles.truncate : '',
-      lineClamp ? styles.lineClamp : '',
-      align ? styles[`align-${align}`] : '',
-      color ? styles[`color-${color}`] : '',
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
+  const textClasses = [
+    styles.text,
+    styles[`size-${size}`],
+    weight ? styles[`weight-${weight}`] : '',
+    italic ? styles.italic : '',
+    truncate ? styles.truncate : '',
+    lineClamp ? styles.lineClamp : '',
+    align ? styles[`align-${align}`] : '',
+    color ? styles[`color-${color}`] : '',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
-    const textStyle = lineClamp
-      ? ({ '--line-clamp': lineClamp } as React.CSSProperties)
-      : undefined;
+  const textStyle = lineClamp ? ({ '--line-clamp': lineClamp } as React.CSSProperties) : undefined;
 
-    return (
-      // TODO: Add ref support with correct typing for dynamic element types
-      <TextTag className={textClasses} style={textStyle} {...props}>
-        {children}
-      </TextTag>
-    );
-  }
-);
+  return (
+    <TextTag ref={ref} className={textClasses} style={textStyle} {...props}>
+      {children}
+    </TextTag>
+  );
+};
 
-Text.displayName = 'Text';
+_Text.displayName = 'Text';
+export const Text = React.forwardRef(_Text) as <T extends HTMLElement = HTMLParagraphElement>(
+  props: TextProps & { as?: TextElement } & { ref?: React.Ref<T> }
+) => React.ReactElement | null;

@@ -93,9 +93,9 @@ export class ScoringEngine {
 
     const matches = [...jobTokens].filter((token) => cvTokens.has(token));
     const missing = [...jobTokens].filter((token) => !cvTokens.has(token));
-
+    const denom = matches.length + missing.length;
     return {
-      score: matches.length / (matches.length + missing.length),
+      score: denom === 0 ? 0 : matches.length / denom,
       matches,
       missing,
       suggestions: missing.length > 0 ? [`Add missing keywords: ${missing.join(', ')}`] : [],
@@ -129,13 +129,11 @@ export class ScoringEngine {
     const matches = cv.education.filter((edu) =>
       requiredDegrees.some((req) => edu.degree.toLowerCase().includes(req.toLowerCase()))
     );
-
     const missing = requiredDegrees.filter(
       (req) => !cv.education.some((edu) => edu.degree.toLowerCase().includes(req.toLowerCase()))
     );
-
     return {
-      score: matches.length / requiredDegrees.length,
+      score: requiredDegrees.length === 0 ? 0 : matches.length / requiredDegrees.length,
       matches: matches.map((m) => m.degree),
       missing,
       suggestions: missing.map((deg) => `Missing required degree: ${deg}`),
@@ -145,17 +143,14 @@ export class ScoringEngine {
   private scoreSkills(cv: CVData, posting: JobPosting): SectionScore {
     const requiredSkills = posting.skills || [];
     const cvSkills = cv.skills.map((s) => s.name.toLowerCase());
-
     const matches = requiredSkills.filter((skill) =>
       cvSkills.some((cvSkill) => cvSkill.includes(skill.toLowerCase()))
     );
-
     const missing = requiredSkills.filter(
       (skill) => !cvSkills.some((cvSkill) => cvSkill.includes(skill.toLowerCase()))
     );
-
     return {
-      score: matches.length / requiredSkills.length,
+      score: requiredSkills.length === 0 ? 0 : matches.length / requiredSkills.length,
       matches,
       missing,
       suggestions: missing.map((skill) => `Add missing skill: ${skill}`),

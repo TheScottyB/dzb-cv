@@ -68,7 +68,7 @@ export default defineConfig({
     environment: 'jsdom',
 
     // Setup global test utilities and mocks
-    setupFiles: ['./vitest-setup.ts'],
+    // setupFiles: ['./vitest-setup.ts'],
 
     // Include and exclude patterns
     include: ['packages/*/src/**/*.{test,spec}.{ts,tsx}', 'src/**/*.{test,spec}.{ts,tsx}'],

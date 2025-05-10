@@ -24,18 +24,36 @@ Tests are organized in two main categories:
 - Mock files should be placed in `__mocks__` directories when needed
 
 ### Mocking Strategy
-We use Vitest's mocking capabilities for dependencies:
+
+- Use Vitest's ESM-compatible mocking for all external modules:
+  - Use `vi.mock('module', async (importActual) => { ... })` to ensure all named and default exports are available and only override what you need.
+  - Always hoist mocks to the top of the test file, before imports that use the mocked module.
+
+#### Example
 
 ```typescript
-const mockStorage = {
-  save: vi.fn(),
-  load: vi.fn(),
-  delete: vi.fn()
-};
+vi.mock('@dzb-cv/pdf', async (importActual) => {
+  const actual = await importActual<typeof import('@dzb-cv/pdf')>();
+  return {
+    ...actual,
+    createPDFGenerator: vi.fn().mockImplementation(() => ({ generate: vi.fn() })),
+  };
+});
+```
 
-const mockPdfGenerator = {
-  generate: vi.fn()
-};
+### Shared Test Utilities
+
+- Each package should have a `test-utils.ts` for shared sample data, factories, and helpers.
+- All test files should import from `test-utils.ts` to avoid duplication and keep tests DRY.
+
+#### Example
+
+```typescript
+// test-utils.ts
+export const sampleCV = { ... };
+
+// In your test file
+import { sampleCV } from '../test-utils';
 ```
 
 ### Test Coverage Requirements
@@ -102,6 +120,10 @@ describe('Package exports', () => {
 ```
 
 ## Best Practices
+
+- Use the shared test-utils and ESM mocking pattern for all new and refactored tests.
+- Always reset mocks between tests with `vi.clearAllMocks()`.
+- Prefer meaningful assertions and test both happy and error paths.
 
 1. **Isolation**: Each test should be independent and not rely on the state of other tests
 
