@@ -3,7 +3,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
 
-import { Heading } from '../Heading';
+import { Heading } from '../Heading.js';
 import styles from '../Heading.module.css';
 
 // Safer way to get a style class with fallback for testing environment

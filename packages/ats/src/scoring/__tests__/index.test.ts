@@ -28,6 +28,7 @@ describe('ScoringEngine', () => {
           'Implemented CI/CD pipelines',
           'Mentored junior developers',
         ],
+        employmentType: 'full-time',
       },
       {
         position: 'Software Engineer',
@@ -35,6 +36,7 @@ describe('ScoringEngine', () => {
         startDate: '2018-01',
         endDate: '2019-12',
         responsibilities: ['Developed React applications', 'Worked with TypeScript and Node.js'],
+        employmentType: 'full-time',
       },
     ],
     education: [
@@ -68,6 +70,7 @@ describe('ScoringEngine', () => {
       'Implement best practices and CI/CD',
     ],
     skills: ['TypeScript', 'React', 'Node.js', 'Docker', 'Kubernetes'],
+    url: '',
   };
 
   describe('score', () => {
@@ -151,6 +154,7 @@ describe('ScoringEngine', () => {
         title: '',
         company: '',
         description: '',
+        url: '',
       };
 
       const result = engine.score(sampleCV, emptyJob);
@@ -163,6 +167,7 @@ describe('ScoringEngine', () => {
         title: 'Developer',
         company: 'Company',
         description: 'Job description',
+        url: '',
       };
 
       const result = engine.score(sampleCV, minimalJob);

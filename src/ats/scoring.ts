@@ -1,4 +1,4 @@
-import { CVData } from '../shared/types/cv-base.js';
+import { CVData } from '../shared/types/cv-base';
 
 export enum ATSIssueCategory {
   CRITICAL = 'CRITICAL',

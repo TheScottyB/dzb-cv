@@ -1,18 +1,11 @@
 {
-  "extends": "@dzb-cv/config/typescript/base",
+  "extends": "../../tsconfig.react.json",
   "compilerOptions": {
-    "rootDir": ".",
+    "rootDir": "src",
     "outDir": "dist",
     "jsx": "react-jsx",
-    "types": ["node", "vitest/globals", "@testing-library/jest-dom"],
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "baseUrl": "."
+    "types": ["node", "@testing-library/jest-dom"]
   },
   "references": [{ "path": "../types" }, { "path": "../ui" }],
-  "include": ["src/**/*", "vitest.setup.ts"],
-  "exclude": [
-    "node_modules",
-    "vitest.config.ts"
-  ]
+  "include": ["src/**/*", "src/vitest.setup.ts"]
 }

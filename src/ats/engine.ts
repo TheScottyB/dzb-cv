@@ -1,9 +1,9 @@
 /**
  * Unified resume analysis engine combining ML parsing and ATS API integration
  */
-import { ATSApiClient, JobBoardAPIOptions } from './api.js';
-import { MLResumeParser, MLParserOptions, ParsedResume, MLAnalysisResult } from './ml-parser.js';
-import { ATSAnalysisResult } from './scoring.js';
+import { ATSApiClient, JobBoardAPIOptions } from './api';
+import { MLResumeParser, MLParserOptions, ParsedResume, MLAnalysisResult } from './ml-parser';
+import { ATSAnalysisResult } from './scoring';
 
 export interface ResumeAnalysisOptions {
   ml?: MLParserOptions;

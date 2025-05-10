@@ -1,7 +1,7 @@
-import { Tool } from '../types.js';
-import { PDFParser } from '../../../core/services/pdf/parser.js';
-import { DOCXParser } from '../../../core/services/docx/parser.js';
-import { TXTParser } from '../../../core/services/txt/parser.js';
+import { Tool } from '../types';
+import { PDFParser } from '../../../core/services/pdf/parser';
+import { DOCXParser } from '../../../core/services/docx/parser';
+import { TXTParser } from '../../../core/services/txt/parser';
 
 interface ExtractTextInput {
   fileBuffer: Buffer;

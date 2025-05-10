@@ -1,7 +1,7 @@
 /**
  * ML-based resume parser with advanced matching capabilities
  */
-import { SKILLS_SET, SKILL_CATEGORIES } from './taxonomies/skills.js';
+import { SKILLS_SET, SKILL_CATEGORIES } from './taxonomies/skills';
 
 /**
  * Structure of parsed resume data

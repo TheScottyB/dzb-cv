@@ -34,10 +34,9 @@ describe('CVService', () => {
 
   beforeEach(() => {
     mockStorage = {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       save: vi
         .fn()
-        .mockImplementation((id: string, data: CVData): Promise<void> => Promise.resolve()),
+        .mockImplementation((_id: string, _data: CVData): Promise<void> => Promise.resolve()),
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       load: vi.fn().mockImplementation((id: string): Promise<CVData> => Promise.resolve(sampleCV)),
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -105,7 +104,7 @@ describe('CVService', () => {
 
       mockStorage.load.mockResolvedValue(existingCV);
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+       
       const _result = await service.updateCV(id, updateData);
       expect(mockStorage.load).toHaveBeenCalledWith(id);
       expect(mockStorage.load).toHaveBeenCalledWith(id);

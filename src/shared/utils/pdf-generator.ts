@@ -1,6 +1,6 @@
 import { promises as fs } from 'fs';
 import MarkdownIt from 'markdown-it';
-import type { PDFOptions } from '../types/cv-types.js';
+import type { PDFOptions } from '../types/cv-types';
 
 // Define a type that ensures margins are always defined
 type PDFOptionsWithRequiredMargins = Omit<PDFOptions, 'margins'> & {

@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'fs/promises';
-import { MarkdownConverter } from '../utils/markdown-converter.js';
-import { HTMLToPDFConverter } from '../utils/html-to-pdf.js';
+import { MarkdownConverter } from '../utils/markdown-converter';
+import { HTMLToPDFConverter } from '../utils/html-to-pdf';
 
 async function main() {
   try {

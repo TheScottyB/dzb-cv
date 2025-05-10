@@ -33,15 +33,15 @@ export function createCVCommand(program: Command): void {
       };
 
       const storage = {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         
         save: async (id: string, _data: CVData): Promise<void> => {
           console.log(`Saving CV with ID: ${id}`);
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         
         load: async (_id: string): Promise<CVData> => {
           throw new Error('Not implemented');
         },
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+         
         delete: async (_id: string): Promise<void> => {
           throw new Error('Not implemented');
         },

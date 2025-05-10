@@ -8,7 +8,7 @@ import { PDFDocument } from 'pdf-lib';
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
-import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
+import { getJobPostingFolderName } from '../shared/utils/job-metadata';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { marked } from 'marked';
 import puppeteer, { Browser, PaperFormat } from 'puppeteer';

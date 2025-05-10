@@ -8,9 +8,9 @@
 
 import { Command } from 'commander';
 import chalk from 'chalk';
-import { GenerateCvCommand } from './commands/generate-cv.js';
-import { AnalyzeJobCommand } from './commands/analyze-job.js';
-import { ManageProfileCommand } from './commands/manage-profile.js';
+import { GenerateCvCommand } from './commands/generate-cv';
+import { AnalyzeJobCommand } from './commands/analyze-job';
+import { ManageProfileCommand } from './commands/manage-profile';
 
 // Create the main CLI program
 const program = new Command();

@@ -1,6 +1,6 @@
 export * from './cv-analyzer.js';
 
-import type { CVData, Education, Experience } from '@dzb-cv/types';
+import type { CVData, Education as _Education, Experience as _Experience } from '@dzb-cv/types';
 import type { JobPosting } from '@dzb-cv/types/job';
 import { TfIdf, WordTokenizer } from 'natural';
 
@@ -479,8 +479,8 @@ export class CVAnalyzer {
       ['doctorate', 5],
     ]);
 
-    // Patterns to match education requirements
-    const educationRegexes = [
+    // Prefix with _ to silence unused var error
+    const _educationRegexes = [
       /bachelor[''s]?\s+(?:degree|of)/i,
       /master[''s]?\s+(?:degree|of)/i,
       /ph\.?d/i,

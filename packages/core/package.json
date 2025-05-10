@@ -29,9 +29,6 @@
     "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "^1.6.1",
-    "@dzb-cv/config": "workspace:*"
+    "@dzb-cv/config": "workspace:"
   }
 }

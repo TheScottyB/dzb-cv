@@ -1,7 +1,7 @@
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { marked } from 'marked';
 import { JSDOM } from 'jsdom';
-import { MatchResult } from './job-matcher.js';
+import { MatchResult } from './job-matcher';
 
 interface PDFTheme {
   primaryColor: [number, number, number];

@@ -9,4 +9,4 @@
  */
 
 // Re-export all types from the canonical location
-export * from '../../../packages/core/src/types/index.js';
+export * from '../../../packages/core/src/types/index';

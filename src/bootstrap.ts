@@ -9,7 +9,7 @@ import { RuntimeOrchestratorAgent } from '../agents/RuntimeOrchestratorAgent';
 import { MemoryDesignerAgent } from '../agents/MemoryDesignerAgent';
 import { DocumentationAgent } from '../agents/DocumentationAgent';
 
-import { TaskAssignmentPlan, TaskStatus } from '../agents/builders/TaskAssignmentPlan.js';
+import { TaskAssignmentPlan, TaskStatus } from '../agents/builders/TaskAssignmentPlan';
 
 // Define the shape of the minimal AgentRegistry
 interface AgentRegistry {
@@ -86,7 +86,7 @@ async function main() {
         assignee: 'ToolWrapperAgent',
       },
       {
-        description: 'Create base template for a “basic research agent.”',
+        description: 'Create base template for a "basic research agent."',
         assignee: 'AgentScaffolderAgent',
       },
       {

@@ -1,4 +1,4 @@
-import type { CVData } from '../core/types/cv-base.js';
+import type { CVData } from '../core/types/cv-base';
 
 /**
  * Job Posting interface representing job requirements and details

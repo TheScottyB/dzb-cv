@@ -1,4 +1,4 @@
-import { dawnTemplate } from '../templates/dawn-template.js';
+import { dawnTemplate } from '../templates/dawn-template';
 
 export interface JobData {
   responsibilities?: string[];

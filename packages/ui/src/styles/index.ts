@@ -92,13 +92,13 @@ export const theme = {
 /**
  * Utility function to get a specific theme value
  */
-export const getThemeValue = (path: string, defaultValue?: any): any => {
+export const getThemeValue = (path: string, defaultValue?: unknown): unknown => {
   const keys = path.split('.');
-  let value = theme as any;
+  let value: unknown = theme;
 
   for (const key of keys) {
-    if (value === undefined) return defaultValue;
-    value = value[key];
+    if (typeof value !== 'object' || value === undefined || value === null) return defaultValue;
+    value = (value as Record<string, unknown>)[key];
   }
 
   return value !== undefined ? value : defaultValue;
@@ -110,18 +110,18 @@ export const getThemeValue = (path: string, defaultValue?: any): any => {
 export const responsive = (
   property: string,
   values: Record<string, string | number>
-): Record<string, string> => {
-  const result: Record<string, string> = {};
+): Record<string, string | Record<string, string>> => {
+  const result: Record<string, string | Record<string, string>> = {};
 
   Object.entries(values).forEach(([breakpoint, value]) => {
     if (breakpoint === 'base') {
       result[property] = value.toString();
     } else {
-      const breakpointValue = getThemeValue(`breakpoints.${breakpoint}`);
+      const breakpointValue = getThemeValue(`breakpoints.${breakpoint}`) as string | undefined;
       if (breakpointValue) {
         result[`@media (min-width: ${breakpointValue})`] = {
           [property]: value.toString(),
-        } as any;
+        };
       }
     }
   });

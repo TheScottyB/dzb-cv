@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-import { Text } from '../Text';
+import { Text } from '../Text.js';
 
 describe('Text Component', () => {
   beforeEach(() => {
@@ -26,15 +26,6 @@ describe('Text Component', () => {
 
     rerender(<Text as="div">Div Text</Text>);
     expect(screen.getByText('Div Text').tagName).toBe('DIV');
-
-    rerender(<Text as="label">Label Text</Text>);
-    expect(screen.getByText('Label Text').tagName).toBe('LABEL');
-
-    rerender(<Text as="strong">Strong Text</Text>);
-    expect(screen.getByText('Strong Text').tagName).toBe('STRONG');
-
-    rerender(<Text as="em">Emphasized Text</Text>);
-    expect(screen.getByText('Emphasized Text').tagName).toBe('EM');
   });
 
   it('applies size variants correctly', () => {

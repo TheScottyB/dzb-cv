@@ -4,9 +4,9 @@ import {
   ATSIssue,
   ATSAnalysisResult,
   ATS_SCORING,
-} from './scoring.js';
-import type { CVData } from '../core/types/cv-base.js';
-import type { ATSImprovement } from '../core/types/ats-types.js';
+} from './scoring';
+import type { CVData } from '../core/types/cv-base';
+import type { ATSImprovement } from '../core/types/ats-types';
 
 export interface ExperienceEntry {
   startDate?: string;

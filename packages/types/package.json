@@ -53,7 +53,6 @@
     "clean": "rm -rf dist coverage tsconfig.tsbuildinfo"
   },
   "devDependencies": {
-    "typescript": "^5.8.3",
     "@dzb-cv/config": "workspace:*"
   },
   "files": [

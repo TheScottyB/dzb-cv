@@ -11,21 +11,14 @@ declare global {
   }
 }
 
-// Mock global objects and functions needed for tests
-global.ResizeObserver = vi
-  .fn<
-    [],
-    {
-      observe: () => void;
-      unobserve: () => void;
-      disconnect: () => void;
-    }
-  >()
-  .mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn(),
-  }));
+// Polyfill ResizeObserver for tests
+class MockResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.ResizeObserver = MockResizeObserver as any;
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {

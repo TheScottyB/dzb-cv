@@ -1,7 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach, SpyInstance } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Command } from 'commander';
 
 import { createCVCommand } from '../create.js';
+
+type SpyInstance = ReturnType<typeof vi.spyOn>;
 
 // Mock the dependencies
 vi.mock('@dzb-cv/pdf', () => ({

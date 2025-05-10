@@ -3,8 +3,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import chalk from 'chalk';
-import { ResumeAnalysisEngine } from '../ats/engine.js';
-import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
+import { ResumeAnalysisEngine } from '../ats/engine';
+import { getJobPostingFolderName } from '../shared/utils/job-metadata';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

@@ -1,34 +1,9 @@
 {
-  "extends": "@dzb-cv/config/typescript/base",
+  "extends": "../../tsconfig.react.json",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "composite": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "rootDir": "src",
-    "outDir": "dist",
-    "jsx": "react-jsx",
-    "allowSyntheticDefaultImports": true,
-    "types": ["node", "vitest/globals", "react", "react-dom"],
-    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+    "outDir": "dist"
   },
-  "include": ["src/**/*", "src/types/css.d.ts"],
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
-    "node_modules",
-    "dist",
-    "vitest.config.ts",
-    "vitest-setup.ts"
-  ],
-  "references": [{ "path": "../config" }, { "path": "../types" }]
+  "references": [{ "path": "../types" }],
+  "include": ["src/**/*", "src/types/css.d.ts"]
 }

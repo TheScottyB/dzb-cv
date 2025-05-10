@@ -34,9 +34,6 @@
   },
   "devDependencies": {
     "@types/markdown-it": "^13.0.0",
-    "@types/node": "^20.0.0",
-    "typescript": "^5.8.3",
-    "vitest": "^1.6.1",
     "@dzb-cv/config": "workspace:*"
   },
   "files": [

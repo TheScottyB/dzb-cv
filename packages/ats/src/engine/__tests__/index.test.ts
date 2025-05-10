@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { ATSEngine, createATSEngine } from '../index.js';
 import type { CVData } from '@dzb-cv/types';
 import type { JobPosting } from '@dzb-cv/types/job';
+import { SkillCategory } from '../taxonomies/skills';
 
 describe('ATSEngine', () => {
   const sampleCV: CVData = {
@@ -28,6 +29,7 @@ describe('ATSEngine', () => {
           'Built React applications with TypeScript',
           'Implemented automated testing with Jest',
         ],
+        employmentType: 'full-time',
       },
       {
         position: 'Full Stack Developer',
@@ -35,6 +37,7 @@ describe('ATSEngine', () => {
         startDate: '2018-01',
         endDate: '2019-12',
         responsibilities: ['Developed full stack applications', 'Worked with React and Node.js'],
+        employmentType: 'full-time',
       },
     ],
     education: [
@@ -68,6 +71,7 @@ describe('ATSEngine', () => {
       'Implement automated testing',
     ],
     skills: ['TypeScript', 'React', 'Node.js', 'Jest', 'Docker'],
+    url: '',
   };
 
   describe('analyze', () => {
@@ -157,7 +161,7 @@ describe('ATSEngine', () => {
           {
             name: 'React',
             aliases: ['ReactJS', 'React.js'],
-            category: 'Programming',
+            category: SkillCategory.Programming,
             related: ['TypeScript', 'JavaScript'],
           },
         ],
@@ -196,6 +200,7 @@ describe('ATSEngine', () => {
         title: '',
         company: '',
         description: '',
+        url: '',
       };
 
       const result = await engine.analyze(sampleCV, emptyJob);

@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-vars */
+ 
 // No Template or PDFGenerationOptions imports needed here
 import type { CVData } from '@dzb-cv/types';
 interface MarkdownTemplate {

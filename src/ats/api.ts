@@ -1,7 +1,7 @@
 /**
  * Module for integrating with external ATS APIs and services
  */
-import { ATSAnalysisResult, ATSIssue, ATSIssueType, ATSIssueCategory } from './scoring.js';
+import { ATSAnalysisResult, ATSIssue, ATSIssueType, ATSIssueCategory } from './scoring';
 
 /**
  * Interface for configuring the external API client

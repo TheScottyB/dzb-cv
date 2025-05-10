@@ -14,13 +14,14 @@
     "declarationMap": true,
     "sourceMap": true,
     "composite": true,
-    "rootDir": "src",
-    "outDir": "dist",
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@dzb-cv/*": ["../../*/src"]
-    }
+      "@dzb-cv/*": ["packages/*/src"]
+    },
+    "rootDir": "src",
+    "outDir": "dist",
+    "types": ["node"]
   },
   "exclude": ["node_modules", "dist"]
-}
+} 

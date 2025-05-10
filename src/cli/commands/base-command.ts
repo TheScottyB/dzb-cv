@@ -12,7 +12,7 @@ import fs from 'fs/promises';
 import path from 'path';
 
 // Import shared types
-import { RunConfiguration, VerifiedClaim, SectorType } from '../../shared/types/index.js';
+import { RunConfiguration, VerifiedClaim, SectorType } from '../../shared/types/index';
 
 export type { RunConfiguration, VerifiedClaim, SectorType };
 

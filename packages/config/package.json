@@ -25,11 +25,8 @@
     "clean": "rm -rf coverage dist tsconfig.tsbuildinfo"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
     "prettier": "3.5.3",
-    "typescript": "^5.0.0",
-    "vite-tsconfig-paths": "^4.0.0",
-    "vitest": "^1.6.1"
+    "vite-tsconfig-paths": "^4.0.0"
   },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": ">=6.0.0",

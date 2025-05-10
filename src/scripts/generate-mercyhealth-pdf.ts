@@ -1,10 +1,10 @@
-import { PDFGeneratorImpl } from '../core/services/pdf/pdf-generator-impl.js';
-import type { PDFGenerationOptions } from '../core/services/pdf/pdf-generator.js';
+import { PDFGeneratorImpl } from '../core/services/pdf/pdf-generator-impl';
+import type { PDFGenerationOptions } from '../core/services/pdf/pdf-generator';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { marked } from 'marked';
 import chalk from 'chalk';
-import { getJobPostingFolderName } from '../shared/utils/job-metadata.js';
+import { getJobPostingFolderName } from '../shared/utils/job-metadata';
 
 interface JobData {
   title: string;

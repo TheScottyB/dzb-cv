@@ -1,31 +1,11 @@
 {
-  "extends": "./packages/config/tsconfig.json",
-  "compilerOptions": {
-    "typeRoots": ["./node_modules/@types", "./node_modules/vitest"],
-    "types": ["node"],
-    "noImplicitAny": true,
-    "composite": true,
-    "noEmit": false,
-    "baseUrl": ".",
-    "paths": {
-      "@dzb-cv/*": ["packages/*/src"]
-    }
-  },
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/build",
-    "**/*.test.ts",
-    "**/*.spec.ts",
-    "**/__tests__/**",
-    "eslint.config.js"
-  ],
+  "files": [],
   "references": [
     { "path": "./packages/types" },
     { "path": "./packages/core" },
     { "path": "./packages/cli" },
     { "path": "./packages/pdf" },
     { "path": "./packages/templates" },
-    { "path": "./packages/config" }
+    { "path": "./packages/ui" }
   ]
 }

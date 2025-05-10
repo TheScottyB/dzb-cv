@@ -1,0 +1,1 @@
+{"version":3,"file":"vitest.setup.d.ts","sourceRoot":"","sources":["vitest.setup.ts"],"names":[],"mappings":"AAGA,OAAO,2BAA2B,CAAC;AACnC,OAAO,KAAK,EAAE,sBAAsB,EAAE,MAAM,oCAAoC,CAAC;AAGjF,OAAO,CAAC,MAAM,CAAC;IACb,UAAU,EAAE,CAAC;QACX,UAAU,aAAa,CAAC,CAAC,GAAG,OAAO,CAAE,SAAQ,sBAAsB,CAAC,CAAC,EAAE,IAAI,CAAC;SAAG;KAChF;CACF"}

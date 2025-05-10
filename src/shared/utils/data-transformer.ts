@@ -4,7 +4,7 @@
  * Provides functions to transform CV data structure for compatibility with templates
  */
 
-import type { CVData } from '../types/cv-types.js';
+import type { CVData } from '../types/cv-types';
 
 interface WorkExperienceItem {
   employer: string;

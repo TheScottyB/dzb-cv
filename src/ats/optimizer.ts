@@ -14,10 +14,10 @@
  *   });
  */
 
-import { analyzeForATS } from './analyzer.js';
-import type { ATSAnalysis } from '../shared/types/ats-types.js';
-import type { PDFOptions } from '../shared/types/cv-types.js';
-import { convertMarkdownToPdf } from '../shared/utils/pdf-generator.js';
+import { analyzeForATS } from './analyzer';
+import type { ATSAnalysis } from '../shared/types/ats-types';
+import type { PDFOptions } from '../shared/types/cv-types';
+import { convertMarkdownToPdf } from '../shared/utils/pdf-generator';
 
 /**
  * Represents the result of ATS optimization

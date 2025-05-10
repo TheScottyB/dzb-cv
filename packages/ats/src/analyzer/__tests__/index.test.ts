@@ -27,6 +27,7 @@ describe('CVAnalyzer', () => {
           'Implemented responsive designs',
           'Worked with TypeScript',
         ],
+        employmentType: 'full-time',
       },
     ],
     education: [
@@ -61,6 +62,7 @@ describe('CVAnalyzer', () => {
       'Optimize application performance',
     ],
     skills: ['React', 'TypeScript', 'CSS', 'Jest', 'Webpack'],
+    url: '',
   };
 
   describe('analyze', () => {
@@ -117,6 +119,7 @@ describe('CVAnalyzer', () => {
         title: '',
         company: '',
         description: '',
+        url: '',
       };
 
       const result = analyzer.analyze(sampleCV, emptyJob);
@@ -130,6 +133,7 @@ describe('CVAnalyzer', () => {
         title: 'Developer',
         company: 'Company',
         description: 'Looking for a developer',
+        url: '',
       };
 
       const result = analyzer.analyze(sampleCV, noSkillsJob);

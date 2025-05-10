@@ -6,10 +6,10 @@
  */
 
 import path from 'path';
-import { BaseCommand, RunConfiguration } from './base-command.js';
-import { generateCV } from '../../shared/tools/generator.js';
-import type { CVData, CVGenerationOptions } from '../../shared/types/cv-types.js';
-import { transformCVData } from '../../shared/utils/data-transformer.js';
+import { BaseCommand, RunConfiguration } from './base-command';
+import { generateCV } from '../../shared/tools/generator';
+import type { CVData, CVGenerationOptions } from '../../shared/types/cv-types';
+import { transformCVData } from '../../shared/utils/data-transformer';
 
 /**
  * Options for the generate CV command

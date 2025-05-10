@@ -1,5 +1,5 @@
-import { parseResumeTool } from '../agents/tooling/parseResumeTool.js';
-import { scoreResumeTool } from '../agents/tooling/scoreResumeTool.js';
+import { parseResumeTool } from '../agents/tooling/parseResumeTool';
+import { scoreResumeTool } from '../agents/tooling/scoreResumeTool';
 import { promises as fs } from 'fs';
 import path from 'path';
 
