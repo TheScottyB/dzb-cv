@@ -17,7 +17,8 @@
     "**/build",
     "**/*.test.ts",
     "**/*.spec.ts",
-    "**/__tests__/**"
+    "**/__tests__/**",
+    "eslint.config.js"
   ],
   "references": [
     { "path": "./packages/types" },

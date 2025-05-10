@@ -1,40 +1,84 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml", ".env"],
-  "globalEnv": ["NODE_ENV"],
+  "globalDependencies": [
+    "package.json",
+    "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    ".env"
+  ],
+  "globalEnv": [
+    "NODE_ENV"
+  ],
   "remoteCache": {
     "signature": true
   },
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", "**/tsconfig.tsbuildinfo"],
-      "inputs": ["src/**/*.ts", "tsconfig.json"],
-      "env": ["NODE_ENV"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "**/tsconfig.tsbuildinfo"
+      ],
+      "inputs": [
+        "src/**/*.ts",
+        "tsconfig.json"
+      ],
+      "env": [
+        "NODE_ENV"
+      ]
     },
     "test": {
-      "dependsOn": ["build"],
-      "outputs": ["coverage/**"],
-      "inputs": ["src/**/*.{test,spec}.ts"],
-      "env": ["NODE_ENV", "VITEST_*"]
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "coverage/**"
+      ],
+      "inputs": [
+        "src/**/*.{test,spec}.ts"
+      ],
+      "env": [
+        "NODE_ENV",
+        "VITEST_*"
+      ]
     },
     "test:e2e": {
-      "dependsOn": ["build"],
-      "inputs": ["playwright.config.ts", "e2e/**/*.ts", "src/**/*.ts"],
-      "outputs": ["playwright-report/**", "test-results/**"],
-      "env": ["NODE_ENV"]
+      "dependsOn": [
+        "build"
+      ],
+      "inputs": [
+        "config/playwright.config.ts",
+        "e2e/**/*.ts",
+        "src/**/*.ts"
+      ],
+      "outputs": [
+        "playwright-report/**",
+        "test-results/**"
+      ],
+      "env": [
+        "NODE_ENV"
+      ]
     },
     "typecheck": {
       "dependsOn": [],
       "outputs": [],
-      "inputs": ["src/**/*.ts", "tsconfig.json"],
+      "inputs": [
+        "src/**/*.ts",
+        "tsconfig.json"
+      ],
       "cache": true,
       "persistent": false
     },
     "lint": {
       "dependsOn": [],
       "outputs": [],
-      "inputs": ["src/**/*.ts", "tsconfig.json", "eslint.config.js"],
+      "inputs": [
+        "src/**/*.ts",
+        "tsconfig.json",
+        "config/eslint.config.js"
+      ],
       "cache": true
     },
     "lint:fix": {
