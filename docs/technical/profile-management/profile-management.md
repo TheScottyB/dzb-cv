@@ -85,4 +85,7 @@ interface RunConfiguration {
 4. **Security**
    - Sanitize input data
    - Validate file permissions
-   - Secure sensitive information 
+   - Secure sensitive information
+
+5. **Testing**
+   - Use shared `test-utils.ts` and ESM-compatible mocking for all profile-related tests 

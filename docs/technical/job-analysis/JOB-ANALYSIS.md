@@ -1,4 +1,20 @@
+---
+path: docs/technical/JOB-ANALYSIS.md
+type: technical
+category: job-analysis
+maintainer: system
+last_updated: 2025-05-10
+---
+
 # Job Analysis Technical Documentation
+
+## Table of Contents
+- [Overview](#overview)
+- [Known Issues](#known-issues)
+- [Best Practices](#best-practices)
+- [Integration Points](#integration-points)
+- [Verification Steps](#verification-steps)
+- [Future Improvements](#future-improvements)
 
 ## Overview
 

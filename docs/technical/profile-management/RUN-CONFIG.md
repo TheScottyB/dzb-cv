@@ -1,4 +1,19 @@
+---
+path: docs/technical/RUN-CONFIG.md
+type: technical
+category: configuration
+maintainer: system
+last_updated: 2025-05-10
+---
+
 # Run Configuration Technical Documentation
+
+## Table of Contents
+- [Purpose](#purpose)
+- [Structure](#structure)
+- [Example](#example-northwestern-medicine-psr)
+- [Usage](#usage)
+- [Best Practices](#best-practices)
 
 ## Purpose
 

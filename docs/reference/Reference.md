@@ -1,14 +1,14 @@
----
-path: docs/reference/cli-commands.md
-type: reference
-category: cli
-maintainer: system
-last_updated: 2024-03-27
+# Reference
+
+## Introduction
+
+This document provides a consolidated reference for the DZB-CV project, including CLI commands, and placeholders for API and configuration documentation. Use this as the main entry point for all reference material.
+
 ---
 
-# CLI Reference
+## CLI Reference
 
-## Command Structure
+### Command Structure
 ```typescript
 program
   .name('dzb-cv')
@@ -16,9 +16,9 @@ program
   .version('1.0.0')
 ```
 
-## Available Commands
+### Available Commands
 
-### 1. Generate CV
+#### 1. Generate CV
 ```bash
 dzb-cv generate <sector> [options]
 Options:
@@ -27,7 +27,7 @@ Options:
   --filename <n>      Custom filename
 ```
 
-### 2. Analyze Job (Beta)
+#### 2. Analyze Job (Beta)
 ```bash
 dzb-cv analyze <source> [options]
 Options:
@@ -44,11 +44,10 @@ Note: This command is currently in development. Basic functionality includes:
 - Simple keyword extraction
 - Basic structure analysis
 
-Full job analysis features including ATS optimization and detailed 
-requirement extraction are planned for future releases.
+Full job analysis features including ATS optimization and detailed requirement extraction are planned for future releases.
 ```
 
-### 3. Profile Management
+#### 3. Profile Management
 ```bash
 dzb-cv profile <command> [options]
 Commands:
@@ -58,7 +57,7 @@ Commands:
   list      List profiles
 ```
 
-#### Profile Import
+##### Profile Import
 ```bash
 dzb-cv profile import <file> [options]
 Options:
@@ -68,7 +67,7 @@ Options:
   -f, --format <format> Output format (json, markdown)
 ```
 
-#### Profile Export
+##### Profile Export
 ```bash
 dzb-cv profile export [options]
 Options:
@@ -77,14 +76,33 @@ Options:
   -o, --output <path>    Output file path
 ```
 
-#### Profile Validation
+##### Profile Validation
 ```bash
 dzb-cv profile validate <file> [options]
 Options:
   -t, --type <type>     Validation type (basic, strict, federal)
 ```
 
-## Global Options
+#### Global Options
 - `-v, --verbose`: Enable verbose output
 - `--no-color`: Disable color output
-- `-c, --config <path>`: Path to configuration file 
+- `-c, --config <path>`: Path to configuration file
+
+---
+
+## API Reference *(coming soon)*
+
+_This section will document all public APIs, types, and endpoints as the project evolves._
+
+---
+
+## Configuration Reference *(coming soon)*
+
+_This section will document all configuration options, files, and environment variables as the project evolves._
+
+---
+
+## Further Reading
+- [User Guide](../user-guide/)
+- [System Architecture](../technical/System-Architecture.md)
+- [Developer Experience & Maintenance](../technical/Developer-Experience.md) 

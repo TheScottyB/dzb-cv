@@ -1,4 +1,23 @@
+---
+path: docs/technical/agent-blueprint.md
+type: technical
+category: architecture
+maintainer: system
+last_updated: 2025-05-10
+---
+
 # Foreman's Master Blueprint v0.1
+
+## Table of Contents
+- [Core Project Principles](#-core-project-principles)
+- [Project Structure & Layout](#-project-structure--layout)
+- [Standard Agent Responsibilities](#-standard-agent-responsibilities)
+- [Memory & Context Standards](#-memory--context-standards)
+- [Foreman Default Commands](#-foreman-default-commands)
+- [Evolution Guidelines](#-evolution-guidelines)
+- [High-Level System Diagram](#-high-level-system-diagram)
+- [Immediate Foreman Behaviors](#-immediate-foreman-behaviors)
+- [Bonus: Forks & Versioning](#-bonus-forks--versioning)
 
 *This document is the living "constitution" for this meta-agent architecture. All agents must obey and update according to its tenets. Maintained by the Construction Foreman agent.*
 
@@ -129,7 +148,7 @@ Construction Foreman
 - Register builder agents and collect heartbeats/status
 - Infer missing rules/patterns from code/examples/GitHub if SDK docs are light
 - Assign and re-assign tasks as agents complete/fail tasks
-- Inspect/merge agent work product (“agent batch PR”)
+- Inspect/merge agent work product ("agent batch PR")
 - Run regular alignment passes to keep all outputs in conformance
 
 ---
@@ -141,7 +160,7 @@ Construction Foreman
   - Beta/experimental SDK versions
   - Custom enhanced agent variants
 - All forks must reference the blueprint version/fork they derive from.
-- Each agent system “city” has one sovereign Foreman Blueprint.
+- Each agent system "city" has one sovereign Foreman Blueprint.
 
 ---
 

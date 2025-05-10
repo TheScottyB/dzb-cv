@@ -1,4 +1,22 @@
+---
+path: docs/technical/DATA-VERIFICATION.md
+type: technical
+category: verification
+maintainer: system
+last_updated: 2025-05-10
+---
+
 # Data Verification Technical Documentation
+
+## Table of Contents
+- [Core Principle](#core-principle)
+- [Verification Process](#verification-process)
+- [Source Data Structure](#source-data-structure)
+- [Verification Rules](#verification-rules)
+- [Example Usage](#example-usage-northwestern-medicine-psr)
+- [Best Practices](#best-practices)
+- [Error Handling](#error-handling)
+- [Implementation Notes](#implementation-notes)
 
 ## Core Principle
 

@@ -1,4 +1,19 @@
+---
+path: docs/technical/NAMING-CONVENTIONS.md
+type: technical
+category: conventions
+maintainer: system
+last_updated: 2025-05-10
+---
+
 # Naming Conventions Technical Documentation
+
+## Table of Contents
+- [Overview](#overview)
+- [Filename Structure](#filename-structure)
+- [Examples](#examples)
+- [Implementation](#implementation)
+- [Best Practices](#best-practices)
 
 ## Overview
 

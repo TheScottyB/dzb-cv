@@ -3,73 +3,50 @@ path: docs/examples/README.md
 type: index
 category: examples
 maintainer: system
-last_updated: 2024-03-27
+last_updated: 2025-05-10
 related_files:
-  - docs/examples/cv-types/ats-optimized-cv.md
-  - docs/examples/cv-types/federal-cv.md
-  - docs/examples/management/profile-management.md
+  - docs/examples/ats-optimized-cv.md
+  - docs/examples/federal-cv.md
+  - docs/examples/profile-management.md
 ---
 
 # DZB-CV Examples
 
-This directory contains practical examples demonstrating various features and use cases of the DZB-CV system. The examples are organized by category to help you find relevant information quickly.
+This directory contains practical examples demonstrating various features and use cases of the DZB-CV system. Use these as references for best practices, template structure, and CLI usage.
 
-## Available Examples
+## Table of Contents
+- [ATS Optimized CV Example](ats-optimized-cv.md)
+- [Federal CV Example](federal-cv.md)
+- [Profile Management Example](profile-management.md)
 
-### CV Types (`cv-types/`)
+## Example Categories
 
-#### [ATS Optimization](cv-types/ats-optimized-cv.md)
-Examples and best practices for creating ATS-friendly CVs:
-- Optimal formatting for ATS systems
-- Keyword optimization techniques
-- Section header standardization
-- PDF generation with ATS considerations
+### ATS Optimization
+- [ATS Optimized CV Example](ats-optimized-cv.md): Example of an ATS-friendly CV with best practices and code snippets.
 
-#### [Federal CV](cv-types/federal-cv.md)
-Comprehensive guide for federal job applications:
-- USAJOBS-compliant CV structure
-- Required federal information fields
-- Grade-specific customization
-- Supervisor and salary information
-- Security clearance handling
+### Federal CV
+- [Federal CV Example](federal-cv.md): Example of a federal-style CV with required fields and formatting.
 
-### Management (`management/`)
+### Profile Management
+- [Profile Management Example](profile-management.md): Example of profile import/export, validation, and version management.
 
-#### [Profile Management](management/profile-management.md)
-Advanced profile management techniques:
-- Profile data import/export
-- Version control and history
-- Data validation and integrity
-- Profile templating
-- Migration strategies
+## How to Use Examples
+- Choose the relevant example for your use case (ATS, federal, management)
+- Copy code snippets or templates as a starting point
+- Adapt to your data and requirements
+- Use the CLI commands as shown for import/export/validation
 
-## Using the Examples
+## Testing Examples
+- All example tests should use the shared `test-utils.ts` for DRY sample data and helpers
+- ESM-compatible mocking (`vi.mock` with `importActual`) should be used for robust, future-proof tests
+- See the main repo `README.md` and `TESTING.md` for code examples and best practices
 
-1. **Getting Started**
-   - Choose the appropriate example for your use case
-   - Review the metadata header for dependencies
-   - Follow the step-by-step implementation guide
-   - Test with provided sample data
-
-2. **Customization**
-   - Adapt templates to your requirements
-   - Modify data structures as needed
-   - Follow type definitions
-   - Maintain consistent formatting
-
-3. **Testing**
-   - Validate against provided schemas
-   - Test with sample datasets
-   - Verify output in all supported formats
-   - Check ATS compatibility when applicable
-
-## Contributing
-
+## Contributing Examples
 To add new examples:
-1. Follow the established directory structure
+1. Place your example file in this folder
 2. Include complete metadata header
 3. Provide clear, tested code samples
 4. Add comprehensive documentation
-5. Update related example references
+5. Update this README with a summary and link to your example
 
 See [Contributing Guidelines](../../CONTRIBUTING.md) for detailed contribution instructions. 
