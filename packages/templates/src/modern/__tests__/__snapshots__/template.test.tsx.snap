@@ -1,0 +1,1377 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ModernTemplate > should apply responsive styles on mobile viewport > mobile-view 1`] = `
+<div>
+  <div
+    class="modern-cv"
+  >
+    <header
+      class="cv-header"
+    >
+      <div
+        class="header-content"
+      >
+        <h1
+          class="_heading_e3c3c4 _size-3xl_e3c3c4 _weight-bold_e3c3c4"
+        >
+          Jane Marie Smith
+        </h1>
+        <p
+          class="_text_b024fe _size-lg_b024fe _color-primary_b024fe professional-title"
+        >
+          Senior Software Engineer
+        </p>
+        <div
+          class="contact-info"
+        >
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            jane.smith@example.com
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            (555) 987-6543
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            123 Tech Street, San Francisco, CA 94107
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            linkedin.com/in/janesmith
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            github.com/janesmith
+          </p>
+        </div>
+      </div>
+    </header>
+    <div
+      class="cv-content"
+    >
+      <div
+        class="main-column"
+      >
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Professional Summary
+          </h2>
+          <p
+            class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+          >
+            Experienced software engineer with expertise in web development and distributed systems.
+          </p>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Experience
+          </h2>
+          <div
+            class="experience-item"
+          >
+            <div
+              class="item-header"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Senior Software Engineer
+              </h3>
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
+              >
+                Jan 2020
+                 - 
+                Present
+              </p>
+            </div>
+            <p
+              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+            >
+              Tech Solutions Inc.
+              , San Francisco, CA
+            </p>
+            <ul
+              class="list responsibilities-list"
+            >
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Lead development of microservices architecture
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Mentor junior developers and conduct code reviews
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Implement CI/CD pipelines for automated testing and deployment
+                </p>
+              </li>
+            </ul>
+            <p
+              class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe achievements-header"
+            >
+              Key Achievements:
+            </p>
+            <ul
+              class="list achievements-list"
+            >
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Reduced API response time by 40% through optimized database queries
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Implemented authentication system that increased security compliance by 100%
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div
+            class="experience-item"
+          >
+            <div
+              class="item-header"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Software Developer
+              </h3>
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
+              >
+                Mar 2018
+                 - 
+                Dec 2019
+              </p>
+            </div>
+            <p
+              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+            >
+              InnovateTech
+              , Seattle, WA
+            </p>
+            <ul
+              class="list responsibilities-list"
+            >
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Developed front-end components using React and TypeScript
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Created RESTful APIs using Node.js and Express
+                </p>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Projects
+          </h2>
+          <div
+            class="project-item"
+          >
+            <h3
+              class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+            >
+              E-commerce Platform
+            </h3>
+            <p
+              class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+            >
+              Built a scalable e-commerce platform with microservices architecture
+            </p>
+            <div
+              class="technologies"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                Technologies:
+              </p>
+              <div
+                class="tech-tags"
+              >
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    React
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    Node.js
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    MongoDB
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    Docker
+                  </p>
+                </span>
+              </div>
+            </div>
+            <p
+              class="_text_b024fe _size-sm_b024fe _color-default_b024fe project-url"
+            >
+              <a
+                href="https://github.com/janesmith/ecommerce"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                https://github.com/janesmith/ecommerce
+              </a>
+            </p>
+          </div>
+          <div
+            class="project-item"
+          >
+            <h3
+              class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+            >
+              Task Management App
+            </h3>
+            <p
+              class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+            >
+              Developed a responsive task management application with real-time updates
+            </p>
+            <div
+              class="technologies"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                Technologies:
+              </p>
+              <div
+                class="tech-tags"
+              >
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    React
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    Firebase
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    Material-UI
+                  </p>
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div
+        class="side-column"
+      >
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Education
+          </h2>
+          <div
+            class="education-item"
+          >
+            <h3
+              class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+            >
+              Master of Science
+               in Computer Science
+            </h3>
+            <p
+              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+            >
+              University of Washington
+            </p>
+            <p
+              class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            >
+              2018
+            </p>
+            <p
+              class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+            >
+              GPA: 
+              3.92
+            </p>
+            <ul
+              class="list honors-list"
+            >
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _italic_b024fe _color-default_b024fe"
+                >
+                  Magna Cum Laude
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _italic_b024fe _color-default_b024fe"
+                >
+                  Dean's List
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div
+            class="education-item"
+          >
+            <h3
+              class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+            >
+              Bachelor of Science
+               in Software Engineering
+            </h3>
+            <p
+              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+            >
+              California State University
+            </p>
+            <p
+              class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            >
+              2016
+            </p>
+          </div>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Skills
+          </h2>
+          <div
+            class="skills-container"
+          >
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Frontend
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-expert"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    React
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Languages
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-expert"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    TypeScript
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Backend
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-advanced"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    Node.js
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                API
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-intermediate"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    GraphQL
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                DevOps
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-beginner"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    Docker
+                  </p>
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Languages
+          </h2>
+          <ul
+            class="list languages-list"
+          >
+            <li
+              class="list-item language-item"
+              data-testid="language-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                English
+              </p>
+              <p
+                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              >
+                Native
+              </p>
+            </li>
+            <li
+              class="list-item language-item"
+              data-testid="language-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                Spanish
+              </p>
+              <p
+                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              >
+                Fluent
+              </p>
+            </li>
+            <li
+              class="list-item language-item"
+              data-testid="language-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                French
+              </p>
+              <p
+                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              >
+                Intermediate
+              </p>
+            </li>
+          </ul>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Certifications
+          </h2>
+          <ul
+            class="list certifications-list"
+          >
+            <li
+              class="list-item certification-item"
+              data-testid="certification-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                AWS Certified Solutions Architect
+              </p>
+              <p
+                class="_text_b024fe _size-xs_b024fe _color-muted_b024fe"
+              >
+                Amazon Web Services
+                , 
+                2022
+              </p>
+            </li>
+            <li
+              class="list-item certification-item"
+              data-testid="certification-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                Google Cloud Professional Developer
+              </p>
+              <p
+                class="_text_b024fe _size-xs_b024fe _color-muted_b024fe"
+              >
+                Google
+                , 
+                2021
+              </p>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ModernTemplate > should render all sections with full CV data 1`] = `
+<div>
+  <div
+    class="modern-cv"
+  >
+    <header
+      class="cv-header"
+    >
+      <div
+        class="header-content"
+      >
+        <h1
+          class="_heading_e3c3c4 _size-3xl_e3c3c4 _weight-bold_e3c3c4"
+        >
+          Jane Marie Smith
+        </h1>
+        <p
+          class="_text_b024fe _size-lg_b024fe _color-primary_b024fe professional-title"
+        >
+          Senior Software Engineer
+        </p>
+        <div
+          class="contact-info"
+        >
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            jane.smith@example.com
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            (555) 987-6543
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            123 Tech Street, San Francisco, CA 94107
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            linkedin.com/in/janesmith
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            github.com/janesmith
+          </p>
+        </div>
+      </div>
+    </header>
+    <div
+      class="cv-content"
+    >
+      <div
+        class="main-column"
+      >
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Professional Summary
+          </h2>
+          <p
+            class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+          >
+            Experienced software engineer with expertise in web development and distributed systems.
+          </p>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Experience
+          </h2>
+          <div
+            class="experience-item"
+          >
+            <div
+              class="item-header"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Senior Software Engineer
+              </h3>
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
+              >
+                Jan 2020
+                 - 
+                Present
+              </p>
+            </div>
+            <p
+              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+            >
+              Tech Solutions Inc.
+              , San Francisco, CA
+            </p>
+            <ul
+              class="list responsibilities-list"
+            >
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Lead development of microservices architecture
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Mentor junior developers and conduct code reviews
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Implement CI/CD pipelines for automated testing and deployment
+                </p>
+              </li>
+            </ul>
+            <p
+              class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe achievements-header"
+            >
+              Key Achievements:
+            </p>
+            <ul
+              class="list achievements-list"
+            >
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Reduced API response time by 40% through optimized database queries
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Implemented authentication system that increased security compliance by 100%
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div
+            class="experience-item"
+          >
+            <div
+              class="item-header"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Software Developer
+              </h3>
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
+              >
+                Mar 2018
+                 - 
+                Dec 2019
+              </p>
+            </div>
+            <p
+              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+            >
+              InnovateTech
+              , Seattle, WA
+            </p>
+            <ul
+              class="list responsibilities-list"
+            >
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Developed front-end components using React and TypeScript
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                >
+                  Created RESTful APIs using Node.js and Express
+                </p>
+              </li>
+            </ul>
+          </div>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Projects
+          </h2>
+          <div
+            class="project-item"
+          >
+            <h3
+              class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+            >
+              E-commerce Platform
+            </h3>
+            <p
+              class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+            >
+              Built a scalable e-commerce platform with microservices architecture
+            </p>
+            <div
+              class="technologies"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                Technologies:
+              </p>
+              <div
+                class="tech-tags"
+              >
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    React
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    Node.js
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    MongoDB
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    Docker
+                  </p>
+                </span>
+              </div>
+            </div>
+            <p
+              class="_text_b024fe _size-sm_b024fe _color-default_b024fe project-url"
+            >
+              <a
+                href="https://github.com/janesmith/ecommerce"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                https://github.com/janesmith/ecommerce
+              </a>
+            </p>
+          </div>
+          <div
+            class="project-item"
+          >
+            <h3
+              class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+            >
+              Task Management App
+            </h3>
+            <p
+              class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+            >
+              Developed a responsive task management application with real-time updates
+            </p>
+            <div
+              class="technologies"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                Technologies:
+              </p>
+              <div
+                class="tech-tags"
+              >
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    React
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    Firebase
+                  </p>
+                </span>
+                <span
+                  class="tech-tag"
+                >
+                  <p
+                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                  >
+                    Material-UI
+                  </p>
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div
+        class="side-column"
+      >
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Education
+          </h2>
+          <div
+            class="education-item"
+          >
+            <h3
+              class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+            >
+              Master of Science
+               in Computer Science
+            </h3>
+            <p
+              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+            >
+              University of Washington
+            </p>
+            <p
+              class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            >
+              2018
+            </p>
+            <p
+              class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+            >
+              GPA: 
+              3.92
+            </p>
+            <ul
+              class="list honors-list"
+            >
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _italic_b024fe _color-default_b024fe"
+                >
+                  Magna Cum Laude
+                </p>
+              </li>
+              <li
+                class="list-item "
+              >
+                <p
+                  class="_text_b024fe _size-sm_b024fe _italic_b024fe _color-default_b024fe"
+                >
+                  Dean's List
+                </p>
+              </li>
+            </ul>
+          </div>
+          <div
+            class="education-item"
+          >
+            <h3
+              class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+            >
+              Bachelor of Science
+               in Software Engineering
+            </h3>
+            <p
+              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+            >
+              California State University
+            </p>
+            <p
+              class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            >
+              2016
+            </p>
+          </div>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Skills
+          </h2>
+          <div
+            class="skills-container"
+          >
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Frontend
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-expert"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    React
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Languages
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-expert"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    TypeScript
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                Backend
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-advanced"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    Node.js
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                API
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-intermediate"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    GraphQL
+                  </p>
+                </span>
+              </div>
+            </div>
+            <div
+              class="skill-category"
+            >
+              <h3
+                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              >
+                DevOps
+              </h3>
+              <div
+                class="skill-tags"
+              >
+                <span
+                  class="skill-tag level-beginner"
+                >
+                  <p
+                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  >
+                    Docker
+                  </p>
+                </span>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Languages
+          </h2>
+          <ul
+            class="list languages-list"
+          >
+            <li
+              class="list-item language-item"
+              data-testid="language-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                English
+              </p>
+              <p
+                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              >
+                Native
+              </p>
+            </li>
+            <li
+              class="list-item language-item"
+              data-testid="language-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                Spanish
+              </p>
+              <p
+                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              >
+                Fluent
+              </p>
+            </li>
+            <li
+              class="list-item language-item"
+              data-testid="language-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                French
+              </p>
+              <p
+                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              >
+                Intermediate
+              </p>
+            </li>
+          </ul>
+        </section>
+        <section
+          class="cv-section"
+        >
+          <h2
+            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+          >
+            Certifications
+          </h2>
+          <ul
+            class="list certifications-list"
+          >
+            <li
+              class="list-item certification-item"
+              data-testid="certification-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                AWS Certified Solutions Architect
+              </p>
+              <p
+                class="_text_b024fe _size-xs_b024fe _color-muted_b024fe"
+              >
+                Amazon Web Services
+                , 
+                2022
+              </p>
+            </li>
+            <li
+              class="list-item certification-item"
+              data-testid="certification-item"
+            >
+              <p
+                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+              >
+                Google Cloud Professional Developer
+              </p>
+              <p
+                class="_text_b024fe _size-xs_b024fe _color-muted_b024fe"
+              >
+                Google
+                , 
+                2021
+              </p>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ModernTemplate > should render with minimal CV data 1`] = `
+<div>
+  <div
+    class="modern-cv"
+  >
+    <header
+      class="cv-header"
+    >
+      <div
+        class="header-content"
+      >
+        <h1
+          class="_heading_e3c3c4 _size-3xl_e3c3c4 _weight-bold_e3c3c4"
+        >
+          John Doe
+        </h1>
+        <div
+          class="contact-info"
+        >
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            john@example.com
+          </p>
+          <p
+            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+          >
+            (555) 123-4567
+          </p>
+        </div>
+      </div>
+    </header>
+    <div
+      class="cv-content"
+    >
+      <div
+        class="main-column"
+      />
+      <div
+        class="side-column"
+      />
+    </div>
+  </div>
+</div>
+`;

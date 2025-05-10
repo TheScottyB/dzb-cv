@@ -12,10 +12,6 @@
   "references": [{ "path": "../types" }, { "path": "../ui" }],
   "include": ["src/**/*", "vitest.setup.ts"],
   "exclude": [
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.spec.tsx",
     "node_modules",
     "vitest.config.ts"
   ]

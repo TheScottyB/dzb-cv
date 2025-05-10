@@ -8,9 +8,7 @@ import type {
   Experience,
   Skill,
 } from '@dzb-cv/types';
-import { Heading } from '@dzb-cv/ui/Heading';
-import { Text } from '@dzb-cv/ui/Text';
-import { List, ListItem } from '@dzb-cv/ui/List';
+import { Heading, Text, List, ListItem } from '@dzb-cv/ui';
 import './template.css';
 
 // Extended data interfaces with additional properties needed for the template
@@ -80,7 +78,7 @@ export class ModernTemplate implements Template {
    * @param options Optional PDF generation options
    * @returns React element with the rendered CV
    */
-  private renderComponent(
+  public renderComponent(
     data: CVData & Partial<ExtendedCVData>,
     _options?: PDFGenerationOptions
   ): React.ReactElement {
