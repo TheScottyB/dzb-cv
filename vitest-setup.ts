@@ -1,12 +1,13 @@
 import '@testing-library/jest-dom';
 import { expect, afterEach, beforeAll, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
-import matchers from '@testing-library/jest-dom/matchers';
+import * as matchers from '@testing-library/jest-dom/matchers';
 
 // Import React types only for TypeScript, not for runtime
 import type * as ReactTypes from 'react';
 
-// Extend Vitest's expect with Testing Library matchers
+console.log('expect:', expect);
+console.log('matchers:', matchers);
 expect.extend(matchers);
 
 // Automatically cleanup after each test
@@ -38,12 +39,6 @@ const cssModuleMock = new Proxy(
 // Mock all CSS modules
 vi.mock('*.module.css', () => cssModuleMock);
 vi.mock('*.css', () => ({}));
-vi.mock(/\.module\.css$/, () => cssModuleMock);
-
-// Mock static asset imports
-vi.mock(/\.(jpg|jpeg|png|gif|svg)$/, () => ({
-  default: 'mock-image-path',
-}));
 
 // Add DOM polyfills for testing environment
 beforeAll(() => {

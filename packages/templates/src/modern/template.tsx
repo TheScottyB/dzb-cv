@@ -169,7 +169,7 @@ export class ModernTemplate implements Template {
                     </Text>
 
                     {exp.responsibilities?.length > 0 && (
-                      <List type="unordered" marker="disc" className="responsibilities-list">
+                      <List variant="unordered" className="responsibilities-list">
                         {exp.responsibilities?.map((item: string, i: number) => (
                           <ListItem key={i}>
                             <Text size="sm">{item}</Text>
@@ -183,7 +183,7 @@ export class ModernTemplate implements Template {
                         <Text size="sm" weight="medium" className="achievements-header">
                           Key Achievements:
                         </Text>
-                        <List type="unordered" marker="circle" className="achievements-list">
+                        <List variant="unordered" className="achievements-list">
                           {exp.achievements?.map((achievement: string, i: number) => (
                             <ListItem key={i}>
                               <Text size="sm">{achievement}</Text>
@@ -267,7 +267,7 @@ export class ModernTemplate implements Template {
                     {edu.gpa && <Text size="sm">GPA: {edu.gpa}</Text>}
 
                     {Boolean(edu.honors?.length) && (
-                      <List type="unordered" marker="none" className="honors-list">
+                      <List variant="unordered" className="honors-list">
                         {edu.honors?.map((honor: string, i: number) => (
                           <ListItem key={i}>
                             <Text size="sm" italic>
@@ -351,7 +351,7 @@ export class ModernTemplate implements Template {
                   Languages
                 </Heading>
 
-                <List type="unordered" marker="none" className="languages-list">
+                <List variant="unordered" className="languages-list">
                   {data.languages?.map((lang: any, index: number) => (
                     <ListItem key={index} className="language-item" data-testid="language-item">
                       <Text size="sm" weight="medium">
@@ -373,7 +373,7 @@ export class ModernTemplate implements Template {
                   Certifications
                 </Heading>
 
-                <List type="unordered" marker="none" className="certifications-list">
+                <List variant="unordered" className="certifications-list">
                   {data.certifications?.map((cert: any, index: number) => (
                     <ListItem
                       key={index}

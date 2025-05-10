@@ -85,7 +85,7 @@ export const SkillsExample: React.FC = () => {
           <Heading level={4} size="md">
             Frontend Development
           </Heading>
-          <List type="unordered" marker="disc" spaced>
+          <List variant="unordered">
             <ListItem>React.js & React Native</ListItem>
             <ListItem>TypeScript & JavaScript (ES6+)</ListItem>
             <ListItem>HTML5, CSS3, SASS</ListItem>
@@ -97,7 +97,7 @@ export const SkillsExample: React.FC = () => {
           <Heading level={4} size="md">
             Backend Development
           </Heading>
-          <List type="unordered" marker="disc" spaced>
+          <List variant="unordered">
             <ListItem>Node.js, Express</ListItem>
             <ListItem>RESTful API Design</ListItem>
             <ListItem>PostgreSQL, MongoDB</ListItem>

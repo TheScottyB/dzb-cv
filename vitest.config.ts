@@ -71,13 +71,12 @@ export default defineConfig({
     setupFiles: ['./vitest-setup.ts'],
 
     // Include and exclude patterns
-    include: ['packages/*/src/**/*.{test,spec}.{ts,tsx}'],
+    include: ['packages/*/src/**/*.{test,spec}.{ts,tsx}', 'src/**/*.{test,spec}.{ts,tsx}'],
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       'e2e/**',
-      '../e2e/**',
-      '../../e2e/**',
+      '**/e2e/**',
       '**/*.spec.ts',
       '**/*.spec.js',
       '**/*.spec.tsx',
@@ -135,6 +134,12 @@ export default defineConfig({
     deps: {
       // Inline specific modules
       inline: [/\/.*\.css/, '@dzb-cv/ui', 'react', 'react-dom'],
+      optimizer: {
+        web: {
+          include: ['react', 'react-dom', '@testing-library/react', '@testing-library/jest-dom'],
+        },
+      },
     },
+    passWithNoTests: true,
   },
 });

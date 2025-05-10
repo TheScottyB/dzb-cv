@@ -1,117 +1,51 @@
 import React from 'react';
-import styles from './List.module.css';
+import type { JSX } from 'react';
 
 /**
- * List type variants
+ * Reusable List component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - List items
+ * @param {'ordered' | 'unordered'} [props.variant='unordered'] - List type
+ * @param {string} [props.className=''] - Additional CSS classes
+ * @returns {JSX.Element} Rendered list component
  */
 export type ListType = 'ordered' | 'unordered';
-
-/**
- * Props for the List component
- */
 export interface ListProps extends React.HTMLAttributes<HTMLUListElement | HTMLOListElement> {
-  /**
-   * The list items
-   */
   children: React.ReactNode;
-
-  /**
-   * The type of list
-   * @default 'unordered'
-   */
-  type?: ListType;
-
-  /**
-   * Marker type for the list items
-   */
-  marker?: 'disc' | 'circle' | 'square' | 'decimal' | 'none';
-
-  /**
-   * Whether list items should be spaced apart
-   * @default false
-   */
-  spaced?: boolean;
-
-  /**
-   * Whether the list should be rendered horizontally
-   * @default false
-   */
-  horizontal?: boolean;
+  variant?: ListType;
+  className?: string;
 }
-
-/**
- * List Item props
- */
 export interface ListItemProps extends React.LiHTMLAttributes<HTMLLIElement> {
-  /**
-   * The content of the list item
-   */
   children: React.ReactNode;
+  className?: string;
 }
 
-/**
- * List component for ordered and unordered lists
- *
- * @example
- * ```tsx
- * <List type="unordered" marker="disc" spaced>
- *   <List.Item>First item</List.Item>
- *   <List.Item>Second item</List.Item>
- *   <List.Item>Third item</List.Item>
- * </List>
- * ```
- */
-export const List = React.forwardRef<HTMLUListElement | HTMLOListElement, ListProps>(
-  (
-    {
-      children,
-      type = 'unordered',
-      marker,
-      spaced = false,
-      horizontal = false,
-      className = '',
-      ...props
-    },
-    ref
-  ) => {
-    const ListTag = type === 'ordered' ? 'ol' : 'ul';
+export const List = ({
+  children,
+  variant = 'unordered',
+  className = '',
+  ...props
+}: ListProps): JSX.Element => {
+  const ListComponent = variant === 'ordered' ? 'ol' : 'ul';
 
-    const listClasses = [
-      styles.list,
-      marker ? styles[`marker-${marker}`] : '',
-      spaced ? styles.spaced : '',
-      horizontal ? styles.horizontal : '',
-      className,
-    ]
-      .filter(Boolean)
-      .join(' ');
-
-    return (
-      <ListTag ref={ref as any} className={listClasses} {...props}>
-        {children}
-      </ListTag>
-    );
-  }
-);
+  return (
+    <ListComponent className={`list ${className}`} {...props}>
+      {children}
+    </ListComponent>
+  );
+};
 
 /**
  * List item component
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - List item content
+ * @param {string} [props.className=''] - Additional CSS classes
+ * @returns {JSX.Element} Rendered list item
  */
-export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
-  ({ children, className = '', ...props }, ref) => {
-    const itemClasses = [styles.item, className].filter(Boolean).join(' ');
-
-    return (
-      <li ref={ref} className={itemClasses} {...props}>
-        {children}
-      </li>
-    );
-  }
-);
-
-// Add display names for better debugging
-List.displayName = 'List';
-ListItem.displayName = 'ListItem';
-
-// Attach ListItem to List for convenient nested usage
-(List as any).Item = ListItem;
+export const ListItem = ({ children, className = '', ...props }: ListItemProps): JSX.Element => {
+  return (
+    <li className={`list-item ${className}`} {...props}>
+      {children}
+    </li>
+  );
+};

@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
 
 import { Heading } from '../Heading';
-import styles from './Heading.module.css';
+import styles from '../Heading.module.css';
 
 // Safer way to get a style class with fallback for testing environment
 const getStyleClass = (styles: Record<string, string>, key: string): string => {
