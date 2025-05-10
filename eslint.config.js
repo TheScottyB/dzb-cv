@@ -1,1 +1,3 @@
-export { default } from './config/eslint.config.js';
+import turboConfig from 'eslint-config-turbo/flat';
+
+export default [...turboConfig];

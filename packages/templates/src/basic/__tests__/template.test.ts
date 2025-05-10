@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import type { CVData } from '@dzb-cv/types';
 
 import { BasicTemplate } from '../template.js';

@@ -1,12 +1,10 @@
+/* eslint-disable no-unused-vars */
 // No Template or PDFGenerationOptions imports needed here
 import type { CVData } from '@dzb-cv/types';
-
-// TODO: Define or import MarkdownTemplate interface if it's needed
-// Assuming MarkdownTemplate might be similar to this for now:
 interface MarkdownTemplate {
   name: string;
   description: string;
-  render(cv: CVData, options?: Record<string, unknown>): string;
+  render(_cv: CVData, _options?: Record<string, unknown>): string;
   getStyles?(): string;
 }
 
@@ -15,94 +13,79 @@ export class BasicTemplate implements MarkdownTemplate {
   readonly description = 'A basic, clean Markdown template.'; // Corrected syntax
 
   // Method to render CV data into Markdown string
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   render(cv: CVData, _options?: Record<string, unknown>): string {
     let output = '';
-    output += `# ${cv?.personalInfo?.name?.full || ''}\n\n`;
+    output += `# ${cv.personalInfo.name.full}\n\n`;
 
-    if (cv?.personalInfo?.contact) {
-      const contact = cv.personalInfo.contact;
-      const contactParts = [];
-
-      // Add email and phone with proper handling for empty/null values
-      if (contact.email) contactParts.push(contact.email);
-      if (contact.phone) contactParts.push(contact.phone);
-
-      // Only add the contact line if we have at least one contact method
-      if (contactParts.length > 0) {
-        output += `${contactParts.join(' | ')}\n`;
-      }
-
-      // Optional contact fields
-      if (contact.address) output += `${contact.address}\n`;
-      if (contact.linkedin) output += `LinkedIn: ${contact.linkedin}\n`;
+    const contact = cv.personalInfo.contact;
+    const contactParts = [];
+    if (contact.email !== '') contactParts.push(contact.email);
+    if (contact.phone !== '') contactParts.push(contact.phone);
+    if (contactParts.length > 0) {
+      output += `${contactParts.join(' | ')}\n`;
     }
+    if (contact.address != null && contact.address !== '') output += `${contact.address}\n`;
+    if (contact.linkedin != null && contact.linkedin !== '')
+      output += `LinkedIn: ${contact.linkedin}\n`;
     output += '\n';
 
     // Experience - always include section header
     output += '## Experience\n\n';
-    if (cv?.experience?.length > 0) {
-      // Changed data to cv
+    if (cv.experience.length > 0) {
       for (const exp of cv.experience) {
-        // Changed data to cv
-        // Safely access properties
-        const position = exp?.position || 'Position';
-        const employer = exp?.employer || 'Employer';
-        const startDate = exp?.startDate || '';
-        const endDate = exp?.endDate || 'Present';
+        const position = exp.position || 'Position';
+        const employer = exp.employer || 'Employer';
+        const startDate = exp.startDate || '';
+        const endDate = exp.endDate ?? 'Present';
 
         output += `### ${position} at ${employer}\n`;
-        if (startDate || endDate) {
-          output += `${startDate}${startDate ? ' - ' : ''}${endDate}\n\n`;
+        if (startDate !== '' || endDate !== '') {
+          output += `${startDate}${startDate !== '' ? ' - ' : ''}${endDate}\n\n`;
         }
 
-        if (exp.responsibilities && exp.responsibilities.length > 0) {
-          output += exp.responsibilities.map((r: string) => `- ${r}`).join('\n');
+        if (Array.isArray(exp.responsibilities) && exp.responsibilities.length > 0) {
+          output += exp.responsibilities
+            .filter((r: string) => r !== '')
+            .map((r: string) => `- ${r}`)
+            .join('\n');
           output += '\n\n';
         } else {
           output += '\n';
         }
       }
     } else {
-      // Add placeholder text for empty experience section
       output += '\n';
     }
 
     // Education - always include section header
     output += '## Education\n\n';
-    if (cv?.education?.length > 0) {
-      // Changed data to cv
+    if (cv.education.length > 0) {
       for (const edu of cv.education) {
-        // Changed data to cv
-        // Safely access properties
-        const degree = edu?.degree || 'Degree';
-        const field = edu?.field ? ` (${edu.field})` : '';
-        const institution = edu?.institution || 'Institution';
-        const graduationDate = edu?.graduationDate || '';
+        const degree = edu.degree || 'Degree';
+        const field = edu.field ? ` (${edu.field})` : '';
+        const institution = edu.institution || 'Institution';
+        const graduationDate = edu.graduationDate || '';
 
         output += `### ${degree}${field}\n`;
-        if (institution || graduationDate) {
-          output += `${institution}${institution && graduationDate ? ', ' : ''}${graduationDate}\n\n`;
+        if (institution !== '' || graduationDate !== '') {
+          output += `${institution}${institution !== '' && graduationDate !== '' ? ', ' : ''}${graduationDate}\n\n`;
         } else {
           output += '\n';
         }
       }
     } else {
-      // Add placeholder text for empty education section
       output += '\n';
     }
 
     // Skills - always include section header
     output += '## Skills\n\n';
-    if (cv?.skills?.length > 0) {
-      // Changed data to cv
-      output += cv.skills // Changed data to cv
-        .filter((skill: { name?: string }) => skill?.name) // Filter out skills without names
+    if (cv.skills.length > 0) {
+      output += cv.skills
+        .filter((skill: { name?: string }) => skill.name != null && skill.name !== '')
         .map((skill: { name: string }) => `- ${skill.name}`)
         .join('\n');
       output += '\n\n';
     } else {
-      // Add placeholder text for empty skills section
       output += '\n';
     }
 

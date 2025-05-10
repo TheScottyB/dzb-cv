@@ -11,17 +11,18 @@ describe('ModernTemplate', () => {
   function mockMatchMedia(matches: boolean) {
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      // @ts-ignore
-      value: vi.fn().mockImplementation((query) => ({
-        matches,
-        media: query,
-        onchange: null,
-        addListener: vi.fn(),
-        removeListener: vi.fn(),
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      })),
+      value: vi.fn().mockImplementation(
+        (query: string): MediaQueryList => ({
+          matches,
+          media: query,
+          onchange: null,
+          addListener: vi.fn(),
+          removeListener: vi.fn(),
+          addEventListener: vi.fn(),
+          removeEventListener: vi.fn(),
+          dispatchEvent: vi.fn(),
+        })
+      ),
     });
   }
   const template = new ModernTemplate();
@@ -583,8 +584,7 @@ describe('ModernTemplate', () => {
 
   // 6. Test print media styles
   it('should include print-specific styles', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { container: _container } = render(template.renderComponent(fullCVData));
+    render(template.renderComponent(fullCVData));
 
     // Get the styles
     const styles = template.getStyles();
