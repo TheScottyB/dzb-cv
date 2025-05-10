@@ -12,25 +12,25 @@ export default {
             files: {
               type: 'array',
               description: 'Files to lint',
-              items: { type: 'string' }
+              items: { type: 'string' },
             },
             fix: {
               type: 'boolean',
               description: 'Auto-fix problems',
-              default: false
-            }
-          }
+              default: false,
+            },
+          },
         },
         status: {
           description: 'Get ESLint server status',
-          parameters: {}
-        }
+          parameters: {},
+        },
       },
       configuration: {
         eslint: {
           linterOptions: {
             reportUnusedDisableDirectives: true,
-            noInlineConfig: true
+            noInlineConfig: true,
           },
           languageOptions: {
             ecmaVersion: 2024,
@@ -40,31 +40,31 @@ export default {
               project: './tsconfig.json',
               tsconfigRootDir: '.',
               ecmaFeatures: {
-                jsx: true
-              }
-            }
+                jsx: true,
+              },
+            },
           },
           plugins: ['@typescript-eslint', 'react', 'react-hooks', 'import'],
           settings: {
             'import/resolver': {
               typescript: true,
-              node: true
+              node: true,
             },
             react: {
-              version: 'detect'
-            }
-          }
-        }
-      }
-    }
+              version: 'detect',
+            },
+          },
+        },
+      },
+    },
   },
-  
+
   server: {
     port: 3000,
     host: 'localhost',
-    cors: true
+    cors: true,
   },
-  
+
   // Integration settings for different editors
   editors: {
     vscode: {
@@ -78,24 +78,23 @@ export default {
               'eslint-mcp.enable': {
                 type: 'boolean',
                 default: true,
-                description: 'Enable ESLint MCP server'
+                description: 'Enable ESLint MCP server',
               },
               'eslint-mcp.autoFixOnSave': {
                 type: 'boolean',
                 default: false,
-                description: 'Auto-fix ESLint issues on save'
-              }
-            }
-          }
-        }
-      }
+                description: 'Auto-fix ESLint issues on save',
+              },
+            },
+          },
+        },
+      },
     },
     cursor: {
       settings: {
         'eslint.MCPServer.enable': true,
-        'eslint.MCPServer.validateOnType': true
-      }
-    }
-  }
+        'eslint.MCPServer.validateOnType': true,
+      },
+    },
+  },
 };
-

@@ -22,16 +22,16 @@ const cssModuleMock = new Proxy(
     get: (_, key) => {
       // Special module keys
       if (key === 'default' || key === '__esModule') return {};
-      
+
       // Handle any dynamic key access by returning the key itself
       if (typeof key === 'string') {
         // Create a string that definitely has all string methods
         return String(key);
       }
-      
+
       // Fallback for any other property type
       return '';
-    }
+    },
   }
 );
 
@@ -49,13 +49,13 @@ vi.mock(/\.(jpg|jpeg|png|gif|svg)$/, () => ({
 beforeAll(() => {
   // Add React 18 useId polyfill for testing
   let idCounter = 0;
-  
+
   // Create a proper useId implementation that returns a string with all string methods
   const safeUseId = () => {
     const id = `:r${idCounter++}:`;
     return String(id); // Ensure it's a proper string
   };
-  
+
   // Get the React object directly from global or require it at runtime
   let ReactModule: any;
   try {
@@ -67,12 +67,12 @@ beforeAll(() => {
     ReactModule = { version: '18.0.0' };
     global.React = ReactModule;
   }
-  
+
   // Patch useId on the React module
   if (!ReactModule.useId) {
     ReactModule.useId = safeUseId;
   }
-  
+
   // Make sure global.React exists and has useId
   if (!global.React) {
     global.React = ReactModule;
@@ -90,7 +90,7 @@ beforeAll(() => {
   // Mock window.matchMedia
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
-    value: vi.fn().mockImplementation(query => ({
+    value: vi.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -117,14 +117,13 @@ beforeAll(() => {
 const originalConsoleError = console.error;
 console.error = (...args) => {
   if (
-    typeof args[0] === 'string' && (
-      args[0].includes('Warning: ReactDOM.render is no longer supported') ||
+    typeof args[0] === 'string' &&
+    (args[0].includes('Warning: ReactDOM.render is no longer supported') ||
       args[0].includes('Warning: useLayoutEffect does nothing on the server') ||
       args[0].includes('Warning: React does not recognize the') ||
       args[0].includes('Warning: The current testing environment is not configured') ||
       args[0].includes("It looks like you're using the wrong act()") ||
-      args[0].includes('Warning: useId() relies on React.useId()')
-    )
+      args[0].includes('Warning: useId() relies on React.useId()'))
   ) {
     return;
   }
@@ -134,7 +133,7 @@ console.error = (...args) => {
 // Create a custom version of replace that works on any value
 const originalReplace = String.prototype.replace;
 Object.defineProperty(String.prototype, 'replace', {
-  value: function(...args) {
+  value: function (...args) {
     try {
       // First try to use the original method
       return originalReplace.apply(this, args);
@@ -145,28 +144,28 @@ Object.defineProperty(String.prototype, 'replace', {
     }
   },
   writable: true,
-  configurable: true
+  configurable: true,
 });
 
 // Make Symbol.toString return a proper string with string methods
 const originalSymbolToString = Symbol.prototype.toString;
 Object.defineProperty(Symbol.prototype, 'toString', {
-  value: function() {
+  value: function () {
     return String(originalSymbolToString.call(this));
   },
   writable: true,
-  configurable: true
+  configurable: true,
 });
 
 // Try to ensure Proxy objects can be converted to strings
 // Note: This may not work in all environments as Proxy.prototype is not accessible in some JS engines
 try {
   Object.defineProperty(Proxy.prototype, 'toString', {
-    value: function() {
+    value: function () {
       return '[object Proxy]';
     },
     writable: true,
-    configurable: true
+    configurable: true,
   });
 } catch (e) {
   console.warn('Could not patch Proxy.prototype.toString, will use fallback mechanisms');
