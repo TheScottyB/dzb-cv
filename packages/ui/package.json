@@ -12,9 +12,29 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
+    "./Heading": {
+      "types": "./dist/components/Typography/Heading.d.ts",
+      "import": "./dist/components/Typography/Heading.js"
+    },
+    "./Text": {
+      "types": "./dist/components/Typography/Text.d.ts",
+      "import": "./dist/components/Typography/Text.js"
+    },
+    "./List": {
+      "types": "./dist/components/Typography/List.d.ts",
+      "import": "./dist/components/Typography/List.js"
+    },
     "./components": {
       "types": "./dist/components/index.d.ts",
       "import": "./dist/components/index.js"
+    },
+    "./components/Typography": {
+      "types": "./dist/components/Typography/index.d.ts",
+      "import": "./dist/components/Typography/index.js"
+    },
+    "./components/*": {
+      "types": "./dist/components/*/index.d.ts",
+      "import": "./dist/components/*/index.js"
     },
     "./hooks": {
       "types": "./dist/hooks/index.d.ts",
@@ -26,7 +46,8 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && pnpm run copy-files",
+    "copy-files": "cp -R src/components/**/*.module.css dist/components/",
     "test": "vitest run || true",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -37,8 +58,7 @@
   "dependencies": {
     "@dzb-cv/types": "workspace:*",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "styled-components": "^6.1.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@dzb-cv/config": "workspace:*",
@@ -71,5 +91,6 @@
   "peerDependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
-  }
+  },
+  "sideEffects": false
 }

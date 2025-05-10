@@ -48,4 +48,3 @@ export interface TemplateCustomization {
     background?: string;
   };
 }
-

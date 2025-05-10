@@ -125,6 +125,9 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
   }
 );
 
+// Add display names for better debugging
 List.displayName = 'List';
-ListItem.displayName = 'List.Item';
+ListItem.displayName = 'ListItem';
 
+// Attach ListItem to List for convenient nested usage
+(List as any).Item = ListItem;

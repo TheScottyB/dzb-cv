@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import type { CVData, Template, PDFGenerationOptions, Education, Experience, Skill } from '@dzb-cv/types';
-import { Heading, Text, List, ListItem } from '@dzb-cv/ui/components';
+import { Heading } from '@dzb-cv/ui/Heading';
+import { Text } from '@dzb-cv/ui/Text';
+import { List, ListItem } from '@dzb-cv/ui/List';
 import './template.css';
 
 // Extended data interfaces with additional properties needed for the template

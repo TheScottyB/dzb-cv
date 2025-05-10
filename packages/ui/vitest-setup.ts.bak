@@ -1,0 +1,172 @@
+import '@testing-library/jest-dom';
+import { expect, afterEach, vi } from 'vitest';
+import { cleanup } from '@testing-library/react';
+import matchers from '@testing-library/jest-dom/matchers';
+
+// Extend Vitest's expect with Testing Library matchers
+expect.extend(matchers);
+
+// Clean up after each test
+afterEach(() => {
+  cleanup();
+  vi.resetAllMocks();
+});
+
+// Enable debug mode for CSS mocking
+const DEBUG_CSS_MOCKS = true;
+
+// Define a safer string creator with detailed logging
+const safeString = (value) => {
+  // Log input value details
+  if (DEBUG_CSS_MOCKS) {
+    console.log(`safeString called with:`, {
+      value,
+      type: typeof value,
+      isNull: value === null,
+      isUndefined: value === undefined,
+      constructor: value?.constructor?.name
+    });
+  }
+
+  // Handle various input types defensively
+  if (value === null || value === undefined) {
+    if (DEBUG_CSS_MOCKS) console.log(`safeString: null/undefined converted to empty string`);
+    return '';
+  }
+  
+  // Handle Symbol specially
+  if (typeof value === 'symbol') {
+    const result = value.toString();
+    if (DEBUG_CSS_MOCKS) console.log(`safeString: symbol converted to: "${result}"`);
+    return result;
+  }
+  
+  // Ensure we always get a primitive string
+  const result = String(value);
+  if (DEBUG_CSS_MOCKS) console.log(`safeString final result: "${result}"`);
+  return result;
+};
+
+// Better CSS module mock that guarantees string methods with detailed logging
+const cssModuleMock = new Proxy(
+  {},
+  {
+    get: function(target, prop) {
+      if (DEBUG_CSS_MOCKS) {
+        console.log(`CSS Module access:`, {
+          property: String(prop),
+          propertyType: typeof prop,
+          isSymbol: typeof prop === 'symbol',
+          stringValue: String(prop),
+        });
+      }
+      
+      try {
+        // Handle special module properties
+        if (prop === '__esModule') {
+          if (DEBUG_CSS_MOCKS) console.log(`CSS Module returning __esModule flag`);
+          return true;
+        }
+        
+        if (prop === 'default') {
+          if (DEBUG_CSS_MOCKS) console.log(`CSS Module returning default export`);
+          return cssModuleMock;
+        }
+        
+        // For any CSS class name, always return a proper string
+        const result = safeString(prop);
+        
+        // Verify the result has string methods
+        if (DEBUG_CSS_MOCKS) {
+          console.log(`CSS Module returning:`, {
+            result,
+            hasReplaceMethod: typeof result.replace === 'function',
+            stringPrototype: Object.getPrototypeOf(result) === String.prototype
+          });
+        }
+        
+        return result;
+      } catch (e) {
+        // Detailed error logging
+        console.error(`CSS module access error for property "${String(prop)}":`, {
+          error: e,
+          errorName: e.name,
+          errorMessage: e.message,
+          stack: e.stack
+        });
+        
+        // Return a safe empty string as fallback
+        return '';
+      }
+    }
+  }
+);
+
+// Add defensive error handler for String.prototype.replace
+const originalReplace = String.prototype.replace;
+String.prototype.replace = function(...args) {
+  try {
+    if (DEBUG_CSS_MOCKS && (this === null || this === undefined || typeof this.valueOf() !== 'string')) {
+      console.warn(`String.replace called on non-string:`, {
+        value: this,
+        type: typeof this,
+        constructor: this?.constructor?.name,
+        args
+      });
+    }
+    
+    return originalReplace.apply(this, args);
+  } catch (e) {
+    console.error(`String replace error:`, {
+      value: this,
+      args,
+      error: e,
+      errorMessage: e.message,
+      stack: e.stack
+    });
+    
+    // Convert to string and retry
+    const safeValue = safeString(this);
+    return originalReplace.apply(safeValue, args);
+  }
+};
+
+// Mock all CSS module imports
+vi.mock(/\.module\.css$/, () => cssModuleMock);
+
+// Mock regular CSS imports
+vi.mock(/\.css$/, () => ({}));
+
+// Mock SVG imports
+vi.mock(/\.svg$/, () => ({
+  default: 'div',
+}));
+
+// Add browser mocks needed for testing
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
+
+// Mock ResizeObserver
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn()
+}));
+
+// Mock IntersectionObserver
+global.IntersectionObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn()
+}));

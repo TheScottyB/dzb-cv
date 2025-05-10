@@ -21,11 +21,11 @@ export interface PersonalInfo {
 
 export interface Experience {
   position: string;
-  employer: string;  // Add this field
+  employer: string; // Add this field
   startDate: string;
   endDate?: string;
   location?: string;
-  responsibilities: string[];  // Add this field
+  responsibilities: string[]; // Add this field
   achievements?: string[];
   employmentType: 'full-time' | 'part-time' | 'contract' | 'internship';
 }
@@ -50,7 +50,7 @@ export interface CVData {
   experience: Experience[];
   education: Education[];
   skills: Skill[];
-  projects?: { 
+  projects?: {
     name: string;
     description: string;
     technologies?: string[];

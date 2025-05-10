@@ -1,5 +1,3 @@
-import type { JobPosting } from './posting.js';
-
 /**
  * Options for job posting analysis
  * @interface JobAnalysisOptions
@@ -78,4 +76,3 @@ export interface CVMatchResult {
   /** Full job posting analysis */
   jobAnalysis: JobPostingAnalysis;
 }
-

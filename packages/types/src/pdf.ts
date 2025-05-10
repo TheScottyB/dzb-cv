@@ -20,11 +20,12 @@ export interface PDFGenerationOptions {
 }
 
 export interface PDFGenerator {
-  generate(data: CVData, options?: PDFGenerationOptions): Promise<Buffer>;
+  generate(_data: CVData, _options?: PDFGenerationOptions): Promise<Buffer>;
 }
 
 export interface Template {
   name: string;
-  render(data: CVData, options?: PDFGenerationOptions): Promise<string> | string;
+
+  render(_data: CVData, _options?: PDFGenerationOptions): Promise<string> | string;
   getStyles(): string;
 }

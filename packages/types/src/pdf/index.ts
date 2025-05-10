@@ -54,6 +54,6 @@ export interface PDFGenerator {
    * @param options PDF generation options
    * @returns Promise resolving to PDF buffer
    */
-  generate(data: CVData, options?: PDFGenerationOptions): Promise<Buffer>;
-}
 
+  generate(_data: CVData, _options?: PDFGenerationOptions): Promise<Buffer>;
+}

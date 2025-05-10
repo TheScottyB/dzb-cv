@@ -13,7 +13,8 @@ export interface Template {
   /** Template description */
   description: string;
   /** Render CV data using this template */
-  render(data: CVData, options?: PDFGenerationOptions): string;
+
+  render(_data: CVData, _options?: PDFGenerationOptions): string;
   /** Get template-specific styles */
   getStyles(): string;
 }
@@ -38,4 +39,3 @@ export interface TemplateInfo {
   /** Template tags for filtering */
   tags?: string[];
 }
-

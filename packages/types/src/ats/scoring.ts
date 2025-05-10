@@ -50,4 +50,3 @@ export interface ATSCompatibilityReport {
   /** Overall recommendation */
   recommendation: string;
 }
-

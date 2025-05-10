@@ -77,7 +77,7 @@ export interface Reference {
 /**
  * Extended CV data structures not included in base CV types
  */
-import { Experience } from './base.js';
+import type { Experience } from './base.js';
 export interface ExtendedCVData {
   /** Portfolio projects */
   projects?: Project[];
@@ -90,4 +90,3 @@ export interface ExtendedCVData {
   /** Volunteer experience */
   volunteerExperience?: Array<Omit<Experience, 'employmentType'>>;
 }
-

@@ -1,3 +1,2 @@
-export * from './base.js';
-export * from './options.js';
-
+export type * from './base.js';
+export type * from './options.js';

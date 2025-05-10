@@ -1,46 +1,53 @@
 /* Base heading styles */
 .heading {
   margin: 0;
-  font-family: inherit;
-  font-weight: 600;
   line-height: 1.2;
-  color: inherit;
+  color: var(--heading-color, inherit);
+  font-weight: 600; /* Semibold as default */
 }
 
-/* Size variants */
+/* Size variants - using a consistent scale */
 .size-xs {
   font-size: 0.75rem; /* 12px */
+  line-height: 1.5;
 }
 
 .size-sm {
   font-size: 0.875rem; /* 14px */
+  line-height: 1.43;
 }
 
 .size-md {
   font-size: 1rem; /* 16px */
+  line-height: 1.5;
 }
 
 .size-lg {
   font-size: 1.125rem; /* 18px */
+  line-height: 1.4;
 }
 
 .size-xl {
   font-size: 1.25rem; /* 20px */
+  line-height: 1.4;
 }
 
 .size-2xl {
   font-size: 1.5rem; /* 24px */
+  line-height: 1.33;
 }
 
 .size-3xl {
   font-size: 1.875rem; /* 30px */
+  line-height: 1.3;
 }
 
 .size-4xl {
   font-size: 2.25rem; /* 36px */
+  line-height: 1.25;
 }
 
-/* Font weights */
+/* Weight variants */
 .weight-light {
   font-weight: 300;
 }
@@ -61,11 +68,21 @@
   font-weight: 700;
 }
 
-/* Truncate text with ellipsis */
+/* Truncation style */
 .truncate {
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
   max-width: 100%;
 }
 
+/* Responsive adjustments for mobile viewports */
+@media (max-width: 640px) {
+  .size-3xl {
+    font-size: 1.625rem; /* Slightly smaller on mobile */
+  }
+  
+  .size-4xl {
+    font-size: 1.875rem; /* Slightly smaller on mobile */
+  }
+}

@@ -1,6 +1,6 @@
-export * from './cv/index.js';
-export * from './pdf/index.js';
-export * from './ats/index.js';
-export * from './job/index.js';
-export * from './templates/index.js';
-export * from './cv/extended.js';
+export type * from './cv/index.js';
+export type * from './pdf/index.js';
+export type * from './ats/index.js';
+export type * from './job/index.js';
+export type * from './templates/index.js';
+export type * from './cv/extended.js';

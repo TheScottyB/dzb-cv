@@ -72,4 +72,3 @@ export interface JobPosting {
   /** Additional metadata */
   metadata?: Record<string, unknown>;
 }
-

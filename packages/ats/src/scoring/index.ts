@@ -164,7 +164,7 @@ export class ScoringEngine {
     const yearPattern = /(\d+)[\s-]*years?/i;
     const match = posting.description.match(yearPattern);
     
-    return match ? parseInt(match[1], 10) : defaultYears;
+    return (match && match[1]) ? parseInt(match[1], 10) : defaultYears;
   }
 
   private calculateTotalExperience(cv: CVData): number {

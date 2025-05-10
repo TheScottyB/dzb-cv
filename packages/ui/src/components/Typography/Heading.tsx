@@ -1,5 +1,18 @@
+
 import React from 'react';
 import styles from './Heading.module.css';
+
+// Safer way to get a style class with fallback for testing environment
+const getStyleClass = (styles: Record<string, string>, key: string): string => {
+  if (!styles) return key; // Fallback for when styles object is undefined
+  
+  const value = styles[key];
+  // Handle different types of values that might come from CSS modules
+  if (typeof value === 'string') return value;
+  if (value === undefined) return key; // Fallback for missing keys
+  
+  return String(value || key); // Ensure we always return a string
+};
 
 /**
  * Heading level variants (h1-h6)
@@ -83,13 +96,25 @@ export const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(
     
     const actualSize = size || defaultSize();
     
+    // Safely get style classes with fallbacks
     const headingClasses = [
-      styles.heading,
-      styles[`size-${actualSize}`],
-      weight ? styles[`weight-${weight}`] : '',
-      truncate ? styles.truncate : '',
-      className,
-    ].filter(Boolean).join(' ');
+      // Get base heading class
+      getStyleClass(styles, 'heading'),
+      
+      // Get size class with dynamic key
+      actualSize ? getStyleClass(styles, `size-${actualSize}`) : '',
+      
+      // Get weight class if weight is provided
+      weight ? getStyleClass(styles, `weight-${weight}`) : '',
+      
+      // Get truncate class if needed
+      truncate ? getStyleClass(styles, 'truncate') : '',
+      
+      // Add custom className if provided
+      className || '',
+    ]
+      .filter(Boolean) // Remove empty strings
+      .join(' '); // Join with spaces
     
     const HeadingTag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
     

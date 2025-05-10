@@ -41,4 +41,3 @@ export interface CVData {
   education: Education[];
   skills: Skill[];
 }
-

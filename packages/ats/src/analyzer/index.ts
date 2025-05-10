@@ -243,14 +243,16 @@ export class CVAnalyzer {
     
     if (experienceMatch) {
       // Remove any "+" character and convert to number
-      const requiredYearsStr = experienceMatch[1].replace('+', '');
+      const requiredYearsStr = experienceMatch[1]?.replace('+', '') ?? '';
       const requiredYears = parseInt(requiredYearsStr, 10);
       
       // Calculate total experience from CV
       const totalExperience = cv.experience.reduce((total, exp) => {
         if (exp.startDate && exp.endDate) {
-          const startYear = parseInt(exp.startDate.split('-')[0], 10);
-          const endYear = parseInt(exp.endDate.split('-')[0], 10);
+          const startYearStr = exp.startDate.split('-')[0] ?? '0';
+          const endYearStr = exp.endDate.split('-')[0] ?? '0';
+          const startYear = parseInt(startYearStr, 10);
+          const endYear = parseInt(endYearStr, 10);
           return total + (endYear - startYear);
         }
         return total;
@@ -284,7 +286,7 @@ export class CVAnalyzer {
     const checkTextForExperience = (text: string): boolean => {
       for (const pattern of experienceRegexPatterns) {
         const match = text.match(pattern);
-        if (match) {
+        if (match && match[1]) {
           const yearsStr = match[1].replace('+', '');
           requiredYears = parseInt(yearsStr, 10);
           foundExperienceReq = true;
@@ -314,10 +316,15 @@ export class CVAnalyzer {
     // Calculate total years of experience from CV
     const totalYears = cv.experience.reduce((total, exp) => {
       if (exp.startDate && exp.endDate) {
-        const startYear = parseInt(exp.startDate.split('-')[0], 10);
+        const startYearParts = exp.startDate.split('-');
+        const startYear = startYearParts.length > 0 ? parseInt(startYearParts[0] || '0', 10) : 0;
+        
         const endYear = exp.endDate === 'present' 
           ? new Date().getFullYear() 
-          : parseInt(exp.endDate.split('-')[0], 10);
+          : (() => {
+              const endYearParts = exp.endDate.split('-');
+              return endYearParts.length > 0 ? parseInt(endYearParts[0] || '0', 10) : 0;
+            })();
         
         return total + (endYear - startYear);
       }

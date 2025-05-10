@@ -144,4 +144,3 @@ export interface AcademicCVData extends CVData {
   /** Academic service and committee work */
   academicService?: AcademicService[];
 }
-

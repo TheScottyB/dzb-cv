@@ -17,7 +17,7 @@ export interface ATSResult {
   /** Missing skills with recommendations */
   missingSkills: {
     skill: string;
-    alternatives?: SkillDefinition[];
+    alternatives?: SkillDefinition[] | undefined;
   }[];
 }
 
@@ -124,7 +124,7 @@ export class ATSEngine {
    */
   private findMissingSkills(cv: CVData, posting: JobPosting): {
     skill: string;
-    alternatives?: SkillDefinition[];
+    alternatives?: SkillDefinition[] | undefined;
   }[] {
     const requiredSkills = posting.skills || [];
     const cvSkills = new Set(cv.skills.map(s => s.name.toLowerCase()));

@@ -10,13 +10,9 @@ export interface ATSKeywordAnalysis {
   /** Overall relevance score based on keyword matches */
   relevanceScore: number;
   /** Keyword density analysis */
-  density?: {
-    [keyword: string]: number;
-  };
+  density?: Record<string, number>;
   /** Context in which keywords appear */
-  context?: {
-    [keyword: string]: string[];
-  };
+  context?: Record<string, string[]>;
 }
 
 /**
@@ -35,4 +31,3 @@ export interface ATSAnalysis {
   /** Issues related to CV formatting */
   formattingIssues: string[];
 }
-
