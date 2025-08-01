@@ -14,8 +14,30 @@
     "profiles": {
         "linkedIn": "placeholder-linkedin-url"
     },
-    "professionalSummary": "With over 40 years of experience in customer service and healthcare, and 20 years in real estate, I have developed a deep understanding of the needs of individuals in various environments. My expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, and maintaining patient records. Additionally, I have strong negotiation and problem-solving skills, recognized through awards in consumer and residential loans. I am committed to continuous improvement and strive for perfection in every role I undertake, making me a valuable asset to any organization.",
+    "professionalSummary": "Healthcare professional with over 40 years of combined experience in customer service and healthcare operations. Recently completed Medical Terminology and EKG Training at McHenry Community College, earning Certified EKG Technician (CET) certification from the National Healthcareer Association (NHA) in July 2025. Currently pursuing Basic Nursing Assistant Certificate Program. My healthcare expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, patient records management, and cardiac monitoring. With 20 years of real estate experience providing strong negotiation and problem-solving skills, I am committed to continuous improvement and delivering exceptional patient care in healthcare environments.",
     "education": [
+        {
+            "certification": "Certified EKG Technician (CET)",
+            "institution": "National Healthcareer Association (NHA)",
+            "year": "2025",
+            "month": "July",
+            "status": "Current",
+            "notes": "Completed Medical Terminology and EKG Training Program at McHenry Community College, Summer 2025"
+        },
+        {
+            "certification": "Medical Terminology Certificate",
+            "institution": "McHenry Community College",
+            "year": "2025",
+            "semester": "Summer",
+            "status": "Completed"
+        },
+        {
+            "certification": "Basic Nursing Assistant Certificate Program",
+            "institution": "McHenry Community College",
+            "year": "2025",
+            "semester": "Fall",
+            "status": "In Progress"
+        },
         {
             "certification": "Certified Pharmacy Technician",
             "institution": "Osco Pharmacy",
@@ -60,6 +82,10 @@
             "Property Rehabbing & Investment"
         ],
         "healthcareAdministration": [
+            "EKG/ECG Testing and Monitoring",
+            "Cardiac Rhythm Analysis",
+            "Patient Cardiac Assessment",
+            "Medical Terminology",
             "Patient Intake & Triage (Human/Animal)",
             "Scheduling",
             "Scribing",
@@ -90,6 +116,9 @@
             "Quick to learn new EHR and practice management systems, including cloud-based platforms such as PointClickCare"
         ],
         "certifications": [
+            "Certified EKG Technician (CET, National Healthcareer Association, July 2025 - Current)",
+            "Medical Terminology Certificate (McHenry Community College, Summer 2025)",
+            "Basic Nursing Assistant Certificate Program (McHenry Community College, Fall 2025 - In Progress)",
             "Certified Pharmacy Technician (CPhT, Illinois State License, 1996)",
             "Licensed Managing Broker, Illinois (IDFPR, Issued: 10/2017 - Current)",
             "Licensed Managing Broker, Wisconsin (DSPS, Issued: 2018 - Current)",
@@ -251,17 +280,18 @@
                 "employer": "Vylla",
                 "address": "Corporate Address Required",
                 "position": "Admin for Central & Eastern Coast AVPs",
-                "period": "February 2024 - Present",
+                "period": "February 2024 - May 2025",
                 "hours": "40 hrs/wk",
                 "duties": [
-                    "Provide administrative support for 3 AVPs covering 14 states",
+                    "Provided administrative support for 3 AVPs covering 14 states",
                     "Selected for pilot program supporting 30 new agents during initial 2-3 months via email, text, Teams",
-                    "Implement and manage agent support systems (Broker Kit, Monday.com) for onboarding, license transfers, system access, and training coordination",
+                    "Implemented and managed agent support systems (Broker Kit, Monday.com) for onboarding, license transfers, system access, and training coordination",
                     "Collaborated and implemented streamlined phone system (Phone.com) for 160 NY agents, reducing AVP call volume 70%",
                     "Developed and managed agent retention initiative (birthday emails/social media)"
                 ],
                 "supervisor": "William Thompson, Regional Vice President",
-                "mayContact": true
+                "mayContact": true,
+                "reasonForLeaving": "Career transition to healthcare to utilize newly obtained EKG certification"
             },
             {
                 "employer": "Vylla",
@@ -592,16 +622,39 @@
             ],
             "format": "Modern professional format",
             "emphasizedExperience": [
-                "realEstate.0",
-                "realEstate.2",
-                "healthcare.2"
+                "healthcare.0",
+                "healthcare.2",
+                "healthcare.3"
             ],
             "highlights": [
-                "Over 40 years in customer service",
-                "20 years in real estate",
-                "Multiple leadership positions",
-                "Experience managing teams across states",
-                "Strong administrative and organizational skills"
+                "Certified EKG Technician (CET) - July 2025",
+                "Over 40 years in customer service and healthcare",
+                "Recently completed Medical Terminology and EKG Training",
+                "Currently pursuing Basic Nursing Assistant certification",
+                "Strong administrative and organizational skills",
+                "HIPAA compliance and patient confidentiality expertise"
+            ]
+        },
+        "ekgTechnician": {
+            "requirements": [
+                "EKG certification emphasis",
+                "healthcare experience",
+                "cardiac monitoring skills"
+            ],
+            "format": "Healthcare-focused format",
+            "emphasizedExperience": [
+                "healthcare.0",
+                "healthcare.1",
+                "healthcare.2",
+                "healthcare.3"
+            ],
+            "highlights": [
+                "Certified EKG Technician (CET) - National Healthcareer Association, July 2025",
+                "Medical Terminology Certificate - McHenry Community College, 2025",
+                "Currently pursuing Basic Nursing Assistant Certificate",
+                "Extensive healthcare administration experience",
+                "Patient intake, triage, and cardiac assessment skills",
+                "HIPAA compliance and medical records management"
             ]
         }
     },
