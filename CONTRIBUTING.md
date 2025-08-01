@@ -5,7 +5,7 @@ Thank you for your interest in contributing to this project! Here's what you nee
 ## Toolchain Requirements
 
 - **Node.js**: 20.10.0 (managed via [Volta](https://volta.sh) — recommended)
-- **pnpm**: 8.12.1+
+- **pnpm**: 10.9.0+
 - **Git**: with [Git LFS](https://git-lfs.com/)
 - **(Optional) Ruby 3.2.3:** for mixed stacks
 

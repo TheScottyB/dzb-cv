@@ -155,13 +155,13 @@ dzb-cv generate [--single-page] <sector> [options]
 **Examples:**
 ```bash
 # Generate standard two-page federal CV
-dzb-cv generate federal --format pdf --output ./output
+dzb-cv generate federal --format pdf --output ./generated
 
 # Generate single-page private sector CV
-dzb-cv generate --single-page private --format pdf --output ./output
+dzb-cv generate --single-page private --format pdf --output ./generated
 
 # Generate single-page state CV
-dzb-cv generate --single-page state --format pdf --output ./output
+dzb-cv generate --single-page state --format pdf --output ./generated
 
 # Generate CV with custom output directory
 dzb-cv generate --single-page federal --output ./my-cvs
