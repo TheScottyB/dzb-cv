@@ -28,6 +28,7 @@ Located in `/docs/user-guide/`:
 ### Reference
 Located in `/docs/reference/`:
 - [Reference](reference/Reference.md) - CLI, API, and configuration reference for the DZB-CV system
+- [CLI Reference](reference/CLI-REFERENCE.md) - Complete command-line interface documentation
 
 ### Examples
 Located in `/docs/examples/`:

@@ -43,21 +43,23 @@ packages/
 - Node.js >= 20.10.0
 - pnpm >= 10.9.0
 
-### Global Installation (coming soon)
+### Global Installation (Development)
 
 ```bash
-# Install globally
-npm install -g @dzb-cv/cli
+# Link the CLI globally for development
+cd packages/cli
+npm link
 
-# Use the CLI
+# Now you can use 'cv' command globally
 cv create --name "John Doe" --email "john@example.com"
+cv --help
 ```
 
 ### Local Development Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/dzb-cv.git
+git clone https://github.com/TheScottyB/dzb-cv.git
 cd dzb-cv
 
 # Install dependencies
@@ -67,30 +69,45 @@ pnpm install
 pnpm run build
 
 # Run CLI commands locally
-pnpm cv create --name "John Doe" --email "john@example.com"
+node packages/cli/dist/index.js create --name "John Doe" --email "john@example.com"
 ```
 
 ## Quick Start
 
 ### Create Your First CV
 
-1. **Initialize a new CV**:
+1. **Install dependencies and build the project**:
 
 ```bash
-pnpm cv create --name "John Doe" --email "john@example.com"
+# Clone the repository
+git clone https://github.com/TheScottyB/dzb-cv.git
+cd dzb-cv
+
+# Install dependencies
+pnpm install
+
+# Build all packages
+pnpm run build
 ```
 
-2. **Export to PDF** (coming soon):
+2. **Create a new CV**:
 
 ```bash
-pnpm cv export --id "your-cv-id" --format pdf --output "my-cv.pdf"
+# Using the built CLI directly
+node packages/cli/dist/index.js create --name "John Doe" --email "john@example.com"
+
+# Or if you've linked the CLI globally (see Development Setup)
+cv create --name "John Doe" --email "john@example.com" --output "my-cv.pdf"
 ```
 
-3. **Update your CV** (coming soon):
+3. **View available commands**:
 
 ```bash
-pnpm cv update --id "your-cv-id" --add-experience "Company Name" --title "Job Title" --start "2022-01" --end "Present"
+node packages/cli/dist/index.js --help
+node packages/cli/dist/index.js create --help
 ```
+
+For comprehensive usage instructions, examples, and troubleshooting, see **[USAGE.md](USAGE.md)**.
 
 ## Development Setup
 
@@ -208,7 +225,12 @@ Command-line interface:
 
 ```bash
 # Available commands
-pnpm cv create --name "John Doe" --email "john@example.com"
+node packages/cli/dist/index.js create --name "John Doe" --email "john@example.com"
+node packages/cli/dist/index.js create --name "Jane Smith" --email "jane@example.com" --output "jane-cv.pdf"
+
+# Get help
+node packages/cli/dist/index.js --help
+node packages/cli/dist/index.js create --help
 ```
 
 ## Configuration
