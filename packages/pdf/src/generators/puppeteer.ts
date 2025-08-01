@@ -40,7 +40,8 @@ export class PuppeteerGenerator implements RichPDFGenerator {
         landscape: options?.orientation === 'landscape',
       };
 
-      return await page.pdf(pdfOptions);
+      const pdfBuffer = await page.pdf(pdfOptions);
+      return Buffer.from(pdfBuffer);
     } finally {
       await browser.close();
     }

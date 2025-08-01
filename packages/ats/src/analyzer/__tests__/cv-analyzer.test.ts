@@ -138,8 +138,8 @@ describe('CVAnalyzer - advanced', () => {
 
   it('should handle null, undefined, or empty input gracefully', () => {
     const analyzer = new CVAnalyzer();
-    expect(() => analyzer.analyze(null as any, sampleJob)).not.toThrow();
-    expect(() => analyzer.analyze(sampleCV, null as any)).not.toThrow();
-    expect(() => analyzer.analyze(undefined as any, undefined as any)).not.toThrow();
+    expect(() => analyzer.analyze(null as never, sampleJob)).not.toThrow();
+    expect(() => analyzer.analyze(sampleCV, null as never)).not.toThrow();
+    expect(() => analyzer.analyze(undefined as never, undefined as never)).not.toThrow();
   });
 });
