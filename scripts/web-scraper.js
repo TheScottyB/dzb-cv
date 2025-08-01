@@ -7,7 +7,7 @@ import path from 'path';
 const DEFAULT_SCRAPER_OPTIONS = {
   headless: true,
   waitTime: 5000,
-  outputDir: 'output/scraped',
+  outputDir: 'generated/reports/scraped',
   saveHtml: true,
   saveScreenshot: true,
   savePdf: false,

@@ -10,14 +10,14 @@ import { convertMarkdownToPdf } from '../dist/utils/pdf-generator.js';
 async function main() {
   try {
     // Path to the cover letter markdown file
-    const inputPath = './output/state/dawn-recruitment-expert-cover-letter.md';
+    const inputPath = './generated/cvs/personal/state/dawn-recruitment-expert-cover-letter.md';
 
     // Read the markdown content
     console.log(`Reading cover letter content from ${inputPath}...`);
     const markdownContent = await fs.readFile(inputPath, 'utf-8');
 
     // Output file path
-    const outputPath = './output/state/Dawn_Zurick_Beilfuss_Cover_Letter.pdf';
+    const outputPath = './generated/cvs/personal/state/Dawn_Zurick_Beilfuss_Cover_Letter.pdf';
 
     // Configure PDF options
     const pdfOptions = {

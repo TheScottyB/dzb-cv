@@ -14,7 +14,7 @@ const JOB_TITLE = 'Position Title'; // e.g., "Conservation Worker"
 const JOB_DEPARTMENT = 'Department Name'; // e.g., "Illinois Department of Natural Resources"
 const JOB_ID = 'Job ID'; // e.g., "12345" or leave as empty string if not available
 const CV_FILENAME = 'dawn-position-employer-cv.md'; // The markdown file in cv-versions/
-const OUTPUT_SUBDIR = 'position'; // Subdirectory within output/state/ or output/federal/
+const OUTPUT_SUBDIR = 'position'; // Subdirectory within generated/cvs/personal/state/ or generated/cvs/personal/federal/
 const SECTOR = 'state'; // "state", "federal", or "private"
 const PRIMARY_COLOR = '#2E7D32'; // Main heading color
 const SECONDARY_COLOR = '#388E3C'; // Secondary heading color
@@ -36,7 +36,7 @@ async function main() {
     const markdownContent = await fs.readFile(inputPath, 'utf-8');
 
     // Create output directory if needed
-    const outputDir = `./output/${SECTOR}/${OUTPUT_SUBDIR}`;
+    const outputDir = `./generated/cvs/personal/${SECTOR}/${OUTPUT_SUBDIR}`;
     await fs.mkdir(outputDir, { recursive: true });
 
     // Format PDF filename

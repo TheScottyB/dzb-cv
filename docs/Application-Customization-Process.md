@@ -71,7 +71,7 @@ This document outlines the process for customizing job application materials—i
 - **PDF Generation:**
   - Open generated HTML in a browser, print to PDF with correct settings (Letter, 0.75" margins, print backgrounds).
 - **Output Structure:**
-  - All outputs are organized by sector in the `output/` directory.
+  - All outputs are now organized in the `generated/cvs/` directory structure.
 
 ---
 

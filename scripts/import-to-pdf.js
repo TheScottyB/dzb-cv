@@ -25,7 +25,7 @@ async function main() {
 ${processedContent}`;
 
     // Create output directory if needed
-    const outputDir = './output/private';
+    const outputDir = './generated/cvs/personal/private';
     await fs.mkdir(outputDir, { recursive: true });
 
     // Generate output filename

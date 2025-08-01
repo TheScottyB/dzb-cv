@@ -112,7 +112,7 @@ interface RunConfiguration {
    const runConfig = await createRunConfig({
      jobUrl: url,
      sector: 'private',
-     outputDir: 'output/nm-crystal-lake'
+     outputDir: 'generated/cvs/applications/nm-crystal-lake'
    });
    ```
 

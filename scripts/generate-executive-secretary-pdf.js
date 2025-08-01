@@ -17,7 +17,7 @@ async function main() {
     const markdownContent = await fs.readFile(inputPath, 'utf-8');
 
     // Create output directory if needed
-    const outputDir = './output/state';
+    const outputDir = './generated/cvs/personal/state';
     await fs.mkdir(outputDir, { recursive: true });
 
     // Output file path

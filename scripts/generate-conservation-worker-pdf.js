@@ -17,7 +17,7 @@ async function main() {
     const markdownContent = await fs.readFile(inputPath, 'utf-8');
 
     // Create output directory if needed
-    const outputDir = './output/state/conservation';
+    const outputDir = './generated/cvs/personal/state/conservation';
     await fs.mkdir(outputDir, { recursive: true });
 
     // Output file path
@@ -85,7 +85,7 @@ async function main() {
 
     // Now generate the cover letter PDF
     const coverLetterInputPath =
-      './output/state/conservation/dawn-conservation-worker-cover-letter.md';
+      './generated/cvs/personal/state/conservation/dawn-conservation-worker-cover-letter.md';
     const coverLetterContent = await fs.readFile(coverLetterInputPath, 'utf-8');
     const coverLetterOutputPath = path.join(
       outputDir,

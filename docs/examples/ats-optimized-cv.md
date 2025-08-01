@@ -41,7 +41,7 @@ const options = {
 // Generate optimized PDF
 const result = await createATSOptimizedPDF(
   cvContent,
-  'output/optimized-cv.pdf',
+  'generated/cvs/personal/optimized-cv.pdf',
   options
 );
 
@@ -94,7 +94,7 @@ async function generateOptimizedCV(data, options) {
   // Then create ATS-optimized version
   const result = await createATSOptimizedPDF(
     cvContent,
-    'output/ats-optimized-cv.pdf',
+    'generated/cvs/personal/ats-optimized-cv.pdf',
     options
   );
   
