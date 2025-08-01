@@ -1,0 +1,15 @@
+name: Feature Request
+about: Suggest an idea for this project
+labels: enhancement
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Feature Summary
+      description: A detailed summary of your feature request
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation
+      description: Why do you think this feature should be implemented?
+
