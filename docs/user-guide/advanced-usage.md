@@ -32,27 +32,71 @@ Templates use Handlebars syntax:
 
 ## Advanced Features
 
-### Job Analysis and Tailoring (Beta)
+### Advanced Job Analysis and Optimization
 
-The job analysis feature is currently in development with basic functionality:
+Leverage the full functionality of the ATS system for in-depth job analysis and CV optimization.
 
-1. Analyze a local job description file:
-   ```bash
-   dzb-cv analyze job-description.txt --file --output ./analysis.json
-   ```
+#### 1. Analyzing Job Descriptions
+```bash
+# Analyze a local job description with extended options
+cv analyze job-description.txt --file --output ./full-analysis.json --format detailed
 
-2. Basic URL content retrieval:
-   ```bash
-   dzb-cv analyze <job-posting-url> --save-raw-content
-   ```
+# Analyze online job posting with comprehensive content retrieval
+cv analyze <job-posting-url> --output ./full-analysis.json --format detailed --save-raw-content
+```
 
-Current Capabilities:
-- Basic text parsing of job descriptions
-- Simple keyword extraction
-- File-based analysis
-- Raw content saving
+#### 2. Utilizing Custom Skills and Scoring
+Create a sophisticated analysis by incorporating industry-specific skills and customizing scoring weights.
 
-Note: Full ATS optimization and detailed job analysis features are under development.
+```typescript
+import { createATSEngine, SkillDefinition, SkillCategory } from '@dzb-cv/ats';
+
+const IndustrySpecificSkills: SkillDefinition[] = [
+  {
+    name: 'Data Science',
+    aliases: ['DS', 'Big Data Analysis'],
+    category: SkillCategory.Programming,
+    related: ['Python', 'R', 'SQL']
+  }
+];
+
+const atsEngine = createATSEngine({
+  skills: [...IndustrySpecificSkills],
+  scoring: {
+    keywordWeight: 0.2,
+    skillsWeight: 0.4,
+    experienceWeight: 0.3,
+    educationWeight: 0.1
+  },
+  minimumScore: 0.75
+});
+
+const analysis = await atsEngine.analyze(cvData, jobPosting);
+console.log(`Custom Analysis Score: ${analysis.score}`);
+```
+
+#### 3. Tailoring CV Suggestions for Optimization
+```typescript
+const generateSuggestions = (analysis) => {
+  console.log('Optimize your CV with these suggestions:');
+  analysis.suggestions.forEach(suggestion => console.log(`- ${suggestion}`));
+};
+
+// Execute
+generateSuggestions(analysis);
+```
+
+#### 4. Batch Processing
+Automate ATS tasks for multiple job descriptions.
+
+```bash
+#!/bin/bash
+# Batch analyze multiple job descriptions
+for file in ./job-descriptions/*.txt; do
+  echo "Analyzing $file..."
+  cv analyze "$file" --output "./analysis/$(basename "$file" .txt)-analysis.json"
+done
+```
 
 ### Advanced Generation Options
 

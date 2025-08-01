@@ -105,24 +105,32 @@ cv create \
 | `0` | Success - CV created and PDF generated |
 | `1` | Error - Failed to create CV or generate PDF |
 
-### `cv help`
+### `cv optimize`
 
-Displays help information for the CLI or specific commands.
+Optimize a CV for a specific job by leveraging detailed analysis and custom scoring.
 
 #### Syntax
 
 ```bash
-cv help [command]
+cv optimize <cv-file> <job-description> [options]
 ```
+
+#### Options
+
+| Option | Alias | Description |
+|--------|--------|-------------|
+| `--output` | `-o` | Path for the optimized CV output |
+| `--format` | `-f` | Output format, e.g. `pdf`, `markdown` |
+| `--profile` | `-p` | Specific profile to optimize for |
 
 #### Examples
 
 ```bash
-# General help
-cv help
+# Optimize a CV with detailed job alignment
+cv optimize john-doe.md job-details.txt --output optimized-cv.pdf --format pdf
 
-# Help for specific command
-cv help create
+# Optimize using a specific profile
+cv optimize jane-smith.md job-ad.md --profile tech --output jane-tech-optimized.md --format markdown
 ```
 
 ## Error Handling
