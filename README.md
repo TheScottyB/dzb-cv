@@ -243,14 +243,73 @@ const renderedCV = template.render(cvData);
 Command-line interface:
 
 ```bash
-# Available commands
+# Available commands - CV creation
 node packages/cli/dist/index.js create --name "John Doe" --email "john@example.com"
 node packages/cli/dist/index.js create --name "Jane Smith" --email "jane@example.com" --output "jane-cv.pdf"
+
+# CV generation with sector-specific templates
+dzb-cv generate federal --format pdf --output ./output
+dzb-cv generate private --format pdf --output ./output
+dzb-cv generate state --format pdf --output ./output
+
+# Single-page format generation
+dzb-cv generate --single-page federal --format pdf --output ./output
+dzb-cv generate --single-page private --format pdf --output ./output
 
 # Get help
 node packages/cli/dist/index.js --help
 node packages/cli/dist/index.js create --help
 ```
+
+## CV Format Options
+
+### Single-Page vs Two-Page Format
+
+Choosing between single-page and two-page formats depends on your experience level and the position you're applying for:
+
+#### **Single-Page Format** (`--single-page` flag)
+**Best for:**
+- Entry-level positions (0-5 years experience)
+- Career changers
+- Jobs requiring concise, focused presentation
+- Positions where brevity is valued
+- Initial screening processes
+
+**Features:**
+- Optimized font size and spacing for compact layout
+- Reduced margins for maximum content density
+- Prioritizes most relevant information
+- Easier to scan quickly by recruiters
+
+**Usage:**
+```bash
+dzb-cv generate --single-page federal --format pdf --output ./output
+```
+
+#### **Standard Two-Page Format** (default)
+**Best for:**
+- Mid-level to senior positions (5+ years experience)
+- Academic or research positions
+- Federal government applications
+- Comprehensive skill and experience showcase
+- Detailed project descriptions needed
+
+**Features:**
+- Standard formatting with comfortable spacing
+- Room for detailed experience descriptions
+- Complete education and certification listings
+- Comprehensive skills and achievements sections
+
+**Usage:**
+```bash
+dzb-cv generate federal --format pdf --output ./output
+```
+
+#### **Format Selection Guidelines**
+- **For most private sector roles**: Start with single-page, expand to two-page if you have 7+ years of relevant experience
+- **For federal positions**: Two-page format is typically preferred due to detailed requirements
+- **For academic roles**: Two-page format to accommodate publications and research
+- **For executive roles**: Two-page format to showcase leadership experience
 
 ## Configuration
 

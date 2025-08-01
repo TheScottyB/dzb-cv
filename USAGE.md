@@ -135,6 +135,38 @@ cv create --name "Jane Smith" --email "jane@company.com" --output "jane-smith-cv
 cv create -n "Alex Johnson" -e "alex@email.com" -o "alex-cv.pdf"
 ```
 
+#### `dzb-cv generate` - Generate Sector-Specific CVs
+
+Generates CVs using sector-specific templates with optional single-page formatting.
+
+**Syntax:**
+```bash
+dzb-cv generate [--single-page] <sector> [options]
+```
+
+**Required Arguments:**
+- `<sector>`: Sector type (federal, state, private)
+
+**Optional Flags:**
+- `--single-page`: Force PDF generation to fit on a single page
+- `--format <format>`: Output format (pdf, markdown)
+- `--output <path>`: Output directory path
+
+**Examples:**
+```bash
+# Generate standard two-page federal CV
+dzb-cv generate federal --format pdf --output ./output
+
+# Generate single-page private sector CV
+dzb-cv generate --single-page private --format pdf --output ./output
+
+# Generate single-page state CV
+dzb-cv generate --single-page state --format pdf --output ./output
+
+# Generate CV with custom output directory
+dzb-cv generate --single-page federal --output ./my-cvs
+```
+
 ### Command Help
 
 Get help for any command:
@@ -142,12 +174,15 @@ Get help for any command:
 ```bash
 # General help
 cv --help
+dzb-cv --help
 
 # Help for specific command
 cv create --help
+dzb-cv generate --help
 
 # Version information
 cv --version
+dzb-cv --version
 ```
 
 ## Common Workflows
