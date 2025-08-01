@@ -1,3 +1,40 @@
+## 2025-08-01 — 🔧 ATS System Architecture Refactor
+
+**Milestone:**  
+Major refactoring of ATS (Applicant Tracking System) functionality with enhanced configurability and improved architecture.
+
+**Features:**
+- Created `BaseCVAnalyzer` abstract class eliminating code duplication between analyzers
+- Enhanced `ScoringEngine` with customizable weights via `ScoringCriteria` interface
+- Improved `SkillMatcher` with fuzzy logic support and configurable similarity thresholds
+- Introduced `ExtendedScoringCriteria` with fuzzy matching configuration options
+- Added configurable analyzer options through `AnalyzerOptions` interface
+- Refactored both Classic and TF-IDF analyzers to extend unified base class
+- Maintained full backward compatibility for all existing APIs
+
+**Technical Implementation:**
+- Consolidated shared functionality in `BaseCVAnalyzer` abstract base class
+- Enhanced scoring algorithms with better normalization and configurability
+- Added fuzzy matching with configurable similarity thresholds for skill detection
+- Improved skill matching accuracy with comprehensive alias support
+- Comprehensive test coverage maintained (243 tests passing, no regressions)
+- Enhanced error handling and input validation across all components
+
+**Benefits:**
+- More maintainable and extensible codebase with better separation of concerns
+- Configurable analysis options for different use cases and requirements
+- Enhanced fuzzy matching capabilities for improved skill and keyword detection
+- Better performance through shared logic and optimized algorithms
+- Zero breaking changes - existing consumer code continues to work unchanged
+
+**Use Cases:**
+- Custom ATS analysis with tailored scoring weights
+- Enhanced skill matching for specialized industries
+- Configurable fuzzy matching for improved keyword detection
+- Extensible architecture for custom analyzer implementations
+
+---
+
 ## 2025-08-01 — 📄 Single-Page PDF Generation Feature
 
 **Milestone:**  

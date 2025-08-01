@@ -3,8 +3,9 @@ path: docs/technical/README.md
 type: index
 category: technical
 maintainer: system
-last_updated: 2025-05-10
+last_updated: 2025-08-01
 related_files:
+  - docs/technical/ats/README.md
   - docs/technical/pdf-generation/README.md
   - docs/technical/agent-architecture/README.md
   - docs/technical/profile-management/README.md
@@ -18,6 +19,7 @@ related_files:
 This folder contains all technical documentation for the DZB-CV system, organized by topic for clarity and maintainability.
 
 ## Table of Contents
+- [ATS (Applicant Tracking System)](ats/README.md)
 - [PDF Generation](pdf-generation/README.md)
 - [Agent Architecture](agent-architecture/README.md)
 - [Profile Management](profile-management/README.md)
