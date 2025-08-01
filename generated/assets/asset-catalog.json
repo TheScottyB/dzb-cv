@@ -1,0 +1,74 @@
+{
+  "lastUpdated": "2025-08-01T19:10:21.280Z",
+  "totalAssets": 2,
+  "assets": [
+    {
+      "id": "other-1754075421280-784",
+      "name": ".gitattributes",
+      "path": "/Users/scottybe/Development/tools/Workspace/dzb-cv/generated/assets/Dawn_Video_Resume/.gitattributes",
+      "type": "other",
+      "format": "other",
+      "sizeInBytes": 52,
+      "lastModified": "2025-08-01T18:36:11.991Z",
+      "createdAt": "2025-08-01T18:36:11.991Z"
+    },
+    {
+      "id": "other-1754075421280-528",
+      "name": ".gitattributes",
+      "path": "/Users/scottybe/Development/tools/Workspace/dzb-cv/generated/assets/Dawn_Video_Resume/Dawn_Resume_PP/.gitattributes",
+      "type": "other",
+      "format": "other",
+      "sizeInBytes": 52,
+      "lastModified": "2025-08-01T18:36:11.990Z",
+      "createdAt": "2025-08-01T18:36:11.990Z"
+    }
+  ],
+  "assetsByType": {
+    "document": [],
+    "image": [],
+    "video": [
+      {
+        "id": "other-1754075421280-784",
+        "name": ".gitattributes",
+        "path": "/Users/scottybe/Development/tools/Workspace/dzb-cv/generated/assets/Dawn_Video_Resume/.gitattributes",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 52,
+        "lastModified": "2025-08-01T18:36:11.991Z",
+        "createdAt": "2025-08-01T18:36:11.991Z"
+      },
+      {
+        "id": "other-1754075421280-528",
+        "name": ".gitattributes",
+        "path": "/Users/scottybe/Development/tools/Workspace/dzb-cv/generated/assets/Dawn_Video_Resume/Dawn_Resume_PP/.gitattributes",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 52,
+        "lastModified": "2025-08-01T18:36:11.990Z",
+        "createdAt": "2025-08-01T18:36:11.990Z"
+      }
+    ],
+    "other": [
+      {
+        "id": "other-1754075421280-784",
+        "name": ".gitattributes",
+        "path": "/Users/scottybe/Development/tools/Workspace/dzb-cv/generated/assets/Dawn_Video_Resume/.gitattributes",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 52,
+        "lastModified": "2025-08-01T18:36:11.991Z",
+        "createdAt": "2025-08-01T18:36:11.991Z"
+      },
+      {
+        "id": "other-1754075421280-528",
+        "name": ".gitattributes",
+        "path": "/Users/scottybe/Development/tools/Workspace/dzb-cv/generated/assets/Dawn_Video_Resume/Dawn_Resume_PP/.gitattributes",
+        "type": "other",
+        "format": "other",
+        "sizeInBytes": 52,
+        "lastModified": "2025-08-01T18:36:11.990Z",
+        "createdAt": "2025-08-01T18:36:11.990Z"
+      }
+    ]
+  }
+}

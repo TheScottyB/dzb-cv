@@ -445,7 +445,7 @@ Example:
       console.log(`\nNext steps:`);
       console.log(`1. Generate PDF version: ${chalk.yellow('node utils/generate-pdf.js')}`);
       console.log(
-        `2. Copy to appropriate sector directory: ${chalk.yellow(`cp cv-versions/${fileName} output/[sector]/`)}`
+        `2. Copy to appropriate sector directory: ${chalk.yellow(`cp cv-versions/${fileName} generated/cvs/personal/[sector]/`)}`
       );
     } else {
       console.log(`${chalk.yellow('⚠')} Could not find a similar CV to compare with.`);

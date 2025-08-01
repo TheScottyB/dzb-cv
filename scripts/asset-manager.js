@@ -6,8 +6,9 @@ import { promisify } from 'util';
 const execAsync = promisify(exec);
 // Base directory paths
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const rootDir = join(__dirname, '..', '..');
-const assetsDir = join(rootDir, 'assets');
+const rootDir = join(__dirname, '..');
+const generatedDir = join(rootDir, 'generated');
+const assetsDir = join(generatedDir, 'assets');
 const documentsDir = join(assetsDir, 'documents');
 const imagesDir = join(assetsDir, 'images');
 const videoDir = join(assetsDir, 'Dawn_Video_Resume');

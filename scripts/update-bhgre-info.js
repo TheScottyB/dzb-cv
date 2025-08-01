@@ -13,10 +13,10 @@ async function main() {
     const baseProfileContent = await fs.readFile(baseProfilePath, 'utf-8');
     const baseProfile = JSON.parse(baseProfileContent);
 
-    // Note: The original CV document was located at:
-    // "/Users/scottybe/Workspace/dzb-cv/archive/assets/documents/Resume at BHGRE .docx"
+    // Note: The original CV document was archived at:
+    // "archive/assets/documents/Resume at BHGRE .docx"
     // This has been renamed to:
-    // "/Users/scottybe/Workspace/dzb-cv/archive/assets/documents/renamed/Resume-BHGRE.docx"
+    // "archive/assets/documents/renamed/Resume-BHGRE.docx"
     // for better compatibility with command-line tools.
 
     // Find the BHGRE entry in the profile
