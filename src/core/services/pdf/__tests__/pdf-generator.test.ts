@@ -7,6 +7,12 @@ import type { CVGenerationOptions } from '../../../types/cv-generation.js';
 vi.mock('puppeteer', () => {
   const pdfMock = vi.fn().mockResolvedValue(Buffer.from('PDF content'));
   const setContentMock = vi.fn().mockResolvedValue(undefined);
+  const evaluateMock = vi.fn().mockResolvedValue({
+    scrollHeight: 800,
+    clientHeight: 600,
+    scrollWidth: 600
+  });
+  const addStyleTagMock = vi.fn().mockResolvedValue(undefined);
 
   return {
     default: {
@@ -14,6 +20,8 @@ vi.mock('puppeteer', () => {
         newPage: vi.fn().mockResolvedValue({
           setContent: setContentMock,
           pdf: pdfMock,
+          evaluate: evaluateMock,
+          addStyleTag: addStyleTagMock,
         }),
         close: vi.fn().mockResolvedValue(undefined),
       }),
@@ -72,6 +80,17 @@ describe('PDFGenerator', () => {
         template: 'minimal',
         includeHeaderFooter: false,
         paperSize: 'Letter',
+      };
+
+      const result = await generator.generate(testData, options);
+      expect(result).toBeInstanceOf(Buffer);
+    });
+
+    it('should generate single-page PDF when requested', async () => {
+      const options = {
+        singlePage: true,
+        paperSize: 'Letter',
+        scale: 0.9,
       };
 
       const result = await generator.generate(testData, options);

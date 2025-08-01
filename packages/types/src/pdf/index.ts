@@ -30,6 +30,10 @@ export interface PDFGenerationOptions {
   fontFamily?: string;
   /** Template to use */
   template?: 'default' | 'minimal' | 'federal' | 'academic';
+  /** Force content to fit on a single page */
+  singlePage?: boolean;
+  /** Scale content to fit page (used with singlePage) */
+  scale?: number;
   /** Additional metadata */
   metadata?: {
     /** Document title */

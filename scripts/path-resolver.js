@@ -3,15 +3,15 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-// Project root directory (2 levels up from utils)
-const PROJECT_ROOT = join(__dirname, '..', '..');
+// Project root directory (1 level up from scripts)
+const PROJECT_ROOT = join(__dirname, '..');
 /**
  * Resolves a path relative to the project's data directory
  * @param relPath Relative path within the data directory
  * @returns Absolute path to the requested resource
  */
 export function resolveDataPath(relPath) {
-  return join(PROJECT_ROOT, 'src', relPath);
+  return join(PROJECT_ROOT, 'data', relPath);
 }
 /**
  * Resolves an output path relative to the project's output directory

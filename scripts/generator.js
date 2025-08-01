@@ -12,12 +12,12 @@ import {
   formatSalary,
   defaultValue,
   formatWithPrefix,
-} from '../.tmp/artefacts/dist/utils/helpers.js';
-import { resolveDataPath } from '../.tmp/artefacts/dist/utils/path-resolver.js';
+} from './helpers.js';
+import { resolveDataPath } from './path-resolver.js';
 import {
   convertMarkdownToPdf,
   DEFAULT_PDF_OPTIONS,
-} from '../.tmp/artefacts/dist/utils/pdf-generator.js';
+} from './pdf-generator.js';
 /**
  * Default options for CV generation
  */
