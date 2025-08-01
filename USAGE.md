@@ -32,7 +32,34 @@ pnpm --version    # Should be >= 10.9.0
 
 ## Installation
 
-### 1. Clone and Setup
+### 🚀 Method 1: Automated Setup (Recommended)
+
+```bash
+# Clone the repository
+git clone https://github.com/TheScottyB/dzb-cv.git
+cd dzb-cv
+
+# Run the automated setup script
+./setup-dzb-cv.sh
+```
+
+The script will automatically:
+- ✅ Check system requirements
+- ✅ Install dependencies  
+- ✅ Build all packages
+- ✅ Test CLI functionality
+- ✅ Optionally link CLI globally
+
+### ⚡ Method 2: Quick Setup
+
+```bash
+# Clone and quick setup (no global linking)
+git clone https://github.com/TheScottyB/dzb-cv.git
+cd dzb-cv
+pnpm run setup:quick
+```
+
+### 🔧 Method 3: Manual Setup
 
 ```bash
 # Clone the repository
@@ -44,13 +71,19 @@ pnpm install
 
 # Build all packages
 pnpm run build
+
+# Link CLI globally (optional)
+pnpm run link-cli
 ```
 
-### 2. Verify Installation
+### Verify Installation
 
 ```bash
 # Test the CLI
 node packages/cli/dist/index.js --help
+
+# Or if globally linked
+cv --help
 ```
 
 You should see:
@@ -66,21 +99,6 @@ Options:
 Commands:
   create [options]  Create a new CV
   help [command]    display help for command
-```
-
-### 3. Optional: Global CLI Access
-
-For easier access, you can link the CLI globally:
-
-```bash
-# Navigate to CLI package
-cd packages/cli
-
-# Link globally
-npm link
-
-# Now you can use 'cv' command anywhere
-cv --help
 ```
 
 ## CLI Usage
@@ -134,16 +152,21 @@ cv --version
 
 ## Common Workflows
 
-### Workflow 1: Creating Your First CV
+### Workflow 1: First-Time Setup and CV Creation
 
 ```bash
-# 1. Navigate to the project directory
+# 1. Clone and run automated setup
+git clone https://github.com/TheScottyB/dzb-cv.git
 cd dzb-cv
+./setup-dzb-cv.sh
 
-# 2. Ensure everything is built
-pnpm run build
+# 2. Create your CV (if CLI was linked globally)
+cv create \
+  --name "Your Full Name" \
+  --email "your.email@example.com" \
+  --output "my-professional-cv.pdf"
 
-# 3. Create your CV
+# Or use direct path if not globally linked
 node packages/cli/dist/index.js create \
   --name "Your Full Name" \
   --email "your.email@example.com" \
@@ -166,17 +189,21 @@ pnpm test
 node packages/cli/dist/index.js create --name "Test User" --email "test@example.com"
 ```
 
-### Workflow 3: Using Linked CLI
+### Workflow 3: Managing Global CLI Access
 
 ```bash
-# 1. Link the CLI (one-time setup)
-cd packages/cli && npm link && cd ../..
+# Link CLI globally (if not done during setup)
+pnpm run link-cli
 
-# 2. Use the CLI from anywhere
+# Use the CLI from anywhere
 cv create --name "John Doe" --email "john@example.com"
 
-# 3. Update and rebuild as needed
+# Unlink CLI if needed
+pnpm run unlink-cli
+
+# Rebuild and test after changes
 pnpm run build
+cv --help
 ```
 
 ## Advanced Usage

@@ -16,22 +16,31 @@ related_files:
 ### Installation Issues
 
 1. **Command Not Found**
-   - **Issue**: `dzb-cv` command is not recognized
-   - **Solution**: Link the CLI globally:
+   - **Issue**: `cv` command is not recognized
+   - **Solution**: Link the CLI globally using automated script:
      ```bash
-     pnpm link-cli
+     pnpm run link-cli
      ```
    - **Alternative**: Use full path:
      ```bash
-     ./node_modules/.bin/dzb-cv
+     node packages/cli/dist/index.js
+     ```
+   - **Or**: Use npm script shortcut:
+     ```bash
+     pnpm run cv --help
      ```
 
 2. **Dependencies Error**
    - **Issue**: Error during `pnpm install`
-   - **Solution**: Clear cache and retry:
+   - **Automated Solution**: Use the setup script:
+     ```bash
+     ./setup-dzb-cv.sh
+     ```
+   - **Manual Solution**: Clear cache and retry:
      ```bash
      pnpm store prune
      pnpm install
+     pnpm run build
      ```
 
 ### Generation Issues
@@ -47,9 +56,9 @@ related_files:
 2. **Missing Information**
    - **Issue**: Generation fails due to missing data
    - **Solution**: Ensure all required fields exist in `base-info.json`
-   - **Validation**: Run profile validation:
+   - **Validation**: Check CLI functionality:
      ```bash
-     dzb-cv profile validate my-cv.md
+     pnpm run cv --help
      ```
 
 3. **PDF Generation**
@@ -110,7 +119,14 @@ related_files:
 ### Debug Mode
 Enable verbose output for more information:
 ```bash
-dzb-cv --verbose generate federal
+# If CLI is globally linked
+cv create --name "Debug Test" --email "debug@example.com"
+
+# Or use direct path
+node packages/cli/dist/index.js create --name "Debug Test" --email "debug@example.com"
+
+# Enable debug logging
+DEBUG=dzb-cv:* cv create --name "Debug Test" --email "debug@example.com"
 ```
 
 ### Log Files

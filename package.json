@@ -21,7 +21,12 @@
     "lint:fix": "turbo run lint:fix",
     "changeset": "changeset",
     "version": "changeset version && pnpm install --no-frozen-lockfile",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "setup": "./setup-dzb-cv.sh",
+    "setup:quick": "pnpm install && pnpm run build && echo '✅ Quick setup complete! Use: node packages/cli/dist/index.js --help'",
+    "link-cli": "cd packages/cli && npm link && cd ../.. && echo '✅ CLI linked globally! You can now use: cv --help'",
+    "unlink-cli": "cd packages/cli && npm unlink && cd ../.. && echo '✅ CLI unlinked globally'",
+    "cv": "node packages/cli/dist/index.js"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
@@ -71,10 +76,27 @@
   },
   "dependencies": {
     "handlebars": "^4.7.8",
+    "markdown-it": "^14.1.0",
     "marked": "^16.1.1",
     "pdf-lib": "^1.17.1"
   },
   "optionalDependencies": {
     "form-data": "4.0.4"
-  }
+  },
+  "description": "A powerful, modular curriculum vitae management system built with TypeScript. Generate and maintain professional CVs with customizable templates and multiple export formats.",
+  "main": "eslint.config.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheScottyB/dzb-cv.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheScottyB/dzb-cv/issues"
+  },
+  "homepage": "https://github.com/TheScottyB/dzb-cv#readme"
 }

@@ -43,20 +43,35 @@ packages/
 - Node.js >= 20.10.0
 - pnpm >= 10.9.0
 
-### Global Installation (Development)
+### 🚀 Automated Setup (Recommended)
 
 ```bash
-# Link the CLI globally for development
-cd packages/cli
-npm link
+# Clone the repository
+git clone https://github.com/TheScottyB/dzb-cv.git
+cd dzb-cv
 
-# Now you can use 'cv' command globally
-cv create --name "John Doe" --email "john@example.com"
-cv --help
+# Run the automated setup script
+./setup-dzb-cv.sh
 ```
 
-### Local Development Installation
+The automated setup script will:
+- ✅ Check system requirements (Node.js, pnpm)
+- ✅ Install all dependencies
+- ✅ Build all packages
+- ✅ Test CLI functionality
+- ✅ Optionally link CLI globally
 
+### Alternative Setup Methods
+
+#### Quick Setup (No Global Linking)
+```bash
+# Clone and quick setup
+git clone https://github.com/TheScottyB/dzb-cv.git
+cd dzb-cv
+pnpm run setup:quick
+```
+
+#### Manual Setup (If Scripts Don't Work)
 ```bash
 # Clone the repository
 git clone https://github.com/TheScottyB/dzb-cv.git
@@ -68,43 +83,47 @@ pnpm install
 # Build packages
 pnpm run build
 
-# Run CLI commands locally
-node packages/cli/dist/index.js create --name "John Doe" --email "john@example.com"
+# Optionally link CLI globally
+pnpm run link-cli
 ```
 
 ## Quick Start
 
 ### Create Your First CV
 
-1. **Install dependencies and build the project**:
+1. **Automated setup** (recommended):
 
 ```bash
-# Clone the repository
+# Clone and run automated setup
 git clone https://github.com/TheScottyB/dzb-cv.git
 cd dzb-cv
-
-# Install dependencies
-pnpm install
-
-# Build all packages
-pnpm run build
+./setup-dzb-cv.sh
 ```
 
-2. **Create a new CV**:
+2. **Create your first CV**:
 
 ```bash
-# Using the built CLI directly
+# If you linked CLI globally during setup
+cv create --name "John Doe" --email "john@example.com"
+
+# Or use the direct path
 node packages/cli/dist/index.js create --name "John Doe" --email "john@example.com"
 
-# Or if you've linked the CLI globally (see Development Setup)
-cv create --name "John Doe" --email "john@example.com" --output "my-cv.pdf"
+# Or use the npm script shortcut
+pnpm run cv create --name "John Doe" --email "john@example.com"
 ```
 
 3. **View available commands**:
 
 ```bash
+# If globally linked
+cv --help
+
+# Or use direct path
 node packages/cli/dist/index.js --help
-node packages/cli/dist/index.js create --help
+
+# Or use npm script
+pnpm run cv --help
 ```
 
 For comprehensive usage instructions, examples, and troubleshooting, see **[USAGE.md](USAGE.md)**.
