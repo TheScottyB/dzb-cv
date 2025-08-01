@@ -1,4 +1,4 @@
-import type { CVData, PDFGenerator } from '@dzb-cv/types';
+import type { CVData, PDFGenerator, PDFGenerationOptions } from '@dzb-cv/types';
 
 export interface CVStorageProvider {
   save(id: string, data: CVData): Promise<void>;
@@ -33,8 +33,8 @@ export class CVService {
     await this.storage.delete(id);
   }
 
-  async generatePDF(data: CVData): Promise<Buffer> {
-    return this.pdfGenerator.generate(data);
+  async generatePDF(data: CVData, options?: PDFGenerationOptions): Promise<Buffer> {
+    return this.pdfGenerator.generate(data, options);
   }
 
   private generateId(): string {

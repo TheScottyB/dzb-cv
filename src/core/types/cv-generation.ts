@@ -19,6 +19,14 @@ export interface PDFOptions {
   pdfAuthor?: string;
   orientation?: 'portrait' | 'landscape';
   fontFamily?: string;
+  /** Force content to fit on a single page */
+  singlePage?: boolean;
+  /** Scale factor for single-page layout (0.1 to 1.0) */
+  scale?: number;
+  /** Line height adjustment for single-page layout */
+  lineHeight?: number;
+  /** Minimum font size to maintain readability (in pt) */
+  minFontSize?: number;
 }
 
 export interface CVGenerationOptions {

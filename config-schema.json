@@ -1,0 +1,54 @@
+{
+  "name": "DZB-CV Configuration",
+  "version": "1.0",
+  "description": "Configuration schema for DZB-CV PDF generation.",
+  "properties": {
+    "includeHeaderFooter": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether to include headers and footers in the PDF."
+    },
+    "paperSize": {
+      "type": "string",
+      "enum": ["Letter", "A4", "Legal"],
+      "default": "Letter",
+      "description": "Size of the paper for PDF generation."
+    },
+    "margins": {
+      "type": "object",
+      "properties": {
+        "top": { "type": "number", "default": 1 },
+        "right": { "type": "number", "default": 1 },
+        "bottom": { "type": "number", "default": 1 },
+        "left": { "type": "number", "default": 1 }
+      },
+      "description": "Margins for the PDF in inches."
+    },
+    "orientation": {
+      "type": "string",
+      "enum": ["portrait", "landscape"],
+      "default": "portrait",
+      "description": "Orientation of the PDF."
+    },
+    "singlePage": {
+      "type": "boolean",
+      "default": false,
+      "description": "Force the content to fit on a single page."
+    },
+    "scale": {
+      "type": "number",
+      "default": 1.0,
+      "description": "Scale factor for single-page layout."
+    },
+    "lineHeight": {
+      "type": "number",
+      "default": 1.5,
+      "description": "Line height for text."
+    },
+    "minFontSize": {
+      "type": "number",
+      "default": 10,
+      "description": "Minimum font size for readability."
+    }
+  }
+}

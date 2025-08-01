@@ -9,6 +9,9 @@ export function createCVCommand(program: Command): void {
     .requiredOption('-n, --name <name>', 'Full name')
     .requiredOption('-e, --email <email>', 'Email address')
     .option('-o, --output <file>', 'Output PDF file')
+    .option('--single-page', 'Force PDF to fit on a single page')
+    .option('--template <template>', 'Template to use (default, minimal, federal, academic)', 'default')
+    .option('--format <format>', 'Paper format (A4, Letter)', 'Letter')
     .action(async (options) => {
       const [firstName, ...lastNameParts] = options.name.split(' ');
       const lastName = lastNameParts.join(' ');
@@ -49,9 +52,23 @@ export function createCVCommand(program: Command): void {
 
       const pdfGenerator = createPDFGenerator();
       const service = new CVService(storage, pdfGenerator);
+      
+      // Build PDF generation options from CLI flags
+      const pdfOptions = {
+        singlePage: options.singlePage || false,
+        template: options.template as 'default' | 'minimal' | 'federal' | 'academic',
+        format: options.format as 'A4' | 'Letter',
+        metadata: {
+          title: `${options.name} - CV`,
+          author: options.name,
+          subject: 'Curriculum Vitae',
+          keywords: ['CV', 'resume', options.template],
+        },
+      };
+      
       try {
         await service.createCV(cvData);
-        const pdf = await service.generatePDF(cvData);
+        const pdf = await service.generatePDF(cvData, pdfOptions);
         console.log(`Generated PDF: ${pdf.length} bytes`);
       } catch (error) {
         console.error('Error creating CV:', error);

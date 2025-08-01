@@ -2,11 +2,11 @@
   "$schema": "https://unpkg.com/@changesets/config@3.1.1/schema.json",
   "changelog": [
     "@changesets/changelog-github", 
-    { "repo": "dzb-cv" }
+    { "repo": "TheScottyB/dzb-cv" }
   ],
   "commit": true,
   "fixed": [
-    ["@dzb-cv/config", "@dzb-cv/types", "@dzb-cv/utils"]
+    ["@dzb-cv/config", "@dzb-cv/types"]
   ],
   "linked": [
     ["@dzb-cv/core", "@dzb-cv/cli"]
@@ -14,7 +14,7 @@
   "access": "restricted",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": ["@dzb-cv/testing"],
+  "ignore": [],
   "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
     "onlyUpdatePeerDependentsWhenOutOfRange": true
   }

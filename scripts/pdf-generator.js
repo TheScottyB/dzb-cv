@@ -22,6 +22,8 @@ export const DEFAULT_PDF_OPTIONS = {
   pdfAuthor: '',
   pdfCreator: '',
   customCss: '',
+  singlePage: false,
+  lineHeight: 1.5,
 };
 
 /**

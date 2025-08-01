@@ -1,6 +1,6 @@
 {
   "name": "@dzb-cv/types",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "TypeScript type definitions for the DZB CV Generator system",
   "private": true,
   "type": "module",

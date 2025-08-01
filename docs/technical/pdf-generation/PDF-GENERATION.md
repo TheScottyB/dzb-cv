@@ -184,6 +184,25 @@ await convertMarkdownToPdf(
   }
 );
 ```
+### Single-Page Generation
+```typescript
+await convertMarkdownToPdf(
+  cvContent,
+  'output/cv-single-page.pdf',
+  {
+    singlePage: true,
+    scale: 0.9,
+    lineHeight: 1.2,
+    minFontSize: 9,
+    margins: {
+      top: 0.5,
+      right: 0.5,
+      bottom: 0.5,
+      left: 0.5
+    }
+  }
+);
+```
 
 ## Best Practices
 1. **ATS Compatibility**

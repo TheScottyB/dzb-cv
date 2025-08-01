@@ -22,6 +22,8 @@ export const DEFAULT_PDF_OPTIONS: PDFOptionsWithRequiredMargins = {
     left: 1,
   },
   orientation: 'portrait',
+  singlePage: false,
+  lineHeight: 1.5,
 };
 
 export async function convertMarkdownToPdf(

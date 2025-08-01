@@ -15,6 +15,9 @@ importers:
       handlebars:
         specifier: ^4.7.8
         version: 4.7.8
+      markdown-it:
+        specifier: ^14.1.0
+        version: 14.1.0
       marked:
         specifier: ^16.1.1
         version: 16.1.1

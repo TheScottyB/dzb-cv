@@ -61,6 +61,7 @@ cv create [options]
 | Option | Alias | Type | Description | Default |
 |--------|--------|------|-------------|---------|
 | `--output` | `-o` | `<string>` | Output PDF filename | Auto-generated |
+| `--single-page` | | `boolean` | Force PDF to fit on a single page | `false` |
 
 #### Examples
 
