@@ -31,15 +31,15 @@
   "dependencies": {
     "@dzb-cv/types": "workspace:*",
     "@dzb-cv/ui": "workspace:*",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@dzb-cv/config": "workspace:*",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^14.1.2",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^14.3.1",
     "@types/testing-library__jest-dom": "^6.0.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "jsdom": "^23.0.1"
+    "@vitejs/plugin-react": "^4.7.0",
+    "jsdom": "^23.2.0"
   }
 }

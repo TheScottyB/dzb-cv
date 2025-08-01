@@ -57,14 +57,14 @@
   },
   "dependencies": {
     "@dzb-cv/types": "workspace:*",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@dzb-cv/config": "workspace:*",
-    "@testing-library/react": "^14.0.0",
-    "@testing-library/jest-dom": "^6.0.0",
-    "@testing-library/user-event": "^14.0.0",
+    "@testing-library/jest-dom": "^6.6.4",
+    "@testing-library/react": "^14.3.1",
+    "@testing-library/user-event": "^14.6.1",
     "jsdom": "^22.1.0"
   },
   "files": [

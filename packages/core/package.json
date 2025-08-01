@@ -29,6 +29,6 @@
     "pdf-lib": "^1.17.1"
   },
   "devDependencies": {
-    "@dzb-cv/config": "workspace:"
+    "@dzb-cv/config": "workspace:^"
   }
 }

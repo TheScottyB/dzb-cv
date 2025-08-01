@@ -28,13 +28,13 @@
   },
   "dependencies": {
     "@dzb-cv/types": "workspace:*",
+    "markdown-it": "^14.1.0",
     "pdf-lib": "^1.17.1",
-    "puppeteer": "^21.0.0",
-    "markdown-it": "^14.0.0"
+    "puppeteer": "^24.15.0"
   },
   "devDependencies": {
-    "@types/markdown-it": "^13.0.0",
-    "@dzb-cv/config": "workspace:*"
+    "@dzb-cv/config": "workspace:*",
+    "@types/markdown-it": "^13.0.9"
   },
   "files": [
     "dist",
