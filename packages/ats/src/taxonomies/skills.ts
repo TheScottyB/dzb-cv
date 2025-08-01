@@ -127,15 +127,31 @@ export const AllSkills: SkillDefinition[] = [
 ];
 
 /**
- * Skill matching utilities
+ * Fuzzy matching configuration
+ */
+export interface FuzzyMatchOptions {
+  enabled?: boolean;
+  threshold?: number;
+}
+
+/**
+ * Skill matching utilities with fuzzy logic support
  */
 export class SkillMatcher {
   private skillMap: Map<string, SkillDefinition>;
   private aliasMap: Map<string, string>;
+  private fuzzyOptions: Required<FuzzyMatchOptions>;
 
-  constructor(skills: SkillDefinition[] = AllSkills) {
+  constructor(
+    skills: SkillDefinition[] = AllSkills, 
+    fuzzyOptions: FuzzyMatchOptions = {}
+  ) {
     this.skillMap = new Map();
     this.aliasMap = new Map();
+    this.fuzzyOptions = {
+      enabled: fuzzyOptions.enabled ?? true,
+      threshold: fuzzyOptions.threshold ?? 0.8,
+    };
 
     skills.forEach((skill) => {
       this.skillMap.set(skill.name.toLowerCase(), skill);

@@ -35,6 +35,21 @@ const DEFAULT_WEIGHTS: Required<ScoringCriteria> = {
   skillsWeight: 0.2,
 };
 
+/**
+ * Configuration for fuzzy matching
+ */
+export interface FuzzyMatchConfig {
+  enabled?: boolean;
+  threshold?: number; // Minimum similarity score (0-1)
+}
+
+/**
+ * Extended scoring criteria with fuzzy matching
+ */
+export interface ExtendedScoringCriteria extends ScoringCriteria {
+  fuzzyMatch?: FuzzyMatchConfig;
+}
+
 export class ScoringEngine {
   private tokenizer: natural.WordTokenizer;
   private weights: Required<ScoringCriteria>;

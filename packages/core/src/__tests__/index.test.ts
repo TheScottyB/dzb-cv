@@ -35,7 +35,7 @@ describe('Package exports', () => {
 
     // Test PDF generation
     await service.generatePDF(sampleCV);
-    expect(mockPdfGenerator.generate).toHaveBeenCalledWith(sampleCV);
+    expect(mockPdfGenerator.generate).toHaveBeenCalledWith(sampleCV, undefined);
   });
 });
 
