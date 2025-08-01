@@ -148,7 +148,7 @@ async function loadStylesheet(options: StyleOptions): Promise<string> {
 const result = await generateATSFriendly({
   content: verifiedContent,
   template: 'standard',
-  output: 'output/job-name/cv.pdf'
+  output: 'generated/cvs/applications/job-name/cv.pdf'
 });
 ```
 ### Custom Format Generation
@@ -157,14 +157,14 @@ const result = await generateCustomFormat({
   content: verifiedContent,
   template: customTemplate,
   styling: customStyling,
-  output: 'output/job-name/cv-custom.pdf'
+  output: 'generated/cvs/applications/job-name/cv-custom.pdf'
 });
 ```
 ### Basic CV Generation
 ```typescript
 await convertMarkdownToPdf(
   cvContent,
-  'output/cv.pdf',
+  'generated/cvs/personal/cv.pdf',
   {
     cvType: 'private',
     atsOptimized: true
@@ -175,7 +175,7 @@ await convertMarkdownToPdf(
 ```typescript
 await convertMarkdownToPdf(
   cvContent,
-  'output/federal-cv.pdf',
+  'generated/cvs/personal/federal-cv.pdf',
   {
     cvType: 'federal',
     atsOptimized: true,
@@ -188,7 +188,7 @@ await convertMarkdownToPdf(
 ```typescript
 await convertMarkdownToPdf(
   cvContent,
-  'output/cv-single-page.pdf',
+  'generated/cvs/personal/cv-single-page.pdf',
   {
     singlePage: true,
     scale: 0.9,

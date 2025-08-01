@@ -5,7 +5,7 @@
  * import { DEFAULT_PDF_OPTIONS } from './src/utils/pdf-generator';
  *
  * const markdownContent = "# ATS Test CV\nDawn Zurick Beilfuss\nemail@example.com | 123-456-7890\nChicago, IL\n## Professional Experience\nCompany | 2023 - Present\nRole\n- Did things.\n";
- * const outputPath = 'output/ats-test.pdf';
+ * const outputPath = 'generated/reports/ats-test.pdf';
  * createATSOptimizedPDF(markdownContent, outputPath, DEFAULT_PDF_OPTIONS)
  *   .then(result => {
  *     console.log('ATS PDF Path:', result.pdfPath);

@@ -1,0 +1,44 @@
+{
+  "parsed": {
+    "structuredData": {
+      "personalInfo": {
+        "name": ""
+      },
+      "skills": {
+        "technical": [],
+        "soft": [],
+        "languages": []
+      },
+      "workExperience": [],
+      "education": [],
+      "certifications": [],
+      "projects": []
+    },
+    "metadata": {
+      "fileType": "application/pdf",
+      "fileName": "resume",
+      "fileSize": 2686,
+      "parseDate": "2025-04-26T22:26:55.205Z",
+      "confidence": 0.8
+    }
+  },
+  "mlAnalysis": {
+    "overallMatch": 20,
+    "categoryMatches": {
+      "skills": 50,
+      "experience": 0,
+      "education": 0
+    },
+    "missingSkills": [],
+    "relevantExperience": [],
+    "suggestions": [
+      "Add relevant work experience to your resume",
+      "Add your educational background"
+    ]
+  },
+  "combinedScore": 20,
+  "suggestions": [
+    "Add relevant work experience to your resume",
+    "Add your educational background"
+  ]
+}

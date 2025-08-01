@@ -307,7 +307,7 @@ export async function createAssetCatalog() {
  * Saves the asset catalog to a JSON file
  *
  * @param catalog Asset catalog to save
- * @param outputPath Path to save the catalog to, defaults to assets/asset-catalog.json
+ * @param outputPath Path to save the catalog to, defaults to generated/asset-catalog.json
  * @returns Path to the saved catalog file
  */
 export async function saveAssetCatalog(

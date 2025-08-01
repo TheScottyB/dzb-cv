@@ -13,7 +13,7 @@ async function main() {
     process.exit(1);
   }
   const sector = sectorArg.split('=')[1];
-  const outputPath = `output/${sector}`;
+  const outputPath = `generated/cvs/personal/${sector}`;
   try {
     // Create the sector directory if it doesn't exist
     await import('fs/promises').then((fs) => fs.mkdir(outputPath, { recursive: true }));

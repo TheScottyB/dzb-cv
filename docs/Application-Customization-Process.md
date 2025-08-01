@@ -31,7 +31,7 @@ This document outlines the process for customizing job application materials—i
      pnpm cv generate state
      pnpm cv generate private
      ```
-     - Outputs are saved in the `output/` directory by sector (e.g., `output/federal/`, `output/state/`, `output/private/`).
+     - Outputs are now saved in the `generated/cvs/` directory by sector.
    - (Optional) Use scripts for custom generation.
 
 ---

@@ -1,0 +1,265 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dawn Zurick Beilfuss</title>
+    <style>
+      :root {
+        --primary-color: #006633;
+        --secondary-color: #333333;
+        --accent-color: #cc3333;
+        --background-color: #ffffff;
+        --font-family: system-ui, -apple-system, sans-serif;
+        --font-size: 14px;
+        --line-height: 1.6;
+        --spacing: 1.5rem;
+      }
+
+      body {
+        font-family: var(--font-family);
+        font-size: var(--font-size);
+        line-height: var(--line-height);
+        color: var(--secondary-color);
+        background: var(--background-color);
+        margin: 0;
+        padding: 2rem;
+      }
+
+      .document-title {
+        color: var(--primary-color);
+        font-size: 2.5em;
+        margin-bottom: 0.5rem;
+        border-bottom: none;
+      }
+
+      .document-subtitle {
+        color: var(--secondary-color);
+        font-size: 1.5em;
+        margin-bottom: var(--spacing);
+        font-weight: normal;
+      }
+
+      .content {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: var(--primary-color);
+        margin-top: var(--spacing);
+        margin-bottom: calc(var(--spacing) * 0.5);
+        page-break-after: avoid;
+        page-break-inside: avoid;
+      }
+
+      h1 {
+        font-size: 2em;
+        border-bottom: 2px solid var(--primary-color);
+      }
+      h2 {
+        font-size: 1.75em;
+      }
+      h3 {
+        font-size: 1.5em;
+      }
+      h4 {
+        font-size: 1.25em;
+      }
+
+      p {
+        margin-bottom: var(--spacing);
+        orphans: 2;
+        widows: 2;
+      }
+
+      ul,
+      ol {
+        margin-bottom: var(--spacing);
+        padding-left: 1.5em;
+      }
+
+      li {
+        margin-bottom: calc(var(--spacing) * 0.25);
+        page-break-inside: avoid;
+      }
+
+      a {
+        color: var(--accent-color);
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      blockquote {
+        border-left: 4px solid var(--primary-color);
+        margin: 0 0 1.5em 0;
+        padding-left: 1em;
+        color: var(--secondary-color);
+        font-size: 0.95em;
+        background: #f7f7f7;
+        font-style: normal;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
+        border-radius: 4px;
+        max-width: 400px;
+        float: right;
+        text-align: right;
+        page-break-inside: avoid;
+      }
+
+      .signature-block {
+        margin-top: 2em;
+        margin-bottom: 0;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        text-align: left;
+        font-size: 1em;
+        font-family: var(--font-family);
+      }
+
+      .page-break {
+        page-break-after: always;
+        break-after: page;
+        height: 0;
+        margin: 0;
+        border: none;
+      }
+
+      code {
+        font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+        background: #f5f5f5;
+        padding: 0.2em 0.4em;
+        border-radius: 3px;
+        font-size: 0.9em;
+      }
+
+      pre code {
+        display: block;
+        padding: 1em;
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: var(--spacing);
+        page-break-inside: avoid;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 0.5em;
+        text-align: left;
+      }
+
+      th {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background: #f9f9f9;
+      }
+
+      footer {
+        margin-top: calc(var(--spacing) * 2);
+        padding-top: var(--spacing);
+        border-top: 1px solid #ddd;
+        text-align: center;
+        color: var(--secondary-color);
+        font-size: 0.9em;
+        page-break-after: avoid;
+      }
+
+      /* Print styles */
+      @media print {
+        body {
+          padding: 0.5in 0.5in 0.5in 0.5in;
+        }
+        .content {
+          max-width: none;
+        }
+        a {
+          text-decoration: none;
+          color: var(--secondary-color);
+        }
+        footer {
+          display: none;
+        }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+          page-break-after: avoid;
+          page-break-inside: avoid;
+        }
+        ul,
+        ol,
+        li,
+        table,
+        tr,
+        td,
+        th {
+          page-break-inside: avoid;
+        }
+      }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css"
+    />
+  </head>
+  <body>
+    <div class="content">
+      <p>Dear Hiring Manager,</p>
+      <p>
+        I am writing to express my strong interest in the Assistant Manager position at Village
+        Green in Palatine, IL. With over 20 years of experience in property management, real estate,
+        and customer service, I am confident in my ability to contribute effectively to your team
+        and support Village Green&#8217;s commitment to exceptional resident experiences.
+      </p>
+      <p>My career has been built on a foundation of:</p>
+      <ul>
+        <li>Rent collection & delinquency management</li>
+        <li>Property management operations</li>
+        <li>Team leadership & supervision</li>
+        <li>Office administration & process improvement</li>
+        <li>Resident relations & customer service</li>
+        <li>Regulatory compliance (Fair Housing, state/local)</li>
+        <li>Proficiency in Microsoft Office and property management software</li>
+      </ul>
+      <p>
+        I am particularly drawn to this opportunity because it aligns with my background in managing
+        residential properties, leading teams, and ensuring operational excellence. My experience
+        in:
+      </p>
+      <ul>
+        <li>Overseeing full property lifecycles, including rent collection and resident support</li>
+        <li>Implementing process improvements and supporting team development</li>
+        <li>Maintaining compliance with state and local regulations</li>
+        <li>Delivering high-quality service to residents and stakeholders</li>
+        <li>Managing multiple priorities in fast-paced environments</li>
+      </ul>
+      <p>
+        makes me well-suited for the responsibilities of this position. I am committed to upholding
+        Village Green&#8217;s standards and contributing to a positive, thriving community.
+      </p>
+      <p>
+        I look forward to discussing how my skills and experience can benefit Village Green in more
+        detail.
+      </p>
+      <p>Best regards,<br />Dawn Zurick Beilfuss</p>
+    </div>
+    <footer>Generated on 4/26/2025</footer>
+  </body>
+</html>

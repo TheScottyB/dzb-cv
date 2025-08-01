@@ -68,7 +68,7 @@ export class ManageProfileCommand extends BaseCommand {
       .description('Export a profile to a specified format')
       .option('-p, --profile-id <id>', 'ID of the profile to export')
       .option('-f, --format <format>', 'Export format (json, markdown, pdf)', 'json')
-      .option('-o, --output <path>', 'Output file path', 'output/profiles/exported-profile.json')
+      .option('-o, --output <path>', 'Output file path', 'generated/cvs/personal/exported-profile.json')
       .action(this.executeExport.bind(this));
 
     // Sub-command to validate a profile
@@ -189,7 +189,7 @@ export class ManageProfileCommand extends BaseCommand {
       // Save the run configuration
       const configPath = options.output
         ? path.join(path.dirname(options.output), 'import-run-config.json')
-        : path.join('output', 'profiles', `profile-import-${Date.now()}.json`);
+        : path.join('generated/cvs/personal', `profile-import-${Date.now()}.json`);
 
       await this.recordRunConfiguration(runConfig, configPath);
     } catch (error) {

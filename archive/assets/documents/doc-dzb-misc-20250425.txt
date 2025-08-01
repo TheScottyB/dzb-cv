@@ -1,0 +1,33 @@
+feat: add ATS optimization system
+
+Added comprehensive ATS optimization system:
+1. Content Analysis
+   - Special character detection
+   - Heading validation
+   - Date format checking
+   - Contact info verification
+
+2. Optimization Features
+   - Automatic content improvement
+   - Format standardization
+   - ATS score calculation
+   - Improvement suggestions
+
+3. Integration
+   - PDF generation integration
+   - Test suite for validation
+   - Example documentation
+   - Type definitions
+
+Testing:
+- Added integration tests
+- Added compatibility tests
+- Edge case handling
+
+Documentation:
+- Added usage examples
+- Added best practices
+- Added integration guide
+
+This enhancement ensures all generated CVs are
+optimized for Applicant Tracking Systems.

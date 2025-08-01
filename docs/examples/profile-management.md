@@ -85,13 +85,13 @@ dzb-cv profile import profile.json \
 dzb-cv profile export \
   --profile-id profile-123 \
   --format pdf \
-  --output ./output/cv.pdf
+  --output ./generated/cvs/personal/cv.pdf
 
 # Export as Markdown
 dzb-cv profile export \
   --profile-id profile-123 \
   --format markdown \
-  --output ./output/cv.md
+  --output ./generated/cvs/personal/cv.md
 ```
 
 ## Profile Validation
