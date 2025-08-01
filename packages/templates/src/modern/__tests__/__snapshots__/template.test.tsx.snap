@@ -12,12 +12,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
         class="header-content"
       >
         <h1
-          class="_heading_e3c3c4 _size-3xl_e3c3c4 _weight-bold_e3c3c4"
+          class="_heading_4bffbd _size-3xl_4bffbd _weight-bold_4bffbd"
         >
           Jane Marie Smith
         </h1>
         <p
-          class="_text_b024fe _size-lg_b024fe _color-primary_b024fe professional-title"
+          class="_text_8bdee8 _size-lg_8bdee8 _color-primary_8bdee8 professional-title"
         >
           Senior Software Engineer
         </p>
@@ -25,27 +25,27 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
           class="contact-info"
         >
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             jane.smith@example.com
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             (555) 987-6543
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             123 Tech Street, San Francisco, CA 94107
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             linkedin.com/in/janesmith
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             github.com/janesmith
           </p>
@@ -62,12 +62,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Professional Summary
           </h2>
           <p
-            class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+            class="_text_8bdee8 _size-md_8bdee8 _color-default_8bdee8"
           >
             Experienced software engineer with expertise in web development and distributed systems.
           </p>
@@ -76,7 +76,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Experience
           </h2>
@@ -87,12 +87,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="item-header"
             >
               <h3
-                class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-lg_4bffbd _weight-semibold_4bffbd"
               >
                 Senior Software Engineer
               </h3>
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-primary_8bdee8"
               >
                 Jan 2020
                  -
@@ -101,7 +101,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               </p>
             </div>
             <p
-              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
             >
               Tech Solutions Inc.
               , San Francisco, CA
@@ -113,7 +113,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Lead development of microservices architecture
                 </p>
@@ -122,7 +122,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Mentor junior developers and conduct code reviews
                 </p>
@@ -131,14 +131,14 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Implement CI/CD pipelines for automated testing and deployment
                 </p>
               </li>
             </ul>
             <p
-              class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe achievements-header"
+              class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8 achievements-header"
             >
               Key Achievements:
             </p>
@@ -149,7 +149,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Reduced API response time by 40% through optimized database queries
                 </p>
@@ -158,7 +158,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Implemented authentication system that increased security compliance by 100%
                 </p>
@@ -172,12 +172,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="item-header"
             >
               <h3
-                class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-lg_4bffbd _weight-semibold_4bffbd"
               >
                 Software Developer
               </h3>
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-primary_8bdee8"
               >
                 Mar 2018
                  -
@@ -186,7 +186,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               </p>
             </div>
             <p
-              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
             >
               InnovateTech
               , Seattle, WA
@@ -198,7 +198,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Developed front-end components using React and TypeScript
                 </p>
@@ -207,7 +207,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Created RESTful APIs using Node.js and Express
                 </p>
@@ -219,7 +219,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Projects
           </h2>
@@ -227,12 +227,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
             class="project-item"
           >
             <h3
-              class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+              class="_heading_4bffbd _size-lg_4bffbd _weight-semibold_4bffbd"
             >
               E-commerce Platform
             </h3>
             <p
-              class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _color-default_8bdee8"
             >
               Built a scalable e-commerce platform with microservices architecture
             </p>
@@ -240,7 +240,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="technologies"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 Technologies:
               </p>
@@ -251,7 +251,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     React
                   </p>
@@ -260,7 +260,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     Node.js
                   </p>
@@ -269,7 +269,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     MongoDB
                   </p>
@@ -278,7 +278,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     Docker
                   </p>
@@ -286,7 +286,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               </div>
             </div>
             <p
-              class="_text_b024fe _size-sm_b024fe _color-default_b024fe project-url"
+              class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8 project-url"
             >
               <a
                 href="https://github.com/janesmith/ecommerce"
@@ -301,12 +301,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
             class="project-item"
           >
             <h3
-              class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+              class="_heading_4bffbd _size-lg_4bffbd _weight-semibold_4bffbd"
             >
               Task Management App
             </h3>
             <p
-              class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _color-default_8bdee8"
             >
               Developed a responsive task management application with real-time updates
             </p>
@@ -314,7 +314,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="technologies"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 Technologies:
               </p>
@@ -325,7 +325,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     React
                   </p>
@@ -334,7 +334,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     Firebase
                   </p>
@@ -343,7 +343,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     Material-UI
                   </p>
@@ -360,7 +360,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Education
           </h2>
@@ -368,23 +368,23 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
             class="education-item"
           >
             <h3
-              class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
             >
               Master of Science
                in Computer Science
             </h3>
             <p
-              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
             >
               University of Washington
             </p>
             <p
-              class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
             >
               2018
             </p>
             <p
-              class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
             >
               GPA: 
               3.92
@@ -396,7 +396,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _italic_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _italic_8bdee8 _color-default_8bdee8"
                 >
                   Magna Cum Laude
                 </p>
@@ -405,7 +405,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _italic_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _italic_8bdee8 _color-default_8bdee8"
                 >
                   Dean's List
                 </p>
@@ -416,18 +416,18 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
             class="education-item"
           >
             <h3
-              class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
             >
               Bachelor of Science
                in Software Engineering
             </h3>
             <p
-              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
             >
               California State University
             </p>
             <p
-              class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
             >
               2016
             </p>
@@ -437,7 +437,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Skills
           </h2>
@@ -448,7 +448,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 Frontend
               </h3>
@@ -459,7 +459,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="skill-tag level-expert"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     React
                   </p>
@@ -470,7 +470,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 Languages
               </h3>
@@ -481,7 +481,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="skill-tag level-expert"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     TypeScript
                   </p>
@@ -492,7 +492,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 Backend
               </h3>
@@ -503,7 +503,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="skill-tag level-advanced"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     Node.js
                   </p>
@@ -514,7 +514,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 API
               </h3>
@@ -525,7 +525,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="skill-tag level-intermediate"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     GraphQL
                   </p>
@@ -536,7 +536,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 DevOps
               </h3>
@@ -547,7 +547,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
                   class="skill-tag level-beginner"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     Docker
                   </p>
@@ -560,7 +560,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Languages
           </h2>
@@ -572,12 +572,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               data-testid="language-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 English
               </p>
               <p
-                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
               >
                 Native
               </p>
@@ -587,12 +587,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               data-testid="language-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 Spanish
               </p>
               <p
-                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
               >
                 Fluent
               </p>
@@ -602,12 +602,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               data-testid="language-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 French
               </p>
               <p
-                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
               >
                 Intermediate
               </p>
@@ -618,7 +618,7 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Certifications
           </h2>
@@ -630,12 +630,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               data-testid="certification-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 AWS Certified Solutions Architect
               </p>
               <p
-                class="_text_b024fe _size-xs_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-xs_8bdee8 _color-muted_8bdee8"
               >
                 Amazon Web Services
                 , 
@@ -647,12 +647,12 @@ exports[`ModernTemplate > should apply responsive styles on mobile viewport > mo
               data-testid="certification-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 Google Cloud Professional Developer
               </p>
               <p
-                class="_text_b024fe _size-xs_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-xs_8bdee8 _color-muted_8bdee8"
               >
                 Google
                 , 
@@ -679,12 +679,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
         class="header-content"
       >
         <h1
-          class="_heading_e3c3c4 _size-3xl_e3c3c4 _weight-bold_e3c3c4"
+          class="_heading_4bffbd _size-3xl_4bffbd _weight-bold_4bffbd"
         >
           Jane Marie Smith
         </h1>
         <p
-          class="_text_b024fe _size-lg_b024fe _color-primary_b024fe professional-title"
+          class="_text_8bdee8 _size-lg_8bdee8 _color-primary_8bdee8 professional-title"
         >
           Senior Software Engineer
         </p>
@@ -692,27 +692,27 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
           class="contact-info"
         >
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             jane.smith@example.com
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             (555) 987-6543
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             123 Tech Street, San Francisco, CA 94107
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             linkedin.com/in/janesmith
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             github.com/janesmith
           </p>
@@ -729,12 +729,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Professional Summary
           </h2>
           <p
-            class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+            class="_text_8bdee8 _size-md_8bdee8 _color-default_8bdee8"
           >
             Experienced software engineer with expertise in web development and distributed systems.
           </p>
@@ -743,7 +743,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Experience
           </h2>
@@ -754,12 +754,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="item-header"
             >
               <h3
-                class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-lg_4bffbd _weight-semibold_4bffbd"
               >
                 Senior Software Engineer
               </h3>
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-primary_8bdee8"
               >
                 Jan 2020
                  -
@@ -768,7 +768,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               </p>
             </div>
             <p
-              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
             >
               Tech Solutions Inc.
               , San Francisco, CA
@@ -780,7 +780,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Lead development of microservices architecture
                 </p>
@@ -789,7 +789,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Mentor junior developers and conduct code reviews
                 </p>
@@ -798,14 +798,14 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Implement CI/CD pipelines for automated testing and deployment
                 </p>
               </li>
             </ul>
             <p
-              class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe achievements-header"
+              class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8 achievements-header"
             >
               Key Achievements:
             </p>
@@ -816,7 +816,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Reduced API response time by 40% through optimized database queries
                 </p>
@@ -825,7 +825,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Implemented authentication system that increased security compliance by 100%
                 </p>
@@ -839,12 +839,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="item-header"
             >
               <h3
-                class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-lg_4bffbd _weight-semibold_4bffbd"
               >
                 Software Developer
               </h3>
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-primary_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-primary_8bdee8"
               >
                 Mar 2018
                  -
@@ -853,7 +853,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               </p>
             </div>
             <p
-              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
             >
               InnovateTech
               , Seattle, WA
@@ -865,7 +865,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Developed front-end components using React and TypeScript
                 </p>
@@ -874,7 +874,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                 >
                   Created RESTful APIs using Node.js and Express
                 </p>
@@ -886,7 +886,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Projects
           </h2>
@@ -894,12 +894,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
             class="project-item"
           >
             <h3
-              class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+              class="_heading_4bffbd _size-lg_4bffbd _weight-semibold_4bffbd"
             >
               E-commerce Platform
             </h3>
             <p
-              class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _color-default_8bdee8"
             >
               Built a scalable e-commerce platform with microservices architecture
             </p>
@@ -907,7 +907,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="technologies"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 Technologies:
               </p>
@@ -918,7 +918,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     React
                   </p>
@@ -927,7 +927,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     Node.js
                   </p>
@@ -936,7 +936,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     MongoDB
                   </p>
@@ -945,7 +945,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     Docker
                   </p>
@@ -953,7 +953,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               </div>
             </div>
             <p
-              class="_text_b024fe _size-sm_b024fe _color-default_b024fe project-url"
+              class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8 project-url"
             >
               <a
                 href="https://github.com/janesmith/ecommerce"
@@ -968,12 +968,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
             class="project-item"
           >
             <h3
-              class="_heading_e3c3c4 _size-lg_e3c3c4 _weight-semibold_e3c3c4"
+              class="_heading_4bffbd _size-lg_4bffbd _weight-semibold_4bffbd"
             >
               Task Management App
             </h3>
             <p
-              class="_text_b024fe _size-md_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _color-default_8bdee8"
             >
               Developed a responsive task management application with real-time updates
             </p>
@@ -981,7 +981,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="technologies"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 Technologies:
               </p>
@@ -992,7 +992,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     React
                   </p>
@@ -1001,7 +1001,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     Firebase
                   </p>
@@ -1010,7 +1010,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="tech-tag"
                 >
                   <p
-                    class="_text_b024fe _size-xs_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-xs_8bdee8 _color-default_8bdee8"
                   >
                     Material-UI
                   </p>
@@ -1027,7 +1027,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Education
           </h2>
@@ -1035,23 +1035,23 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
             class="education-item"
           >
             <h3
-              class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
             >
               Master of Science
                in Computer Science
             </h3>
             <p
-              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
             >
               University of Washington
             </p>
             <p
-              class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
             >
               2018
             </p>
             <p
-              class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
             >
               GPA: 
               3.92
@@ -1063,7 +1063,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _italic_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _italic_8bdee8 _color-default_8bdee8"
                 >
                   Magna Cum Laude
                 </p>
@@ -1072,7 +1072,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                 class="list-item "
               >
                 <p
-                  class="_text_b024fe _size-sm_b024fe _italic_b024fe _color-default_b024fe"
+                  class="_text_8bdee8 _size-sm_8bdee8 _italic_8bdee8 _color-default_8bdee8"
                 >
                   Dean's List
                 </p>
@@ -1083,18 +1083,18 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
             class="education-item"
           >
             <h3
-              class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+              class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
             >
               Bachelor of Science
                in Software Engineering
             </h3>
             <p
-              class="_text_b024fe _size-md_b024fe _weight-medium_b024fe _color-default_b024fe"
+              class="_text_8bdee8 _size-md_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
             >
               California State University
             </p>
             <p
-              class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+              class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
             >
               2016
             </p>
@@ -1104,7 +1104,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Skills
           </h2>
@@ -1115,7 +1115,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 Frontend
               </h3>
@@ -1126,7 +1126,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="skill-tag level-expert"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     React
                   </p>
@@ -1137,7 +1137,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 Languages
               </h3>
@@ -1148,7 +1148,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="skill-tag level-expert"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     TypeScript
                   </p>
@@ -1159,7 +1159,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 Backend
               </h3>
@@ -1170,7 +1170,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="skill-tag level-advanced"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     Node.js
                   </p>
@@ -1181,7 +1181,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 API
               </h3>
@@ -1192,7 +1192,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="skill-tag level-intermediate"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     GraphQL
                   </p>
@@ -1203,7 +1203,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               class="skill-category"
             >
               <h3
-                class="_heading_e3c3c4 _size-md_e3c3c4 _weight-semibold_e3c3c4"
+                class="_heading_4bffbd _size-md_4bffbd _weight-semibold_4bffbd"
               >
                 DevOps
               </h3>
@@ -1214,7 +1214,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
                   class="skill-tag level-beginner"
                 >
                   <p
-                    class="_text_b024fe _size-sm_b024fe _color-default_b024fe"
+                    class="_text_8bdee8 _size-sm_8bdee8 _color-default_8bdee8"
                   >
                     Docker
                   </p>
@@ -1227,7 +1227,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Languages
           </h2>
@@ -1239,12 +1239,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               data-testid="language-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 English
               </p>
               <p
-                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
               >
                 Native
               </p>
@@ -1254,12 +1254,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               data-testid="language-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 Spanish
               </p>
               <p
-                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
               >
                 Fluent
               </p>
@@ -1269,12 +1269,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               data-testid="language-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 French
               </p>
               <p
-                class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
               >
                 Intermediate
               </p>
@@ -1285,7 +1285,7 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
           class="cv-section"
         >
           <h2
-            class="_heading_e3c3c4 _size-xl_e3c3c4 _weight-semibold_e3c3c4"
+            class="_heading_4bffbd _size-xl_4bffbd _weight-semibold_4bffbd"
           >
             Certifications
           </h2>
@@ -1297,12 +1297,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               data-testid="certification-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 AWS Certified Solutions Architect
               </p>
               <p
-                class="_text_b024fe _size-xs_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-xs_8bdee8 _color-muted_8bdee8"
               >
                 Amazon Web Services
                 , 
@@ -1314,12 +1314,12 @@ exports[`ModernTemplate > should render all sections with full CV data 1`] = `
               data-testid="certification-item"
             >
               <p
-                class="_text_b024fe _size-sm_b024fe _weight-medium_b024fe _color-default_b024fe"
+                class="_text_8bdee8 _size-sm_8bdee8 _weight-medium_8bdee8 _color-default_8bdee8"
               >
                 Google Cloud Professional Developer
               </p>
               <p
-                class="_text_b024fe _size-xs_b024fe _color-muted_b024fe"
+                class="_text_8bdee8 _size-xs_8bdee8 _color-muted_8bdee8"
               >
                 Google
                 , 
@@ -1346,7 +1346,7 @@ exports[`ModernTemplate > should render with minimal CV data 1`] = `
         class="header-content"
       >
         <h1
-          class="_heading_e3c3c4 _size-3xl_e3c3c4 _weight-bold_e3c3c4"
+          class="_heading_4bffbd _size-3xl_4bffbd _weight-bold_4bffbd"
         >
           John Doe
         </h1>
@@ -1354,12 +1354,12 @@ exports[`ModernTemplate > should render with minimal CV data 1`] = `
           class="contact-info"
         >
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             john@example.com
           </p>
           <p
-            class="_text_b024fe _size-sm_b024fe _color-muted_b024fe"
+            class="_text_8bdee8 _size-sm_8bdee8 _color-muted_8bdee8"
           >
             (555) 123-4567
           </p>
