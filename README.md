@@ -56,7 +56,7 @@ git clone https://github.com/TheScottyB/dzb-cv.git
 cd dzb-cv
 
 # Run the automated setup script
-./setup-dzb-cv.sh
+./scripts/setup-dzb-cv.sh
 ```
 
 The automated setup script will:
@@ -102,7 +102,7 @@ pnpm run link-cli
 # Clone and run automated setup
 git clone https://github.com/TheScottyB/dzb-cv.git
 cd dzb-cv
-./setup-dzb-cv.sh
+./scripts/setup-dzb-cv.sh
 ```
 
 2. **Create your first CV**:
@@ -145,9 +145,11 @@ DZB-CV includes a sophisticated AI-powered CV generation system that uses Large 
 
 ### Quick Start with AI Generator
 
+⚠️ **Note**: The scripts referenced below are currently in `temp-cleanup/` and are being reviewed for integration into the main system.
+
 ```bash
-# Test the AI generator (uses existing CV data)
-node test-ai-generator.js
+# Test the AI generator (uses existing CV data) - TEMPORARY LOCATION
+node temp-cleanup/test-ai-generator.js
 
 # Generate AI-optimized CV with custom parameters
 node -e "
@@ -186,14 +188,14 @@ cv create --name "John Doe" --email "john@example.com" --single-page
 ### 2. AI-Powered Generation (Advanced & Optimized)
 ```bash
 # For AI-optimized, single-page CVs with intelligent content fitting
-node test-ai-generator.js
+node temp-cleanup/test-ai-generator.js
 ```
 **Best for**: Single-page optimization, content-heavy CVs, professional applications
 
 ### 3. Simple Script Generation (Direct Control)
 ```bash
 # For maximum control over formatting and content
-node generate-dawn-improved.js
+node temp-cleanup/generate-dawn-improved.js
 ```
 **Best for**: Custom formatting, specific templates, development and testing
 
@@ -363,7 +365,7 @@ Choosing between single-page and two-page formats depends on your experience lev
 cv create --name "Your Name" --email "your@email.com" --single-page
 
 # AI-powered single-page optimization
-node test-ai-generator.js
+node temp-cleanup/test-ai-generator.js
 ```
 
 #### **Standard Two-Page Format** (default)
@@ -386,7 +388,7 @@ node test-ai-generator.js
 cv create --name "Your Name" --email "your@email.com"
 
 # Custom script with full control
-node generate-dawn-improved.js
+node temp-cleanup/generate-dawn-improved.js
 ```
 
 #### **Format Selection Guidelines**

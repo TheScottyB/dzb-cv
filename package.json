@@ -22,7 +22,7 @@
     "changeset": "changeset",
     "version": "changeset version && pnpm install --no-frozen-lockfile",
     "release": "changeset publish",
-    "setup": "./setup-dzb-cv.sh",
+    "setup": "./scripts/setup-dzb-cv.sh",
     "setup:quick": "pnpm install && pnpm run build && echo '✅ Quick setup complete! Use: node packages/cli/dist/index.js --help'",
     "link-cli": "cd packages/cli && npm link && cd ../.. && echo '✅ CLI linked globally! You can now use: cv --help'",
     "unlink-cli": "cd packages/cli && npm unlink && cd ../.. && echo '✅ CLI unlinked globally'",
