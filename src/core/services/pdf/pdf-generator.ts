@@ -97,7 +97,9 @@ export class DefaultPDFGenerator extends PDFGenerator {
 
       const pdfOptions = {
         format: (options?.paperSize || 'letter') as PaperFormat,
-        margin: options?.margins || { top: '1in', right: '1in', bottom: '1in', left: '1in' },
+        margin: options?.singlePage 
+          ? { top: '0.4in', right: '0.4in', bottom: '0.4in', left: '0.4in' }
+          : (options?.margins || { top: '1in', right: '1in', bottom: '1in', left: '1in' }),
         printBackground: true,
         displayHeaderFooter: options?.includeHeaderFooter || false,
         headerTemplate: options?.headerText || '',
@@ -105,6 +107,7 @@ export class DefaultPDFGenerator extends PDFGenerator {
         landscape: options?.orientation === 'landscape',
         ...(options?.singlePage && {
           preferCSSPageSize: true,
+          pageRanges: '1', // Force single page
         }),
       };
 
@@ -294,46 +297,96 @@ export class DefaultPDFGenerator extends PDFGenerator {
       return '';
     }
 
-    const scale = options.scale || 0.9;
+    const scale = options.scale || 0.8; // More aggressive default scaling
     const minFontSize = options.minFontSize || 8;
     
     return `
       /* Single-page specific optimizations */
       @page {
         size: ${options.paperSize || 'letter'};
-        margin: 0.5in;
+        margin: 0.4in; /* Reduced margins */
       }
       
       body {
         transform: scale(${scale});
         transform-origin: top left;
         width: ${100 / scale}%;
+        height: ${100 / scale}%;
+        overflow: hidden; /* Prevent content from spilling over */
       }
       
       /* Prevent page breaks */
       * {
-        page-break-inside: avoid;
-        break-inside: avoid;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        page-break-after: avoid !important;
+        page-break-before: avoid !important;
       }
       
-      /* Compact list styles */
+      /* Force single page layout */
+      html, body {
+        height: 100vh !important;
+        max-height: 100vh !important;
+      }
+      
+      /* Aggressive compression for headers */
+      h1 {
+        font-size: max(14pt, ${minFontSize + 4}pt) !important;
+        margin: 0 0 4px 0 !important;
+        line-height: 1.1 !important;
+      }
+      
+      h2 {
+        font-size: max(12pt, ${minFontSize + 2}pt) !important;
+        margin: 8px 0 3px 0 !important;
+        line-height: 1.1 !important;
+      }
+      
+      h3 {
+        font-size: max(10pt, ${minFontSize + 1}pt) !important;
+        margin: 4px 0 2px 0 !important;
+        line-height: 1.1 !important;
+      }
+      
+      /* Compact text and list styles */
+      p, li {
+        font-size: max(${minFontSize}pt, 9pt) !important;
+        line-height: 1.15 !important;
+        margin: 1px 0 !important;
+      }
+      
+      ul {
+        margin: 2px 0 !important;
+        padding-left: 12px !important;
+      }
+      
       ul li {
-        line-height: 1.2;
+        line-height: 1.15 !important;
+        margin: 0.5px 0 !important;
       }
       
-      /* Ensure minimum font size for readability */
-      body, p, li {
-        font-size: max(${minFontSize}pt, ${options.singlePage ? '10pt' : '12pt'});
+      /* Compact section spacing */
+      .section {
+        margin-bottom: 8px !important;
+      }
+      
+      .section:last-child {
+        margin-bottom: 4px !important;
+      }
+      
+      .contact-info {
+        margin-bottom: 6px !important;
+        font-size: max(${minFontSize}pt, 9pt) !important;
       }
       
       /* Hide elements that might cause overflow */
       .page-break {
-        display: none;
+        display: none !important;
       }
       
-      /* Compact spacing for sections */
-      .section:last-child {
-        margin-bottom: 8px;
+      /* Ensure content fits within viewport */
+      div, section, article {
+        max-height: none !important;
       }
     `;
   }

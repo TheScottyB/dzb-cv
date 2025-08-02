@@ -61,7 +61,9 @@ export class GenerateCvCommand extends BaseCommand {
 
       // Prepare output path
       const outputPath = path.join(options.output, validSector);
-      await this.ensureDirectory(outputPath);
+await this.ensureDirectory(outputPath);
+const resolvedOutputPath = path.resolve(outputPath);
+this.logInfo(`Using output directory: ${resolvedOutputPath}`);
 
       // Prepare CV generation options
       const cvOptions: Partial<CVGenerationOptions> = {

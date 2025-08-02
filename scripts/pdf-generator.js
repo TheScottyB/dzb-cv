@@ -55,37 +55,76 @@ async function applyHtmlStyling(htmlContent, options) {
   // Generate single-page CSS if enabled
   const singlePageCss = options.singlePage ? `
     /* Single-page optimizations */
+    @page {
+      size: ${options.paperSize} ${options.orientation};
+      margin: 0.4in;
+    }
+    
     body {
       font-size: ${options.fontSize || 9}pt !important;
-      line-height: ${options.lineHeight || 1.2} !important;
+      line-height: ${options.lineHeight || 1.15} !important;
       margin: 0 !important;
-      padding: 0.25in !important;
+      padding: 0.2in !important;
+      transform: scale(0.8);
+      transform-origin: top left;
+      width: 125%;
     }
+    
+    /* Prevent page breaks */
+    * {
+      page-break-inside: avoid !important;
+      break-inside: avoid !important;
+      page-break-after: avoid !important;
+      page-break-before: avoid !important;
+    }
+    
+    /* Force single page layout */
+    html, body {
+      height: 100vh !important;
+      max-height: 100vh !important;
+      overflow: hidden !important;
+    }
+    
     h1 {
-      font-size: 16pt !important;
-      margin: 0.2em 0 !important;
+      font-size: 14pt !important;
+      margin: 0 0 4px 0 !important;
+      line-height: 1.1 !important;
     }
     h2 {
-      font-size: 13pt !important;
-      margin: 0.3em 0 0.1em 0 !important;
+      font-size: 12pt !important;
+      margin: 8px 0 3px 0 !important;
+      line-height: 1.1 !important;
     }
     h3 {
-      font-size: 11pt !important;
-      margin: 0.2em 0 0.1em 0 !important;
+      font-size: 10pt !important;
+      margin: 4px 0 2px 0 !important;
+      line-height: 1.1 !important;
     }
     p {
-      margin: 0.1em 0 !important;
+      margin: 1px 0 !important;
+      font-size: 9pt !important;
+      line-height: 1.15 !important;
     }
     ul, ol {
-      margin: 0.2em 0 !important;
-      padding-left: 1em !important;
+      margin: 2px 0 !important;
+      padding-left: 12px !important;
     }
     li {
-      margin: 0.05em 0 !important;
-      line-height: ${options.lineHeight || 1.2} !important;
+      margin: 0.5px 0 !important;
+      line-height: 1.15 !important;
+      font-size: 9pt !important;
     }
     .page-break {
       display: none !important;
+    }
+    
+    /* Compact sections */
+    .section {
+      margin-bottom: 8px !important;
+    }
+    
+    .section:last-child {
+      margin-bottom: 4px !important;
     }
   ` : '';
 
