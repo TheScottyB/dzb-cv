@@ -41,6 +41,15 @@ generated/
 # Test outputs
 test-output/
 
+# Build artifacts from packages
+packages/*/dist/
+packages/*/.turbo/
+
+# Turbo cache and logs
+.turbo/
+*.turbo.log
+turbo-*.log
+
 # Temporary files and development artifacts
 temp-cleanup/
 scripts/*.tmp
