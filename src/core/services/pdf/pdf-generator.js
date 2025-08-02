@@ -200,8 +200,8 @@ export class DefaultPDFGenerator extends PDFGenerator {
         if (!options?.singlePage) {
             return '';
         }
-        const scale = options.scale || 0.8; // More aggressive default scaling
-        const minFontSize = options.minFontSize || 8;
+        const scale = options.scale || 0.88; // Optimized for readability based on testing
+        const minFontSize = options.minFontSize || 9;
         return `
       /* Single-page specific optimizations */
       @page {

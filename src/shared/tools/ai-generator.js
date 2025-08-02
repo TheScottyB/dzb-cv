@@ -298,14 +298,14 @@ async function generateOptimizedPDF(originalCV, optimizedContent, options) {
     const pdfOptions = {
         singlePage: options.singlePage !== false,
         paperSize: 'Letter',
-        scale: 0.85, // Better readability while maintaining compression
-        minFontSize: 9, // Improved minimum font size for readability
-        lineHeight: 1.2,
+        scale: 0.88, // Optimal readability based on testing
+        minFontSize: 9, // Balanced minimum font size for readability
+        lineHeight: 1.25, // Optimal line height for single-page layout
         margins: {
-            top: '0.3in', // Further reduced margins
-            right: '0.3in',
-            bottom: '0.3in',
-            left: '0.3in'
+            top: '0.35in', // Optimized margins for content balance
+            right: '0.35in',
+            bottom: '0.35in',
+            left: '0.35in'
         },
         pdfTitle: `${options.name} - AI-Optimized CV`,
         pdfAuthor: options.name

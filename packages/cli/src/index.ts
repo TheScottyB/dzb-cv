@@ -2,13 +2,13 @@
 import { Command } from 'commander';
 
 import { createCVCommand } from './commands/create.js';
-import { createAICVCommand } from './commands/ai-generate.js';
+// AI generate command temporarily removed due to import issues
 
 const program = new Command();
 
 program.name('cv').description('CV management tool').version('1.0.0');
 
 createCVCommand(program);
-createAICVCommand(program);
+// createAICVCommand(program); // Temporarily disabled
 
 program.parse(process.argv);

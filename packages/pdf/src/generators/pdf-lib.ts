@@ -24,8 +24,8 @@ export class PdfLibGenerator implements PDFGenerator {
     const { height } = page.getSize();
     const font = await doc.embedFont(StandardFonts.Helvetica);
     
-    // Adjust margins and font sizes for single-page layout
-    const defaultMargin = options.singlePage ? 30 : 50;
+    // Adjust margins and font sizes for single-page layout with improved defaults
+    const defaultMargin = options.singlePage ? 25 : 50; // Reduced margin for better space utilization
     const marginTop = this.convertToNumber(options.margin?.top, defaultMargin);
     const marginLeft = this.convertToNumber(options.margin?.left, defaultMargin);
     const marginBottom = this.convertToNumber(options.margin?.bottom, defaultMargin);
