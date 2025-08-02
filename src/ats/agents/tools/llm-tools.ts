@@ -235,13 +235,32 @@ function stringifyCV(cvData: CVData): string {
     sections.push(`Phone: ${cvData.personalInfo.contact.phone}`);
   }
   
-  // Experience
-  if (cvData.experience.length > 0) {
+  // Experience - handle both direct array and nested object structure
+  let experienceData = [];
+  if (Array.isArray(cvData.experience)) {
+    experienceData = cvData.experience;
+  } else if (cvData.workExperience) {
+    // Handle nested structure from base-info.json
+    const categories = ['healthcare', 'realEstate', 'foodIndustry'];
+    categories.forEach(category => {
+      if (cvData.workExperience[category] && Array.isArray(cvData.workExperience[category])) {
+        experienceData = experienceData.concat(cvData.workExperience[category]);
+      }
+    });
+  }
+  
+  if (experienceData.length > 0) {
     sections.push('EXPERIENCE:');
-    cvData.experience.forEach(exp => {
-      sections.push(`${exp.position} at ${exp.company} (${exp.startDate} - ${exp.endDate || 'Present'})`);
+    experienceData.forEach(exp => {
+      const title = exp.title || exp.position || 'Position';
+      const company = exp.company || exp.employer || 'Company';
+      const period = exp.period || `${exp.startDate || ''} - ${exp.endDate || 'Present'}`;
+      sections.push(`${title} at ${company} (${period})`);
       if (exp.responsibilities) {
         sections.push(...exp.responsibilities);
+      }
+      if (exp.duties && Array.isArray(exp.duties)) {
+        sections.push(...exp.duties);
       }
       if (exp.description) {
         sections.push(exp.description);
@@ -250,18 +269,32 @@ function stringifyCV(cvData: CVData): string {
   }
   
   // Education
-  if (cvData.education.length > 0) {
+  if (Array.isArray(cvData.education) && cvData.education.length > 0) {
     sections.push('EDUCATION:');
     cvData.education.forEach(edu => {
       const graduationDate = edu.graduationDate || edu.endDate || 'N/A';
-      sections.push(`${edu.degree} from ${edu.institution} (${graduationDate})`);
+    const degree = edu.degree || 'Degree';
+    const institution = edu.institution || 'Institution';
+    sections.push(`${degree} from ${institution} (${graduationDate})`);
     });
   }
   
-  // Skills
-  if (cvData.skills.length > 0) {
-    const skillNames = cvData.skills.map(skill => typeof skill === 'string' ? skill : skill.name);
-    sections.push(`SKILLS: ${skillNames.join(', ')}`);
+  // Skills - handle both array and object structure
+  let skillsArray = [];
+  if (Array.isArray(cvData.skills)) {
+    skillsArray = cvData.skills.map(skill => typeof skill === 'string' ? skill : skill?.name || '');
+  } else if (cvData.skills && typeof cvData.skills === 'object') {
+    // Handle object structure from base-info.json
+    const skillCategories = ['managementAndLeadership', 'realEstateOperations', 'healthcareAdministration', 'technical', 'certifications', 'realEstateCertifications', 'leadership'];
+    skillCategories.forEach(category => {
+      if (cvData.skills[category] && Array.isArray(cvData.skills[category])) {
+        skillsArray = skillsArray.concat(cvData.skills[category]);
+      }
+    });
+  }
+  
+  if (skillsArray.length > 0) {
+    sections.push(`SKILLS: ${skillsArray.join(', ')}`);
   }
   
   return sections.join('\n');
@@ -274,22 +307,54 @@ function stringifyCV(cvData: CVData): string {
 function determineSectionsIncluded(cvData: CVData, distilledContent: string): string[] {
   const sections: string[] = [];
   
-  if (distilledContent.includes(cvData.personalInfo.name.full)) {
+  if (cvData.personalInfo?.name?.full && distilledContent.includes(cvData.personalInfo.name.full)) {
     sections.push('personalInfo');
   }
   
-  if (cvData.experience.some(exp => distilledContent.includes(exp.company))) {
+  // Check experience in both structures
+  let hasExperienceContent = false;
+  if (Array.isArray(cvData.experience)) {
+    hasExperienceContent = cvData.experience.some(exp => {
+      const company = exp.company || exp.employer || '';
+      return company && distilledContent.includes(company);
+    });
+  } else if (cvData.workExperience) {
+    const categories = ['healthcare', 'realEstate', 'foodIndustry'];
+    hasExperienceContent = categories.some(category => {
+      if (cvData.workExperience[category] && Array.isArray(cvData.workExperience[category])) {
+        return cvData.workExperience[category].some(exp => {
+          const company = exp.company || exp.employer || '';
+          return company && distilledContent.includes(company);
+        });
+      }
+      return false;
+    });
+  }
+  if (hasExperienceContent) {
     sections.push('experience');
   }
   
-  if (cvData.education.some(edu => distilledContent.includes(edu.institution))) {
+  if (Array.isArray(cvData.education) && cvData.education.some(edu => distilledContent.includes(edu.institution || ''))) {
     sections.push('education');
   }
   
-  if (cvData.skills.some(skill => {
-    const skillName = typeof skill === 'string' ? skill : skill.name;
-    return distilledContent.includes(skillName);
-  })) {
+  // Check skills in both structures
+  let hasSkillsContent = false;
+  if (Array.isArray(cvData.skills)) {
+    hasSkillsContent = cvData.skills.some(skill => {
+      const skillName = typeof skill === 'string' ? skill : skill?.name || '';
+      return skillName && distilledContent.includes(skillName);
+    });
+  } else if (cvData.skills && typeof cvData.skills === 'object') {
+    const skillCategories = ['managementAndLeadership', 'realEstateOperations', 'healthcareAdministration', 'technical', 'certifications', 'realEstateCertifications', 'leadership'];
+    hasSkillsContent = skillCategories.some(category => {
+      if (cvData.skills[category] && Array.isArray(cvData.skills[category])) {
+        return cvData.skills[category].some(skill => distilledContent.includes(skill));
+      }
+      return false;
+    });
+  }
+  if (hasSkillsContent) {
     sections.push('skills');
   }
   

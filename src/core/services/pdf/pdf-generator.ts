@@ -236,24 +236,24 @@ export class DefaultPDFGenerator extends PDFGenerator {
           <div class="section">
             <h2>Professional Experience</h2>
             ${data.experience
-              .map(
+              ?.map(
                 (exp) => `
               <div>
                 <h3>${exp.title} at ${exp.company}</h3>
                 <p>${exp.startDate} - ${exp.endDate || 'Present'}</p>
                 <ul>
-                  ${exp.responsibilities.map((r) => `<li>${r}</li>`).join('')}
+                  ${exp.responsibilities?.map((r) => `<li>${r}</li>`).join('') || ''}
                 </ul>
               </div>
             `
               )
-              .join('')}
+              .join('') || ''}
           </div>
-
+          
           <div class="section">
             <h2>Education</h2>
             ${data.education
-              .map(
+              ?.map(
                 (edu) => `
               <div>
                 <h3>${edu.degree} - ${edu.institution}</h3>
@@ -261,20 +261,24 @@ export class DefaultPDFGenerator extends PDFGenerator {
               </div>
             `
               )
-              .join('')}
+              .join('') || ''}
           </div>
-
+          
           <div class="section">
             <h2>Skills</h2>
             <ul>
-              ${data.skills.map((skill) => `<li>${skill}</li>`).join('')}
+              ${data.skills ? (
+                Array.isArray(data.skills) 
+                  ? data.skills.map((skill) => `<li>${typeof skill === 'string' ? skill : skill.name || 'Skill'}</li>`).join('') 
+                  : ''
+              ) : ''}
             </ul>
           </div>
-
+          
           <div class="section">
             <h2>Certifications</h2>
             <ul>
-              ${data.certifications.map((cert) => `<li>${cert}</li>`).join('')}
+              ${data.certifications?.map((cert) => `<li>${cert}</li>`).join('') || ''}
             </ul>
           </div>
         </body>

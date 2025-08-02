@@ -261,10 +261,12 @@ Content to optimize:\n\n${content}`;
     }
     
     // Experience
-    if (cvData.experience.length > 0) {
+    if (cvData.experience && cvData.experience.length > 0) {
       sections.push('\nEXPERIENCE:');
       cvData.experience.forEach(exp => {
-        sections.push(`${exp.position} at ${exp.company} (${exp.startDate} - ${exp.endDate || 'Present'})`);
+        const title = exp.title || exp.position || 'Position';
+        const company = exp.company || exp.employer || 'Company';
+        sections.push(`${title} at ${company} (${exp.startDate} - ${exp.endDate || 'Present'})`);
         if (exp.responsibilities) {
           exp.responsibilities.forEach(resp => sections.push(`• ${resp}`));
         }
@@ -348,9 +350,11 @@ Content to optimize:\n\n${content}`;
     }
     
     // Add condensed experience
-    if (cvData.experience.length > 0) {
+    if (cvData.experience && cvData.experience.length > 0) {
       const primaryRole = cvData.experience[0];
-      template += ` Currently serving as ${primaryRole.position} at ${primaryRole.company}, bringing expertise in strategic planning and execution.`;
+      const title = primaryRole.title || primaryRole.position || 'Position';
+      const company = primaryRole.company || primaryRole.employer || 'Company';
+      template += ` Currently serving as ${title} at ${company}, bringing expertise in strategic planning and execution.`;
     }
     
     // Add key skills

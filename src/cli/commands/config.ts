@@ -85,7 +85,7 @@ export function createConfigCommand(program: Command): void {
 
   // Set configuration value
   configCmd
-    .command('set \u003ckey\u003e \u003cvalue\u003e')
+    .command('set <key> <value>')
     .description('Set a configuration value (e.g., ai.defaultStyle professional)')
     .action(async (key: string, value: string) => {
       try {
@@ -120,7 +120,7 @@ export function createConfigCommand(program: Command): void {
 
   // Get configuration value
   configCmd
-    .command('get \u003ckey\u003e')
+    .command('get <key>')
     .description('Get a configuration value (e.g., ai.defaultStyle)')
     .action(async (key: string) => {
       try {
@@ -171,7 +171,7 @@ function setNestedValue(obj: any, path: string, value: any): void {
   const keys = path.split('.');
   let current = obj;
   
-  for (let i = 0; i \u003c keys.length - 1; i++) {
+for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
     if (!(key in current) || typeof current[key] !== 'object') {
       current[key] = {};
@@ -187,6 +187,6 @@ function setNestedValue(obj: any, path: string, value: any): void {
  */
 function getNestedValue(obj: any, path: string): any {
   return path.split('.').reduce((current, key) => {
-    return current && current[key] !== undefined ? current[key] : undefined;
+return current && current[key] !== undefined ? current[key] : undefined;
   }, obj);
 }

@@ -36,6 +36,7 @@ export async function generateAICV(options: AIGenerateOptions): Promise<AIGenera
   const startTime = Date.now();
   const requestId = `ai-gen-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   
+  
   try {
     // Initialize message bus and LLM agent
     const messageBus = new AgentMessageBus();
@@ -140,17 +141,18 @@ async function createBaseCV(options: AIGenerateOptions): Promise<CVData> {
   
   try {
     // Attempt to load from standard location
-    const baseDataPath = path.join(process.cwd(), 'src', 'shared', 'data', 'base-info.json');
+    const baseDataPath = path.join(process.cwd(), 'data', 'base-info.json');
     const baseData = await fs.readFile(baseDataPath, 'utf-8');
     baseCV = JSON.parse(baseData);
     
     // Update personal info with provided details
-    baseCV.personalInfo.name = {
-      first: firstName,
-      last: lastName,
-      full: options.name
-    };
-    baseCV.personalInfo.contact.email = options.email;
+    if (baseCV.personalInfo?.name) {
+      baseCV.personalInfo.name.full = options.name;
+      // Keep existing preferred name if available
+    }
+    if (baseCV.personalInfo?.contact) {
+      baseCV.personalInfo.contact.email = options.email;
+    }
     
     console.log('📋 Loaded existing CV data and updated personal information');
   } catch (error) {
@@ -260,7 +262,7 @@ async function generateOptimizedPDF(
   
   // Save PDF
   await fs.writeFile(options.output, pdfBuffer);
-  console.log(`💾 PDF saved: ${options.output} (${pdfBuffer.length} bytes)`);
+  console.log(`💾 PDF saved: ${path.resolve(options.output)} (${pdfBuffer.length} bytes)`);
   
   return path.resolve(options.output);
 }

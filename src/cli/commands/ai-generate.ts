@@ -7,7 +7,8 @@ export function createAICVCommand(program: Command): void {
     .description('Generate an AI-optimized single-page CV')
     .requiredOption('-n, --name <name>', 'Full name')
     .requiredOption('-e, --email <email>', 'Email address')
-    .option('-o, --output <file>', 'Output PDF file', 'output.pdf')
+    .option('-o, --output <file>', 'Output PDF file', '')
+    .option('-s, --style <style>', 'CV style (professional, academic, technical, executive)', 'professional')
     .option('--single-page', 'Force PDF to fit on a single page', true)
     .action(async (options) => {
       console.log(`Creating AI-optimized CV for ${options.name}`);
@@ -15,7 +16,8 @@ export function createAICVCommand(program: Command): void {
       const result = await generateAICV({
         name: options.name,
         email: options.email,
-        output: options.output,
+        output: options.output || 'output.pdf',
+        style: options.style,
         singlePage: options.singlePage
       });
 

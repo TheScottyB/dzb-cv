@@ -7,7 +7,7 @@
 
 import path from 'path';
 import { BaseCommand, RunConfiguration } from './base-command';
-import { generateCV } from '../../shared/tools/generator';
+import { generateCV } from '../../tools/generator';
 import { generateAICV } from '../../shared/tools/ai-generator';
 import type { CVData, CVGenerationOptions } from '../../shared/types/cv-types';
 import { transformCVData } from '../../shared/utils/data-transformer';

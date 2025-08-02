@@ -9,7 +9,7 @@ import fs from 'fs/promises';
 import { existsSync } from 'fs';
 import { BaseCommand, RunConfiguration, VerifiedClaim } from './base-command.js';
 import { parseCvMarkdown } from '../../tools/cv-parser.js';
-import { ProfileService } from '../../shared/services/profile-service.js';
+import { ProfileService } from '../../core/services/profile/profile-service';
 
 // Types
 import type { CVData } from '../../shared/types/cv-types.js';
