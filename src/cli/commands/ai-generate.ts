@@ -7,16 +7,20 @@ export function createAICVCommand(program: Command): void {
     .description('Generate an AI-optimized single-page CV')
     .requiredOption('-n, --name <name>', 'Full name')
     .requiredOption('-e, --email <email>', 'Email address')
-    .option('-o, --output <file>', 'Output PDF file path', '')
+    .option('-o, --output <file>', 'Output PDF file path')
     .option('-s, --style <style>', 'CV style (professional, academic, technical, executive)', 'professional')
     .option('--single-page', 'Force PDF to fit on a single page', true)
     .action(async (options) => {
       console.log(`Creating AI-optimized CV for ${options.name}`);
 
       // Resolve output path properly
+      console.log('Debug - options.output:', options.output);
       let outputPath = options.output;
       if (!outputPath) {
         outputPath = `${options.name.toLowerCase().replace(/\s+/g, '-')}-cv.pdf`;
+        console.log('Debug - Using default output path:', outputPath);
+      } else {
+        console.log('Debug - Using provided output path:', outputPath);
       }
       console.log(`Output will be saved to: ${outputPath}`);
       

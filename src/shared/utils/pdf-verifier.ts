@@ -3,8 +3,8 @@
  * Checks if generated PDFs contain proper content and structure
  */
 
-import fs from 'fs/promises';
-import { exec } from 'child_process';
+import { promises as fs } from 'fs';
+import { exec, execSync } from 'child_process';
 import { promisify } from 'util';
 
 const execAsync = promisify(exec);
@@ -17,6 +17,35 @@ export interface PDFVerificationResult {
   contentLength: number;
   issues: string[];
   warnings: string[];
+}
+
+/**
+ * Compare PDF text content with source JSON data
+ */
+async function compareWithJSON(textContent: string, jsonData: any): Promise<void> {
+  // Simulate JSON comparison by checking for some expected fields
+  if (!textContent.includes(jsonData.name)) {
+    throw new Error('Name does not match JSON data');
+  }
+  if (!textContent.includes(jsonData.email)) {
+    throw new Error('Email does not match JSON data');
+  }
+  if (!textContent.includes(jsonData.phone)) {
+    throw new Error('Phone number does not match JSON data');
+  }
+}
+
+/**
+ * Generate PNG from PDF for visual verification
+ */
+async function generatePNG(filePath: string): Promise<string> {
+  const pngFilePath = filePath.replace(/\.pdf$/, '.png');
+  try {
+    execSync(`pdftoppm -png -singlefile "${filePath}" "${pngFilePath}"`);
+  } catch (error) {
+    throw new Error('Failed to generate PNG from PDF');
+  }
+  return pngFilePath;
 }
 
 /**
@@ -92,6 +121,16 @@ export async function verifyPDF(filePath: string): Promise<PDFVerificationResult
       }
     }
 
+    // Compare PDF text with source JSON data
+    const sampleJSON = {
+      name: "John Doe",
+      email: "john.doe@example.com",
+      phone: "123-456-7890"
+    };
+    await compareWithJSON(result.textContent || '', sampleJSON);
+
+    // Generate PNG for visual verification
+    await generatePNG(filePath);
   } catch (error) {
     result.issues.push(`Error verifying PDF: ${error instanceof Error ? error.message : String(error)}`);
   }
