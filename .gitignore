@@ -15,6 +15,8 @@ coverage/
 .idea/
 *.swp
 *.swo
+
+# macOS
 .DS_Store
 **/.DS_Store
 
@@ -29,6 +31,31 @@ pnpm-debug.log*
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Generated assets (prevent clutter in root)
+generated/
+*.pdf
+*.png
+*.html
+
+# Test outputs
+test-output/
+
+# Build artifacts from packages
+packages/*/dist/
+packages/*/.turbo/
+
+# Turbo cache and logs
+.turbo/
+*.turbo.log
+turbo-*.log
+
+# Temporary files and development artifacts
+temp-cleanup/
+scripts/*.tmp
+debug-*
+test-*
+generate-*
 
 # Backup archives
 archive/*.tar.gz

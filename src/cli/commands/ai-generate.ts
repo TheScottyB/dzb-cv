@@ -4,12 +4,16 @@ import { generateAICV } from '../../shared/tools/ai-generator';
 export function createAICVCommand(program: Command): void {
   program
     .command('ai-generate')
-    .description('Generate an AI-optimized single-page CV')
+    .description('Generate an AI-optimized single-page CV with intelligent content curation')
     .requiredOption('-n, --name <name>', 'Full name')
     .requiredOption('-e, --email <email>', 'Email address')
     .option('-o, --output <file>', 'Output PDF file path')
     .option('-s, --style <style>', 'CV style (professional, academic, technical, executive)', 'professional')
     .option('--single-page', 'Force PDF to fit on a single page', true)
+    .option('--job-description <text>', 'Job description text for intelligent content curation')
+    .option('--job-url <url>', 'Job posting URL for intelligent content curation')
+    .option('--target-sector <sector>', 'Target sector (federal, healthcare, tech, private)', 'private')
+    .option('--disable-curation', 'Disable intelligent content curation', false)
     .action(async (options) => {
       console.log(`Creating AI-optimized CV for ${options.name}`);
 
@@ -29,7 +33,11 @@ export function createAICVCommand(program: Command): void {
         email: options.email,
         output: outputPath,
         style: options.style,
-        singlePage: options.singlePage
+        singlePage: options.singlePage,
+        jobDescription: options.jobDescription,
+        jobUrl: options.jobUrl,
+        targetSector: options.targetSector,
+        useIntelligentCuration: !options.disableCuration
       });
 
       if (result.success) {

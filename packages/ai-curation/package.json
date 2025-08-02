@@ -1,0 +1,47 @@
+{
+  "name": "@dzb-cv/ai-curation",
+  "version": "1.0.0",
+  "description": "Intelligent AI-powered CV content curation system",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@dzb-cv/types": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./types": {
+      "import": "./dist/types/curation.js",
+      "types": "./dist/types/curation.d.ts"
+    },
+    "./agent": {
+      "import": "./dist/agent/content-curator.js",
+      "types": "./dist/agent/content-curator.d.ts"
+    }
+  },
+  "keywords": [
+    "cv",
+    "resume",
+    "ai",
+    "curation",
+    "content-analysis",
+    "job-matching"
+  ],
+  "author": "DZB-CV Team",
+  "license": "MIT"
+}

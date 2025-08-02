@@ -8,7 +8,7 @@
 import path from 'path';
 import { BaseCommand, RunConfiguration } from './base-command';
 import { generateCV } from '../../tools/generator';
-import { generateAICV } from '../../shared/tools/ai-generator';
+import { generateAICV, generateAICVForJob } from '../../shared/tools/ai-generator';
 import type { CVData, CVGenerationOptions } from '../../shared/types/cv-types';
 import { transformCVData } from '../../shared/utils/data-transformer';
 
@@ -21,6 +21,10 @@ interface GenerateCvCommandOptions {
   filename?: string;
   aiOptimize?: boolean;
   style?: 'professional' | 'academic' | 'technical' | 'executive';
+  jobDescription?: string;
+  jobUrl?: string;
+  targetSector?: 'federal' | 'healthcare' | 'tech' | 'private';
+  disableCuration?: boolean;
 }
 
 /**
@@ -44,6 +48,10 @@ export class GenerateCvCommand extends BaseCommand {
       .option('--filename <name>', 'Base filename for the generated CV')
       .option('--ai-optimize', 'Use AI to optimize CV for single-page layout', false)
       .option('--style <style>', 'AI optimization style (professional, academic, technical, executive)', 'professional')
+      .option('--job-description <text>', 'Job description text for intelligent content curation')
+      .option('--job-url <url>', 'Job posting URL for intelligent content curation')
+      .option('--target-sector <sector>', 'Target sector for optimization (overrides detected sector)')
+      .option('--disable-curation', 'Disable intelligent content curation for AI optimization', false)
       .action(this.execute.bind(this));
   }
 
@@ -101,9 +109,15 @@ this.logInfo(`Using output directory: ${resolvedOutputPath}`);
           name: cvData.personalInfo.name.full,
           email: cvData.personalInfo.contact.email,
           output: path.join(outputPath, `${cvData.personalInfo.name.last}-ai-cv.pdf`),
-          style: options.style || 'professional'
+          style: options.style || 'professional',
+          targetSector: options.targetSector || validSector,
+          useIntelligentCuration: !options.disableCuration
         };
-        const aiResult = await generateAICV(aiOptions);
+        
+        // Use job-targeted generation if job info is provided
+        const aiResult = (options.jobDescription || options.jobUrl) 
+          ? await generateAICVForJob(aiOptions, options.jobDescription, options.jobUrl)
+          : await generateAICV(aiOptions);
         if (aiResult.success) {
           this.logSuccess(`AI-optimized CV generated successfully: ${aiResult.filePath}`);
         } else {
