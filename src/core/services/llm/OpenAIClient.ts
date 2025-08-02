@@ -64,7 +64,7 @@ export interface LLMProcessingResult {
  */
 export class OpenAIClient {
   private client: OpenAI;
-  private defaultModel: string = 'gpt-4o-mini';
+  private defaultModel: string = 'gpt-4o';
   private maxRetries: number = 3;
   private retryDelay: number = 1000; // 1 second
 
@@ -110,8 +110,9 @@ export class OpenAIClient {
               content: prompt
             }
           ],
-          max_tokens: Math.min(maxLength * 2, 4000), // Allow for expansion
-          temperature: 0.3, // More focused, less creative
+          max_tokens: Math.min(maxLength * 2, 4000), // Allow for expansion  
+          temperature: 0.1, // Optimized for consistency and precision based on A/B testing
+          top_p: 0.9, // Slightly restrict token choices for better quality
         });
       });
 
@@ -169,11 +170,15 @@ export class OpenAIClient {
             }
           ],
           max_tokens: 2000,
-          temperature: 0.2, // Very focused formatting
+          temperature: 0.1, // Optimized for consistent precise formatting
+          top_p: 0.9, // Restrict token choices for better formatting quality
         });
       });
 
-      const optimizedContent = response.choices[0]?.message?.content?.trim() || content;
+      let optimizedContent = response.choices[0]?.message?.content?.trim() || content;
+      
+      // Validate and fix any orphaned headers
+      optimizedContent = this.validateAndFixOrphanedHeaders(optimizedContent);
       
       return {
         content: optimizedContent,
@@ -214,16 +219,54 @@ export class OpenAIClient {
   private buildDistillationPrompt(cvData: CVData, style: string, maxLength: number): string {
     const cvText = this.cvDataToText(cvData);
     
-    return `Please distill the following CV into a concise, single-page format (approximately ${maxLength} characters).
+    return `You are a senior CV strategist with deep expertise in content prioritization and single-page optimization. Analyze the following CV and create a strategic distillation.
 
-Requirements:
-- Maintain the most impactful information
-- Keep it ${style} in tone
-- Preserve key achievements and skills
-- Ensure readability and flow
-- Focus on results and quantifiable accomplishments
+**STRATEGIC ANALYSIS REQUIRED:**
+1. **Content Audit**: Identify the 3-5 most impactful achievements, skills, and experiences
+2. **Relevance Scoring**: Rank sections by their value to target employers
+3. **Impact Assessment**: Prioritize quantifiable results and measurable outcomes
+4. **Space Allocation**: Distribute ~${maxLength} characters across sections based on strategic importance
 
-Original CV:\n\n${cvText}`;
+**DISTILLATION CRITERIA:**
+- **Style**: ${style} - adapt language and emphasis accordingly
+- **Priority Order**: Most recent and relevant first
+- **Impact Focus**: Lead with achievements that demonstrate ROI, efficiency gains, or problem-solving
+- **Skill Relevance**: Include only skills that align with career trajectory and add unique value
+- **Experience Depth**: Vary detail level - more for recent/relevant roles, less for older/tangential ones
+
+**SECTION INCLUSION LOGIC:**
+For each potential section, apply this decision matrix:
+- **INCLUDE** if: High relevance to target role + Substantial content (3+ meaningful bullet points)
+- **CONDENSE** if: Medium relevance + Limited space (combine with other sections)
+- **EXCLUDE** if: Low relevance OR insufficient content for standalone section
+
+**CRITICAL QUALITY CONTROLS:**
+❌ **NEVER DO**: Include section headers without 2-3 substantial bullet points underneath
+❌ **NEVER DO**: Add filler content or generic statements to pad sections
+❌ **NEVER DO**: Include outdated skills or irrelevant experiences just to fill space
+
+✅ **ALWAYS DO**: Every section must justify its inclusion with concrete value
+✅ **ALWAYS DO**: Prioritize recent, quantifiable achievements with clear business impact
+✅ **ALWAYS DO**: Ensure each bullet point adds unique information and demonstrates capability
+
+**EXAMPLE STRATEGIC THINKING:**
+
+For Healthcare Professional:
+- Core Competencies section: INCLUDE if demonstrates 3+ distinct skill areas with years of experience
+- Recent Certifications: HIGH PRIORITY - shows current capabilities
+- Older Experience: CONDENSE to 1-2 lines focusing on transferable skills
+- Technical Skills: INCLUDE only those relevant to target healthcare environment
+
+**FORMAT EXPECTATIONS:**
+- Use professional markdown formatting with clear section headers
+- Bullet points should be concise but information-dense
+- Include quantifiable metrics where available (years, percentages, volumes)
+- Maintain consistent tense and formatting throughout
+
+**Original CV for Analysis:**
+${cvText}
+
+**Task**: Create a strategically optimized single-page CV that maximizes impact while respecting the ${maxLength} character limit. Focus on content that tells a compelling professional story and demonstrates clear value to potential employers.`;
   }
 
   /**
@@ -422,6 +465,79 @@ Content to optimize:\n\n${content}`;
       content: optimized,
       model: 'fallback-optimization',
     };
+  }
+
+  /**
+   * Validate and fix orphaned headers (headers without meaningful content)
+   */
+  private validateAndFixOrphanedHeaders(content: string): string {
+    const lines = content.split('\n');
+    const fixedLines: string[] = [];
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      // Check if this is a header (starts with # or ##)
+      if (line.match(/^#+\s/)) {
+        // Look ahead to see if there's meaningful content
+        let hasContent = false;
+        let contentLines = 0;
+        
+        for (let j = i + 1; j < lines.length && j < i + 8; j++) {
+          const nextLine = lines[j].trim();
+          
+          // Stop if we hit another header
+          if (nextLine.match(/^#+\s/)) break;
+          
+          // Skip empty lines
+          if (!nextLine) continue;
+          
+          // Count meaningful content lines
+          if (nextLine.length > 15) { // Meaningful content threshold
+            contentLines++;
+          }
+        }
+        
+        // Header needs at least 2 lines of meaningful content or 1 very substantial line
+        hasContent = contentLines >= 2 || (contentLines >= 1 && this.hasSubstantialContent(lines, i + 1, i + 8));
+        
+        // Only include header if it has meaningful content
+        if (hasContent) {
+          fixedLines.push(line);
+        } else {
+          console.warn(`Removing orphaned header: ${line}`);
+          // Skip the header and its minimal content
+          while (i + 1 < lines.length && !lines[i + 1].match(/^#+\s/) && lines[i + 1].trim()) {
+            i++; // Skip the insufficient content
+          }
+        }
+      } else {
+        fixedLines.push(line);
+      }
+    }
+    
+    return fixedLines.join('\n');
+  }
+
+  /**
+   * Check if there's substantial content in a range of lines
+   */
+  private hasSubstantialContent(lines: string[], startIdx: number, endIdx: number): boolean {
+    let totalContent = 0;
+    let bulletPoints = 0;
+    
+    for (let i = startIdx; i < Math.min(endIdx, lines.length); i++) {
+      const line = lines[i].trim();
+      if (!line || line.match(/^#+\s/)) break;
+      
+      totalContent += line.length;
+      if (line.match(/^[•\-\*]\s/)) {
+        bulletPoints++;
+      }
+    }
+    
+    // Substantial if: total content > 100 chars OR 3+ bullet points OR 1 very long line (>50 chars)
+    return totalContent > 100 || bulletPoints >= 3 || lines.slice(startIdx, endIdx).some(line => line.trim().length > 50);
   }
 }
 

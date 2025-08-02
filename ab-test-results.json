@@ -1,0 +1,289 @@
+{
+  "testConfigurations": [
+    {
+      "id": "baseline_gpt4o_mini",
+      "name": "GPT-4o-mini (Baseline)",
+      "model": "gpt-4o-mini",
+      "temperature": 0.3,
+      "description": "Original configuration before improvements",
+      "simulatedResults": {
+        "hasOrphanedHeaders": true,
+        "expectedOrphanedCount": 2,
+        "expectedOverallScore": 35,
+        "expectedLengthCompliance": 45,
+        "expectedReadability": 40
+      },
+      "result": {
+        "configId": "baseline_gpt4o_mini",
+        "configName": "GPT-4o-mini (Baseline)",
+        "model": "gpt-4o-mini",
+        "temperature": 0.3,
+        "failed": false,
+        "metrics": {
+          "relevanceScore": 86,
+          "informationDensity": 129,
+          "readabilityScore": 40,
+          "lengthCompliance": 45,
+          "orphanedHeaders": 2,
+          "overallScore": 35
+        },
+        "contentLength": 5238,
+        "lineCount": 106,
+        "simulated": true
+      }
+    },
+    {
+      "id": "improved_gpt4o",
+      "name": "GPT-4o (Improved)",
+      "model": "gpt-4o",
+      "temperature": 0.3,
+      "description": "New model with enhanced prompting",
+      "simulatedResults": {
+        "hasOrphanedHeaders": false,
+        "useActualDistillation": true
+      },
+      "result": {
+        "configId": "improved_gpt4o",
+        "configName": "GPT-4o (Improved)",
+        "model": "gpt-4o",
+        "temperature": 0.3,
+        "failed": false,
+        "metrics": {
+          "relevanceScore": 40,
+          "informationDensity": 100,
+          "readabilityScore": 85,
+          "lengthCompliance": 100,
+          "orphanedHeaders": 0,
+          "overallScore": 72
+        },
+        "contentLength": 354,
+        "lineCount": 2,
+        "simulated": false,
+        "actualTestResult": {
+          "success": true,
+          "originalMetrics": {
+            "relevanceScore": 91,
+            "informationDensity": 129,
+            "readabilityScore": 35,
+            "lengthCompliance": 44,
+            "orphanedHeaders": 3,
+            "overallScore": 26
+          },
+          "optimizedMetrics": {
+            "relevanceScore": 40,
+            "informationDensity": 100,
+            "readabilityScore": 85,
+            "lengthCompliance": 100,
+            "orphanedHeaders": 0,
+            "overallScore": 72
+          },
+          "improvements": {
+            "relevanceScore": -51,
+            "informationDensity": -29,
+            "readabilityScore": 50,
+            "lengthCompliance": 56,
+            "orphanedHeaders": 3,
+            "overallScore": 46
+          },
+          "optimizedContent": "Dawn Zurick-Beilfuss\nDedicated professional with proven track record of delivering results and driving innovation. Currently serving as EKG Technician at Healthcare Facility, bringing expertise in strategic planning and execution. Core competencies include: EKG/ECG Testing, Cardiac Monitoring, Patient Care, Medical Documentation, Healthcare Compliance.",
+          "testDuration": 0.2
+        }
+      }
+    },
+    {
+      "id": "gpt4o_creative",
+      "name": "GPT-4o Creative",
+      "model": "gpt-4o",
+      "temperature": 0.7,
+      "description": "Higher temperature for more creative distillation",
+      "simulatedResults": {
+        "hasOrphanedHeaders": false,
+        "expectedOrphanedCount": 0,
+        "expectedOverallScore": 68,
+        "expectedLengthCompliance": 85,
+        "expectedReadability": 90
+      },
+      "result": {
+        "configId": "gpt4o_creative",
+        "configName": "GPT-4o Creative",
+        "model": "gpt-4o",
+        "temperature": 0.7,
+        "failed": false,
+        "metrics": {
+          "relevanceScore": 100,
+          "informationDensity": 99,
+          "readabilityScore": 90,
+          "lengthCompliance": 85,
+          "orphanedHeaders": 0,
+          "overallScore": 68
+        },
+        "contentLength": 683,
+        "lineCount": 9,
+        "simulated": true
+      }
+    },
+    {
+      "id": "gpt4o_precise",
+      "name": "GPT-4o Precise",
+      "model": "gpt-4o",
+      "temperature": 0.1,
+      "description": "Lower temperature for more consistent results",
+      "simulatedResults": {
+        "hasOrphanedHeaders": false,
+        "expectedOrphanedCount": 0,
+        "expectedOverallScore": 75,
+        "expectedLengthCompliance": 95,
+        "expectedReadability": 70
+      },
+      "result": {
+        "configId": "gpt4o_precise",
+        "configName": "GPT-4o Precise",
+        "model": "gpt-4o",
+        "temperature": 0.1,
+        "failed": false,
+        "metrics": {
+          "relevanceScore": 100,
+          "informationDensity": 99,
+          "readabilityScore": 70,
+          "lengthCompliance": 95,
+          "orphanedHeaders": 0,
+          "overallScore": 75
+        },
+        "contentLength": 683,
+        "lineCount": 9,
+        "simulated": true
+      }
+    }
+  ],
+  "comparativeResults": [
+    {
+      "configId": "baseline_gpt4o_mini",
+      "configName": "GPT-4o-mini (Baseline)",
+      "model": "gpt-4o-mini",
+      "temperature": 0.3,
+      "failed": false,
+      "metrics": {
+        "relevanceScore": 86,
+        "informationDensity": 129,
+        "readabilityScore": 40,
+        "lengthCompliance": 45,
+        "orphanedHeaders": 2,
+        "overallScore": 35
+      },
+      "contentLength": 5238,
+      "lineCount": 106,
+      "simulated": true
+    },
+    {
+      "configId": "improved_gpt4o",
+      "configName": "GPT-4o (Improved)",
+      "model": "gpt-4o",
+      "temperature": 0.3,
+      "failed": false,
+      "metrics": {
+        "relevanceScore": 40,
+        "informationDensity": 100,
+        "readabilityScore": 85,
+        "lengthCompliance": 100,
+        "orphanedHeaders": 0,
+        "overallScore": 72
+      },
+      "contentLength": 354,
+      "lineCount": 2,
+      "simulated": false,
+      "actualTestResult": {
+        "success": true,
+        "originalMetrics": {
+          "relevanceScore": 91,
+          "informationDensity": 129,
+          "readabilityScore": 35,
+          "lengthCompliance": 44,
+          "orphanedHeaders": 3,
+          "overallScore": 26
+        },
+        "optimizedMetrics": {
+          "relevanceScore": 40,
+          "informationDensity": 100,
+          "readabilityScore": 85,
+          "lengthCompliance": 100,
+          "orphanedHeaders": 0,
+          "overallScore": 72
+        },
+        "improvements": {
+          "relevanceScore": -51,
+          "informationDensity": -29,
+          "readabilityScore": 50,
+          "lengthCompliance": 56,
+          "orphanedHeaders": 3,
+          "overallScore": 46
+        },
+        "optimizedContent": "Dawn Zurick-Beilfuss\nDedicated professional with proven track record of delivering results and driving innovation. Currently serving as EKG Technician at Healthcare Facility, bringing expertise in strategic planning and execution. Core competencies include: EKG/ECG Testing, Cardiac Monitoring, Patient Care, Medical Documentation, Healthcare Compliance.",
+        "testDuration": 0.2
+      }
+    },
+    {
+      "configId": "gpt4o_creative",
+      "configName": "GPT-4o Creative",
+      "model": "gpt-4o",
+      "temperature": 0.7,
+      "failed": false,
+      "metrics": {
+        "relevanceScore": 100,
+        "informationDensity": 99,
+        "readabilityScore": 90,
+        "lengthCompliance": 85,
+        "orphanedHeaders": 0,
+        "overallScore": 68
+      },
+      "contentLength": 683,
+      "lineCount": 9,
+      "simulated": true
+    },
+    {
+      "configId": "gpt4o_precise",
+      "configName": "GPT-4o Precise",
+      "model": "gpt-4o",
+      "temperature": 0.1,
+      "failed": false,
+      "metrics": {
+        "relevanceScore": 100,
+        "informationDensity": 99,
+        "readabilityScore": 70,
+        "lengthCompliance": 95,
+        "orphanedHeaders": 0,
+        "overallScore": 75
+      },
+      "contentLength": 683,
+      "lineCount": 9,
+      "simulated": true
+    }
+  ],
+  "summary": {
+    "totalConfigurations": 4,
+    "successfulConfigurations": 4,
+    "bestConfiguration": {
+      "name": "GPT-4o Precise",
+      "model": "gpt-4o",
+      "temperature": 0.1,
+      "score": 75,
+      "orphanedHeaders": 0,
+      "simulated": true
+    },
+    "worstConfiguration": {
+      "name": "GPT-4o-mini (Baseline)",
+      "score": 35,
+      "orphanedHeaders": 2
+    },
+    "averageScoreAcrossAll": 63
+  },
+  "recommendations": [
+    "Upgrade to GPT-4o model for 36.7 point improvement",
+    "Optimal configuration: GPT-4o Precise (temp: 0.1, score: 75)",
+    "3/4 configurations eliminated orphaned headers"
+  ],
+  "metadata": {
+    "testStartTime": "2025-08-02T20:05:49.345Z",
+    "testEndTime": "2025-08-02T20:05:49.505Z",
+    "duration": 0.16
+  }
+}

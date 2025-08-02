@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "originalMetrics": {
+    "relevanceScore": 91,
+    "informationDensity": 129,
+    "readabilityScore": 35,
+    "lengthCompliance": 44,
+    "orphanedHeaders": 3,
+    "overallScore": 26
+  },
+  "optimizedMetrics": {
+    "relevanceScore": 40,
+    "informationDensity": 100,
+    "readabilityScore": 85,
+    "lengthCompliance": 100,
+    "orphanedHeaders": 0,
+    "overallScore": 72
+  },
+  "improvements": {
+    "relevanceScore": -51,
+    "informationDensity": -29,
+    "readabilityScore": 50,
+    "lengthCompliance": 56,
+    "orphanedHeaders": 3,
+    "overallScore": 46
+  },
+  "optimizedContent": "Dawn Zurick-Beilfuss\nDedicated professional with proven track record of delivering results and driving innovation. Currently serving as EKG Technician at Healthcare Facility, bringing expertise in strategic planning and execution. Core competencies include: EKG/ECG Testing, Cardiac Monitoring, Patient Care, Medical Documentation, Healthcare Compliance.",
+  "testDuration": 0.2
+}
