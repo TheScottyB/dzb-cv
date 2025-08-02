@@ -12,6 +12,8 @@ import { GenerateCvCommand } from './commands/generate-cv';
 import { AnalyzeJobCommand } from './commands/analyze-job';
 import { ManageProfileCommand } from './commands/manage-profile';
 import { createAICVCommand } from './commands/ai-generate';
+import { createConfigCommand } from './commands/config';
+import configService from '../core/services/config/ConfigurationService';
 import dotenv from 'dotenv';
 
 // Load environment variables
@@ -57,6 +59,9 @@ try {
   
   // Register AI-powered command
   createAICVCommand(program);
+  
+  // Register configuration command
+  createConfigCommand(program);
 
   // Add a test command for verifying the CLI is working
   program
@@ -69,6 +74,7 @@ try {
       console.log('   - ai-generate: AI-powered single-page CV generation');
       console.log('   - analyze: Analyze a job posting');
       console.log('   - profile: Manage CV profiles');
+      console.log('   - config: Manage configuration settings');
       console.log(chalk.yellow('\nFor more details, use --help with any command.'));
       
       // Check OpenAI configuration

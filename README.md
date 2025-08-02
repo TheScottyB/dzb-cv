@@ -10,6 +10,9 @@ A powerful, modular curriculum vitae management system built with TypeScript. Ge
 - 🔄 Type-safe data structures
 - 📦 PDF export support
 - 🏗️ Extensible architecture
+- 🤖 **AI-Powered CV Optimization** - Single-page layout optimization using OpenAI
+- ⚙️ **Configuration Management** - Flexible configuration system with CLI commands
+- 🎯 **Multiple CV Styles** - Professional, academic, technical, and executive styles
 
 ## Project Structure
 
