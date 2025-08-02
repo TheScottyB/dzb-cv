@@ -235,11 +235,26 @@ function transformBaseInfoToCVData(rawData: any): CVData {
     categories.forEach(category => {
       if (rawData.workExperience[category] && Array.isArray(rawData.workExperience[category])) {
         rawData.workExperience[category].forEach((job: any) => {
+          // Parse period properly to extract correct dates
+          let startDate = 'Unknown';
+          let endDate = 'Present';
+          
+          if (job.period) {
+            const parts = job.period.split(' - ');
+            startDate = parts[0].trim();
+            if (parts.length > 1 && !parts[1].includes('Present')) {
+              endDate = parts[1].trim();
+            }
+          } else {
+            startDate = job.startDate || 'Unknown';
+            endDate = job.endDate || 'Present';
+          }
+          
           experience.push({
             title: job.position || job.title || 'Position',
             company: job.employer || job.company || 'Company',
-            startDate: job.period ? job.period.split(' - ')[0] : (job.startDate || 'Unknown'),
-            endDate: job.period ? (job.period.includes('Present') ? 'Present' : job.period.split(' - ')[1]) : (job.endDate || 'Present'),
+            startDate: startDate,
+            endDate: endDate,
             responsibilities: job.duties || job.responsibilities || []
           });
         });
