@@ -236,7 +236,7 @@ export class AnalyzeJobCommand extends BaseCommand {
       // Save the run configuration for documentation
       const configPath = options.output
         ? path.join(path.dirname(options.output), 'run-config.json')
-        : path.join('output', 'job-analysis', `job-analysis-run-config-${Date.now()}.json`);
+        : path.join('generated', 'reports', 'job-analysis', `job-analysis-run-config-${Date.now()}.json`);
 
       await this.recordRunConfiguration(runConfig, configPath);
     } catch (error) {
