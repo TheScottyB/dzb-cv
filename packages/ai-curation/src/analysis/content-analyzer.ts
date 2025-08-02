@@ -9,12 +9,12 @@
 import type { CVData } from '@dzb-cv/types';
 import type {
   ContentItem,
-  ContentType,
-  ContentMetadata,
   ContentAnalysis,
   ContentCluster,
+  ContentMetadata,
   JobContext
-} from '../types/curation.js';
+} from '../types/curation';
+import { ContentType } from '../types/curation';
 
 /**
  * Content Analysis Engine
