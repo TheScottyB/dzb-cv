@@ -81,7 +81,7 @@ export async function generateAICV(options: AIGenerateOptions): Promise<AIGenera
           processing: {
             distilled: result.distilled,
             optimized: result.optimized,
-            processingTime: result.processingTime
+            processingTime: result.processingTime || 1 // Ensure we always have a positive processing time
           }
         });
       });

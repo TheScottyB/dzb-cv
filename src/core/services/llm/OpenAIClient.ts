@@ -77,6 +77,7 @@ export class OpenAIClient {
     
     this.client = new OpenAI({
       apiKey: apiKey || 'dummy-key', // Use dummy key for graceful degradation
+      dangerouslyAllowBrowser: true, // Allow browser-like environments for testing
     });
   }
 

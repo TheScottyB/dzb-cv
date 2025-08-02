@@ -39,7 +39,7 @@ function cleanDirectory(dirPath: string) {
 
       if (stats.isDirectory()) {
         cleanDirectory(filePath);
-        fs.rmdirSync(filePath);
+        fs.rmSync(filePath, { recursive: true, force: true });
       } else {
         fs.unlinkSync(filePath);
       }
