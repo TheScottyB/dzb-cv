@@ -40,7 +40,7 @@ export class GenerateCvCommand extends BaseCommand {
       .description(this.description)
       .argument('<sector>', 'The sector to generate for (federal, state, private)')
       .option('-f, --format <format>', 'Output format: markdown or pdf', 'pdf')
-      .option('-o, --output <path>', 'Output directory for the generated CV', 'output')
+      .option('-o, --output <path>', 'Output directory for the generated CV', 'generated/cvs')
       .option('--filename <name>', 'Base filename for the generated CV')
       .option('--ai-optimize', 'Use AI to optimize CV for single-page layout', false)
       .option('--style <style>', 'AI optimization style (professional, academic, technical, executive)', 'professional')

@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 
 export function resolveOutputPath(path: string): string {
-  return resolve(process.cwd(), 'output', path);
+  return resolve(process.cwd(), 'generated', path);
 }
 
 export function resolveDataPath(path: string): string {
@@ -9,7 +9,7 @@ export function resolveDataPath(path: string): string {
 }
 
 export async function ensureProjectDirectories(): Promise<void> {
-  const dirs = ['output', 'data'];
+  const dirs = ['generated', 'data'];
   for (const dir of dirs) {
     await import('fs/promises').then((fs) =>
       fs.mkdir(resolve(process.cwd(), dir), { recursive: true })
