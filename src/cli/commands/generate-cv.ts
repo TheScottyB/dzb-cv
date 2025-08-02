@@ -8,6 +8,7 @@
 import path from 'path';
 import { BaseCommand, RunConfiguration } from './base-command';
 import { generateCV } from '../../shared/tools/generator';
+import { generateAICV } from '../../shared/tools/ai-generator';
 import type { CVData, CVGenerationOptions } from '../../shared/types/cv-types';
 import { transformCVData } from '../../shared/utils/data-transformer';
 
@@ -18,6 +19,8 @@ interface GenerateCvCommandOptions {
   format: string;
   output: string;
   filename?: string;
+  aiOptimize?: boolean;
+  style?: 'professional' | 'academic' | 'technical' | 'executive';
 }
 
 /**
@@ -39,6 +42,8 @@ export class GenerateCvCommand extends BaseCommand {
       .option('-f, --format <format>', 'Output format: markdown or pdf', 'pdf')
       .option('-o, --output <path>', 'Output directory for the generated CV', 'output')
       .option('--filename <name>', 'Base filename for the generated CV')
+      .option('--ai-optimize', 'Use AI to optimize CV for single-page layout', false)
+      .option('--style <style>', 'AI optimization style (professional, academic, technical, executive)', 'professional')
       .action(this.execute.bind(this));
   }
 
@@ -85,6 +90,26 @@ export class GenerateCvCommand extends BaseCommand {
           true
         );
         return;
+      }
+
+      // Check if AI optimization is requested
+      if (options.aiOptimize) {
+        this.logInfo(`AI-optimizing ${validSector} CV...`);
+        const aiOptions = {
+          name: cvData.personalInfo.name.full,
+          email: cvData.personalInfo.contact.email,
+          output: path.join(outputPath, `${cvData.personalInfo.name.last}-ai-cv.pdf`),
+          style: options.style || 'professional'
+        };
+        const aiResult = await generateAICV(aiOptions);
+        if (aiResult.success) {
+          this.logSuccess(`AI-optimized CV generated successfully: ${aiResult.filePath}`);
+        } else {
+          this.logError(`AI optimization failed: ${aiResult.error}`, true);
+          return;
+        }
+        
+        return; // Skip traditional generation if AI optimization is used
       }
 
       // Generate the CV

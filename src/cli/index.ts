@@ -11,6 +11,11 @@ import chalk from 'chalk';
 import { GenerateCvCommand } from './commands/generate-cv';
 import { AnalyzeJobCommand } from './commands/analyze-job';
 import { ManageProfileCommand } from './commands/manage-profile';
+import { createAICVCommand } from './commands/ai-generate';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Create the main CLI program
 const program = new Command();
@@ -49,6 +54,9 @@ try {
   generateCvCommand.register(program);
   analyzeJobCommand.register(program);
   manageProfileCommand.register(program);
+  
+  // Register AI-powered command
+  createAICVCommand(program);
 
   // Add a test command for verifying the CLI is working
   program
@@ -58,9 +66,18 @@ try {
       console.log(chalk.green('✅ CLI is working!'));
       console.log(chalk.blue('💡 Available commands:'));
       console.log('   - generate: Generate a CV for a specific sector');
+      console.log('   - ai-generate: AI-powered single-page CV generation');
       console.log('   - analyze: Analyze a job posting');
       console.log('   - profile: Manage CV profiles');
       console.log(chalk.yellow('\nFor more details, use --help with any command.'));
+      
+      // Check OpenAI configuration
+      if (process.env.OPENAI_API_KEY) {
+        console.log(chalk.green('🤖 OpenAI API key configured - AI features enabled'));
+      } else {
+        console.log(chalk.yellow('⚠️  OpenAI API key not found - AI features will use simulation mode'));
+        console.log(chalk.blue('💡 Set OPENAI_API_KEY environment variable to enable AI optimization'));
+      }
     });
 
   /**

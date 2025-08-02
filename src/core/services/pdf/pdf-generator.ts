@@ -42,6 +42,10 @@ export interface PDFGenerationOptions {
   minFontSize?: number;
   /** Line height adjustment for single-page layout */
   lineHeight?: number;
+  /** Use LLM-optimized content for generation */
+  llmOptimized?: boolean;
+  /** Pre-optimized content from LLM processing */
+  optimizedContent?: string;
 }
 
 /**
@@ -170,6 +174,11 @@ export class DefaultPDFGenerator extends PDFGenerator {
 
   protected generateHTML(data: CVData, options?: Partial<PDFGenerationOptions>): string {
     const singlePageStyles = this.getSinglePageStyles(options);
+    
+    // If LLM optimized content is provided, use it directly
+    if (options?.llmOptimized && options?.optimizedContent) {
+      return this.generateOptimizedHTML(data, options.optimizedContent, options);
+    }
     
     // Basic HTML template
     return `
@@ -407,5 +416,86 @@ export class DefaultPDFGenerator extends PDFGenerator {
       bottom: parseMargin(margins?.bottom || '1in'),
       left: parseMargin(margins?.left || '1in')
     };
+  }
+
+  /**
+   * Generate HTML using LLM-optimized content
+   */
+  private generateOptimizedHTML(
+    data: CVData, 
+    optimizedContent: string, 
+    options?: Partial<PDFGenerationOptions>
+  ): string {
+    const singlePageStyles = this.getSinglePageStyles(options);
+    
+    return `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>${data.personalInfo.name.full} - AI-Optimized CV</title>
+          <style>
+            body { 
+              font-family: ${options?.fontFamily || 'Arial, sans-serif'}; 
+              margin: ${options?.singlePage ? '20px' : '40px'};
+              font-size: ${options?.singlePage ? '11pt' : '12pt'};
+              line-height: ${options?.lineHeight || (options?.singlePage ? '1.3' : '1.5')};
+            }
+            h1 { 
+              color: #333; 
+              font-size: ${options?.singlePage ? '18pt' : '24pt'};
+              margin: ${options?.singlePage ? '0 0 8px 0' : '0 0 16px 0'};
+            }
+            h2 {
+              font-size: ${options?.singlePage ? '14pt' : '18pt'};
+              margin: ${options?.singlePage ? '12px 0 6px 0' : '20px 0 10px 0'};
+              color: #444;
+            }
+            h3 {
+              font-size: ${options?.singlePage ? '12pt' : '14pt'};
+              margin: ${options?.singlePage ? '6px 0 3px 0' : '10px 0 5px 0'};
+            }
+            .contact-info { 
+              margin-bottom: ${options?.singlePage ? '12px' : '20px'};
+              font-size: ${options?.singlePage ? '10pt' : '12pt'};
+            }
+            .section { 
+              margin-bottom: ${options?.singlePage ? '15px' : '30px'};
+            }
+            ul {
+              margin: ${options?.singlePage ? '4px 0' : '8px 0'};
+              padding-left: ${options?.singlePage ? '18px' : '20px'};
+            }
+            li {
+              margin: ${options?.singlePage ? '2px 0' : '4px 0'};
+            }
+            p {
+              margin: ${options?.singlePage ? '3px 0' : '6px 0'};
+            }
+            .llm-optimized {
+              white-space: pre-wrap;
+              font-family: inherit;
+            }
+            ${singlePageStyles}
+          </style>
+        </head>
+        <body>
+          <div class="llm-optimized">
+            ${this.formatOptimizedContent(optimizedContent)}
+          </div>
+        </body>
+      </html>
+    `;
+  }
+
+  /**
+   * Format LLM-optimized content for HTML display
+   */
+  private formatOptimizedContent(content: string): string {
+    // Basic formatting - convert newlines to proper HTML structure
+    return content
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n/g, '<br>')
+      .replace(/^/, '<p>')
+      .replace(/$/, '</p>');
   }
 }
