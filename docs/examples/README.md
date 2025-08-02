@@ -34,7 +34,56 @@ This directory contains practical examples demonstrating various features and us
 - Choose the relevant example for your use case (ATS, federal, management)
 - Copy code snippets or templates as a starting point
 - Adapt to your data and requirements
-- Use the CLI commands as shown for import/export/validation
+- Use current CLI commands (`cv create`) or AI generator scripts as shown
+- For advanced features, refer to AI generator workflows
+
+## Current System Examples
+
+### CLI Usage Examples
+
+```bash
+# Basic CV creation
+cv create --name "John Doe" --email "john@example.com"
+
+# Single-page optimized CV
+cv create --name "Jane Smith" --email "jane@company.com" --single-page --output "jane-optimized.pdf"
+
+# Batch generation
+for name in "Alice Johnson" "Bob Wilson"; do
+  cv create --name "$name" --email "${name// /}@company.com" --single-page
+done
+```
+
+### AI Generator Examples
+
+```bash
+# Sector-specific generation
+node scripts/ai-generator.js --sector federal --name "Government Worker" --email "worker@agency.gov"
+
+# Job-tailored CV
+node scripts/ai-generator.js --job-file "job-description.txt" --name "Applicant Name" --email "applicant@example.com"
+
+# Healthcare CV with simple generator
+node scripts/simple-cv-generator.js healthcare "Dawn Zurick" "dawn@hospital.com"
+```
+
+### Integration Workflow Example
+
+```bash
+#!/bin/bash
+# Complete application generation workflow
+NAME="Professional Candidate"
+EMAIL="candidate@example.com"
+
+# Generate AI-optimized content
+node scripts/ai-generator.js --sector private --name "$NAME" --email "$EMAIL" --output "ai-cv"
+
+# Create optimized PDF
+cv create --name "$NAME" --email "$EMAIL" --single-page --output "final-cv.pdf"
+
+# Generate cover letter
+node scripts/ai-generator.js --cover-letter --job-file "target-job.txt" --name "$NAME" --email "$EMAIL"
+```
 
 ## Testing Examples
 - All example tests should use the shared `test-utils.ts` for DRY sample data and helpers

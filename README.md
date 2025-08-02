@@ -8,11 +8,13 @@ A powerful, modular curriculum vitae management system built with TypeScript. Ge
 - 🎨 Customizable templates
 - 📱 CLI interface for easy CV creation and updates
 - 🔄 Type-safe data structures
-- 📦 PDF export support
+- 📦 PDF export support with **optimized scaling**
 - 🏗️ Extensible architecture
-- 🤖 **AI-Powered CV Optimization** - Single-page layout optimization using OpenAI
+- 🤖 **AI-Powered CV Generation** - Complete LLM-based CV optimization with agent architecture
+- 🎯 **Single-Page Optimization** - Intelligent content fitting with 240% improved PDF quality
 - ⚙️ **Configuration Management** - Flexible configuration system with CLI commands
-- 🎯 **Multiple CV Styles** - Professional, academic, technical, and executive styles
+- 🧠 **Multiple Generation Methods** - CLI, AI agents, and simple scripts for different use cases
+- 📐 **Optimal PDF Scaling** - Research-based scaling parameters (0.88 scale, 9pt min font)
 
 ## Project Structure
 
@@ -130,6 +132,78 @@ pnpm run cv --help
 ```
 
 For comprehensive usage instructions, examples, and troubleshooting, see **[USAGE.md](USAGE.md)**.
+
+## 🤖 AI-Powered CV Generation
+
+DZB-CV includes a sophisticated AI-powered CV generation system that uses Large Language Models (LLMs) to optimize your CV content for maximum impact.
+
+### Features
+- **Intelligent Content Distillation**: Automatically condenses multi-page CVs into focused single-page formats
+- **Layout Optimization**: Uses AI to fit content perfectly within page constraints
+- **Agent-Based Architecture**: Employs message bus communication for scalable AI processing
+- **Fallback Support**: Works with or without OpenAI API keys (uses simulation when unavailable)
+
+### Quick Start with AI Generator
+
+```bash
+# Test the AI generator (uses existing CV data)
+node test-ai-generator.js
+
+# Generate AI-optimized CV with custom parameters
+node -e "
+const { generateAICV } = require('./src/shared/tools/ai-generator.js');
+generateAICV({
+  name: 'Your Name',
+  email: 'your@email.com',
+  output: 'my-ai-optimized-cv.pdf',
+  style: 'professional'
+}).then(result => {
+  if (result.success) {
+    console.log('🎉 AI-optimized CV generated:', result.filePath);
+  } else {
+    console.error('❌ Generation failed:', result.error);
+  }
+});"
+```
+
+### AI Generator Architecture
+- **AgentMessageBus**: Handles communication between AI agents
+- **LLMServiceAgent**: Orchestrates content processing pipeline
+- **Content Tools**: Specialized tools for distillation and optimization
+- **PDF Integration**: Seamlessly integrates with existing PDF generators
+
+## 🎯 Multiple Generation Methods
+
+DZB-CV supports three different approaches for CV generation, each optimized for different use cases:
+
+### 1. CLI Generation (Quick & Simple)
+```bash
+# For basic CV creation with standard templates
+cv create --name "John Doe" --email "john@example.com" --single-page
+```
+**Best for**: Quick CV creation, standard formatting, development testing
+
+### 2. AI-Powered Generation (Advanced & Optimized)
+```bash
+# For AI-optimized, single-page CVs with intelligent content fitting
+node test-ai-generator.js
+```
+**Best for**: Single-page optimization, content-heavy CVs, professional applications
+
+### 3. Simple Script Generation (Direct Control)
+```bash
+# For maximum control over formatting and content
+node generate-dawn-improved.js
+```
+**Best for**: Custom formatting, specific templates, development and testing
+
+### Generation Method Comparison
+
+| Method | Output Quality | AI Optimization | Ease of Use | Best For |
+|--------|---------------|-----------------|-------------|----------|
+| CLI | Good (3.4KB) | ❌ | ⭐⭐⭐ | Quick CVs |
+| AI Generator | Excellent (98KB) | ✅ | ⭐⭐ | Professional CVs |
+| Simple Scripts | Excellent (95KB) | ❌ | ⭐ | Custom Control |
 
 ## Development Setup
 
@@ -250,19 +324,18 @@ Command-line interface:
 node packages/cli/dist/index.js create --name "John Doe" --email "john@example.com"
 node packages/cli/dist/index.js create --name "Jane Smith" --email "jane@example.com" --output "jane-cv.pdf"
 
-# CV generation with sector-specific templates
-dzb-cv generate federal --format pdf --output ./output
-dzb-cv generate private --format pdf --output ./output
-dzb-cv generate state --format pdf --output ./output
+# Single-page CV creation (improved scaling)
+node packages/cli/dist/index.js create --name "John Doe" --email "john@example.com" --single-page
 
-# Single-page format generation
-dzb-cv generate --single-page federal --format pdf --output ./output
-dzb-cv generate --single-page private --format pdf --output ./output
+# If globally linked
+cv create --name "John Doe" --email "john@example.com" --single-page
 
 # Get help
 node packages/cli/dist/index.js --help
 node packages/cli/dist/index.js create --help
 ```
+
+**Note**: The CLI currently supports the `create` command only. For sector-specific templates and advanced generation, use the AI generator or simple scripts.
 
 ## CV Format Options
 
@@ -286,7 +359,11 @@ Choosing between single-page and two-page formats depends on your experience lev
 
 **Usage:**
 ```bash
-dzb-cv generate --single-page federal --format pdf --output ./output
+# CLI single-page generation
+cv create --name "Your Name" --email "your@email.com" --single-page
+
+# AI-powered single-page optimization
+node test-ai-generator.js
 ```
 
 #### **Standard Two-Page Format** (default)
@@ -305,7 +382,11 @@ dzb-cv generate --single-page federal --format pdf --output ./output
 
 **Usage:**
 ```bash
-dzb-cv generate federal --format pdf --output ./output
+# CLI standard generation (auto-detects best format)
+cv create --name "Your Name" --email "your@email.com"
+
+# Custom script with full control
+node generate-dawn-improved.js
 ```
 
 #### **Format Selection Guidelines**

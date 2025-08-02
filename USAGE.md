@@ -135,37 +135,32 @@ cv create --name "Jane Smith" --email "jane@company.com" --output "jane-smith-cv
 cv create -n "Alex Johnson" -e "alex@email.com" -o "alex-cv.pdf"
 ```
 
-#### `dzb-cv generate` - Generate Sector-Specific CVs
+#### `--single-page` Flag for CLI Create
 
-Generates CVs using sector-specific templates with optional single-page formatting.
+The CLI `create` command supports a `--single-page` flag for optimized single-page PDF generation.
 
 **Syntax:**
 ```bash
-dzb-cv generate [--single-page] <sector> [options]
+cv create --name <name> --email <email> [--single-page] [--output <file>]
 ```
 
-**Required Arguments:**
-- `<sector>`: Sector type (federal, state, private)
-
 **Optional Flags:**
-- `--single-page`: Force PDF generation to fit on a single page
-- `--format <format>`: Output format (pdf, markdown)
-- `--output <path>`: Output directory path
+- `--single-page`: Optimize PDF for single-page layout with improved scaling
+- `--output <file>`: Custom output filename
 
 **Examples:**
 ```bash
-# Generate standard two-page federal CV
-dzb-cv generate federal --format pdf --output ./generated
+# Generate single-page CV with optimized scaling
+cv create --name "John Doe" --email "john@example.com" --single-page
 
-# Generate single-page private sector CV
-dzb-cv generate --single-page private --format pdf --output ./generated
+# Single-page CV with custom filename
+cv create --name "Jane Smith" --email "jane@company.com" --single-page --output "jane-optimized-cv.pdf"
 
-# Generate single-page state CV
-dzb-cv generate --single-page state --format pdf --output ./generated
-
-# Generate CV with custom output directory
-dzb-cv generate --single-page federal --output ./my-cvs
+# Standard CV (multi-page capable)
+cv create --name "John Doe" --email "john@example.com"
 ```
+
+**Note**: For sector-specific templates and advanced generation features, use the AI generator or simple scripts described below.
 
 ### Command Help
 

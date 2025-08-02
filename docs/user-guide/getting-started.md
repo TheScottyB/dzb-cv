@@ -86,6 +86,7 @@ node packages/cli/dist/index.js create --help
 
 **Optional:**
 - `--output, -o <file>`: Output PDF filename
+- `--single-page`: Optimize PDF for single-page layout with improved scaling
 
 ## Examples
 
@@ -117,6 +118,22 @@ node packages/cli/dist/index.js create \
   -e "e.rodriguez@university.edu" \
   -o "emily-academic-cv.pdf"
 ```
+
+### Example 4: Single-Page Optimized CV
+
+```bash
+# Create a CV optimized for single-page layout
+node packages/cli/dist/index.js create \
+  --name "Alex Thompson" \
+  --email "alex@example.com" \
+  --single-page \
+  --output "alex-single-page-cv.pdf"
+
+# If CLI is globally linked:
+cv create --name "Sarah Wilson" --email "sarah@company.com" --single-page
+```
+
+**Note:** The `--single-page` flag applies optimized scaling parameters to fit content on a single page while maintaining readability. This is ideal for job applications that prefer concise, one-page resumes.
 
 ## Next Steps
 

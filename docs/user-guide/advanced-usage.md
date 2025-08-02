@@ -32,83 +32,135 @@ Templates use Handlebars syntax:
 
 ## Advanced Features
 
-### Advanced Job Analysis and Optimization
+### Current CLI Capabilities
 
-Leverage the full functionality of the ATS system for in-depth job analysis and CV optimization.
+The DZB-CV CLI currently supports basic CV creation with the `cv create` command. For advanced features like job analysis, ATS optimization, and sector-specific generation, use the AI generator scripts described below.
 
-#### 1. Analyzing Job Descriptions
+#### Single-Page Optimization
+
 ```bash
-# Analyze a local job description with extended options
-cv analyze job-description.txt --file --output ./full-analysis.json --format detailed
+# Create optimized single-page CV
+cv create --name "John Doe" --email "john@example.com" --single-page --output "optimized-cv.pdf"
 
-# Analyze online job posting with comprehensive content retrieval
-cv analyze <job-posting-url> --output ./full-analysis.json --format detailed --save-raw-content
+# Standard multi-page CV
+cv create --name "Jane Smith" --email "jane@company.com" --output "standard-cv.pdf"
 ```
 
-#### 2. Utilizing Custom Skills and Scoring
-Create a sophisticated analysis by incorporating industry-specific skills and customizing scoring weights.
-
-```typescript
-import { createATSEngine, SkillDefinition, SkillCategory } from '@dzb-cv/ats';
-
-const IndustrySpecificSkills: SkillDefinition[] = [
-  {
-    name: 'Data Science',
-    aliases: ['DS', 'Big Data Analysis'],
-    category: SkillCategory.Programming,
-    related: ['Python', 'R', 'SQL']
-  }
-];
-
-const atsEngine = createATSEngine({
-  skills: [...IndustrySpecificSkills],
-  scoring: {
-    keywordWeight: 0.2,
-    skillsWeight: 0.4,
-    experienceWeight: 0.3,
-    educationWeight: 0.1
-  },
-  minimumScore: 0.75
-});
-
-const analysis = await atsEngine.analyze(cvData, jobPosting);
-console.log(`Custom Analysis Score: ${analysis.score}`);
-```
-
-#### 3. Tailoring CV Suggestions for Optimization
-```typescript
-const generateSuggestions = (analysis) => {
-  console.log('Optimize your CV with these suggestions:');
-  analysis.suggestions.forEach(suggestion => console.log(`- ${suggestion}`));
-};
-
-// Execute
-generateSuggestions(analysis);
-```
-
-#### 4. Batch Processing
-Automate ATS tasks for multiple job descriptions.
+#### Batch CV Generation
 
 ```bash
 #!/bin/bash
-# Batch analyze multiple job descriptions
-for file in ./job-descriptions/*.txt; do
-  echo "Analyzing $file..."
-  cv analyze "$file" --output "./analysis/$(basename "$file" .txt)-analysis.json"
+# Generate multiple CVs with different options
+NAMES=("Alice Johnson" "Bob Smith" "Carol Davis")
+EMAILS=("alice@company.com" "bob@startup.io" "carol@nonprofit.org")
+
+for i in "${!NAMES[@]}"; do
+  name="${NAMES[$i]}"
+  email="${EMAILS[$i]}"
+  filename="${name// /-}-cv.pdf"
+  
+  echo "Generating CV for $name..."
+  cv create --name "$name" --email "$email" --single-page --output "$filename"
 done
 ```
 
-### Advanced Generation Options
+### AI Generator Integration
+
+For advanced CV generation features beyond the basic CLI, use the AI generator scripts:
+
+#### Sector-Specific CV Generation
 
 ```bash
-# Generate with custom format and output
-dzb-cv generate federal --format markdown --output ./my-output --filename my-cv
+# Generate federal CV with comprehensive formatting
+node scripts/ai-generator.js --sector federal --name "John Doe" --email "john@example.com" --output "federal-cv"
 
-# Analyze with detailed options
-dzb-cv analyze <job-posting-url> \
-  --output ./analysis.json \
-  --format json \
-  --save-raw-content
+# Generate private sector CV optimized for tech industry
+node scripts/ai-generator.js --sector private --industry tech --name "Jane Smith" --email "jane@company.com"
+
+# Generate state government CV
+node scripts/ai-generator.js --sector state --name "Alex Johnson" --email "alex@state.gov"
+
+# Healthcare sector CV with specialized templates
+node scripts/simple-cv-generator.js healthcare "Dawn Zurick" "dawn@example.com"
+```
+
+#### Job-Tailored CV Generation
+
+```bash
+# Generate CV tailored to specific job posting URL
+node scripts/ai-generator.js --job-url "https://example.com/job-posting" --name "Sarah Chen" --email "sarah@example.com"
+
+# Generate CV from local job description file
+node scripts/ai-generator.js --job-file "./job-descriptions/senior-developer.txt" --name "Michael Brown" --email "michael@example.com"
+
+# Batch process multiple job applications
+node scripts/ai-generator.js --job-batch "./job-descriptions/" --name "Lisa Wang" --email "lisa@example.com"
+```
+
+#### Advanced Workflow Integration
+
+```bash
+#!/bin/bash
+# Complete AI-powered CV generation workflow
+
+NAME="John Professional"
+EMAIL="john@example.com"
+SECTOR="private"
+JOB_FILE="./target-job.txt"
+
+# Step 1: Generate job-tailored CV content with AI
+echo "Generating AI-optimized CV content..."
+node scripts/ai-generator.js \
+  --sector "$SECTOR" \
+  --job-file "$JOB_FILE" \
+  --name "$NAME" \
+  --email "$EMAIL" \
+  --output "temp-ai-cv"
+
+# Step 2: Generate optimized single-page PDF with CLI
+echo "Creating optimized PDF..."
+cv create \
+  --name "$NAME" \
+  --email "$EMAIL" \
+  --single-page \
+  --output "$NAME-optimized-cv.pdf"
+
+# Step 3: Generate cover letter
+echo "Generating cover letter..."
+node scripts/ai-generator.js \
+  --cover-letter \
+  --job-file "$JOB_FILE" \
+  --name "$NAME" \
+  --email "$EMAIL" \
+  --output "cover-letter"
+
+echo "Complete application package generated!"
+```
+
+#### Specialized Templates and Customization
+
+```bash
+# Generate CV with custom template modifications
+node scripts/ai-generator.js \
+  --sector federal \
+  --template-override "./custom-templates/usajobs-enhanced.md" \
+  --name "Government Candidate" \
+  --email "candidate@example.com"
+
+# Generate multiple format outputs
+node scripts/ai-generator.js \
+  --sector private \
+  --name "Multi Format" \
+  --email "multi@example.com" \
+  --formats "pdf,markdown,docx"
+
+# Generate with ATS optimization focus
+node scripts/ai-generator.js \
+  --sector private \
+  --ats-optimize \
+  --keywords-file "./target-keywords.txt" \
+  --name "ATS Optimized" \
+  --email "ats@example.com"
 ```
 
 ## CV Format Details
@@ -133,22 +185,13 @@ dzb-cv analyze <job-posting-url> \
 
 ## Profile Management
 
-### Import/Export
-```bash
-# Import existing CV
-dzb-cv profile import my-cv.md --validate
+Profile management is currently handled through direct file editing and the AI generator workflows. Future CLI releases will include dedicated profile management commands.
 
-# Export in different formats
-dzb-cv profile export --format pdf
-dzb-cv profile export --format markdown
-```
-
-### Validation
-```bash
-# Validate against different requirements
-dzb-cv profile validate my-cv.md --type federal
-dzb-cv profile validate my-cv.md --type strict
-```
+### Current Approach
+- Edit base data files directly in `src/data/`
+- Use AI generator for sector-specific profiles
+- Version control with Git for profile history
+- Manual validation through test generation
 
 ## Template Customization
 

@@ -104,33 +104,6 @@ cv create \
 |------|---------|
 | `0` | Success - CV created and PDF generated |
 | `1` | Error - Failed to create CV or generate PDF |
-
-### `cv optimize`
-
-Optimize a CV for a specific job by leveraging detailed analysis and custom scoring.
-
-#### Syntax
-
-```bash
-cv optimize <cv-file> <job-description> [options]
-```
-
-#### Options
-
-| Option | Alias | Description |
-|--------|--------|-------------|
-| `--output` | `-o` | Path for the optimized CV output |
-| `--format` | `-f` | Output format, e.g. `pdf`, `markdown` |
-| `--profile` | `-p` | Specific profile to optimize for |
-
-#### Examples
-
-```bash
-# Optimize a CV with detailed job alignment
-cv optimize john-doe.md job-details.txt --output optimized-cv.pdf --format pdf
-
-# Optimize using a specific profile
-cv optimize jane-smith.md job-ad.md --profile tech --output jane-tech-optimized.md --format markdown
 ```
 
 ## Error Handling
@@ -314,6 +287,96 @@ pnpm --version
 pnpm list --depth=0
 ```
 
+## AI-Powered CV Generation
+
+While the CLI provides basic CV creation functionality, the DZB-CV system includes powerful AI-powered CV generation capabilities for advanced use cases. These complement the CLI and provide sector-specific templates and job-tailored CV generation.
+
+### AI Generator Scripts
+
+The AI generator provides advanced CV creation workflows that go beyond the basic CLI functionality:
+
+#### Sector-Specific Generation
+
+```bash
+# Generate federal CV using AI templates
+node scripts/ai-generator.js --sector federal --name "John Doe" --email "john@example.com"
+
+# Generate private sector CV optimized for specific industry
+node scripts/ai-generator.js --sector private --industry tech --name "Jane Smith" --email "jane@company.com"
+
+# Generate state government CV
+node scripts/ai-generator.js --sector state --name "Alex Johnson" --email "alex@state.gov"
+```
+
+#### Job-Tailored CV Generation
+
+```bash
+# Generate CV tailored to specific job posting
+node scripts/ai-generator.js --job-url "https://example.com/job-posting" --name "Sarah Chen" --email "sarah@example.com"
+
+# Generate CV from local job description file
+node scripts/ai-generator.js --job-file "./job-description.txt" --name "Michael Brown" --email "michael@example.com"
+```
+
+### Simple Generation Scripts
+
+For quick CV generation with predefined templates:
+
+```bash
+# Healthcare sector CV
+node scripts/simple-cv-generator.js healthcare "Dawn Zurick" "dawn@example.com"
+
+# Technology sector CV
+node scripts/simple-cv-generator.js tech "John Developer" "john@techcompany.com"
+
+# Federal application CV
+node scripts/simple-cv-generator.js federal "Jane Government" "jane@agency.gov"
+```
+
+### Integration with CLI
+
+The AI generator and CLI can be used together for comprehensive CV management:
+
+1. **Generate base CV with AI**: Use AI generator for sector-specific content
+2. **Refine with CLI**: Use `cv create --single-page` for final PDF optimization
+3. **Batch processing**: Combine both tools in automated workflows
+
+#### Example Workflow
+
+```bash
+#!/bin/bash
+# Complete CV generation workflow
+
+# Step 1: Generate sector-specific CV content with AI
+node scripts/ai-generator.js --sector private --name "$NAME" --email "$EMAIL" --output temp-cv.md
+
+# Step 2: Convert to optimized PDF with CLI
+cv create --name "$NAME" --email "$EMAIL" --single-page --output "$NAME-optimized-cv.pdf"
+
+# Step 3: Clean up temporary files
+rm temp-cv.md
+```
+
+### AI Generator Features
+
+- **Sector-specific templates**: Federal, state, private, healthcare, technology
+- **Job posting analysis**: Automatic keyword extraction and CV optimization
+- **ATS optimization**: Built-in applicant tracking system compatibility
+- **Multiple output formats**: Markdown, PDF, and structured data
+- **Cover letter generation**: Complementary cover letter creation
+- **Batch processing**: Generate multiple CVs for different applications
+
+### When to Use AI Generator vs CLI
+
+| Use Case | Recommended Tool | Reason |
+|----------|------------------|--------|
+| Quick CV with basic info | CLI (`cv create`) | Simple, fast, direct PDF output |
+| Sector-specific CV | AI Generator | Advanced templates and formatting |
+| Job-tailored application | AI Generator | Keyword optimization and customization |
+| Single-page optimization | CLI with `--single-page` | Optimized PDF scaling |
+| Batch processing | Both (scripted workflow) | Leverage strengths of each tool |
+| Cover letter needed | AI Generator | Integrated cover letter generation |
+
 ## Future Commands
 
 The following commands are planned for future releases:
@@ -323,6 +386,8 @@ The following commands are planned for future releases:
 - `cv export` - Export CVs in different formats
 - `cv template` - Manage CV templates
 - `cv config` - Configure CLI settings
+- `cv analyze` - Integrate AI analysis into CLI
+- `cv optimize` - Direct CV optimization commands
 
 ## API Compatibility
 

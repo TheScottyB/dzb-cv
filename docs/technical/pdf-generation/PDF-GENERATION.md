@@ -184,24 +184,97 @@ await convertMarkdownToPdf(
   }
 );
 ```
-### Single-Page Generation
+### Single-Page Generation with Optimized Scaling
+
 ```typescript
+// Basic single-page generation
 await convertMarkdownToPdf(
   cvContent,
   'generated/cvs/personal/cv-single-page.pdf',
   {
     singlePage: true,
-    scale: 0.9,
-    lineHeight: 1.2,
-    minFontSize: 9,
+    scale: 0.85,           // Optimal scaling for content fit
+    lineHeight: 1.15,      // Improved line spacing
+    minFontSize: 10,       // Minimum readable font size
     margins: {
-      top: 0.5,
-      right: 0.5,
-      bottom: 0.5,
-      left: 0.5
+      top: 0.4,
+      right: 0.4,
+      bottom: 0.4,
+      left: 0.4
     }
   }
 );
+
+// Advanced single-page with optimal parameters
+await convertMarkdownToPdf(
+  cvContent,
+  'generated/cvs/personal/cv-optimized-single-page.pdf',
+  {
+    singlePage: true,
+    scale: 0.82,           // Fine-tuned for maximum content
+    lineHeight: 1.1,       // Compact but readable
+    minFontSize: 9.5,      // Balance readability and space
+    fontSizeAdjustment: -0.5, // Slightly smaller fonts
+    margins: {
+      top: 0.35,
+      right: 0.35,
+      bottom: 0.35,
+      left: 0.35
+    },
+    optimizeForATS: true,  // ATS-friendly formatting
+    compactSections: true  // Reduce section spacing
+  }
+);
+```
+
+### Single-Page Optimization Parameters
+
+Optimal parameter combinations for different content densities:
+
+#### Standard Content (2-3 pages → 1 page)
+```typescript
+const standardOptimization = {
+  scale: 0.85,
+  lineHeight: 1.15,
+  minFontSize: 10,
+  margins: { top: 0.4, right: 0.4, bottom: 0.4, left: 0.4 }
+};
+```
+
+#### Dense Content (3-4 pages → 1 page)
+```typescript
+const denseOptimization = {
+  scale: 0.82,
+  lineHeight: 1.1,
+  minFontSize: 9.5,
+  fontSizeAdjustment: -0.5,
+  margins: { top: 0.35, right: 0.35, bottom: 0.35, left: 0.35 },
+  compactSections: true
+};
+```
+
+#### Maximum Compression (4+ pages → 1 page)
+```typescript
+const maxCompression = {
+  scale: 0.78,
+  lineHeight: 1.05,
+  minFontSize: 9,
+  fontSizeAdjustment: -1,
+  margins: { top: 0.3, right: 0.3, bottom: 0.3, left: 0.3 },
+  compactSections: true,
+  reduceWhitespace: true
+};
+```
+
+#### CLI Integration Parameters
+The CLI `--single-page` flag uses optimized defaults:
+```typescript
+const cliDefaults = {
+  scale: 0.85,        // Good balance of readability and compression
+  lineHeight: 1.15,   // Maintains readability
+  minFontSize: 10,    // Professional minimum
+  margins: { top: 0.4, right: 0.4, bottom: 0.4, left: 0.4 }
+};
 ```
 
 ## Best Practices
@@ -213,7 +286,12 @@ await convertMarkdownToPdf(
    - Use CSS variables for consistency
    - Keep sector-specific styles separate
    - Maintain print-friendly formatting
-3. **Error Handling**
+3. **Single-Page Optimization**
+   - Test readability at different scale factors
+   - Maintain minimum font sizes for accessibility
+   - Balance content compression with visual clarity
+   - Use appropriate margins for print compatibility
+4. **Error Handling**
    - Validate input content
    - Handle missing styles gracefully
    - Provide meaningful error messages
