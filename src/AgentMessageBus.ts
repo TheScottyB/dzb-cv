@@ -7,6 +7,15 @@
  * TODO: Wildcard and pattern subscriptions.
  */
 
+// Debug logging configuration
+const DEBUG = process.env.DEBUG === 'true' || process.env.VERBOSE === 'true';
+const log = {
+  debug: (...args: any[]) => DEBUG && console.log('[MessageBus DEBUG]', ...args),
+  info: (...args: any[]) => console.log('[MessageBus INFO]', ...args),
+  warn: (...args: any[]) => console.warn('[MessageBus WARN]', ...args),
+  error: (...args: any[]) => console.error('[MessageBus ERROR]', ...args)
+};
+
 type Handler = (payload: any) => void;
 type UnsubscribeFn = () => void;
 
@@ -25,8 +34,12 @@ export class AgentMessageBus {
     const map = isDirect ? this.directHandlers : this.topicHandlers;
     if (!map.has(topic)) map.set(topic, new Set());
     map.get(topic)!.add(handler);
+    
+    log.debug(`Subscribed to ${isDirect ? 'direct' : 'topic'}: ${topic} (${map.get(topic)!.size} handlers)`);
+    
     return () => {
       map.get(topic)!.delete(handler);
+      log.debug(`Unsubscribed from ${isDirect ? 'direct' : 'topic'}: ${topic} (${map.get(topic)!.size} handlers remaining)`);
       // Clean up empty sets for memory.
       if (map.get(topic)!.size === 0) map.delete(topic);
     };
@@ -39,8 +52,18 @@ export class AgentMessageBus {
    */
   publish(topic: string, payload: any): void {
     const handlers = this.topicHandlers.get(topic);
+    log.debug(`Publishing to topic: ${topic} (${handlers?.size || 0} handlers)`);
+    
     if (handlers) {
-      for (const h of handlers) h(payload);
+      for (const h of handlers) {
+        try {
+          h(payload);
+        } catch (error) {
+          log.error(`Error in handler for topic ${topic}:`, error);
+        }
+      }
+    } else {
+      log.debug(`No handlers found for topic: ${topic}`);
     }
     // TODO: Wildcard/broadcast to e.g. "*" or "task:*"
   }
@@ -52,8 +75,18 @@ export class AgentMessageBus {
    */
   publishDirect(agentName: string, payload: any): void {
     const handlers = this.directHandlers.get('@' + agentName);
+    log.debug(`Publishing direct to agent: ${agentName} (${handlers?.size || 0} handlers)`);
+    
     if (handlers) {
-      for (const h of handlers) h(payload);
+      for (const h of handlers) {
+        try {
+          h(payload);
+        } catch (error) {
+          log.error(`Error in direct handler for agent ${agentName}:`, error);
+        }
+      }
+    } else {
+      log.debug(`No handlers found for agent: ${agentName}`);
     }
   }
 

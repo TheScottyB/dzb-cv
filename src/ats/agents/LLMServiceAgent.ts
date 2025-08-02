@@ -1,6 +1,15 @@
 import { AgentMessageBus } from '../../AgentMessageBus';
 import { distillContentTool, optimizeContentTool } from './tools/llm-tools';
 
+// Debug logging configuration
+const DEBUG = process.env.DEBUG === 'true' || process.env.VERBOSE === 'true';
+const log = {
+  debug: (...args: any[]) => DEBUG && console.log('[LLM-Agent DEBUG]', ...args),
+  info: (...args: any[]) => console.log('[LLM-Agent INFO]', ...args),
+  warn: (...args: any[]) => console.warn('[LLM-Agent WARN]', ...args),
+  error: (...args: any[]) => console.error('[LLM-Agent ERROR]', ...args)
+};
+
 // Local CVData interface to avoid dependency issues
 interface CVData {
   personalInfo: {

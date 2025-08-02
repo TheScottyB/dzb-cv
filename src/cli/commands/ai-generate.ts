@@ -14,7 +14,10 @@ export function createAICVCommand(program: Command): void {
       console.log(`Creating AI-optimized CV for ${options.name}`);
 
       // Resolve output path properly
-      const outputPath = options.output || `${options.name.toLowerCase().replace(/\s+/g, '-')}-cv.pdf`;
+      let outputPath = options.output;
+      if (!outputPath) {
+        outputPath = `${options.name.toLowerCase().replace(/\s+/g, '-')}-cv.pdf`;
+      }
       console.log(`Output will be saved to: ${outputPath}`);
       
       const result = await generateAICV({

@@ -10,6 +10,15 @@ import { DefaultPDFGenerator } from '../../core/services/pdf/pdf-generator';
 import type { CVData } from '../../shared/types/cv-types';
 import { verifyPDF, printVerificationResults } from '../utils/pdf-verifier';
 
+// Debug logging configuration
+const DEBUG = process.env.DEBUG === 'true' || process.env.VERBOSE === 'true';
+const log = {
+  debug: (...args: any[]) => DEBUG && console.log('[AI-Gen DEBUG]', ...args),
+  info: (...args: any[]) => console.log('[AI-Gen INFO]', ...args),
+  warn: (...args: any[]) => console.warn('[AI-Gen WARN]', ...args),
+  error: (...args: any[]) => console.error('[AI-Gen ERROR]', ...args)
+};
+
 interface AIGenerateOptions {
   name: string;
   email: string;
@@ -37,16 +46,25 @@ export async function generateAICV(options: AIGenerateOptions): Promise<AIGenera
   const startTime = Date.now();
   const requestId = `ai-gen-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   
+  log.debug('Starting generateAICV with options:', JSON.stringify(options, null, 2));
+  log.debug('Generated requestId:', requestId);
   
   try {
     // Initialize message bus and LLM agent
+    log.debug('Initializing AgentMessageBus and LLMServiceAgent...');
     const messageBus = new AgentMessageBus();
     const llmAgent = new LLMServiceAgent({ messageBus, agentName: 'AIGenerator' });
     
-    console.log('🤖 Initializing AI-powered CV generation...');
+    log.info('🤖 Initializing AI-powered CV generation...');
     
     // Create base CV data from input
+    log.debug('Creating base CV data from options...');
     const cvData = await createBaseCV(options);
+    log.debug('Base CV data created:', {
+      hasPersonalInfo: !!cvData.personalInfo,
+      experienceCount: cvData.experience?.length || 0,
+      skillsCount: cvData.skills?.length || 0
+    });
     
     // Create promise to wait for LLM processing
     const processingPromise = new Promise<AIGenerateResult>((resolve, reject) => {
@@ -80,7 +98,8 @@ export async function generateAICV(options: AIGenerateOptions): Promise<AIGenera
     });
     
     // Trigger AI processing
-    console.log('🧠 Starting LLM content optimization...');
+    log.info('🧠 Starting LLM content optimization...');
+    log.debug('Publishing cv:process:single-page with requestId:', requestId, 'and style:', options.style);
     messageBus.publish('cv:process:single-page', {
       requestId,
       cvData,
