@@ -8,6 +8,7 @@ import { AgentMessageBus } from '../../AgentMessageBus';
 import LLMServiceAgent from '../../ats/agents/LLMServiceAgent';
 import { DefaultPDFGenerator } from '../../core/services/pdf/pdf-generator';
 import type { CVData } from '../../shared/types/cv-types';
+import { verifyPDF, printVerificationResults } from '../utils/pdf-verifier';
 
 interface AIGenerateOptions {
   name: string;
@@ -143,12 +144,14 @@ async function createBaseCV(options: AIGenerateOptions): Promise<CVData> {
     // Attempt to load from standard location
     const baseDataPath = path.join(process.cwd(), 'data', 'base-info.json');
     const baseData = await fs.readFile(baseDataPath, 'utf-8');
-    baseCV = JSON.parse(baseData);
+    const rawData = JSON.parse(baseData);
+    
+    // Transform the complex base-info.json structure to PDF generator format
+    baseCV = transformBaseInfoToCVData(rawData);
     
     // Update personal info with provided details
     if (baseCV.personalInfo?.name) {
       baseCV.personalInfo.name.full = options.name;
-      // Keep existing preferred name if available
     }
     if (baseCV.personalInfo?.contact) {
       baseCV.personalInfo.contact.email = options.email;
@@ -220,6 +223,87 @@ async function createBaseCV(options: AIGenerateOptions): Promise<CVData> {
 }
 
 /**
+ * Transform the complex base-info.json structure to the format expected by PDF generator
+ */
+function transformBaseInfoToCVData(rawData: any): CVData {
+  // Extract work experience from nested structure
+  const experience: any[] = [];
+  
+  if (rawData.workExperience) {
+    // Combine all work experience categories
+    const categories = ['healthcare', 'realEstate', 'foodIndustry'];
+    categories.forEach(category => {
+      if (rawData.workExperience[category] && Array.isArray(rawData.workExperience[category])) {
+        rawData.workExperience[category].forEach((job: any) => {
+          experience.push({
+            title: job.position || job.title || 'Position',
+            company: job.employer || job.company || 'Company',
+            startDate: job.period ? job.period.split(' - ')[0] : (job.startDate || 'Unknown'),
+            endDate: job.period ? (job.period.includes('Present') ? 'Present' : job.period.split(' - ')[1]) : (job.endDate || 'Present'),
+            responsibilities: job.duties || job.responsibilities || []
+          });
+        });
+      }
+    });
+  }
+  
+  // Extract skills from nested structure
+  const skills: string[] = [];
+  if (rawData.skills && typeof rawData.skills === 'object') {
+    const skillCategories = ['managementAndLeadership', 'realEstateOperations', 'healthcareAdministration', 'technical', 'leadership'];
+    skillCategories.forEach(category => {
+      if (rawData.skills[category] && Array.isArray(rawData.skills[category])) {
+        skills.push(...rawData.skills[category]);
+      }
+    });
+  } else if (Array.isArray(rawData.skills)) {
+    skills.push(...rawData.skills);
+  }
+  
+  // Extract certifications
+  const certifications: string[] = [];
+  if (rawData.skills?.certifications && Array.isArray(rawData.skills.certifications)) {
+    certifications.push(...rawData.skills.certifications);
+  }
+  if (rawData.skills?.realEstateCertifications && Array.isArray(rawData.skills.realEstateCertifications)) {
+    certifications.push(...rawData.skills.realEstateCertifications);
+  }
+  
+  // Extract education
+  const education: any[] = [];
+  if (rawData.education && Array.isArray(rawData.education)) {
+    rawData.education.forEach((edu: any) => {
+      education.push({
+        degree: edu.certification || edu.degree || 'Certification',
+        institution: edu.institution || 'Institution',
+        year: edu.year || edu.graduationDate || edu.endDate || 'N/A'
+      });
+    });
+  }
+  
+  return {
+    personalInfo: {
+      name: {
+        first: rawData.personalInfo?.name?.preferred?.split(' ')[0] || 'Unknown',
+        last: rawData.personalInfo?.name?.full?.split(' ').slice(1).join(' ') || 'Unknown',
+        full: rawData.personalInfo?.name?.full || 'Unknown Name'
+      },
+      contact: {
+        email: rawData.personalInfo?.contact?.email || 'email@example.com',
+        phone: rawData.personalInfo?.contact?.phone || 'Phone not available',
+        address: rawData.personalInfo?.contact?.address || 'Address not available'
+      },
+      title: 'Professional'
+    },
+    professionalSummary: rawData.professionalSummary || 'Experienced professional with a strong background in delivering results.',
+    experience: experience,
+    education: education,
+    skills: skills,
+    certifications: certifications
+  };
+}
+
+/**
  * Generate PDF using optimized content from LLM
  */
 async function generateOptimizedPDF(
@@ -263,6 +347,15 @@ async function generateOptimizedPDF(
   // Save PDF
   await fs.writeFile(options.output, pdfBuffer);
   console.log(`💾 PDF saved: ${path.resolve(options.output)} (${pdfBuffer.length} bytes)`);
+  
+  // Verify the generated PDF
+  console.log('🔍 Verifying generated PDF...');
+  const verificationResult = await verifyPDF(options.output);
+  printVerificationResults(options.output, verificationResult);
+  
+  if (!verificationResult.isValid || verificationResult.issues.length > 0) {
+    console.warn('⚠️  PDF verification found issues - the generated CV may not contain proper content');
+  }
   
   return path.resolve(options.output);
 }

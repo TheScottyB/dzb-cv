@@ -13,6 +13,7 @@ import { AnalyzeJobCommand } from './commands/analyze-job';
 import { ManageProfileCommand } from './commands/manage-profile';
 import { createAICVCommand } from './commands/ai-generate';
 import { createConfigCommand } from './commands/config';
+import { createVerifyPDFCommand } from './commands/verify-pdf';
 import configService from '../core/services/config/ConfigurationService';
 import dotenv from 'dotenv';
 
@@ -62,6 +63,9 @@ try {
   
   // Register configuration command
   createConfigCommand(program);
+  
+  // Register PDF verification command
+  createVerifyPDFCommand(program);
 
   // Add a test command for verifying the CLI is working
   program
