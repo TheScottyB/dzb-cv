@@ -26,7 +26,13 @@
     "setup:quick": "pnpm install && pnpm run build && echo '✅ Quick setup complete! Use: node packages/cli/dist/index.js --help'",
     "link-cli": "cd packages/cli && npm link && cd ../.. && echo '✅ CLI linked globally! You can now use: cv --help'",
     "unlink-cli": "cd packages/cli && npm unlink && cd ../.. && echo '✅ CLI unlinked globally'",
-    "cv": "node packages/cli/dist/index.js"
+    "cv": "node packages/cli/dist/index.js",
+    "ai:evaluate": "node scripts/evaluate-cv-quality.js",
+    "ai:test": "node scripts/test-ai-distillation.js",
+    "ai:ab-test": "node scripts/simple-ab-test.js",
+    "ai:quality-check": "node scripts/evaluate-cv-quality.js cv-versions/dawn-ekg-technician-cv.md --keywords 'healthcare,EKG,technician,patient care' --export quality-check.json",
+    "ai:full-test": "npm run ai:quality-check && node scripts/test-ai-distillation.js cv-versions/dawn-ekg-technician-cv.md",
+    "ai:benchmark": "node scripts/simple-ab-test.js cv-versions/dawn-ekg-technician-cv.md --keywords 'healthcare,EKG,technician,patient care' --export benchmark-results.json"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
