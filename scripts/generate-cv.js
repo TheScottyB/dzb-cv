@@ -337,18 +337,20 @@ async function generateCV(options) {
   const timestamp = new Date().toISOString().slice(0, 10);
   const defaultOutput = `output/${options.profile}-${options.focus}-cv-${timestamp}.md`;
   const outputPath = options.output || defaultOutput;
+  const fullOutputPath = path.resolve(rootDir, outputPath);
   
   // Ensure output directory exists
-  const outputDir = path.dirname(outputPath);
+  const outputDir = path.dirname(fullOutputPath);
   if (!fs.existsSync(outputDir)) {
+    console.log(`📁 Creating output directory: ${outputDir}`);
     fs.mkdirSync(outputDir, { recursive: true });
   }
   
   // Write CV file
-  fs.writeFileSync(outputPath, cvContent, 'utf8');
+  fs.writeFileSync(fullOutputPath, cvContent, 'utf8');
   
   console.log(`✅ CV generated successfully!`);
-  console.log(`📄 Output: ${outputPath}`);
+  console.log(`📄 Output: ${fullOutputPath}`);
   console.log(`📊 Template: ${options.template}`);
   console.log(`🎯 Focus: ${options.focus}`);
   
@@ -356,7 +358,7 @@ async function generateCV(options) {
   try {
     const { execSync } = await import('child_process');
     console.log(`\n🔍 Running quality evaluation...`);
-    const qualityResult = execSync(`node scripts/evaluate-cv-quality.js "${outputPath}"`, { 
+    const qualityResult = execSync(`node scripts/evaluate-cv-quality.js "${fullOutputPath}"`, { 
       encoding: 'utf8',
       cwd: rootDir 
     });
@@ -367,7 +369,7 @@ async function generateCV(options) {
   
   return {
     success: true,
-    outputPath: path.resolve(outputPath),
+    outputPath: fullOutputPath,
     profile: options.profile,
     template: options.template,
     focus: options.focus
