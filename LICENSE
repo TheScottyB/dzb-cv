@@ -1,0 +1,69 @@
+MIT License
+
+Copyright (c) 2025 Dawn Zurick-Beilfuss and Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Third-Party Licenses
+
+This software incorporates third-party components with their own licenses:
+
+### AI Model Integration
+- OpenAI GPT-4o: Subject to OpenAI's Terms of Service and Usage Policies
+- Anthropic Claude: Subject to Anthropic's Terms of Service
+
+### Dependencies
+- Node.js ecosystem packages: Various open source licenses (see package.json files)
+- Chrome/Chromium: BSD-style license for PDF generation
+
+### Fonts and Assets
+- System fonts used in PDF generation retain their respective licenses
+- Template designs are released under this MIT license
+
+## Usage Guidelines
+
+### Personal and CV Data
+- This software is designed to handle personal information (CV/resume data)
+- Users are responsible for their own data privacy and security
+- No personal data is transmitted to external services without explicit user action
+- Generated PDFs and documents contain user-provided information only
+
+### AI Services
+- AI features require API keys from supported providers (OpenAI, Anthropic)
+- Users are responsible for their own API usage and associated costs
+- AI-generated content should be reviewed before professional use
+- Rate limiting and usage policies of AI providers apply
+
+### Commercial Use
+- Commercial use is permitted under this MIT license
+- Attribution to original authors is appreciated but not required
+- No warranty is provided for commercial applications
+
+## Data Privacy Notice
+
+This software:
+- Processes CV/resume data locally by default
+- Only sends data to AI services when explicitly requested by user
+- Does not collect telemetry or analytics data
+- Stores data locally in user-controlled files
+- Users retain full ownership of their CV data and generated content
+
+For questions about licensing or usage, please contact the maintainers.

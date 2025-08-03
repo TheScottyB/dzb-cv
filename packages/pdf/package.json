@@ -1,7 +1,7 @@
 {
   "name": "@dzb-cv/pdf",
   "version": "1.1.0",
-  "description": "PDF generation functionality for DZB CV Generator",
+  "description": "Chrome-based PDF generation with multiple interfaces for DZB CV Generator",
   "private": true,
   "type": "module",
   "license": "MIT",
@@ -11,6 +11,26 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./cli": {
+      "types": "./dist/interfaces/cli-interface.d.ts",
+      "import": "./dist/interfaces/cli-interface.js"
+    },
+    "./agent": {
+      "types": "./dist/interfaces/agent-interface.d.ts",
+      "import": "./dist/interfaces/agent-interface.js"
+    },
+    "./script": {
+      "types": "./dist/interfaces/script-interface.d.ts",
+      "import": "./dist/interfaces/script-interface.js"
+    },
+    "./pipeline": {
+      "types": "./dist/interfaces/pipeline-interface.d.ts",
+      "import": "./dist/interfaces/pipeline-interface.js"
+    },
+    "./core": {
+      "types": "./dist/core/chrome-engine.d.ts",
+      "import": "./dist/core/chrome-engine.js"
     },
     "./generators": {
       "types": "./dist/generators/index.d.ts",
@@ -28,9 +48,7 @@
   },
   "dependencies": {
     "@dzb-cv/types": "workspace:*",
-    "markdown-it": "^14.1.0",
-    "pdf-lib": "^1.17.1",
-    "puppeteer": "^24.15.0"
+    "markdown-it": "^14.1.0"
   },
   "devDependencies": {
     "@dzb-cv/config": "workspace:*",
@@ -45,8 +63,11 @@
     "cv",
     "resume",
     "generator",
+    "chrome",
     "html-to-pdf",
-    "markdown-to-pdf"
+    "cli-tools",
+    "ai-agents",
+    "automation"
   ],
   "publishConfig": {
     "access": "restricted"

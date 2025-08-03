@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-08-02T20:31:39.525Z",
+  "metrics": {
+    "relevanceScore": 36,
+    "informationDensity": 100,
+    "readabilityScore": 85,
+    "lengthCompliance": 100,
+    "orphanedHeaders": 0,
+    "overallScore": 71
+  },
+  "passed": true,
+  "recommendations": [
+    "Improve keyword relevance and section completeness"
+  ]
+}

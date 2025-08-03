@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-08-02T20:00:36.129Z",
+  "metrics": {
+    "relevanceScore": 91,
+    "informationDensity": 129,
+    "readabilityScore": 35,
+    "lengthCompliance": 44,
+    "orphanedHeaders": 3,
+    "overallScore": 26
+  },
+  "passed": false,
+  "recommendations": [
+    "Enhance readability with better sentence structure and bullet points",
+    "Reduce content length to meet single-page constraints",
+    "Remove orphaned headers or add meaningful content"
+  ]
+}

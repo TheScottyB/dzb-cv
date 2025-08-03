@@ -1,65 +1,124 @@
-# Node dependencies
+# Dependencies
 node_modules/
 .pnpm-store/
+*.pnp
+.pnp.js
 
-# Build output
+# Build outputs
 dist/
 coverage/
 .turbo/
-
-# Python virtual environment
-.venv/
-
-# IDE/editor
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# macOS
-.DS_Store
-**/.DS_Store
-
-# Environment files
-.env
-.env.*
-
-# Logs
-*.log
-npm-debug.log*
-pnpm-debug.log*
-
-# TypeScript build info
 *.tsbuildinfo
-
-# Generated assets (prevent clutter in root)
-generated/
-*.pdf
-*.png
-*.html
-
-# Test outputs
-test-output/
-
-# Build artifacts from packages
 packages/*/dist/
 packages/*/.turbo/
 
-# Turbo cache and logs
+# Runtime and logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
 .turbo/
 *.turbo.log
 turbo-*.log
 
-# Temporary files and development artifacts
+# Environment variables (CRITICAL: Never commit API keys)
+.env
+.env.*
+!.env.example
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Generated content (examples preserved in examples/)
+generated/
+job-postings/
+archive/
 temp-cleanup/
-scripts/*.tmp
+backup*/
+*-backup*/
+
+# Test artifacts and temporary files
+test-output/
+test-results/
 debug-*
-test-*
-generate-*
+temp-*
 
-# Backup archives
-archive/*.tar.gz
+# PDF outputs (examples preserved in examples/)
+*.pdf
+!examples/**/*.pdf
 
-# Misc
+# HTML/image outputs (examples preserved in examples/)
+*.html
+!examples/**/*.html
+*.png
+!examples/**/*.png
+
+# Development artifacts
+scripts/*.tmp
 *.local
 output/
+.cache/
+
+# Python (for scrapers)
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.Python
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints
+
+# MacOS specific
+*.DS_Store
+**/.DS_Store
+
+# Windows specific
+desktop.ini
+$RECYCLE.BIN/
+
+# Linux specific
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# AI/ML model cache (if any)
+.cache/
+models/
+*.model
+
+# Security: Never commit these patterns
+**/secret*
+**/password*
+**/key*
+**/token*
+**/credential*
+**/.secret*
+**/.key*
+
+# But allow specific files that are safe
+!packages/ats/src/scoring/index.ts
+!packages/ats/src/analyzer/analyzer-utils.ts

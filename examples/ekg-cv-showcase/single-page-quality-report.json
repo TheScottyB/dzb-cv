@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-08-02T20:33:42.843Z",
+  "metrics": {
+    "relevanceScore": 100,
+    "informationDensity": 99,
+    "readabilityScore": 20,
+    "lengthCompliance": 100,
+    "orphanedHeaders": 0,
+    "overallScore": 74
+  },
+  "passed": true,
+  "recommendations": [
+    "Enhance readability with better sentence structure and bullet points"
+  ]
+}
