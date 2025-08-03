@@ -57,7 +57,25 @@ try {
     console.log('💡 Try: git fetch upstream && git merge upstream/main');
   }
 
-  // Step 4: Generate Dawn's CV
+  // Step 4: Install Chrome if in Codespaces
+  if (process.env.CODESPACES === 'true') {
+    console.log('\n🌐 Detected GitHub Codespaces - checking Chrome installation...');
+    try {
+      execSync('which google-chrome || which chromium-browser', { stdio: 'pipe' });
+      console.log('✅ Chrome/Chromium already installed');
+    } catch (error) {
+      console.log('📦 Installing Chrome for PDF generation...');
+      try {
+        execSync('./install-chrome-codespaces.sh', { stdio: 'inherit' });
+        console.log('✅ Chrome installation completed');
+      } catch (installError) {
+        console.log('⚠️  Chrome installation failed (continuing anyway)');
+        console.log('💡 You can install manually: pnpm run install:chrome');
+      }
+    }
+  }
+
+  // Step 5: Generate Dawn's CV
   console.log('\n🏥 Generating Dawn\'s EKG CV...');
   try {
     execSync('node scripts/generate-cv.js --profile dawn --template healthcare --focus ekg', { 
@@ -73,25 +91,27 @@ try {
     process.exit(1);
   }
 
-  // Step 5: Summary
+  // Step 6: Summary
   console.log('\n🎉 Quick Fix Complete!');
   console.log('\n📋 What was fixed:');
   console.log('✅ Output directory created');
   console.log('✅ Git upstream configured');
   console.log('✅ Fork synced (if possible)');
+  console.log('✅ Chrome/Chromium checked (Codespaces)');
   console.log('✅ EKG CV generated');
   
   console.log('\n📝 Next steps:');
   console.log('1. Check your CV in the output/ directory');
   console.log('2. Edit src/data/dawn-base-info.json with your real contact info');
-  console.log('3. Regenerate CV: pnpm run generate:ekg-cv');
+  console.log('3. Generate PDF: node scripts/generate-pdf-simple.js output/dawn-ekg-cv-*.md');
   console.log('4. Check quality: pnpm run check:quality');
 
   console.log('\n🎯 Available npm scripts now:');
-  console.log('• pnpm run generate:ekg-cv');
-  console.log('• pnpm run generate:latest');  
-  console.log('• pnpm run check:quality');
-  console.log('• pnpm run update:profile');
+  console.log('• pnpm run generate:ekg-cv   (Generate CV)');
+  console.log('• pnpm run generate:pdf      (Generate PDF)');
+  console.log('• pnpm run install:chrome    (Install Chrome for PDF)');
+  console.log('• pnpm run check:quality     (Quality evaluation)');
+  console.log('• pnpm run update:profile    (Profile instructions)');
 
 } catch (error) {
   console.error('\n❌ Quick fix failed:', error.message);

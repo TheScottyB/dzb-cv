@@ -38,6 +38,7 @@
     "update:profile": "echo '📝 Edit src/data/dawn-base-info.json to update your profile information'",
     "check:quality": "node scripts/evaluate-cv-quality.js output/dawn-*-cv-*.md",
     "generate:pdf": "node scripts/generate-pdf-simple.js output/dawn-*-cv-*.md",
+    "install:chrome": "./install-chrome-codespaces.sh",
     "dawn:setup": "node scripts/customize-fork.js",
     "deploy": "echo '🚀 CV generated and ready! Check the output/ directory for your files'",
     "ai:benchmark": "node scripts/simple-ab-test.js cv-versions/dawn-ekg-technician-cv.md --keywords 'healthcare,EKG,technician,patient care' --export benchmark-results.json"
