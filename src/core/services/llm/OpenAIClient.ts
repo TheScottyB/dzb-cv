@@ -1,6 +1,8 @@
 import OpenAI from 'openai';
-// Local CVData type definition for OpenAI integration
-interface CVData {
+import type { CVData } from '@dzb-cv/types';
+
+// Legacy interface - now using consolidated types
+/*interface CVData {
   personalInfo: {
     name: {
       first: string;

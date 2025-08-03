@@ -1,73 +1,6 @@
 declare module '@dzb-cv/types' {
-  export interface PersonalInfo {
-    name: {
-      first: string;
-      middle?: string;
-      last: string;
-      full: string;
-    };
-    contact: {
-      email: string;
-      phone: string;
-      address?: string;
-      linkedin?: string;
-      github?: string;
-      website?: string;
-    };
-    professionalTitle?: string;
-    summary?: string;
-  }
-
-  export interface Experience {
-    employer: string;
-    position: string;
-    startDate: string;
-    endDate?: string;
-    location?: string;
-    responsibilities: string[];
-    achievements?: string[];
-    employmentType: 'full-time' | 'part-time' | 'contract' | 'internship';
-  }
-
-  export interface Education {
-    institution: string;
-    degree: string;
-    field: string;
-    graduationDate: string;
-    gpa?: string;
-    honors?: string[];
-  }
-
-  export interface Skill {
-    name: string;
-    level?: 'beginner' | 'intermediate' | 'advanced' | 'expert';
-    category?: string;
-  }
-
-  export interface Certification {
-    name: string;
-    issuer: string;
-    date: string;
-    expiryDate?: string;
-  }
-
-  export interface CVData {
-    personalInfo: PersonalInfo;
-    experience: Experience[];
-    education: Education[];
-    skills: Skill[];
-    certifications?: Certification[];
-    languages?: string[];
-    interests?: string[];
-    metadata?: Record<string, unknown>;
-  }
-
-  export interface Template {
-    id: string;
-    name: string;
-    description: string;
-    generateMarkdown(data: CVData, options?: any): string;
-  }
+  // Re-export types from consolidated base package
+  export * from '../packages/types/src/cv/base';
 }
 
 // types/global.d.ts
@@ -189,65 +122,8 @@ interface CVTemplate {
   generateMarkdown(data: CVData, options?: any): string;
 }
 
-// Basic types for CV data
-interface CVData {
-  personalInfo: {
-    name: {
-      full: string;
-      first?: string;
-      last?: string;
-    };
-    contact: {
-      email: string;
-      phone: string;
-      address?: string;
-      linkedin?: string;
-      website?: string;
-    };
-    title?: string;
-    citizenship?: string;
-    summary?: string;
-  };
-  experience: ExperienceEntry[];
-  education: EducationEntry[];
-  publications?: any[];
-  // Add other necessary fields
-}
-
-interface ExperienceEntry {
-  title: string;
-  company: string;
-  position?: string;
-  employer?: string;
-  employmentType?: string;
-  employment_type?: string;
-  startDate: string;
-  endDate?: string;
-  responsibilities: string[];
-  achievements?: string[];
-  location?: string;
-  grade_level?: string;
-  gradeLevel?: string;
-  salary?: string;
-  supervisor?: string;
-  mayContact?: boolean;
-  careerProgression?: string[];
-  period?: string;
-}
-
-interface EducationEntry {
-  degree: string;
-  institution: string;
-  year: string;
-  location?: string;
-  field?: string;
-  status?: string;
-  notes?: string;
-  completionDate?: string;
-  gpa?: string;
-  honors?: string[];
-  courses?: string[];
-}
+// Legacy global interfaces - use @dzb-cv/types instead
+// These are kept for backward compatibility but will be deprecated
 
 // Fix for ProfileChange
 interface ProfileChange {

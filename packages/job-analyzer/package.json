@@ -1,0 +1,33 @@
+{
+  "name": "@dzb-cv/job-analyzer",
+  "version": "1.0.0",
+  "description": "Modular job posting analyzer and content extractor",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@dzb-cv/errors": "workspace:*",
+    "jsdom": "^24.0.0",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/jsdom": "^21.1.6",
+    "@types/node-fetch": "^2.6.11",
+    "typescript": "^5.4.5"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}

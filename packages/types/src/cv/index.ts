@@ -1,3 +1,2 @@
-export type * from './base.js';
-export type * from './academic.js';
-export type * from './extended.js';
+// Export only from base - comprehensive types
+export * from './base.js';

@@ -1,40 +1,20 @@
 import { AgentMessageBus } from '../../AgentMessageBus';
 import { distillContentTool, optimizeContentTool } from './tools/llm-tools';
 
-// Debug logging configuration
-const DEBUG = process.env.DEBUG === 'true' || process.env.VERBOSE === 'true';
+// Import centralized configuration
+import { getAppConfig } from '@dzb-cv/configuration';
+
+// Debug logging configuration using centralized config
+const appConfig = getAppConfig();
 const log = {
-  debug: (...args: any[]) => DEBUG && console.log('[LLM-Agent DEBUG]', ...args),
+  debug: (...args: any[]) => appConfig.debug && console.log('[LLM-Agent DEBUG]', ...args),
   info: (...args: any[]) => console.log('[LLM-Agent INFO]', ...args),
   warn: (...args: any[]) => console.warn('[LLM-Agent WARN]', ...args),
   error: (...args: any[]) => console.error('[LLM-Agent ERROR]', ...args)
 };
 
-// Local CVData interface to avoid dependency issues
-interface CVData {
-  personalInfo: {
-    name: { full: string };
-    contact: {
-      email: string;
-      phone?: string;
-    };
-  };
-  experience: Array<{
-    position: string;
-    company: string;
-    startDate: string;
-    endDate?: string;
-    responsibilities?: string[];
-    description?: string;
-  }>;
-  education: Array<{
-    degree: string;
-    institution: string;
-    graduationDate?: string;
-    endDate?: string;
-  }>;
-  skills: Array<{ name: string; level?: string } | string>;
-}
+// Import consolidated CV types
+import type { CVData } from '@dzb-cv/types';
 
 interface LLMServiceAgentOptions {
   messageBus: AgentMessageBus;
