@@ -13,6 +13,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { adaptProfile } from './profile-adapter.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -107,6 +108,22 @@ Templates Available:
 
 // Load Dawn's profile data
 function loadProfile(profileName) {
+  // Check for Dawn's real profile data first
+  if (profileName === 'dawn') {
+    const realProfilePath = path.join(rootDir, 'base-info.json');
+    if (fs.existsSync(realProfilePath)) {
+      console.log(`📋 Loading Dawn's real profile data from base-info.json`);
+      try {
+        const rawProfileData = JSON.parse(fs.readFileSync(realProfilePath, 'utf8'));
+        const profileData = adaptProfile(rawProfileData);
+        console.log(`✅ Loaded and adapted Dawn's real profile data`);
+        return profileData;
+      } catch (error) {
+        console.warn(`⚠️  Error loading real profile, falling back to default: ${error.message}`);
+      }
+    }
+  }
+  
   const profilePath = path.join(rootDir, 'src/data', `${profileName}-base-info.json`);
   
   if (!fs.existsSync(profilePath)) {
