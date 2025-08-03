@@ -32,6 +32,13 @@
     "ai:ab-test": "node scripts/simple-ab-test.js",
     "ai:quality-check": "node scripts/evaluate-cv-quality.js cv-versions/dawn-ekg-technician-cv.md --keywords 'healthcare,EKG,technician,patient care' --export quality-check.json",
     "ai:full-test": "npm run ai:quality-check && node scripts/test-ai-distillation.js cv-versions/dawn-ekg-technician-cv.md",
+    "generate:ekg-cv": "node scripts/generate-cv.js --profile dawn --template healthcare --focus ekg",
+    "generate:cv": "node scripts/generate-cv.js --profile dawn",
+    "generate:latest": "node scripts/generate-cv.js --profile dawn --template healthcare --focus ekg",
+    "update:profile": "echo '📝 Edit src/data/dawn-base-info.json to update your profile information'",
+    "check:quality": "node scripts/evaluate-cv-quality.js output/dawn-*-cv-*.md",
+    "dawn:setup": "node scripts/customize-fork.js",
+    "deploy": "echo '🚀 CV generated and ready! Check the output/ directory for your files'",
     "ai:benchmark": "node scripts/simple-ab-test.js cv-versions/dawn-ekg-technician-cv.md --keywords 'healthcare,EKG,technician,patient care' --export benchmark-results.json"
   },
   "devDependencies": {
