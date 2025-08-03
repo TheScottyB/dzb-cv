@@ -226,7 +226,7 @@ export class AgentPDFInterface {
               return await this.generate({
                 cvData,
                 filename,
-                quality: params.quality
+                quality: params.quality ?? 'standard'
               });
             })
           );

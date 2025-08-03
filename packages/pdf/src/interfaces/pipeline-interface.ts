@@ -115,7 +115,7 @@ export class PipelinePDFInterface extends EventEmitter {
         
         if (result.status === 'fulfilled' && result.value.success) {
           results.push({
-            taskId: task.id,
+            taskId: task?.id || 'unknown',
             success: true,
             outputPath: result.value.outputPath || '',
             executionTime: result.value.executionTime || 0
@@ -127,7 +127,7 @@ export class PipelinePDFInterface extends EventEmitter {
             : result.value.error;
             
           results.push({
-            taskId: task.id,
+            taskId: task?.id || 'unknown',
             success: false,
             error: String(error)
           });

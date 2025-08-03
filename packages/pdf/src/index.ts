@@ -14,6 +14,17 @@ export {
   type PipelineResult 
 } from './interfaces/pipeline-interface.js';
 
+// Import for local use
+import { ChromeDetector } from './core/chrome-detector.js';
+import { CLIPDFInterface, type CLIPDFOptions } from './interfaces/cli-interface.js';
+import { AgentPDFInterface, type AgentPDFOptions } from './interfaces/agent-interface.js';
+import { ScriptPDFInterface, type ScriptPDFOptions } from './interfaces/script-interface.js';
+import { 
+  PipelinePDFInterface, 
+  type PipelinePDFTask, 
+  type PipelinePDFOptions 
+} from './interfaces/pipeline-interface.js';
+
 // Legacy exports for backwards compatibility
 export * from './generators/index.js';
 export * from './templates/index.js';
@@ -59,19 +70,19 @@ export const pdf = {
       return pdfInterface.generateSinglePage({
         input: options.input,
         outputPath: options.output,
-        debug: options.debug
+        debug: options.debug ?? false
       });
     } else if (options.quality === 'high-quality') {
       return pdfInterface.generateHighQuality({
         input: options.input,
         outputPath: options.output,
-        debug: options.debug
+        debug: options.debug ?? false
       });
     } else {
       return pdfInterface.generate({
         input: options.input,
         outputPath: options.output,
-        debug: options.debug
+        debug: options.debug ?? false
       });
     }
   },

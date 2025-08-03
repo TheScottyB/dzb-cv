@@ -109,7 +109,12 @@ export class CLIPDFInterface {
       const item = items[i];
       
       if (commonOptions?.debug) {
-        console.log(`🔄 Processing batch item ${i + 1}/${items.length}: ${item.outputPath}`);
+        console.log(`🔄 Processing batch item ${i + 1}/${items.length}: ${item?.outputPath || 'unknown'}`);
+      }
+
+      if (!item) {
+        console.error(`❌ Batch item ${i + 1} is undefined`);
+        continue;
       }
 
       const result = await this.generate({
@@ -147,10 +152,10 @@ export class CLIPDFInterface {
           windowSize: options.windowSize || '1920,1080',
           virtualTimeBudget: options.virtualTimeBudget || 5000,
           printMargins: options.printMargins ?? false,
-          scale: options.scale,
-          paperSize: options.paperSize,
-          customFlags: options.customFlags,
-          timeout: options.timeout
+          scale: options.scale ?? 1.0,
+          paperSize: options.paperSize ?? 'Letter',
+          customFlags: options.customFlags ?? [],
+          timeout: options.timeout ?? 30000
         };
 
       case 'html':
@@ -160,10 +165,10 @@ export class CLIPDFInterface {
           windowSize: options.windowSize || '1920,1080',
           virtualTimeBudget: options.virtualTimeBudget || 5000,
           printMargins: options.printMargins ?? false,
-          scale: options.scale,
-          paperSize: options.paperSize,
-          customFlags: options.customFlags,
-          timeout: options.timeout
+          scale: options.scale ?? 1.0,
+          paperSize: options.paperSize ?? 'Letter',
+          customFlags: options.customFlags ?? [],
+          timeout: options.timeout ?? 30000
         };
 
       case 'cvdata':
@@ -177,10 +182,10 @@ export class CLIPDFInterface {
           windowSize: options.windowSize || '1920,1080',
           virtualTimeBudget: options.virtualTimeBudget || 5000,
           printMargins: options.printMargins ?? false,
-          scale: options.scale,
-          paperSize: options.paperSize,
-          customFlags: options.customFlags,
-          timeout: options.timeout
+          scale: options.scale ?? 1.0,
+          paperSize: options.paperSize ?? 'Letter',
+          customFlags: options.customFlags ?? [],
+          timeout: options.timeout ?? 30000
         };
 
       default:
