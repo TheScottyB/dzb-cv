@@ -108,8 +108,14 @@ ANTHROPIC_API_KEY=your_claude_key_here  # Optional
 # Generate your EKG-focused CV
 node scripts/generate-cv.js --profile dawn --template healthcare --focus ekg
 
-# Or generate for a specific job posting
+# Generate for a specific job posting
 node scripts/generate-cv.js --profile dawn --job path/to/job-posting.txt
+
+# Generate with custom output location
+node scripts/generate-cv.js --profile dawn --focus ekg --output output/my-latest-cv.md
+
+# See all options
+node scripts/generate-cv.js --help
 ```
 
 ## 🔄 Step 7: Keep Your Fork Updated

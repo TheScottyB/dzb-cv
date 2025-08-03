@@ -171,16 +171,15 @@ async function generateEKGCV() {
   const options = {
     profile: 'dawn',
     template: 'healthcare',
-    focus: 'ekg-technician',
-    format: 'single-page',
-    aiOptimize: true
+    focus: 'ekg'
   };
   
   try {
     const result = await generateCV(options);
     console.log('✅ EKG CV generated successfully!');
     console.log(\`📄 Output: \${result.outputPath}\`);
-    console.log(\`📊 Quality Score: \${result.qualityScore}/100\`);
+    console.log(\`📊 Template: \${result.template}\`);
+    console.log(\`🎯 Focus: \${result.focus}\`);
   } catch (error) {
     console.error('❌ Error generating CV:', error.message);
   }

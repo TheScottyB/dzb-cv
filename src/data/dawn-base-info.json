@@ -1,0 +1,77 @@
+{
+  "personalInfo": {
+    "name": {
+      "first": "Dawn",
+      "last": "Zurick-Beilfuss",
+      "full": "Dawn Zurick-Beilfuss"
+    },
+    "contact": {
+      "email": "dawn@example.com",
+      "phone": "(555) 123-4567",
+      "location": "Your City, State"
+    },
+    "professionalTitle": "Certified EKG Technician",
+    "summary": "Certified EKG Technician with strong analytical skills and attention to detail. Successfully transitioned from real estate to healthcare, bringing customer service excellence and professional communication skills to medical environments."
+  },
+  "certifications": [
+    {
+      "name": "EKG Technician Certification",
+      "issuer": "National Healthcareer Association (NHA)",
+      "date": "2025",
+      "status": "Active"
+    }
+  ],
+  "skills": [
+    {
+      "name": "EKG Testing",
+      "level": "Expert",
+      "category": "Medical"
+    },
+    {
+      "name": "Patient Care",
+      "level": "Advanced",
+      "category": "Healthcare"
+    },
+    {
+      "name": "Medical Terminology",
+      "level": "Proficient",
+      "category": "Healthcare"
+    },
+    {
+      "name": "Healthcare Compliance",
+      "level": "Proficient",
+      "category": "Healthcare"
+    },
+    {
+      "name": "Customer Service",
+      "level": "Expert",
+      "category": "Soft Skills"
+    },
+    {
+      "name": "Communication",
+      "level": "Expert",
+      "category": "Soft Skills"
+    }
+  ],
+  "experience": [
+    {
+      "position": "Veterinary Assistant",
+      "employer": "Fox Lake Animal Hospital",
+      "startDate": "2023-01",
+      "endDate": "2024-02",
+      "responsibilities": [
+        "Managed 60-80 patients daily",
+        "Medical triage and emergency response",
+        "Documentation and payment processing"
+      ]
+    }
+  ],
+  "education": [
+    {
+      "degree": "Medical Terminology Certificate",
+      "institution": "McHenry Community College",
+      "year": "2025",
+      "field": "Healthcare"
+    }
+  ]
+}
