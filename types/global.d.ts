@@ -119,7 +119,15 @@ interface CVTemplate {
   id: string;
   name: string;
   getStyles(): string;
-  generateMarkdown(data: CVData, options?: any): string;
+  generateMarkdown(data: CVData, options?: TemplateOptions): string;
+}
+
+interface TemplateOptions {
+  style?: 'professional' | 'academic' | 'modern' | 'minimal';
+  format?: 'markdown' | 'html' | 'latex';
+  includePhoto?: boolean;
+  sections?: string[];
+  customFields?: Record<string, unknown>;
 }
 
 // Legacy global interfaces - use @dzb-cv/types instead
@@ -148,22 +156,22 @@ interface JobInfo {
 // Fix for ATSIssue
 interface ATSIssue {
   score?: number;
-  examples?: any;
+  examples?: string[];
   category?: string;
   message?: string;
   fix?: string;
-  priority?: string;
-  type?: any;
+  priority?: 'high' | 'medium' | 'low';
+  type?: 'keyword' | 'format' | 'structure' | 'content';
 }
 
 // Fix for ATSImprovement
 interface ATSImprovement {
   message: string;
   fix: string;
-  priority: string;
-  type: any;
+  priority: 'high' | 'medium' | 'low';
+  type: 'keyword' | 'format' | 'structure' | 'content';
   score?: number;
-  examples?: any;
+  examples?: string[];
 }
 
 // Fix for publication

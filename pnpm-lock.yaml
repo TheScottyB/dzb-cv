@@ -289,6 +289,16 @@ importers:
         specifier: ^5.4.5
         version: 5.9.2
 
+  packages/logging:
+    dependencies:
+      '@dzb-cv/configuration':
+        specifier: workspace:*
+        version: link:../configuration
+    devDependencies:
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.2
+
   packages/pdf:
     dependencies:
       '@dzb-cv/types':
