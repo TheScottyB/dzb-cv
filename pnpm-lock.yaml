@@ -259,12 +259,6 @@ importers:
       markdown-it:
         specifier: ^14.1.0
         version: 14.1.0
-      pdf-lib:
-        specifier: ^1.17.1
-        version: 1.17.1
-      puppeteer:
-        specifier: ^24.15.0
-        version: 24.15.0(typescript@5.9.2)
     devDependencies:
       '@dzb-cv/config':
         specifier: workspace:*
