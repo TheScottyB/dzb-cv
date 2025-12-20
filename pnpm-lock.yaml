@@ -127,10 +127,10 @@ importers:
         specifier: ^1.0.0-rc.12
         version: 1.0.0
       natural:
-        specifier: ^6.0.0
+        specifier: ^6.12.0
         version: 6.12.0(socks@2.8.4)
       openai:
-        specifier: ^4.0.0
+        specifier: ^4.98.0
         version: 4.98.0(ws@8.18.2)(zod@3.24.4)
     devDependencies:
       '@dzb-cv/config':
@@ -155,10 +155,10 @@ importers:
         specifier: workspace:*
         version: link:../types
       commander:
-        specifier: ^13.0.0
+        specifier: ^13.1.0
         version: 13.1.0
       inquirer:
-        specifier: ^9.0.0
+        specifier: ^9.3.7
         version: 9.3.7
     devDependencies:
       '@dzb-cv/config':
@@ -212,20 +212,20 @@ importers:
         specifier: workspace:*
         version: link:../types
       markdown-it:
-        specifier: ^14.0.0
+        specifier: ^14.1.0
         version: 14.1.0
       pdf-lib:
         specifier: ^1.17.1
         version: 1.17.1
       puppeteer:
-        specifier: ^21.0.0
+        specifier: ^21.11.0
         version: 21.11.0(typescript@5.8.3)
     devDependencies:
       '@dzb-cv/config':
         specifier: workspace:*
         version: link:../config
       '@types/markdown-it':
-        specifier: ^13.0.0
+        specifier: ^13.0.9
         version: 13.0.9
 
   packages/templates:
@@ -237,10 +237,10 @@ importers:
         specifier: workspace:*
         version: link:../ui
       react:
-        specifier: ^18.2.0
+        specifier: ^18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@dzb-cv/config':
@@ -250,16 +250,16 @@ importers:
         specifier: ^6.6.3
         version: 6.6.3
       '@testing-library/react':
-        specifier: ^14.1.2
+        specifier: ^14.3.1
         version: 14.3.1(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@types/testing-library__jest-dom':
         specifier: ^6.0.0
         version: 6.0.0
       '@vitejs/plugin-react':
-        specifier: ^4.2.1
+        specifier: ^4.4.1
         version: 4.4.1(vite@5.4.19(@types/node@20.17.46))
       jsdom:
-        specifier: ^23.0.1
+        specifier: ^23.2.0
         version: 23.2.0
 
   packages/types:
@@ -274,27 +274,27 @@ importers:
         specifier: workspace:*
         version: link:../types
       react:
-        specifier: ^18.2.0
+        specifier: ^18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
     devDependencies:
       '@dzb-cv/config':
         specifier: workspace:*
         version: link:../config
       '@testing-library/jest-dom':
-        specifier: ^6.0.0
+        specifier: ^6.6.3
         version: 6.6.3
       '@testing-library/react':
-        specifier: ^14.0.0
+        specifier: ^14.3.1
         version: 14.3.1(@types/react@18.3.21)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@testing-library/user-event':
-        specifier: ^14.0.0
+        specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@9.3.4)
       jsdom:
-        specifier: ^22.1.0
-        version: 22.1.0
+        specifier: ^23.2.0
+        version: 23.2.0
 
 packages:
 

@@ -22,8 +22,8 @@
     "@dzb-cv/pdf": "workspace:*",
     "@dzb-cv/templates": "workspace:*",
     "@dzb-cv/types": "workspace:*",
-    "commander": "^13.0.0",
-    "inquirer": "^9.0.0"
+    "commander": "^13.1.0",
+    "inquirer": "^9.3.7"
   },
   "devDependencies": {
     "@dzb-cv/config": "workspace:*"

@@ -44,8 +44,8 @@
   },
   "dependencies": {
     "@dzb-cv/types": "workspace:*",
-    "openai": "^4.0.0",
-    "natural": "^6.0.0",
+    "openai": "^4.98.0",
+    "natural": "^6.12.0",
     "cheerio": "^1.0.0-rc.12"
   },
   "devDependencies": {
