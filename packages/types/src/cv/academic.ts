@@ -4,7 +4,7 @@ import type { CVData } from './base.js';
  * Represents an academic publication entry
  * @interface Publication
  */
-export interface Publication {
+export interface AcademicPublication {
   /** The title of the publication */
   title: string;
   /** List of authors (formatted string) */
@@ -127,7 +127,7 @@ export interface AcademicService {
  */
 export interface AcademicCVData extends CVData {
   /** List of publications */
-  publications?: Publication[];
+  publications?: AcademicPublication[];
   /** Conference presentations */
   conferences?: Conference[];
   /** Research grants and funding */

@@ -1,8 +1,10 @@
 import type { CVData } from '@dzb-cv/types';
 import { vi } from 'vitest';
 
+export { emptyCV, makeCV } from '@dzb-cv/types/test-fixtures';
+
 /**
- * A sample CV for core service tests.
+ * A minimal sample CV for core service tests.
  */
 export const sampleCV: CVData = {
   personalInfo: {
