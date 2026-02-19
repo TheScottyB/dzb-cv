@@ -46,6 +46,8 @@
   "devDependencies": {
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.5",
+    "@commitlint/cli": "^20.4.2",
+    "@commitlint/config-conventional": "^20.4.2",
     "@dzb-cv/config": "workspace:*",
     "@eslint/js": "^9.32.0",
     "@playwright/test": "^1.54.2",
