@@ -70,6 +70,8 @@ temp-*
 scripts/*.tmp
 *.local
 output/
+output
+output.PDF
 .cache/
 
 # Python (for scrapers)
