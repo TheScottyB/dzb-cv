@@ -22,8 +22,9 @@
         "**/tsconfig.tsbuildinfo"
       ],
       "inputs": [
-        "src/**/*.ts",
-        "tsconfig.json"
+        "src/**/*.{ts,tsx,css}",
+        "tsconfig.json",
+        "index.html"
       ],
       "env": [
         "NODE_ENV"

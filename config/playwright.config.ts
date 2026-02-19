@@ -12,7 +12,7 @@ import path from 'path';
  */
 export default defineConfig({
   // Test directory and file patterns
-  testDir: './e2e',
+  testDir: '../e2e',
   testMatch: '**/*.spec.ts',
 
   // Maximum time one test can run for
@@ -32,8 +32,8 @@ export default defineConfig({
 
   // Reporter to use
   reporter: [
-    ['html', { outputFolder: 'playwright-report' }],
-    ['json', { outputFile: 'playwright-report/test-results.json' }],
+    ['html', { outputFolder: '../playwright-report' }],
+    ['json', { outputFile: '../playwright-report/test-results.json' }],
   ],
 
   // Shared settings for all projects
@@ -97,8 +97,8 @@ export default defineConfig({
       },
 
   // Output directory for storing test artifacts
-  outputDir: 'test-results/',
+  outputDir: '../test-results/',
 
   // Global teardown to run after all tests
-  globalTeardown: process.env.CI ? undefined : path.join(__dirname, 'e2e/global-teardown.ts'),
+  globalTeardown: process.env.CI ? undefined : path.join(__dirname, '../e2e/global-teardown.ts'),
 });
