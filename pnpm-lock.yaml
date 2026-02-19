@@ -315,6 +315,15 @@ importers:
         specifier: ^13.0.9
         version: 13.0.9
 
+  packages/performance:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.9
+      typescript:
+        specifier: ^5.4.5
+        version: 5.9.2
+
   packages/templates:
     dependencies:
       '@dzb-cv/types':
