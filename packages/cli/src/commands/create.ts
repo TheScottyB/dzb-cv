@@ -4,6 +4,7 @@ import { createPDFGenerator } from '@dzb-cv/pdf';
 import type { CVData } from '@dzb-cv/types';
 import * as fs from 'fs';
 import * as path from 'path';
+import { safePath } from '../utils/safe-path.js';
 
 function loadBaseInfoData(): any {
   try {
@@ -177,22 +178,20 @@ export function createCVCommand(program: Command): void {
         await service.createCV(cvData);
         const pdf = await service.generatePDF(cvData, pdfOptions);
         
-        // Determine output file path
-        const outputPath = options.output || `${options.name.toLowerCase().replace(/\s+/g, '-')}-cv.pdf`;
-        
-        // Save PDF to file
-        const fs = await import('fs');
-        const path = await import('path');
-        
+        // Determine output file path (validated to stay inside cwd; ADR-0003)
+        const requestedPath =
+          options.output || `${options.name.toLowerCase().replace(/\s+/g, '-')}-cv.pdf`;
+        const outputPath = safePath(requestedPath);
+
         // Ensure output directory exists
         const outputDir = path.dirname(outputPath);
-        if (outputDir !== '.') {
+        if (outputDir !== process.cwd()) {
           fs.mkdirSync(outputDir, { recursive: true });
         }
-        
+
         fs.writeFileSync(outputPath, pdf);
         console.log(`Generated PDF: ${pdf.length} bytes`);
-        console.log(`✅ CV saved to: ${path.resolve(outputPath)}`);
+        console.log(`✅ CV saved to: ${outputPath}`);
       } catch (error) {
         console.error('Error creating CV:', error);
         process.exit(1);
