@@ -52,7 +52,7 @@ jobs:
         npm test
 
     - name: Install Chrome for PDF testing
-      uses: browser-actions/setup-chrome@facf10a55b9caf92e0cc749b4f82bf8220989148 # v1.7.2
+      uses: browser-actions/setup-chrome@c785b87e244131f27c9f19c1a33e2ead956ab7ce # v1.7.3 (ubuntu 24 support)
 
     - name: Test PDF generation
       run: |
@@ -120,7 +120,7 @@ jobs:
       run: pnpm build
 
     - name: Install Chrome
-      uses: browser-actions/setup-chrome@facf10a55b9caf92e0cc749b4f82bf8220989148 # v1.7.2
+      uses: browser-actions/setup-chrome@c785b87e244131f27c9f19c1a33e2ead956ab7ce # v1.7.3 (ubuntu 24 support)
 
     - name: Quality metrics check
       run: |
@@ -203,7 +203,7 @@ jobs:
       run: pnpm build
 
     - name: Install Chrome
-      uses: browser-actions/setup-chrome@facf10a55b9caf92e0cc749b4f82bf8220989148 # v1.7.2
+      uses: browser-actions/setup-chrome@c785b87e244131f27c9f19c1a33e2ead956ab7ce # v1.7.3 (ubuntu 24 support)
 
     - name: Performance benchmarks
       run: |
