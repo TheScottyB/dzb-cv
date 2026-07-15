@@ -1,6 +1,6 @@
 {
   "name": "@dzb-cv/ats",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ATS (Applicant Tracking System) functionality for DZB CV Generator",
   "private": true,
   "type": "module",
