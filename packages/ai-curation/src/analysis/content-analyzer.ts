@@ -1,12 +1,13 @@
 /**
  * Content Analysis Engine
- * 
+ *
  * This engine parses and analyzes all sections of a CV, understanding the
  * relevance and impact of each piece of content. It identifies key achievements,
  * skills, experiences, and qualifications for intelligent curation.
  */
 
-import type { CVData } from '@dzb-cv/types';
+import type { CVData, PersonalInfo, Experience, Education, Skill, Certification, Project } from '@dzb-cv/types';
+import { normalizeCVData } from '@dzb-cv/types';
 import type {
   ContentItem,
   ContentAnalysis,
@@ -34,9 +35,10 @@ export class ContentAnalyzer {
    * Analyzes a complete CV and extracts all content items
    */
   public async analyzeCV(cv: CVData, jobContext?: JobContext): Promise<ContentAnalysis> {
-    const contentItems = await this.extractAllContent(cv);
+    const normalizedCV = normalizeCVData(cv);
+    const contentItems = await this.extractAllContent(normalizedCV);
     const clusters = await this.clusterAnalyzer.clusterContent(contentItems, jobContext);
-    
+
     const summary = this.generateAnalysisSummary(contentItems, clusters, jobContext);
 
     return {
@@ -79,8 +81,8 @@ export class ContentAnalyzer {
     }
 
     // Extract projects if present
-    if ((cv as any).projects?.length) {
-      contentItems.push(...await this.extractProjects((cv as any).projects));
+    if (cv.projects?.length) {
+      contentItems.push(...await this.extractProjects(cv.projects));
     }
 
     return contentItems;
@@ -89,7 +91,7 @@ export class ContentAnalyzer {
   /**
    * Extracts personal information content items
    */
-  private async extractPersonalInfo(personalInfo: any): Promise<ContentItem[]> {
+  private async extractPersonalInfo(personalInfo: PersonalInfo): Promise<ContentItem[]> {
     const items: ContentItem[] = [];
 
     if (personalInfo.summary) {
@@ -109,9 +111,7 @@ export class ContentAnalyzer {
     }
 
     if (personalInfo.name) {
-      const nameContent = typeof personalInfo.name === 'string' 
-        ? personalInfo.name 
-        : personalInfo.name.full || `${personalInfo.name.first} ${personalInfo.name.last}`;
+      const nameContent = personalInfo.name.full || `${personalInfo.name.first} ${personalInfo.name.last}`;
 
       const metadata = await this.analyzeContentMetadata(
         nameContent,
@@ -134,16 +134,16 @@ export class ContentAnalyzer {
   /**
    * Extracts experience content items
    */
-  private async extractExperience(experience: any[]): Promise<ContentItem[]> {
+  private async extractExperience(experience: Experience[]): Promise<ContentItem[]> {
     const items: ContentItem[] = [];
 
     for (let i = 0; i < experience.length; i++) {
       const exp = experience[i];
-      
+
       // Main experience entry
       const expContent = `${exp.position} at ${exp.employer}`;
       const expMetadata = await this.analyzeContentMetadata(expContent, ContentType.EXPERIENCE);
-      
+
       // Add date range information to metadata
       if (exp.startDate || exp.endDate) {
         expMetadata.dateRange = {
@@ -218,15 +218,15 @@ export class ContentAnalyzer {
   /**
    * Extracts education content items
    */
-  private async extractEducation(education: any[]): Promise<ContentItem[]> {
+  private async extractEducation(education: Education[]): Promise<ContentItem[]> {
     const items: ContentItem[] = [];
 
     for (let i = 0; i < education.length; i++) {
       const edu = education[i];
       const eduContent = `${edu.degree} in ${edu.field} from ${edu.institution}`;
-      
+
       const metadata = await this.analyzeContentMetadata(eduContent, ContentType.EDUCATION);
-      
+
       // Add graduation date information
       if (edu.graduationDate || edu.startDate) {
         metadata.dateRange = {
@@ -252,16 +252,15 @@ export class ContentAnalyzer {
   /**
    * Extracts skills content items
    */
-  private async extractSkills(skills: any[]): Promise<ContentItem[]> {
+  private async extractSkills(skills: Skill[]): Promise<ContentItem[]> {
     const items: ContentItem[] = [];
 
     for (let i = 0; i < skills.length; i++) {
       const skill = skills[i];
-      const skillName = typeof skill === 'string' ? skill : skill.name;
-      const skillContent = skillName;
+      const skillContent = skill.name;
 
       const metadata = await this.analyzeContentMetadata(skillContent, ContentType.SKILL);
-      
+
       // Skills are generally current, so high recency
       metadata.recency = 0.9;
 
@@ -281,22 +280,22 @@ export class ContentAnalyzer {
   /**
    * Extracts certification content items
    */
-  private async extractCertifications(certifications: any[]): Promise<ContentItem[]> {
+  private async extractCertifications(certifications: Certification[]): Promise<ContentItem[]> {
     const items: ContentItem[] = [];
 
     for (let i = 0; i < certifications.length; i++) {
       const cert = certifications[i];
-      const certContent = typeof cert === 'string' ? cert : cert.name || cert.title;
+      const certContent = cert.name;
 
       const metadata = await this.analyzeContentMetadata(certContent, ContentType.CERTIFICATION);
-      
+
       // Add certification date if available
-      if (cert.dateObtained) {
+      if (cert.date) {
         metadata.dateRange = {
-          start: cert.dateObtained,
+          start: cert.date,
           end: cert.expirationDate
         };
-        metadata.recency = this.calculateRecency(cert.dateObtained, cert.expirationDate);
+        metadata.recency = this.calculateRecency(cert.date, cert.expirationDate);
       }
 
       // Certifications have higher impact scores
@@ -318,7 +317,7 @@ export class ContentAnalyzer {
   /**
    * Extracts project content items
    */
-  private async extractProjects(projects: any[]): Promise<ContentItem[]> {
+  private async extractProjects(projects: Project[]): Promise<ContentItem[]> {
     const items: ContentItem[] = [];
 
     for (let i = 0; i < projects.length; i++) {
@@ -326,7 +325,7 @@ export class ContentAnalyzer {
       const projectContent = `${project.name}: ${project.description || ''}`;
 
       const metadata = await this.analyzeContentMetadata(projectContent, ContentType.PROJECT);
-      
+
       if (project.startDate || project.endDate) {
         metadata.dateRange = {
           start: project.startDate,
@@ -377,13 +376,13 @@ export class ContentAnalyzer {
 
     // Calculate how recent the end date is (more recent = higher score)
     const monthsAgo = (now.getTime() - end.getTime()) / (1000 * 60 * 60 * 24 * 30);
-    
+
     if (monthsAgo <= 0) return 1.0; // Current
     if (monthsAgo <= 6) return 0.9; // Within 6 months
     if (monthsAgo <= 12) return 0.8; // Within 1 year
     if (monthsAgo <= 24) return 0.6; // Within 2 years
     if (monthsAgo <= 60) return 0.4; // Within 5 years
-    
+
     return Math.max(0.1, 0.4 - (monthsAgo - 60) / 120); // Decay after 5 years
   }
 
@@ -437,13 +436,13 @@ export class ContentAnalyzer {
   ) {
     const totalItems = contentItems.length;
     const averageQuality = contentItems.reduce((sum, item) => sum + item.metadata.impact, 0) / totalItems;
-    
+
     const coverageAreas = [...new Set(contentItems.flatMap(item => item.metadata.sectors))];
     const strengthAreas = clusters
       .filter(cluster => cluster.jobRelevance > 0.7)
       .map(cluster => cluster.theme);
-    
-    const gapAreas = jobContext 
+
+    const gapAreas = jobContext
       ? this.identifyGaps(contentItems, jobContext)
       : [];
 
@@ -467,7 +466,7 @@ export class ContentAnalyzer {
     const missingSkills = jobContext.requiredSkills.filter(
       skill => !allKeywords.includes(skill.toLowerCase())
     );
-    
+
     if (missingSkills.length > 0) {
       gaps.push(`Missing skills: ${missingSkills.join(', ')}`);
     }
@@ -540,7 +539,7 @@ class ImpactAnalyzer {
 
     // Content-based impact modifiers
     const contentLower = content.toLowerCase();
-    
+
     // Achievement indicators
     const achievementWords = ['achieved', 'accomplished', 'improved', 'increased', 'decreased', 'led', 'managed', 'developed', 'created', 'implemented'];
     const achievementCount = achievementWords.filter(word => contentLower.includes(word)).length;
@@ -550,7 +549,7 @@ class ImpactAnalyzer {
     const hasNumbers = /\d+/.test(content);
     const hasPercentage = /%/.test(content);
     const hasCurrency = /\$/.test(content);
-    
+
     if (hasNumbers) baseImpact += 0.1;
     if (hasPercentage) baseImpact += 0.1;
     if (hasCurrency) baseImpact += 0.1;
@@ -569,7 +568,7 @@ class ImpactAnalyzer {
 class ClusterAnalyzer {
   async clusterContent(contentItems: ContentItem[], jobContext?: JobContext): Promise<ContentCluster[]> {
     const clusters: ContentCluster[] = [];
-    
+
     // Simple clustering based on content types and keywords
     const experienceClusters = this.clusterByType(contentItems, ContentType.EXPERIENCE);
     const skillClusters = this.clusterByType(contentItems, ContentType.SKILL);
@@ -612,7 +611,7 @@ class ClusterAnalyzer {
   ): Promise<number> {
     const clusterItems = allContentItems.filter(item => cluster.contentIds.includes(item.id));
     const clusterKeywords = clusterItems.flatMap(item => item.metadata.keywords.map(k => k.toLowerCase()));
-    
+
     const jobKeywords = [
       ...jobContext.requiredSkills.map(s => s.toLowerCase()),
       ...jobContext.responsibilities.map(r => r.toLowerCase().split(' ')).flat(),
@@ -620,7 +619,7 @@ class ClusterAnalyzer {
     ].filter(k => k.length > 2);
 
     const matches = clusterKeywords.filter(ck => jobKeywords.some(jk => jk.includes(ck) || ck.includes(jk)));
-    
+
     return matches.length / Math.max(clusterKeywords.length, 1);
   }
 }

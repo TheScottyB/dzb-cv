@@ -63,6 +63,7 @@ temp-*
 # HTML/image outputs (examples preserved in examples/)
 *.html
 !examples/**/*.html
+!packages/web/index.html
 *.png
 !examples/**/*.png
 
@@ -70,6 +71,8 @@ temp-*
 scripts/*.tmp
 *.local
 output/
+output
+output.PDF
 .cache/
 
 # Python (for scrapers)

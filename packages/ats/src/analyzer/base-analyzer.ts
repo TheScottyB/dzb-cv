@@ -136,7 +136,7 @@ export abstract class BaseCVAnalyzer {
     
     for (const edu of cv.education) {
       parts.push(edu.degree);
-      parts.push(edu.field);
+      if (edu.field) parts.push(edu.field);
       parts.push(edu.institution);
     }
     

@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { readFileSync, existsSync } from 'fs';
-import { dirname } from 'path';
 
 test.describe('CV Generation Flow', () => {
   test('should load the home page', async ({ page }) => {
@@ -19,7 +18,7 @@ test.describe('CV Generation Flow', () => {
 
     // Verify templates are displayed
     const templateCards = page.locator('.template-card');
-    await expect(templateCards).toHaveCount.atLeast(1);
+    expect(await templateCards.count()).toBeGreaterThanOrEqual(1);
 
     // Select the first template
     await templateCards.first().click();

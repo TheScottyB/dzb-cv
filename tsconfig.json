@@ -6,6 +6,7 @@
     { "path": "./packages/cli" },
     { "path": "./packages/pdf" },
     { "path": "./packages/templates" },
-    { "path": "./packages/ui" }
+    { "path": "./packages/ui" },
+    { "path": "./packages/web" }
   ]
 }

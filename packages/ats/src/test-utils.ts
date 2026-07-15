@@ -2,6 +2,8 @@ import type { CVData } from '@dzb-cv/types';
 import type { JobPosting } from '@dzb-cv/types/job';
 import { expect } from 'vitest';
 
+export { emptyCV } from '@dzb-cv/types/test-fixtures';
+
 /**
  * A comprehensive sample CV for general testing.
  */
@@ -142,19 +144,6 @@ export const simpleSampleJob: JobPosting = {
   ],
   skills: ['React', 'TypeScript', 'CSS', 'Jest', 'Webpack'],
   url: '',
-};
-
-/**
- * An empty CV for edge case testing.
- */
-export const emptyCV: CVData = {
-  personalInfo: {
-    name: { first: '', last: '', full: '' },
-    contact: { email: '', phone: '' },
-  },
-  experience: [],
-  education: [],
-  skills: [],
 };
 
 /**

@@ -1,6 +1,8 @@
 import { spawn, ChildProcess } from 'child_process';
-import { writeFileSync, mkdirSync, existsSync } from 'fs';
-import { dirname, resolve, isAbsolute } from 'path';
+import { writeFileSync, mkdirSync, existsSync, mkdtempSync } from 'fs';
+import { dirname, resolve, isAbsolute, join } from 'path';
+import { tmpdir } from 'os';
+import { randomUUID } from 'crypto';
 import { ChromeDetector } from './chrome-detector.js';
 
 export interface ChromePDFOptions {
@@ -41,9 +43,11 @@ export class ChromePDFEngine {
   private readonly chromePath: string;
   private readonly tempDir: string;
 
-  constructor(tempDir = '/tmp/dzb-cv-pdf') {
+  // Default to a unique OS temp dir; callers may override (e.g. for debugging).
+  // See ADR-0004.
+  constructor(tempDir?: string) {
     this.chromePath = ChromeDetector.detectChromePath();
-    this.tempDir = tempDir;
+    this.tempDir = tempDir ?? mkdtempSync(join(tmpdir(), 'dzb-cv-pdf-'));
     this.ensureTempDir();
   }
 
@@ -196,8 +200,8 @@ export class ChromePDFEngine {
     }
 
     if (options.htmlContent) {
-      // Create temporary HTML file
-      const tempHtmlPath = `${this.tempDir}/temp-${Date.now()}.html`;
+      // Unique filename per call; collisions impossible. See ADR-0004.
+      const tempHtmlPath = join(this.tempDir, `temp-${randomUUID()}.html`);
       writeFileSync(tempHtmlPath, options.htmlContent, 'utf8');
       return tempHtmlPath;
     }

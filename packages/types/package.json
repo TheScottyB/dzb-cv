@@ -1,6 +1,6 @@
 {
   "name": "@dzb-cv/types",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "TypeScript type definitions for the DZB CV Generator system",
   "private": true,
   "type": "module",
@@ -31,6 +31,10 @@
     "./templates": {
       "types": "./dist/templates/index.d.ts",
       "import": "./dist/templates/index.js"
+    },
+    "./test-fixtures": {
+      "types": "./dist/test-fixtures.d.ts",
+      "import": "./dist/test-fixtures.js"
     }
   },
   "keywords": [

@@ -1,6 +1,7 @@
 import { spawn, ChildProcess } from 'child_process';
-import { writeFileSync, existsSync, mkdirSync } from 'fs';
-import { resolve, isAbsolute } from 'path';
+import { writeFileSync, existsSync, mkdirSync, mkdtempSync, rmSync } from 'fs';
+import { resolve, isAbsolute, join } from 'path';
+import { tmpdir } from 'os';
 
 export interface SimplePDFOptions {
   /** HTML content to convert */
@@ -36,14 +37,16 @@ export class SimpleChromePDF {
   async generatePDF(options: SimplePDFOptions): Promise<SimplePDFResult> {
     const startTime = Date.now();
 
+    // Per-invocation temp dir with random suffix; see ADR-0004
+    const tempDir = mkdtempSync(join(tmpdir(), 'dzb-cv-'));
+    const tempHtmlPath = join(tempDir, 'input.html');
+
     try {
       if (options.debug) {
         console.log('🚀 Starting Chrome PDF generation...');
         console.log('Chrome path:', this.chromePath);
       }
 
-      // Write HTML to temp file
-      const tempHtmlPath = '/tmp/dzb-cv-temp.html';
       writeFileSync(tempHtmlPath, options.html);
 
       // Build Chrome command
@@ -89,6 +92,10 @@ export class SimpleChromePDF {
         error: error instanceof Error ? error.message : String(error),
         executionTime: Date.now() - startTime
       };
+    } finally {
+      if (!options.debug) {
+        rmSync(tempDir, { recursive: true, force: true });
+      }
     }
   }
 
