@@ -16,6 +16,13 @@ export class ChromeDetector {
       return this.cachedPath;
     }
 
+    // Explicit override for CI/sandboxed environments with non-standard installs
+    const envPath = process.env.CHROME_PATH || process.env.PLAYWRIGHT_CHROMIUM_PATH;
+    if (envPath && this.isExecutable(envPath)) {
+      this.cachedPath = envPath;
+      return envPath;
+    }
+
     const platform = process.platform;
     let chromePaths: string[] = [];
 

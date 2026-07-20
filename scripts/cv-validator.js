@@ -117,7 +117,7 @@ const TERMINOLOGY_VARIATIONS = [
  */
 async function _loadBaseData() {
   try {
-    const baseInfoPath = path.join(process.cwd(), 'src', 'data', 'base-info.json');
+    const baseInfoPath = path.join(process.cwd(), 'base-info.json');
     const baseInfoData = await fs.readFile(baseInfoPath, 'utf-8');
     return JSON.parse(baseInfoData);
   } catch (error) {
