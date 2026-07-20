@@ -57,10 +57,12 @@
 
 ### Low
 
-14. **Incomplete HTML escape (missing single quote)**
-    - `packages/web/src/pages/PreviewPage.tsx:92-98`
+14. ~~**Incomplete HTML escape (missing single quote)**~~ — resolved 2026-02-19:
+    `escapeHTML` now escapes `'`; template rendering delegated to
+    `@dzb-cv/templates` (`PreviewPage.tsx`)
 15. **Missing CSP headers** — `packages/web/index.html`
-16. **iframe without `sandbox` attribute** — `packages/web/src/pages/PreviewPage.tsx:129-135`
+16. ~~**iframe without `sandbox` attribute**~~ — resolved 2026-02-19: preview
+    iframe now uses `sandbox="allow-same-origin allow-modals"` (no scripts)
 17. **Error messages may leak system info**
     - `src/ats/agents/LLMServiceAgent.ts:92-93`
     - `src/core/services/llm/OpenAIClient.ts:133`
