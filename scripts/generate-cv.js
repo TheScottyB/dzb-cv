@@ -265,7 +265,10 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
     cvContent += `## ${optimization.focusAreas[1] || 'EXPERIENCE'}\n\n`;
     experience.forEach(exp => {
       cvContent += `**${exp.position}** — ${exp.employer}\n`;
-      cvContent += `${fmtDate(exp.startDate)} to ${fmtDate(exp.endDate)}\n\n`;
+      const range = exp.endDate == null && !/present/i.test(exp.startDate)
+        ? fmtDate(exp.startDate)
+        : `${fmtDate(exp.startDate)} to ${fmtDate(exp.endDate)}`;
+      cvContent += `${range}\n\n`;
       if (exp.responsibilities) {
         exp.responsibilities.forEach(r => { cvContent += bullet(r); });
         cvContent += `\n`;

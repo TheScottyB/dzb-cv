@@ -48,8 +48,25 @@ export function adaptRootBaseInfo(rootData) {
     });
   }
 
-  // Convert experience from root data if available
-  if (rootData.experience) {
+  // Convert experience from root data if available.
+  // base-info.json stores workExperience.healthcare entries with a
+  // combined "period" style startDate ("June 2025 - Present").
+  const splitPeriod = (v) => {
+    const m = /^(.+?)\s*[-\u2013]\s*(.+)$/.exec(String(v || ''));
+    return m ? [m[1].trim(), m[2].trim()] : [String(v || ''), null];
+  };
+  if (rootData.workExperience && Array.isArray(rootData.workExperience.healthcare)) {
+    adapted.experience = rootData.workExperience.healthcare.slice(0, 5).map((job) => {
+      const [start, end] = splitPeriod(job.startDate || job.period);
+      return {
+        position: job.position,
+        employer: job.employer,
+        startDate: start,
+        endDate: end, // 'Present' kept literal; null means single-date period
+        responsibilities: job.responsibilities || job.duties || []
+      };
+    });
+  } else if (rootData.experience) {
     adapted.experience = rootData.experience;
   } else {
     // Add default experience based on professional summary
