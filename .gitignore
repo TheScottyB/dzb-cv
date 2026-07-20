@@ -122,6 +122,9 @@ models/
 **/.secret*
 **/.key*
 
+# Playwright MCP local cache (console logs + page snapshots may contain profile data)
+.playwright-mcp/
+
 # But allow specific files that are safe
 !packages/ats/src/scoring/index.ts
 !packages/ats/src/analyzer/analyzer-utils.ts
