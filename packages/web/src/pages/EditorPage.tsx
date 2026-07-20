@@ -102,40 +102,45 @@ export function EditorPage({ store }: Props) {
           <div key={i} className="entry-card">
             <div className="form-grid">
               <div className="form-group">
-                <label>Position</label>
+                <label htmlFor={`exp-${i}-position`}>Position</label>
                 <input
+                  id={`exp-${i}-position`}
                   value={exp.position}
                   onChange={e => store.updateExperience(i, { ...exp, position: e.target.value })}
                   placeholder="Job title"
                 />
               </div>
               <div className="form-group">
-                <label>Employer</label>
+                <label htmlFor={`exp-${i}-employer`}>Employer</label>
                 <input
+                  id={`exp-${i}-employer`}
                   value={exp.employer}
                   onChange={e => store.updateExperience(i, { ...exp, employer: e.target.value })}
                   placeholder="Company name"
                 />
               </div>
               <div className="form-group">
-                <label>Start Date</label>
+                <label htmlFor={`exp-${i}-start`}>Start Date</label>
                 <input
+                  id={`exp-${i}-start`}
                   value={exp.startDate}
                   onChange={e => store.updateExperience(i, { ...exp, startDate: e.target.value })}
                   placeholder="2020-01"
                 />
               </div>
               <div className="form-group">
-                <label>End Date</label>
+                <label htmlFor={`exp-${i}-end`}>End Date</label>
                 <input
+                  id={`exp-${i}-end`}
                   value={exp.endDate || ''}
                   onChange={e => store.updateExperience(i, { ...exp, endDate: e.target.value })}
                   placeholder="Present"
                 />
               </div>
               <div className="form-group full-width">
-                <label>Responsibilities (one per line)</label>
+                <label htmlFor={`exp-${i}-resp`}>Responsibilities (one per line)</label>
                 <textarea
+                  id={`exp-${i}-resp`}
                   rows={3}
                   value={exp.responsibilities.join('\n')}
                   onChange={e => store.updateExperience(i, {
@@ -163,32 +168,36 @@ export function EditorPage({ store }: Props) {
           <div key={i} className="entry-card">
             <div className="form-grid">
               <div className="form-group">
-                <label>Degree</label>
+                <label htmlFor={`edu-${i}-degree`}>Degree</label>
                 <input
+                  id={`edu-${i}-degree`}
                   value={edu.degree}
                   onChange={e => store.updateEducation(i, { ...edu, degree: e.target.value })}
                   placeholder="Bachelor of Science"
                 />
               </div>
               <div className="form-group">
-                <label>Field of Study</label>
+                <label htmlFor={`edu-${i}-field`}>Field of Study</label>
                 <input
+                  id={`edu-${i}-field`}
                   value={edu.field || ''}
                   onChange={e => store.updateEducation(i, { ...edu, field: e.target.value })}
                   placeholder="Computer Science"
                 />
               </div>
               <div className="form-group">
-                <label>Institution</label>
+                <label htmlFor={`edu-${i}-institution`}>Institution</label>
                 <input
+                  id={`edu-${i}-institution`}
                   value={edu.institution}
                   onChange={e => store.updateEducation(i, { ...edu, institution: e.target.value })}
                   placeholder="University name"
                 />
               </div>
               <div className="form-group">
-                <label>Graduation Date</label>
+                <label htmlFor={`edu-${i}-graduation`}>Graduation Date</label>
                 <input
+                  id={`edu-${i}-graduation`}
                   value={edu.graduationDate || ''}
                   onChange={e => store.updateEducation(i, { ...edu, graduationDate: e.target.value })}
                   placeholder="2020"

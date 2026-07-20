@@ -9,6 +9,21 @@
   margin-bottom: 1.5rem;
 }
 
+.preview-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.template-badge {
+  font-size: 0.85rem;
+  color: var(--color-text-muted, #6b7280);
+  background: var(--color-background-muted, #f3f4f6);
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
 .preview-container {
   border: 1px solid var(--color-border);
   border-radius: 8px;
