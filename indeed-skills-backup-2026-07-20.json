@@ -1,0 +1,63 @@
+{
+  "source": "Indeed Resume (profile.indeed.com/resume) — Dawn Zurick Beilfuss",
+  "capturedAt": "2026-07-20",
+  "context": "Full skills list captured before trimming unrelated skills for the ER Tech (Northwestern Memorial, Grayslake) target. Restore any of these via /resume/skills/add if needed.",
+  "skills_all_20": [
+    "12-lead EKG",
+    "arrhythmia recognition",
+    "cardiac monitoring",
+    "phlebotomy",
+    "specimen collection",
+    "blood glucose testing",
+    "vital signs",
+    "wound care",
+    "patient transport",
+    "admissions/intake",
+    "EHR order entry",
+    "HIPAA",
+    "Customer service",
+    "CPR",
+    "Time management",
+    "Negotiation",
+    "Fair Housing regulations",
+    "Home health",
+    "Microsoft Office",
+    "Organizational skills"
+  ],
+  "new_clinical_added_this_session": [
+    "12-lead EKG",
+    "arrhythmia recognition",
+    "cardiac monitoring",
+    "phlebotomy",
+    "specimen collection",
+    "blood glucose testing",
+    "vital signs",
+    "wound care",
+    "patient transport",
+    "admissions/intake",
+    "EHR order entry",
+    "HIPAA"
+  ],
+  "pre_existing": [
+    "Customer service",
+    "CPR",
+    "Time management",
+    "Negotiation",
+    "Fair Housing regulations",
+    "Home health",
+    "Microsoft Office",
+    "Organizational skills"
+  ],
+  "removing_as_unrelated": [
+    "Fair Housing regulations",
+    "Negotiation"
+  ],
+  "keeping_transferable": [
+    "Customer service",
+    "CPR",
+    "Time management",
+    "Home health",
+    "Microsoft Office",
+    "Organizational skills"
+  ]
+}
