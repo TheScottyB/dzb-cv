@@ -1,5 +1,12 @@
 # @dzb-cv/cli
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`b034af2`](https://github.com/TheScottyB/dzb-cv/commit/b034af290fef0c25c07adb5a9b6f5e55b6dfe086)]:
+  - @dzb-cv/templates@1.1.0
+
 ## 1.2.0
 
 ### Minor Changes
