@@ -60,7 +60,7 @@
       "year": "2026",
       "semester": "Summer",
       "status": "In Progress",
-      "notes": "Medical Assistant Capstone program, June 3–August 6, 2026; includes 60-hour supervised clinical experience; prepares for NHA Certified Clinical Medical Assistant (CCMA) exam. Coursework: anatomy & physiology, medical terminology, medical law & ethics, patient communication, medical office procedures, clinical testing and treatment skills."
+      "notes": "Medical Assistant Capstone program, June 3–August 6, 2026; includes 60-hour supervised clinical experience (externship at Mercyhealth Woodstock Clinic — Internal Medicine and Urgent Care); prepares for NHA Certified Clinical Medical Assistant (CCMA) exam. Coursework: anatomy & physiology, medical terminology, medical law & ethics, patient communication, medical office procedures, clinical testing and treatment skills."
     },
     {
       "certification": "Certified Pharmacy Technician",
@@ -215,24 +215,45 @@
   "workExperience": {
     "healthcare": [
       {
+        "employer": "Healthcare Plus Senior Care",
+        "position": "Home Health Care Provider",
+        "titleOnTimesheet": "Homecare Aide (HCA)",
+        "period": "June 2025 - Present",
+        "hours": "Part-time / flexible",
+        "duties": [
+          "Provide dedicated, flexible in-home health support and care to senior clients, balancing patient needs with a demanding clinical and academic schedule",
+          "Coordinate independent scheduling and travel to deliver consistent, reliable care between school and clinical commitments"
+        ]
+      },
+      {
+        "employer": "Mercyhealth Woodstock Clinic",
+        "address": "Woodstock, IL",
+        "position": "Clinical Externship (Medical Assistant)",
+        "period": "June 2026 - August 2026",
+        "url": "https://www.mercyhealthsystem.org",
+        "duties": [
+          "Gained 60+ hours of clinical experience in Internal Medicine and Urgent Care settings",
+          "Capstone clinical placement for the McHenry County College Medical Assistant program"
+        ]
+      },
+      {
         "employer": "Fox Lake Animal Hospital",
         "address": "110 S US Hwy 12, Fox Lake, IL 60020",
-        "position": "Front Desk / Veterinary Assistant",
-        "period": "January 2023 - February 2024",
-        "hours": "40 hrs/wk",
+        "position": "Veterinary Assistant / Support Staff",
+        "period": "January 2023 - Present",
+        "hours": "Part-time / as-needed (high-volume Saturday shifts)",
         "duties": [
+          "Provide part-time/as-needed staffing support during high-volume Saturday shifts, assisting veterinary teams in a fast-paced, short-staffed environment",
           "Managed patient flow (60-80/day)",
           "Triage patients",
-          "Process new patient paperwork",
-          "Charting",
-          "Filing",
-          "Answering phones",
           "Assisting in medical emergencies",
-          "Handling payments and check-outs",
+          "Deliver attentive animal care, support patient handling, and manage facility needs for a safe, efficient environment",
+          "Process new patient paperwork, charting, filing, and check-outs",
           "Supported sole pharmacist (orders, chart/med prep, approvals)"
         ],
         "supervisor": "Joanne Malanowski",
-        "mayContact": true
+        "mayContact": true,
+        "note": "Continuous since January 2023 (never left); shifted to part-time/as-needed while completing the Medical Assistant program"
       },
       {
         "employer": "The Center for Corrective Eye Surgery",
