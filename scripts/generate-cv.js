@@ -269,12 +269,13 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
     if (focus === 'ekg') {
       cvContent += `**Current Certifications:**\n`;
       certifications.forEach(cert => {
-        cvContent += `• ✅ **${cert.name}** - ${cert.issuer}, ${cert.date}\n`;
+        const meta = [cert.issuer, cert.date].filter(Boolean).join(', ');
+        cvContent += `• ✅ **${cert.name}**${meta ? ` - ${meta}` : ''}\n`;
       });
       cvContent += `\n**EKG Skills:** EKG/ECG Testing • Cardiac Rhythm Analysis • 12-Lead EKG Interpretation • Holter Monitor Setup • Stress Test Monitoring • Patient Cardiac Assessment\n\n`;
     } else {
       certifications.forEach(cert => {
-        cvContent += `• **${cert.name}** - ${cert.issuer} (${cert.date})\n`;
+        cvContent += `• **${cert.name}**${cert.issuer ? ` - ${cert.issuer}` : ''}${cert.date ? ` (${cert.date})` : ''}\n`;
       });
       cvContent += `\n`;
     }
@@ -300,7 +301,7 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
   if (education && education.length > 0) {
     cvContent += `## 🎓 EDUCATION\n\n`;
     education.forEach(edu => {
-      cvContent += `**${edu.degree}** - ${edu.institution} (${edu.year})\n`;
+      cvContent += `**${edu.degree}**${edu.institution ? ` - ${edu.institution}` : ''}${edu.year ? ` (${edu.year})` : ''}\n`;
     });
     cvContent += `\n`;
   }

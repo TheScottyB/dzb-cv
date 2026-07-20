@@ -74,9 +74,12 @@ You'll see:
 
 - ✅ **Real Contact**: DZ4100@gmail.com, 847.287.1148
 - ✅ **Real Address**: 15810 IL Rt. 173 #2F, Harvard, IL 60033
-- ✅ **EKG Certification**: National Healthcareer Association (NHA), July 2025
-- ✅ **Medical Terminology**: McHenry Community College, Summer 2025
-- ✅ **Nursing Assistant Program**: In Progress, Fall 2025
+- ✅ **EKG Certification**: Certified EKG Technician (CET), National Healthcareer Association (NHA), July 2025
+- ✅ **BLS / CPR**: BLS Provider (CPR/AED), American Heart Association — issued Oct 15, 2025, renew by Oct 2027 (Training Center: Northwestern Medicine McHenry Hospital)
+- ✅ **Medical Terminology**: McHenry County College, Summer 2025
+- ✅ **CNA**: Certified Nursing Assistant, McHenry County College, Fall 2025 (Completed)
+- ✅ **Phlebotomy**: Certified Phlebotomy Technician (CPT), NHA — training started March 2, 2026; certification exam May 2026
+- ✅ **Medical Assistant Capstone**: McHenry County College, June 3 – Aug 6, 2026 — In Progress (NHA CCMA candidate; 60-hour clinical)
 - ✅ **Complete Professional Summary**: 40+ years healthcare experience
 - ✅ **Real Estate Background**: Current since 2006
 - ✅ **Pharmacy Tech Experience**: Osco Pharmacy, 1996

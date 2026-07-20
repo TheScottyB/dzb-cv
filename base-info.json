@@ -14,7 +14,7 @@
     "profiles": {
         "linkedIn": "placeholder-linkedin-url"
     },
-    "professionalSummary": "Healthcare professional with over 40 years of combined experience in customer service and healthcare operations. Recently completed Medical Terminology and EKG Training at McHenry Community College, earning Certified EKG Technician (CET) certification from the National Healthcareer Association (NHA) in July 2025. Currently pursuing Basic Nursing Assistant Certificate Program. My healthcare expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, patient records management, and cardiac monitoring. With 20 years of real estate experience providing strong negotiation and problem-solving skills, I am committed to continuous improvement and delivering exceptional patient care in healthcare environments.",
+    "professionalSummary": "Healthcare professional with over 40 years of combined experience in customer service and healthcare operations. Recently completed Medical Terminology and EKG Training at McHenry County College, earning Certified EKG Technician (CET) certification from the National Healthcareer Association (NHA) in July 2025. Has since earned Certified Nursing Assistant (CNA) and Certified Phlebotomy Technician (CPT) credentials, and is completing a Medical Assistant Capstone program (NHA CCMA candidate) at McHenry County College in 2026. My healthcare expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, patient records management, and cardiac monitoring. With 20 years of real estate experience providing strong negotiation and problem-solving skills, I am committed to continuous improvement and delivering exceptional patient care in healthcare environments.",
     "education": [
         {
             "certification": "Certified EKG Technician (CET)",
@@ -22,21 +22,45 @@
             "year": "2025",
             "month": "July",
             "status": "Current",
-            "notes": "Completed Medical Terminology and EKG Training Program at McHenry Community College, Summer 2025"
+            "notes": "Completed Medical Terminology and EKG Training Program at McHenry County College, Summer 2025"
+        },
+        {
+            "certification": "BLS Provider (CPR/AED)",
+            "institution": "American Heart Association (AHA)",
+            "year": "2025",
+            "month": "October",
+            "status": "Current",
+            "notes": "Basic Life Support (CPR and AED); issued October 15, 2025, valid through October 2027; training center Northwestern Medicine McHenry Hospital, McHenry, IL"
         },
         {
             "certification": "Medical Terminology Certificate",
-            "institution": "McHenry Community College",
+            "institution": "McHenry County College",
             "year": "2025",
             "semester": "Summer",
             "status": "Completed"
         },
         {
-            "certification": "Basic Nursing Assistant Certificate Program",
-            "institution": "McHenry Community College",
+            "certification": "Certified Nursing Assistant (CNA)",
+            "institution": "McHenry County College",
             "year": "2025",
             "semester": "Fall",
-            "status": "In Progress"
+            "status": "Completed"
+        },
+        {
+            "certification": "Certified Phlebotomy Technician (CPT)",
+            "institution": "National Healthcareer Association (NHA)",
+            "year": "2026",
+            "month": "May",
+            "status": "Current",
+            "notes": "Completed Phlebotomy Technician Training at McHenry County College (started March 2, 2026); passed NHA CPT certification exam May 2026"
+        },
+        {
+            "certification": "Medical Assistant Capstone (NHA CCMA candidate)",
+            "institution": "McHenry County College",
+            "year": "2026",
+            "semester": "Summer",
+            "status": "In Progress",
+            "notes": "Medical Assistant Capstone program, June 3–August 6, 2026; includes 60-hour supervised clinical experience; prepares for NHA Certified Clinical Medical Assistant (CCMA) exam. Coursework: anatomy & physiology, medical terminology, medical law & ethics, patient communication, medical office procedures, clinical testing and treatment skills."
         },
         {
             "certification": "Certified Pharmacy Technician",
@@ -117,8 +141,11 @@
         ],
         "certifications": [
             "Certified EKG Technician (CET, National Healthcareer Association, July 2025 - Current)",
-            "Medical Terminology Certificate (McHenry Community College, Summer 2025)",
-            "Basic Nursing Assistant Certificate Program (McHenry Community College, Fall 2025 - In Progress)",
+            "BLS Provider - CPR/AED (American Heart Association, Issued Oct 2025 - Renew Oct 2027)",
+            "Medical Terminology Certificate (McHenry County College, Summer 2025)",
+            "Certified Nursing Assistant (CNA) (McHenry County College, Fall 2025)",
+            "Certified Phlebotomy Technician (CPT) (National Healthcareer Association, May 2026 - Current)",
+            "Medical Assistant Capstone - NHA CCMA candidate (McHenry County College, Summer 2026 - In Progress)",
             "Certified Pharmacy Technician (CPhT, Illinois State License, 1996)",
             "Licensed Managing Broker, Illinois (IDFPR, Issued: 10/2017 - Current)",
             "Licensed Managing Broker, Wisconsin (DSPS, Issued: 2018 - Current)",
@@ -650,8 +677,9 @@
             ],
             "highlights": [
                 "Certified EKG Technician (CET) - National Healthcareer Association, July 2025",
-                "Medical Terminology Certificate - McHenry Community College, 2025",
-                "Currently pursuing Basic Nursing Assistant Certificate",
+                "Medical Terminology Certificate - McHenry County College, 2025",
+                "Certified Nursing Assistant (CNA) and Certified Phlebotomy Technician (CPT)",
+                "Medical Assistant Capstone in progress - NHA CCMA candidate (2026)",
                 "Extensive healthcare administration experience",
                 "Patient intake, triage, and cardiac assessment skills",
                 "HIPAA compliance and medical records management"

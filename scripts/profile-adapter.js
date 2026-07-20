@@ -33,7 +33,7 @@ export function adaptRootBaseInfo(rootData) {
         adapted.certifications.push({
           name: edu.certification,
           issuer: edu.institution,
-          date: edu.year,
+          date: edu.year || edu.status || '',
           status: edu.status || 'Active'
         });
         
@@ -41,7 +41,7 @@ export function adaptRootBaseInfo(rootData) {
         adapted.education.push({
           degree: edu.certification,
           institution: edu.institution,
-          year: edu.year,
+          year: edu.year || edu.status || '',
           field: 'Healthcare'
         });
       }
