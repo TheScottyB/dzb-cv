@@ -95,7 +95,10 @@
       "Verified pet insurance coverage and eligibility for animal patients",
       "Insurance Verification/Reconciliation",
       "Medical Equipment Prep/Sterilization",
-      "Pharmacy Support"
+      "Pharmacy Support",
+      "Holter Monitor Setup and Analysis",
+      "12-Lead EKG Interpretation",
+      "Stress Test Monitoring"
     ],
     "technical": [
       "Microsoft Office Suite",
@@ -680,7 +683,21 @@
     "reviewNeeded": [
       "workExperience.realEstate: Vylla Team Leader marked Present since Nov 2022 - confirm still current",
       "education/training: BNA program listed In Progress Fall 2025 - confirm completion status",
-      "no entries newer than Jul 2025 - add any 2025-2026 roles/certs"
-    ]
+      "no entries newer than Jul 2025 - add any 2025-2026 roles/certs",
+      "CONFLICT: CPhT issuer - Osco/IL license vs PTCB (doc-dzb-misc-20250425)",
+      "CONFLICT: Vylla sales volume $25M vs $10M+",
+      "CONFLICT: Phone.com rollout 160 NY agents/70% vs ~1000 agents/90%",
+      "CONFLICT: GenStone offers supervised-hundreds vs 150+ written",
+      "CONFLICT: WCR chapter name McHenry/Elgin vs McHenry County (2013-2015)",
+      "CONFIRM: Notary states IL+WI?"
+    ],
+    "applicationReferences": {
+      "vyllaOffice": "1827 Walden Office Square, Suite 325, Schaumburg, IL 60173",
+      "foxLakeSupervisor": "Joanne Malanowski, Office Manager, 847-587-0505",
+      "vyllaGenstoneSupervisor": "William Thompson, 941-404-8041",
+      "okAssociatesAddress": "10325 N Main St, Richmond, IL 60071",
+      "coursework2006": "Fundamentals of Real Estate, Real Estate Appraisal, USPAP - McHenry Community College, Crystal Lake",
+      "shpCertIssuer": "Illinois Realtors"
+    }
   }
 }
