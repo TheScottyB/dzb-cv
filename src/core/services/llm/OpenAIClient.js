@@ -72,7 +72,7 @@ export class OpenAIClient {
             };
         }
         catch (error) {
-            console.error('OpenAI Distillation Error:', error);
+            console.error('OpenAI Distillation Error:', error instanceof Error ? `${error.name}: ${error.message}` : 'Unknown error');
             return this.fallbackDistill(cvData, options);
         }
     }
@@ -122,7 +122,7 @@ export class OpenAIClient {
             };
         }
         catch (error) {
-            console.error('OpenAI Optimization Error:', error);
+            console.error('OpenAI Optimization Error:', error instanceof Error ? `${error.name}: ${error.message}` : 'Unknown error');
             return this.fallbackOptimize(content, constraints);
         }
     }

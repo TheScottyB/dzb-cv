@@ -1,6 +1,6 @@
 import { spawn, ChildProcess } from 'child_process';
 import { writeFileSync, mkdirSync, existsSync, mkdtempSync } from 'fs';
-import { dirname, resolve, isAbsolute, join } from 'path';
+import { dirname, resolve, isAbsolute, join, sep } from 'path';
 import { tmpdir } from 'os';
 import { randomUUID } from 'crypto';
 import { ChromeDetector } from './chrome-detector.js';
@@ -56,14 +56,19 @@ export class ChromePDFEngine {
    */
   async generatePDF(options: ChromePDFOptions): Promise<ChromePDFResult> {
     const startTime = Date.now();
-    
+
     try {
+      // Validate the user-controlled output path before it reaches Chrome's
+      // --print-to-pdf flag. See ADR-0003.
+      const outputPath = this.validateOutputPath(options.outputPath);
+
       // Prepare HTML file
       const htmlPath = await this.prepareHtmlFile(options);
-      
+
       // Build Chrome command
       const command = this.buildChromeCommand({
         ...options,
+        outputPath,
         htmlPath
       });
 
@@ -71,13 +76,13 @@ export class ChromePDFEngine {
       await this.executeCommand(command, options.timeout || 30000);
 
       // Verify output file exists
-      if (!existsSync(options.outputPath)) {
-        throw new Error(`PDF generation failed: Output file not created at ${options.outputPath}`);
+      if (!existsSync(outputPath)) {
+        throw new Error(`PDF generation failed: Output file not created at ${outputPath}`);
       }
 
       return {
         success: true,
-        outputPath: options.outputPath,
+        outputPath,
         chromeVersion: ChromeDetector.getChromeVersion(this.chromePath),
         executionTime: Date.now() - startTime
       };
@@ -90,6 +95,45 @@ export class ChromePDFEngine {
         executionTime: Date.now() - startTime
       };
     }
+  }
+
+  /**
+   * Validate the caller-supplied output path before it is passed to Chrome's
+   * --print-to-pdf flag. Mirrors packages/cli/src/utils/safe-path.ts: the path
+   * is resolved against process.cwd() and must stay within cwd, or be an
+   * absolute path under os.tmpdir(). NUL bytes are rejected, and the output
+   * directory must exist or be creatable. See ADR-0003.
+   */
+  private validateOutputPath(outputPath: string): string {
+    if (outputPath.includes('\0')) {
+      throw new Error('Invalid output path: contains NUL byte');
+    }
+
+    const cwd = resolve(process.cwd());
+    const tmp = resolve(tmpdir());
+    const resolved = resolve(cwd, outputPath);
+    const within = (base: string): boolean =>
+      resolved === base || resolved.startsWith(base + sep);
+
+    const allowedTmp = isAbsolute(outputPath) && within(tmp);
+    if (!within(cwd) && !allowedTmp) {
+      throw new Error(
+        `Refusing to write outside ${cwd}: "${outputPath}" resolves to "${resolved}"`
+      );
+    }
+
+    const outputDir = dirname(resolved);
+    if (!existsSync(outputDir)) {
+      try {
+        mkdirSync(outputDir, { recursive: true });
+      } catch {
+        throw new Error(
+          `Output directory does not exist and could not be created: ${outputDir}`
+        );
+      }
+    }
+
+    return resolved;
   }
 
   /**

@@ -3,6 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- CSP (finding #15): srcdoc preview iframe inherits this policy, so
+         style-src needs 'unsafe-inline' for template-injected <style> tags;
+         frame-src allows blob:/data: for blob-based PDF/HTML previews. -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; frame-src 'self' blob: data:; object-src 'none'; base-uri 'self'"
+    />
     <title>DZB CV Builder</title>
   </head>
   <body>

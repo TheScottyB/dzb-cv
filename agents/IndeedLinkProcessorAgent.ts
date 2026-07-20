@@ -8,6 +8,11 @@
 import { Buffer } from 'buffer';
 import { gunzipSync, inflateSync } from 'zlib';
 
+/** Maximum allowed size of decompressed output (1 MB) to prevent decompression bombs. */
+const MAX_DECOMPRESSED_BYTES = 1_048_576;
+/** Maximum allowed size of the base64-decoded input buffer (10 MB); larger payloads skip decompression. */
+const MAX_COMPRESSED_INPUT_BYTES = 10 * 1_048_576;
+
 interface IndeedLinkProcessorOptions {
   registry: Record<string, any>;
   messageBus: any;
@@ -123,6 +128,17 @@ export class IndeedLinkProcessorAgent {
       let decompressed;
       let decompressionMethod = 'none';
 
+      // Cap input size: skip decompression entirely for oversized payloads
+      if (decodedBase64.length > MAX_COMPRESSED_INPUT_BYTES) {
+        console.warn(
+          `${this.logPrefix} Decoded payload too large (${decodedBase64.length} bytes > ${MAX_COMPRESSED_INPUT_BYTES}); skipping decompression`
+        );
+        return this.extractJobInfo({
+          rawContent: '',
+          error: 'Encoded payload exceeds maximum allowed size',
+        });
+      }
+
       // Check if the data starts with the gzip magic number (1F 8B)
       const isGzipped =
         decodedBase64.length > 2 && decodedBase64[0] === 0x1f && decodedBase64[1] === 0x8b;
@@ -130,7 +146,11 @@ export class IndeedLinkProcessorAgent {
       if (isGzipped) {
         try {
           // Try gzip decompression first for gzipped data
-          decompressed = gunzipSync(decodedBase64).toString('utf-8');
+          // maxOutputLength guards against decompression bombs (throws ERR_BUFFER_TOO_LARGE,
+          // which is handled by the existing catch/fallback chain)
+          decompressed = gunzipSync(decodedBase64, {
+            maxOutputLength: MAX_DECOMPRESSED_BYTES,
+          }).toString('utf-8');
           decompressionMethod = 'gzip';
           console.info(
             `${this.logPrefix} Successfully gzip-decompressed to: ${decompressed.length} chars`
@@ -143,7 +163,9 @@ export class IndeedLinkProcessorAgent {
 
           // Try inflate as a fallback (some Indeed URLs use deflate instead of gzip)
           try {
-            decompressed = inflateSync(decodedBase64).toString('utf-8');
+            decompressed = inflateSync(decodedBase64, {
+              maxOutputLength: MAX_DECOMPRESSED_BYTES,
+            }).toString('utf-8');
             decompressionMethod = 'inflate';
             console.info(
               `${this.logPrefix} Successfully inflate-decompressed to: ${decompressed.length} chars`

@@ -47,7 +47,7 @@ export class ContentFetcher {
         retryCount++;
         const response = await fetch(url, {
           headers,
-          follow: fetchOptions.followRedirects ? 20 : 0,
+          follow: fetchOptions.followRedirects ? 5 : 0,
         } as any);
 
         if (!response.ok) {
@@ -59,7 +59,7 @@ export class ContentFetcher {
         }
 
         const contentType = response.headers.get('content-type') || '';
-        if (!contentType.includes('text/html')) {
+        if (!/^text\/html\s*(;|$)/i.test(contentType)) {
           throw createError.api(
             `Expected HTML content, got: ${contentType}`,
             undefined,
