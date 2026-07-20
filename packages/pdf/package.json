@@ -1,6 +1,6 @@
 {
   "name": "@dzb-cv/pdf",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Chrome-based PDF generation with multiple interfaces for DZB CV Generator",
   "private": true,
   "type": "module",

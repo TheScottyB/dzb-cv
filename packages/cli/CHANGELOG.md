@@ -1,5 +1,12 @@
 # @dzb-cv/cli
 
+## 1.2.2
+
+### Patch Changes
+
+- Updated dependencies [21b0165]
+  - @dzb-cv/pdf@1.2.2
+
 ## 1.2.1
 
 ### Patch Changes
