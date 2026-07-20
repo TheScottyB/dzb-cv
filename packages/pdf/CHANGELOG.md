@@ -1,5 +1,11 @@
 # @dzb-cv/pdf
 
+## 1.2.2
+
+### Patch Changes
+
+- 21b0165: feat: honor CHROME_PATH / PLAYWRIGHT_CHROMIUM_PATH env vars in ChromeDetector for CI and sandboxed environments
+
 ## 1.2.1
 
 ### Patch Changes

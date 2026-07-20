@@ -14,8 +14,54 @@
   "profiles": {
     "linkedIn": "placeholder-linkedin-url"
   },
-  "professionalSummary": "With over 40 years of experience in customer service and healthcare, and 20 years in real estate, I have developed a deep understanding of the needs of individuals in various environments. My expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, and maintaining patient records. Additionally, I have strong negotiation and problem-solving skills, recognized through awards in consumer and residential loans. I am committed to continuous improvement and strive for perfection in every role I undertake, making me a valuable asset to any organization.",
+  "professionalSummary": "Healthcare professional with over 40 years of combined experience in customer service and healthcare operations. Recently completed Medical Terminology and EKG Training at McHenry County College, earning Certified EKG Technician (CET) certification from the National Healthcareer Association (NHA) in July 2025. Has since earned Certified Nursing Assistant (CNA) and Certified Phlebotomy Technician (CPT) credentials, and is completing a Medical Assistant Capstone program (NHA CCMA candidate) at McHenry County College in 2026. My healthcare expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, patient records management, and cardiac monitoring. With 20 years of real estate experience providing strong negotiation and problem-solving skills, I am committed to continuous improvement and delivering exceptional patient care in healthcare environments.",
   "education": [
+    {
+      "certification": "Certified EKG Technician (CET)",
+      "institution": "National Healthcareer Association (NHA)",
+      "year": "2025",
+      "month": "July",
+      "status": "Current",
+      "notes": "Completed Medical Terminology and EKG Training Program at McHenry County College, Summer 2025"
+    },
+    {
+      "certification": "BLS Provider (CPR/AED)",
+      "institution": "American Heart Association (AHA)",
+      "year": "2025",
+      "month": "October",
+      "status": "Current",
+      "notes": "Basic Life Support (CPR and AED); issued October 15, 2025, valid through October 2027; training center Northwestern Medicine McHenry Hospital, McHenry, IL"
+    },
+    {
+      "certification": "Medical Terminology Certificate",
+      "institution": "McHenry County College",
+      "year": "2025",
+      "semester": "Summer",
+      "status": "Completed"
+    },
+    {
+      "certification": "Certified Nursing Assistant (CNA)",
+      "institution": "McHenry County College",
+      "year": "2025",
+      "semester": "Fall",
+      "status": "Completed"
+    },
+    {
+      "certification": "Certified Phlebotomy Technician (CPT)",
+      "institution": "National Healthcareer Association (NHA)",
+      "year": "2026",
+      "month": "May",
+      "status": "Current",
+      "notes": "Completed Phlebotomy Technician Training at McHenry County College (started March 2, 2026); passed NHA CPT certification exam May 2026"
+    },
+    {
+      "certification": "Medical Assistant Capstone (NHA CCMA candidate)",
+      "institution": "McHenry County College",
+      "year": "2026",
+      "semester": "Summer",
+      "status": "In Progress",
+      "notes": "Medical Assistant Capstone program, June 3–August 6, 2026; includes 60-hour supervised clinical experience; prepares for NHA Certified Clinical Medical Assistant (CCMA) exam. Coursework: anatomy & physiology, medical terminology, medical law & ethics, patient communication, medical office procedures, clinical testing and treatment skills."
+    },
     {
       "certification": "Certified Pharmacy Technician",
       "institution": "Osco Pharmacy",
@@ -60,6 +106,10 @@
       "Property Rehabbing & Investment"
     ],
     "healthcareAdministration": [
+      "EKG/ECG Testing and Monitoring",
+      "Cardiac Rhythm Analysis",
+      "Patient Cardiac Assessment",
+      "Medical Terminology",
       "Patient Intake & Triage (Human/Animal)",
       "Scheduling",
       "Scribing",
@@ -69,7 +119,10 @@
       "Verified pet insurance coverage and eligibility for animal patients",
       "Insurance Verification/Reconciliation",
       "Medical Equipment Prep/Sterilization",
-      "Pharmacy Support"
+      "Pharmacy Support",
+      "Holter Monitor Setup and Analysis",
+      "12-Lead EKG Interpretation",
+      "Stress Test Monitoring"
     ],
     "technical": [
       "Microsoft Office Suite",
@@ -90,6 +143,12 @@
       "Quick to learn new EHR and practice management systems, including cloud-based platforms such as PointClickCare"
     ],
     "certifications": [
+      "Certified EKG Technician (CET, National Healthcareer Association, July 2025 - Current)",
+      "BLS Provider - CPR/AED (American Heart Association, Issued Oct 2025 - Renew Oct 2027)",
+      "Medical Terminology Certificate (McHenry County College, Summer 2025)",
+      "Certified Nursing Assistant (CNA) (McHenry County College, Fall 2025)",
+      "Certified Phlebotomy Technician (CPT) (National Healthcareer Association, May 2026 - Current)",
+      "Medical Assistant Capstone - NHA CCMA candidate (McHenry County College, Summer 2026 - In Progress)",
       "Certified Pharmacy Technician (CPhT, Illinois State License, 1996)",
       "Licensed Managing Broker, Illinois (IDFPR, Issued: 10/2017 - Current)",
       "Licensed Managing Broker, Wisconsin (DSPS, Issued: 2018 - Current)",
@@ -251,17 +310,18 @@
         "employer": "Vylla",
         "address": "Corporate Address Required",
         "position": "Admin for Central & Eastern Coast AVPs",
-        "period": "February 2024 - Present",
+        "period": "February 2024 - May 2025",
         "hours": "40 hrs/wk",
         "duties": [
-          "Provide administrative support for 3 AVPs covering 14 states",
+          "Provided administrative support for 3 AVPs covering 14 states",
           "Selected for pilot program supporting 30 new agents during initial 2-3 months via email, text, Teams",
-          "Implement and manage agent support systems (Broker Kit, Monday.com) for onboarding, license transfers, system access, and training coordination",
+          "Implemented and managed agent support systems (Broker Kit, Monday.com) for onboarding, license transfers, system access, and training coordination",
           "Collaborated and implemented streamlined phone system (Phone.com) for 160 NY agents, reducing AVP call volume 70%",
           "Developed and managed agent retention initiative (birthday emails/social media)"
         ],
         "supervisor": "William Thompson, Regional Vice President",
-        "mayContact": true
+        "mayContact": true,
+        "reasonForLeaving": "Career transition to healthcare to utilize newly obtained EKG certification"
       },
       {
         "employer": "Vylla",
@@ -592,16 +652,40 @@
       ],
       "format": "Modern professional format",
       "emphasizedExperience": [
-        "realEstate.0",
-        "realEstate.2",
-        "healthcare.2"
+        "healthcare.0",
+        "healthcare.2",
+        "healthcare.3"
       ],
       "highlights": [
-        "Over 40 years in customer service",
-        "20 years in real estate",
-        "Multiple leadership positions",
-        "Experience managing teams across states",
-        "Strong administrative and organizational skills"
+        "Certified EKG Technician (CET) - July 2025",
+        "Over 40 years in customer service and healthcare",
+        "Recently completed Medical Terminology and EKG Training",
+        "Currently pursuing Basic Nursing Assistant certification",
+        "Strong administrative and organizational skills",
+        "HIPAA compliance and patient confidentiality expertise"
+      ]
+    },
+    "ekgTechnician": {
+      "requirements": [
+        "EKG certification emphasis",
+        "healthcare experience",
+        "cardiac monitoring skills"
+      ],
+      "format": "Healthcare-focused format",
+      "emphasizedExperience": [
+        "healthcare.0",
+        "healthcare.1",
+        "healthcare.2",
+        "healthcare.3"
+      ],
+      "highlights": [
+        "Certified EKG Technician (CET) - National Healthcareer Association, July 2025",
+        "Medical Terminology Certificate - McHenry County College, 2025",
+        "Certified Nursing Assistant (CNA) and Certified Phlebotomy Technician (CPT)",
+        "Medical Assistant Capstone in progress - NHA CCMA candidate (2026)",
+        "Extensive healthcare administration experience",
+        "Patient intake, triage, and cardiac assessment skills",
+        "HIPAA compliance and medical records management"
       ]
     }
   },
@@ -619,6 +703,29 @@
       "upwardMobilityProgram": "No",
       "alternativeEmploymentProgram": "No",
       "certifiedStatus": "Not Applicable"
+    }
+  },
+  "meta": {
+    "lastUpdated": "2026-07-20",
+    "source": "canonical - data/base-info.json is a synced copy",
+    "reviewNeeded": [
+      "workExperience.realEstate: Vylla Team Leader marked Present since Nov 2022 - confirm still current",
+      "education/training: BNA program listed In Progress Fall 2025 - confirm completion status",
+      "no entries newer than Jul 2025 - add any 2025-2026 roles/certs",
+      "CONFLICT: CPhT issuer - Osco/IL license vs PTCB (doc-dzb-misc-20250425)",
+      "CONFLICT: Vylla sales volume $25M vs $10M+",
+      "CONFLICT: Phone.com rollout 160 NY agents/70% vs ~1000 agents/90%",
+      "CONFLICT: GenStone offers supervised-hundreds vs 150+ written",
+      "CONFLICT: WCR chapter name McHenry/Elgin vs McHenry County (2013-2015)",
+      "CONFIRM: Notary states IL+WI?"
+    ],
+    "applicationReferences": {
+      "vyllaOffice": "1827 Walden Office Square, Suite 325, Schaumburg, IL 60173",
+      "foxLakeSupervisor": "Joanne Malanowski, Office Manager, 847-587-0505",
+      "vyllaGenstoneSupervisor": "William Thompson, 941-404-8041",
+      "okAssociatesAddress": "10325 N Main St, Richmond, IL 60071",
+      "coursework2006": "Fundamentals of Real Estate, Real Estate Appraisal, USPAP - McHenry Community College, Crystal Lake",
+      "shpCertIssuer": "Illinois Realtors"
     }
   }
 }
