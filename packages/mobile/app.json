@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Dawn CV",
+    "slug": "dawn-cv",
+    "scheme": "dawncv",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "extra": {
+      "apiBase": "http://localhost:4100"
+    }
+  }
+}
