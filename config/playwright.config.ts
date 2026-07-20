@@ -1,5 +1,4 @@
 import { defineConfig, devices } from '@playwright/test';
-import path from 'path';
 
 /**
  * Playwright configuration for CV generation system
@@ -55,7 +54,14 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Allow sandboxed environments to point at a pre-installed browser
+        // instead of downloading one (e.g. PLAYWRIGHT_CHROMIUM_PATH=/opt/pw-browsers/chromium)
+        launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH
+          ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+          : {},
+      },
     },
     {
       name: 'firefox',
@@ -100,5 +106,5 @@ export default defineConfig({
   outputDir: '../test-results/',
 
   // Global teardown to run after all tests
-  globalTeardown: process.env.CI ? undefined : path.join(__dirname, '../e2e/global-teardown.ts'),
+  globalTeardown: process.env.CI ? undefined : '../e2e/global-teardown.ts',
 });

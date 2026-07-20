@@ -6,6 +6,82 @@
  */
 
 import path from 'path';
+
+/**
+ * Returns true if the given bare host (IP literal, no brackets) falls in a
+ * private or reserved address range.
+ */
+function isPrivateAddress(host: string): boolean {
+  // IPv4 literal
+  const ipv4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (ipv4) {
+    const a = Number(ipv4[1]);
+    const b = Number(ipv4[2]);
+    if (a === 127) return true; // 127.0.0.0/8 loopback
+    if (a === 10) return true; // 10.0.0.0/8 private
+    if (a === 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12 private
+    if (a === 192 && b === 168) return true; // 192.168.0.0/16 private
+    if (a === 169 && b === 254) return true; // 169.254.0.0/16 link-local
+    if (a === 0) return true; // 0.0.0.0/8 "this" network
+    return false;
+  }
+  // IPv6 literal
+  if (host.includes(':')) {
+    const h = host.toLowerCase();
+    if (h === '::1' || h === '::') return true; // loopback / unspecified
+    if (/^f[cd][0-9a-f]{0,2}:/.test(h) || /^f[cd]$/.test(h.split(':')[0] ?? '')) {
+      return true; // fc00::/7 unique-local
+    }
+    if (/^fe[89ab][0-9a-f]?:/.test(h)) return true; // fe80::/10 link-local
+    // IPv4-mapped addresses, e.g. ::ffff:127.0.0.1
+    const mapped = h.match(/^::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/);
+    if (mapped && mapped[1]) return isPrivateAddress(mapped[1]);
+    return false;
+  }
+  return false;
+}
+
+/**
+ * Validates that a URL is safe to fetch (SSRF guard).
+ *
+ * Requires an http: or https: protocol and rejects loopback, private,
+ * link-local, and other reserved addresses as well as internal hostnames
+ * (localhost, *.local, *.internal).
+ *
+ * @param url The URL string to validate
+ * @returns The parsed URL if it is safe to fetch
+ * @throws Error if the URL is invalid or targets a private/internal address
+ */
+export function validateFetchURL(url: string): URL {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error(`Invalid URL: ${url}`);
+  }
+
+  if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+    throw new Error(
+      `Unsupported protocol "${parsed.protocol}" in URL; only http: and https: are allowed`
+    );
+  }
+
+  const hostname = parsed.hostname.toLowerCase();
+  // IPv6 literals appear in URL.hostname wrapped in brackets; strip them.
+  const bareHost = hostname.replace(/^\[/, '').replace(/\]$/, '');
+
+  if (
+    hostname === 'localhost' ||
+    hostname.endsWith('.local') ||
+    hostname.endsWith('.internal') ||
+    isPrivateAddress(bareHost)
+  ) {
+    throw new Error(`Refusing to fetch private or internal address: ${parsed.hostname}`);
+  }
+
+  return parsed;
+}
+
 import { promises as fs } from 'fs';
 import { existsSync } from 'fs';
 import { BaseCommand, RunConfiguration } from './base-command.js';
@@ -432,7 +508,8 @@ export class AnalyzeJobCommand extends BaseCommand {
    */
   private async fetchRawContent(url: string): Promise<string | null> {
     try {
-      const response = await fetch(url);
+      const safeUrl = validateFetchURL(url);
+      const response = await fetch(safeUrl);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

@@ -9,6 +9,7 @@ import LLMServiceAgent from '../../ats/agents/LLMServiceAgent';
 import { DefaultPDFGenerator } from '../../core/services/pdf/pdf-generator';
 import type { CVData } from '../../shared/types/cv-types';
 import { verifyPDF, printVerificationResults } from '../utils/pdf-verifier';
+import { validateJobDescription } from '../../core/services/llm/prompt-safety';
 import { ContentCurator, defaultCuratorConfig } from '../../../packages/ai-curation/src';
 import type { JobDescription, CurationOptions } from '../../../packages/ai-curation/src/types/curation';
 
@@ -417,11 +418,12 @@ async function applyCurationToCVData(
   try {
     const curator = new ContentCurator(defaultCuratorConfig);
     
-    // Prepare job description for curation
+    // Prepare job description for curation. Externally sourced text is
+    // validated and sanitized before entering the AI pipeline (ADR-0005).
     let jobDescription: JobDescription | undefined;
     if (options.jobDescription) {
       jobDescription = {
-        text: options.jobDescription,
+        text: validateJobDescription(options.jobDescription),
         requirements: [], // Could be enhanced to parse requirements
         sector: options.targetSector || 'private'
       };

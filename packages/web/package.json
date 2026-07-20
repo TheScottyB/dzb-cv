@@ -1,6 +1,6 @@
 {
   "name": "@dzb-cv/web",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,6 +13,7 @@
     "@dzb-cv/types": "workspace:*",
     "@dzb-cv/templates": "workspace:*",
     "@dzb-cv/ui": "workspace:*",
+    "marked": "^16.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.6.2"

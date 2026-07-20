@@ -89,7 +89,7 @@ class LLMServiceAgent {
       this.messageBus.publish('cv:distill:complete', { requestId, result });
       console.info(`${this.logPrefix} Distill completed for request: ${requestId}`);
     } catch (error) {
-      console.error(`${this.logPrefix} Error processing distill request ${requestId}:`, error);
+      console.error(`${this.logPrefix} Error processing distill request ${requestId}:`, this.formatError(error));
       this.messageBus.publish('cv:distill:error', { requestId, error: this.formatError(error) });
     } finally {
       this.activeRequests.delete(requestId);
@@ -110,7 +110,7 @@ class LLMServiceAgent {
       this.messageBus.publish('cv:optimize:complete', { requestId, result });
       console.info(`${this.logPrefix} Optimize completed for request: ${requestId}`);
     } catch (error) {
-      console.error(`${this.logPrefix} Error processing optimize request ${requestId}:`, error);
+      console.error(`${this.logPrefix} Error processing optimize request ${requestId}:`, this.formatError(error));
       this.messageBus.publish('cv:optimize:error', { requestId, error: this.formatError(error) });
     } finally {
       this.activeRequests.delete(requestId);
@@ -171,7 +171,7 @@ class LLMServiceAgent {
         error: this.formatError(error)
       };
       
-      console.error(`${this.logPrefix} [${requestId}] Pipeline failed after ${processingTime}ms:`, error);
+      console.error(`${this.logPrefix} [${requestId}] Pipeline failed after ${processingTime}ms:`, this.formatError(error));
       this.messageBus.publish('cv:process:single-page:error', errorResult);
     } finally {
       this.activeRequests.delete(requestId);

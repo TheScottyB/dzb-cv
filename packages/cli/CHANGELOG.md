@@ -1,5 +1,14 @@
 # @dzb-cv/cli
 
+## 1.2.1
+
+### Patch Changes
+
+- Updated dependencies [e54a146]
+- Updated dependencies [ff0ac2a]
+  - @dzb-cv/pdf@1.2.1
+  - @dzb-cv/templates@1.1.0
+
 ## 1.2.0
 
 ### Minor Changes

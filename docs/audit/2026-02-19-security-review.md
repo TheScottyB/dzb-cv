@@ -3,7 +3,9 @@
 **Reviewer:** Claude Code (`/security-review`)
 **Branch:** `claude/unify-dataset-alignment-Cip99`
 **Scope:** Full codebase
-**Status:** 5 of 17 findings resolved in this cycle (Phase 1)
+**Status:** ALL 17 findings resolved — Phase 1 (#4, #6-#10, ADR-0002/3/4),
+web pass (#14, #16), Phase 2 LLM hardening (#1-#3, ADR-0005), Phase 3
+batch (#5, #11-#13, #15, #17, ADR-0006).
 
 ---
 
@@ -32,38 +34,43 @@
 
 ### Critical
 
-1. **Prompt injection — CV data interpolated into LLM prompts**
-   - `src/core/services/llm/OpenAIClient.ts:221-271`
-   - Raw user data via `cvDataToText()` enters prompts unsanitized.
-2. **Personal data sent to external AI without consent**
-   - `src/core/services/llm/OpenAIClient.ts:299-343`
-   - Email, phone, full name shipped to OpenAI without explicit opt-in.
-3. **Unvalidated job description input to LLM**
-   - `src/shared/tools/ai-generator.ts:422-427`
+1. ~~**Prompt injection — CV data interpolated into LLM prompts**~~ —
+   resolved 2026-02-20 (ADR-0005): all fields pass `sanitizeForPrompt()`,
+   prompts use `<cv_data>` boundaries + standing data-only notice
+2. ~~**Personal data sent to external AI without consent**~~ — resolved
+   2026-02-20 (ADR-0005): email/phone replaced with placeholders, external
+   calls gated behind `DZB_CV_AI_CONSENT=granted` with privacy notice
+3. ~~**Unvalidated job description input to LLM**~~ — resolved 2026-02-20
+   (ADR-0005): `validateJobDescription()` enforces type, 50 KB cap,
+   sanitization
 
 ### High
 
-5. **Chrome spawn with user-controlled output path**
-   - `packages/pdf/src/core/chrome-engine.ts:94-136`
+5. ~~**Chrome spawn with user-controlled output path**~~ — resolved
+   2026-02-20 (ADR-0006): outputPath validated (cwd/tmpdir containment)
+   before reaching Chrome flags
 
 ### Medium
 
-11. **Missing SSRF protection on URL fetches**
-    - `src/cli/commands/analyze-job.ts:433-443`
-12. **Insecure decompression (no size limit)**
-    - `agents/IndeedLinkProcessorAgent.ts:122-156`
-13. **Weak Content-Type validation**
-    - `packages/job-analyzer/src/content-fetcher.ts:61-69`
+11. ~~**Missing SSRF protection on URL fetches**~~ — resolved 2026-02-20
+    (ADR-0006): http/https only; private/reserved ranges and internal
+    hostnames rejected
+12. ~~**Insecure decompression (no size limit)**~~ — resolved 2026-02-20
+    (ADR-0006): 10 MB input / 1 MB output caps via zlib maxOutputLength
+13. ~~**Weak Content-Type validation**~~ — resolved 2026-02-20 (ADR-0006):
+    strict `^text/html(;|$)` match; redirect cap 20 → 5
 
 ### Low
 
-14. **Incomplete HTML escape (missing single quote)**
-    - `packages/web/src/pages/PreviewPage.tsx:92-98`
-15. **Missing CSP headers** — `packages/web/index.html`
-16. **iframe without `sandbox` attribute** — `packages/web/src/pages/PreviewPage.tsx:129-135`
-17. **Error messages may leak system info**
-    - `src/ats/agents/LLMServiceAgent.ts:92-93`
-    - `src/core/services/llm/OpenAIClient.ts:133`
+14. ~~**Incomplete HTML escape (missing single quote)**~~ — resolved 2026-02-19:
+    `escapeHTML` now escapes `'`; template rendering delegated to
+    `@dzb-cv/templates` (`PreviewPage.tsx`)
+15. ~~**Missing CSP headers**~~ — resolved 2026-02-20 (ADR-0006): CSP meta
+    tag in `packages/web/index.html`
+16. ~~**iframe without `sandbox` attribute**~~ — resolved 2026-02-19: preview
+    iframe now uses `sandbox="allow-same-origin allow-modals"` (no scripts)
+17. ~~**Error messages may leak system info**~~ — resolved 2026-02-20
+    (ADR-0006): error logs emit `name: message` only
 
 ## Positive Findings
 

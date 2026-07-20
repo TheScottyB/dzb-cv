@@ -20,12 +20,17 @@ test.describe('CV Generation Flow', () => {
     const templateCards = page.locator('.template-card');
     expect(await templateCards.count()).toBeGreaterThanOrEqual(1);
 
-    // Select the first template
-    await templateCards.first().click();
+    // Select the second template (Basic)
+    await templateCards.nth(1).click();
 
     // Verify we've moved to the editor page
     await expect(page).toHaveURL(/editor/);
     await expect(page.getByText(/Personal Information/i)).toBeVisible();
+
+    // The selection must actually reach the preview (client-side navigation
+    // preserves store state)
+    await page.getByRole('link', { name: 'Preview' }).click();
+    await expect(page.getByText(/Template: basic/i)).toBeVisible();
   });
 
   test('should fill in CV information', async ({ page }) => {
@@ -46,29 +51,31 @@ test.describe('CV Generation Flow', () => {
     await expect(page.getByText('Information saved')).toBeVisible();
   });
 
-  test('should generate a PDF', async ({ page }) => {
-    test.slow(); // PDF generation might take some time
-
+  test('should export the CV document', async ({ page }) => {
     await page.goto('/preview');
 
-    // Trigger PDF generation
-    const downloadPromise = page.waitForEvent('download');
-    await page.getByRole('button', { name: /Download PDF/i }).click();
+    // A print-to-PDF path must be offered
+    await expect(page.getByRole('button', { name: /Print \/ Save as PDF/i })).toBeVisible();
 
-    // Wait for download to start
+    // The rendered preview iframe must be present
+    await expect(page.locator('iframe[title="CV Preview"]')).toBeVisible();
+
+    // Downloading the HTML document must produce a real file
+    const downloadPromise = page.waitForEvent('download');
+    await page.getByRole('button', { name: /Download HTML/i }).click();
     const download = await downloadPromise;
 
     // Verify the file name contains "CV" or "Resume"
     expect(download.suggestedFilename()).toMatch(/CV|Resume/i);
 
-    // Wait for download to complete
     const path = await download.path();
     expect(path).toBeTruthy();
 
-    // Optional: Basic check that the file exists and isn't empty
+    // The document should contain the rendered template markup, not be empty
     expect(existsSync(path)).toBeTruthy();
-    const fileContent = readFileSync(path);
-    expect(fileContent.length).toBeGreaterThan(1000); // PDF should be reasonably sized
+    const fileContent = readFileSync(path, 'utf8');
+    expect(fileContent).toContain('<!DOCTYPE html>');
+    expect(fileContent.length).toBeGreaterThan(500);
   });
 
   test('should pass basic accessibility checks', async ({ page }) => {

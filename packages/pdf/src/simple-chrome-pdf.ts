@@ -1,6 +1,6 @@
 import { spawn, ChildProcess } from 'child_process';
 import { writeFileSync, existsSync, mkdirSync, mkdtempSync, rmSync } from 'fs';
-import { resolve, isAbsolute, join } from 'path';
+import { dirname, resolve, isAbsolute, join, sep } from 'path';
 import { tmpdir } from 'os';
 
 export interface SimplePDFOptions {
@@ -42,6 +42,11 @@ export class SimpleChromePDF {
     const tempHtmlPath = join(tempDir, 'input.html');
 
     try {
+      // Validate the user-controlled output path before it reaches Chrome's
+      // --print-to-pdf flag. See ADR-0003.
+      const outputPath = this.validateOutputPath(options.outputPath);
+      options = { ...options, outputPath };
+
       if (options.debug) {
         console.log('🚀 Starting Chrome PDF generation...');
         console.log('Chrome path:', this.chromePath);
@@ -97,6 +102,45 @@ export class SimpleChromePDF {
         rmSync(tempDir, { recursive: true, force: true });
       }
     }
+  }
+
+  /**
+   * Validate the caller-supplied output path before it is passed to Chrome's
+   * --print-to-pdf flag. Mirrors packages/cli/src/utils/safe-path.ts: the path
+   * is resolved against process.cwd() and must stay within cwd, or be an
+   * absolute path under os.tmpdir(). NUL bytes are rejected, and the output
+   * directory must exist or be creatable. See ADR-0003.
+   */
+  private validateOutputPath(outputPath: string): string {
+    if (outputPath.includes('\0')) {
+      throw new Error('Invalid output path: contains NUL byte');
+    }
+
+    const cwd = resolve(process.cwd());
+    const tmp = resolve(tmpdir());
+    const resolved = resolve(cwd, outputPath);
+    const within = (base: string): boolean =>
+      resolved === base || resolved.startsWith(base + sep);
+
+    const allowedTmp = isAbsolute(outputPath) && within(tmp);
+    if (!within(cwd) && !allowedTmp) {
+      throw new Error(
+        `Refusing to write outside ${cwd}: "${outputPath}" resolves to "${resolved}"`
+      );
+    }
+
+    const outputDir = dirname(resolved);
+    if (!existsSync(outputDir)) {
+      try {
+        mkdirSync(outputDir, { recursive: true });
+      } catch {
+        throw new Error(
+          `Output directory does not exist and could not be created: ${outputDir}`
+        );
+      }
+    }
+
+    return resolved;
   }
 
   /**
