@@ -1,5 +1,12 @@
 # @dzb-cv/cli
 
+## 1.2.3
+
+### Patch Changes
+
+- Updated dependencies [[`0a58c9b`](https://github.com/TheScottyB/dzb-cv/commit/0a58c9b975097a6c7a7f20fa12cbd8b91d9cdd9e)]:
+  - @dzb-cv/pdf@1.3.0
+
 ## 1.2.2
 
 ### Patch Changes
