@@ -216,74 +216,85 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
       title: 'Certified EKG Technician | Healthcare Professional',
       summary: `**Newly Certified EKG Technician** with **${calculateTotalExperience(experience)}+ years healthcare administration experience**. Recently earned **National Healthcareer Association (NHA) Certified EKG Technician (CET) credential**. Combines fresh cardiac monitoring expertise with extensive patient care background.`,
       keySkills: ['EKG Testing', 'Cardiac Rhythm Analysis', '12-Lead EKG Interpretation', 'Patient Care', 'Medical Terminology', 'Healthcare Compliance'],
-      focusAreas: ['🫀 EKG EXPERTISE & CERTIFICATIONS', '🏥 HEALTHCARE EXPERIENCE', '💪 CORE COMPETENCIES']
+      focusAreas: ['EKG EXPERTISE & CERTIFICATIONS', 'HEALTHCARE EXPERIENCE', 'CORE COMPETENCIES']
     },
     medical: {
       title: 'Healthcare Professional | Medical Support Specialist',
       summary: `**Healthcare Professional** with **${calculateTotalExperience(experience)}+ years medical industry experience**. Proven expertise in patient care, medical administration, and healthcare operations.`,
       keySkills: ['Patient Care', 'Medical Terminology', 'Healthcare Compliance', 'Medical Documentation', 'Patient Education'],
-      focusAreas: ['🏥 MEDICAL EXPERIENCE', '📋 HEALTHCARE ADMINISTRATION', '💪 CORE COMPETENCIES']
+      focusAreas: ['MEDICAL EXPERIENCE', 'HEALTHCARE ADMINISTRATION', 'CORE COMPETENCIES']
     },
     general: {
       title: 'Healthcare Professional',
       summary: `**Healthcare Professional** with **${calculateTotalExperience(experience)}+ years experience** in medical environments and patient care.`,
       keySkills: skills.map(s => s.name).slice(0, 6),
-      focusAreas: ['🏥 EXPERIENCE', '🎓 EDUCATION & CERTIFICATIONS', '💪 SKILLS']
+      focusAreas: ['EXPERIENCE', 'EDUCATION & CERTIFICATIONS', 'SKILLS']
     }
   };
   
   const optimization = focusOptimizations[focus] || focusOptimizations.general;
   
-  // Generate markdown CV
+  // Format "YYYY-MM" as "Mon YYYY" for human-readable dates
+  const fmtDate = (d) => {
+    if (!d || d === 'Present') return 'Present';
+    const m = /^(\d{4})-(\d{2})$/.exec(d);
+    if (!m) return d;
+    const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return `${months[Number(m[2]) - 1]} ${m[1]}`;
+  };
+
+  // Generate markdown CV. One bullet per line, period-terminated, no emoji:
+  // ATS parsers and the readability scorer both prefer real list items.
+  const bullet = (text) => `- ${String(text).replace(/[.\s]+$/, '')}.\n`;
+
   let cvContent = `# ${personalInfo.name.full}\n`;
   cvContent += `**${optimization.title}**\n\n`;
-  cvContent += `📧 ${personalInfo.contact.email} | 📱 ${personalInfo.contact.phone} | 📍 ${personalInfo.contact.location}\n\n`;
+  cvContent += `${personalInfo.contact.email} | ${personalInfo.contact.phone} | ${personalInfo.contact.location}\n\n`;
   cvContent += `---\n\n`;
-  
+
   // Professional Summary
-  cvContent += `## 🫀 PROFESSIONAL SUMMARY\n\n`;
+  cvContent += `## PROFESSIONAL SUMMARY\n\n`;
   cvContent += `${optimization.summary}\n\n`;
   if (focus === 'ekg') {
     cvContent += `Seeking opportunities in hospital cardiac units, cardiology practices, and healthcare facilities.\n\n`;
   }
   cvContent += `---\n\n`;
-  
+
   // Experience Section
   if (experience && experience.length > 0) {
-    cvContent += `## ${optimization.focusAreas[1] || '🏥 EXPERIENCE'}\n\n`;
+    cvContent += `## ${optimization.focusAreas[1] || 'EXPERIENCE'}\n\n`;
     experience.forEach(exp => {
-      const endDate = exp.endDate || 'Present';
-      cvContent += `**${exp.employer}** | ${exp.position} *(${exp.startDate} - ${endDate})*\n`;
+      cvContent += `**${exp.position}** — ${exp.employer}\n`;
+      cvContent += `${fmtDate(exp.startDate)} to ${fmtDate(exp.endDate)}\n\n`;
       if (exp.responsibilities) {
-        cvContent += `${exp.responsibilities.map(r => `• ${r}`).join(' ')}\n\n`;
+        exp.responsibilities.forEach(r => { cvContent += bullet(r); });
+        cvContent += `\n`;
       }
     });
     cvContent += `---\n\n`;
   }
-  
+
   // Certifications Section (emphasized for EKG focus)
   if (certifications && certifications.length > 0) {
-    const sectionTitle = focus === 'ekg' ? '🫀 EKG EXPERTISE & CERTIFICATIONS' : '🎓 CERTIFICATIONS';
+    const sectionTitle = focus === 'ekg' ? 'EKG EXPERTISE & CERTIFICATIONS' : 'CERTIFICATIONS';
     cvContent += `## ${sectionTitle}\n\n`;
-    
+    certifications.forEach(cert => {
+      const detail = [cert.issuer, cert.date].filter(Boolean).join(', ');
+      cvContent += bullet(`**${cert.name}**${detail ? ` — ${detail}` : ''}`);
+    });
+    cvContent += `\n`;
     if (focus === 'ekg') {
-      cvContent += `**Current Certifications:**\n`;
-      certifications.forEach(cert => {
-        const meta = [cert.issuer, cert.date].filter(Boolean).join(', ');
-        cvContent += `• ✅ **${cert.name}**${meta ? ` - ${meta}` : ''}\n`;
-      });
-      cvContent += `\n**EKG Skills:** EKG/ECG Testing • Cardiac Rhythm Analysis • 12-Lead EKG Interpretation • Holter Monitor Setup • Stress Test Monitoring • Patient Cardiac Assessment\n\n`;
-    } else {
-      certifications.forEach(cert => {
-        cvContent += `• **${cert.name}**${cert.issuer ? ` - ${cert.issuer}` : ''}${cert.date ? ` (${cert.date})` : ''}\n`;
-      });
+      cvContent += `**EKG Skills**\n\n`;
+      ['EKG/ECG Testing', 'Cardiac Rhythm Analysis', '12-Lead EKG Interpretation',
+       'Holter Monitor Setup and Analysis', 'Stress Test Monitoring',
+       'Patient Cardiac Assessment'].forEach(s => { cvContent += bullet(s); });
       cvContent += `\n`;
     }
     cvContent += `---\n\n`;
   }
-  
+
   // Skills/Competencies Section
-  cvContent += `## 💪 CORE COMPETENCIES\n\n`;
+  cvContent += `## CORE COMPETENCIES\n\n`;
   const skillsByCategory = {};
   skills.forEach(skill => {
     if (!skillsByCategory[skill.category]) {
@@ -291,27 +302,27 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
     }
     skillsByCategory[skill.category].push(skill.name);
   });
-  
+
   Object.entries(skillsByCategory).forEach(([category, skillList]) => {
-    cvContent += `**${category}:** ${skillList.join(' • ')}\n`;
+    cvContent += bullet(`**${category}:** ${skillList.join(', ')}`);
   });
   cvContent += `\n---\n\n`;
-  
+
   // Education Section
   if (education && education.length > 0) {
-    cvContent += `## 🎓 EDUCATION\n\n`;
+    cvContent += `## EDUCATION\n\n`;
     education.forEach(edu => {
-      cvContent += `**${edu.degree}**${edu.institution ? ` - ${edu.institution}` : ''}${edu.year ? ` (${edu.year})` : ''}\n`;
+      const detail = [edu.institution, edu.year].filter(Boolean).join(', ');
+      cvContent += bullet(`**${edu.degree}**${detail ? ` — ${detail}` : ''}`);
     });
     cvContent += `\n`;
   }
-  
+
   // Job-specific targeting
   if (jobPosting) {
-    cvContent += `---\n\n## 🎯 JOB TARGETING\n\n`;
-    cvData += `*This CV has been optimized for the specific job requirements provided.*\n\n`;
+    cvContent += `---\n\nThis CV has been tailored to the specific job requirements provided.\n\n`;
   }
-  
+
   return cvContent;
 }
 

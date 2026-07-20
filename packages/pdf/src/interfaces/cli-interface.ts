@@ -1,5 +1,30 @@
 import { ChromePDFEngine, ChromePDFOptions, ChromePDFResult } from '../core/chrome-engine.js';
 import type { CVData, PDFGenerationOptions } from '@dzb-cv/types';
+import { readFileSync } from 'fs';
+import { marked } from 'marked';
+
+/** Print-optimized stylesheet for markdown-sourced CVs. */
+const PRINT_CSS = `
+  body { font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif; color: #333;
+         max-width: 210mm; margin: 0 auto; padding: 14mm 16mm; font-size: 10.5pt; line-height: 1.5; }
+  h1 { font-size: 21pt; margin: 0 0 2pt; color: #1a1a1a; border-bottom: 2pt solid #2c5282; padding-bottom: 6pt; }
+  h1 + p strong { font-size: 11.5pt; color: #2c5282; }
+  h2 { font-size: 13pt; color: #2c5282; margin: 14pt 0 6pt; border-bottom: 0.75pt solid #ddd;
+       padding-bottom: 3pt; letter-spacing: 0.03em; page-break-after: avoid; }
+  p { margin: 4pt 0; }
+  ul { margin: 4pt 0 8pt; padding-left: 16pt; }
+  li { margin: 2pt 0; page-break-inside: avoid; }
+  hr { border: none; margin: 6pt 0; }
+  strong { color: #1a1a1a; }
+  @media print { body { padding: 8mm 10mm; } }
+`;
+
+/** Convert a markdown file to a standalone print-ready HTML document. */
+function markdownFileToHTML(filePath: string): string {
+  const md = readFileSync(filePath, 'utf8');
+  const body = marked.parse(md, { async: false }) as string;
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>${PRINT_CSS}</style></head><body>${body}</body></html>`;
+}
 
 export interface CLIPDFOptions extends Omit<ChromePDFOptions, 'htmlContent' | 'htmlPath'> {
   /** Input source - can be HTML file, HTML content, or CV data */
@@ -145,7 +170,23 @@ export class CLIPDFInterface {
     const inputType = options.inputType || this.detectInputType(options.input);
 
     switch (inputType) {
-      case 'file':
+      case 'file': {
+        const filePath = options.input as string;
+        // Markdown files must be converted to styled HTML before Chrome
+        // prints them, otherwise the PDF is raw markdown as plain text.
+        if (/\.(md|markdown)$/i.test(filePath)) {
+          return {
+            htmlContent: markdownFileToHTML(filePath),
+            outputPath: options.outputPath,
+            windowSize: options.windowSize || '1920,1080',
+            virtualTimeBudget: options.virtualTimeBudget || 5000,
+            printMargins: options.printMargins ?? false,
+            scale: options.scale ?? 1.0,
+            paperSize: options.paperSize ?? 'Letter',
+            customFlags: options.customFlags ?? [],
+            timeout: options.timeout ?? 30000
+          };
+        }
         return {
           htmlPath: options.input as string,
           outputPath: options.outputPath,
@@ -157,6 +198,7 @@ export class CLIPDFInterface {
           customFlags: options.customFlags ?? [],
           timeout: options.timeout ?? 30000
         };
+      }
 
       case 'html':
         return {

@@ -61,6 +61,7 @@ export class SimpleChromePDF {
         '--disable-dev-shm-usage',
         `--print-to-pdf=${options.outputPath}`,
         '--print-to-pdf-no-header',
+      '--no-pdf-header-footer',
         '--virtual-time-budget=5000',
         '--window-size=1920,1080',
         '--no-sandbox',

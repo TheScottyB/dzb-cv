@@ -163,7 +163,7 @@ export class ChromePDFEngine {
       ...(options.paperSize ? [`--print-to-pdf-paper-size=${options.paperSize}`] : []),
       
       // Headers/margins
-      ...(options.printMargins ? [] : ['--print-to-pdf-no-header']),
+      ...(options.printMargins ? [] : ['--print-to-pdf-no-header', '--no-pdf-header-footer']),
       
       // Security and performance
       '--no-sandbox',
