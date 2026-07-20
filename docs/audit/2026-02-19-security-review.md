@@ -3,7 +3,9 @@
 **Reviewer:** Claude Code (`/security-review`)
 **Branch:** `claude/unify-dataset-alignment-Cip99`
 **Scope:** Full codebase
-**Status:** 5 of 17 findings resolved in this cycle (Phase 1)
+**Status:** 11 of 17 findings resolved — Phase 1 (#4, #6-#10), web pass
+(#14, #16), Phase 2 LLM hardening (#1-#3, ADR-0005). Remaining: #5, #11,
+#12, #13, #15, #17.
 
 ---
 
@@ -32,14 +34,15 @@
 
 ### Critical
 
-1. **Prompt injection — CV data interpolated into LLM prompts**
-   - `src/core/services/llm/OpenAIClient.ts:221-271`
-   - Raw user data via `cvDataToText()` enters prompts unsanitized.
-2. **Personal data sent to external AI without consent**
-   - `src/core/services/llm/OpenAIClient.ts:299-343`
-   - Email, phone, full name shipped to OpenAI without explicit opt-in.
-3. **Unvalidated job description input to LLM**
-   - `src/shared/tools/ai-generator.ts:422-427`
+1. ~~**Prompt injection — CV data interpolated into LLM prompts**~~ —
+   resolved 2026-02-20 (ADR-0005): all fields pass `sanitizeForPrompt()`,
+   prompts use `<cv_data>` boundaries + standing data-only notice
+2. ~~**Personal data sent to external AI without consent**~~ — resolved
+   2026-02-20 (ADR-0005): email/phone replaced with placeholders, external
+   calls gated behind `DZB_CV_AI_CONSENT=granted` with privacy notice
+3. ~~**Unvalidated job description input to LLM**~~ — resolved 2026-02-20
+   (ADR-0005): `validateJobDescription()` enforces type, 50 KB cap,
+   sanitization
 
 ### High
 
