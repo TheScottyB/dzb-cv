@@ -129,6 +129,20 @@ describe('Logger', () => {
     });
   });
 
+  describe('colorized output', () => {
+    test('should emit real ANSI escape characters when colorize is enabled', () => {
+      const errorSpy = vi.spyOn(console, 'error');
+      const logger = new Logger({ component: 'T', colorize: true });
+
+      logger.error('boom');
+
+      expect(errorSpy).toHaveBeenCalled();
+      const line = errorSpy.mock.calls[0][0] as string;
+      expect(line).toContain(String.fromCharCode(27));
+      expect(line).toContain('ERROR');
+    });
+  });
+
   describe('createLogger convenience function', () => {
     test('should create logger using convenience function', () => {
       const logger = createLogger('TestComponent');
