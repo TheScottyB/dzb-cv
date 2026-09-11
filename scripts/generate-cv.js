@@ -329,19 +329,46 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
   return cvContent;
 }
 
-// Calculate total years of experience
+// Parse a period token into a Date. Accepts "YYYY-MM", "YYYY", "Month YYYY",
+// and "Present" / "Current" (=> now). Returns null when unparseable.
+function parsePeriodDate(token, { endOfPeriod = false } = {}) {
+  if (token == null) return null;
+  const t = String(token).trim();
+  if (/^(present|current|now)$/i.test(t)) return new Date();
+  let m;
+  if ((m = t.match(/^(\d{4})-(\d{1,2})$/))) {
+    return new Date(Number(m[1]), Number(m[2]) - 1, 1);
+  }
+  if ((m = t.match(/^(\d{4})$/))) {
+    // Bare year: start => Jan 1, end => Dec 31 of that year
+    return endOfPeriod ? new Date(Number(m[1]), 11, 31) : new Date(Number(m[1]), 0, 1);
+  }
+  if ((m = t.match(/^([A-Za-z]+)\.?\s+(\d{4})$/))) {
+    const d = new Date(`${m[1]} 1, ${m[2]}`);
+    return isNaN(d) ? null : d;
+  }
+  const d = new Date(t);
+  return isNaN(d) ? null : d;
+}
+
+// Calculate total years of experience (sum of role durations, floored).
+// A role with a start but no end is treated as spanning its start period
+// (e.g. "2002" alone => calendar year 2002), not as ongoing.
 function calculateTotalExperience(experience) {
   if (!experience || experience.length === 0) return 0;
-  
-  let totalYears = 0;
+
+  let totalMs = 0;
   experience.forEach(exp => {
-    const startDate = new Date(exp.startDate + '-01');
-    const endDate = exp.endDate ? new Date(exp.endDate + '-01') : new Date();
-    const years = (endDate - startDate) / (1000 * 60 * 60 * 24 * 365.25);
-    totalYears += years;
+    const start = parsePeriodDate(exp.startDate);
+    if (!start) return;
+    let end = exp.endDate
+      ? parsePeriodDate(exp.endDate, { endOfPeriod: true })
+      : parsePeriodDate(exp.startDate, { endOfPeriod: true });
+    if (!end || end < start) return;
+    totalMs += end - start;
   });
-  
-  return Math.floor(totalYears);
+
+  return Math.max(0, Math.floor(totalMs / (1000 * 60 * 60 * 24 * 365.25)));
 }
 
 // Main generation function
