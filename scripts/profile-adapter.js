@@ -33,6 +33,9 @@ export function adaptRootBaseInfo(rootData) {
         adapted.certifications.push({
           name: edu.certification,
           issuer: edu.institution,
+          // `month` is carried separately so existing focuses keep rendering
+          // the bare year while focuses that want "August 2026" can opt in.
+          month: edu.month || edu.semester || '',
           date: edu.year || edu.status || '',
           status: edu.status || 'Active'
         });
@@ -41,6 +44,7 @@ export function adaptRootBaseInfo(rootData) {
         adapted.education.push({
           degree: edu.certification,
           institution: edu.institution,
+          month: edu.month || edu.semester || '',
           year: edu.year || edu.status || '',
           field: 'Healthcare'
         });
@@ -112,6 +116,10 @@ export function adaptRootBaseInfo(rootData) {
     { name: 'Problem Solving', level: 'Advanced', category: 'Soft Skills' },
     { name: 'Negotiation', level: 'Advanced', category: 'Soft Skills' }
   ];
+
+  // Keep the raw skill groups from base-info.json available to the generator so
+  // focus-specific sections can source real skills instead of hardcoding them.
+  adapted.sourceSkills = rootData.skills || {};
 
   return adapted;
 }

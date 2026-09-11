@@ -77,12 +77,15 @@ Usage:
 Options:
   --profile <name>     Profile to use (default: dawn)
   --template <type>    Template type (healthcare, professional, modern)
-  --focus <area>       Focus area (ekg, medical, general)
+  --focus <area>       Focus area (ma, ekg, medical, general)
   --job <path>         Job posting file for targeted CV
   --output <path>      Output file path
   --help, -h           Show this help
 
 Examples:
+  # Generate Medical Assistant (CCMA) focused CV
+  node scripts/generate-cv.js --profile dawn --template healthcare --focus ma
+
   # Generate EKG-focused CV
   node scripts/generate-cv.js --profile dawn --template healthcare --focus ekg
   
@@ -93,6 +96,7 @@ Examples:
   node scripts/generate-cv.js --profile dawn --output output/dawn-cv-latest.pdf
 
 Healthcare Focus Areas:
+  ma           - Medical Assistant positions (leads with the CCMA credential)
   ekg          - EKG Technician positions
   medical      - General medical roles
   nursing      - Nursing assistant positions
@@ -206,9 +210,95 @@ function loadProfile(profileName) {
   }
 }
 
+// Credential name fragments in the order a Medical Assistant CV should present
+// them: the CCMA leads, then the supporting clinical credentials.
+const MA_CREDENTIAL_ORDER = [
+  'Certified Clinical Medical Assistant',
+  'Certified Phlebotomy Technician',
+  'Certified EKG Technician',
+  'Certified Nursing Assistant',
+  'BLS Provider',
+  'Medical Terminology'
+];
+
+// Credentials from Dawn's real-estate career. On an MA CV these move out of the
+// clinical list and onto a single "Other Licenses" line.
+const NON_CLINICAL_CREDENTIAL = /real estate|mortgage|notary|managing broker/i;
+
+// Credentials come through the adapter as { name, ... } (certifications) or
+// { degree, ... } (education); read whichever is present.
+const credentialName = (item) => String((item && (item.name || item.degree)) || '');
+
+// "August" + "2026" => "August 2026". The month/semester is optional in the
+// data, so this degrades to the bare year (or status) when it is missing.
+const credentialDate = (item) =>
+  [item && item.month, item && (item.date || item.year)].filter(Boolean).join(' ');
+
+// Order credentials for the MA focus: the ranked clinical credentials first,
+// then any remaining clinical credential, with non-clinical licenses removed.
+function orderCredentialsForMA(list) {
+  const clinical = (list || []).filter(item => !NON_CLINICAL_CREDENTIAL.test(credentialName(item)));
+  const ranked = [];
+  MA_CREDENTIAL_ORDER.forEach(fragment => {
+    const match = clinical.find(item =>
+      credentialName(item).toLowerCase().includes(fragment.toLowerCase()) && !ranked.includes(item));
+    if (match) ranked.push(match);
+  });
+  clinical.forEach(item => { if (!ranked.includes(item)) ranked.push(item); });
+  return ranked;
+}
+
+// The non-clinical licenses, formatted for the short "Other Licenses" line.
+function otherLicenses(list) {
+  return (list || [])
+    .filter(item => NON_CLINICAL_CREDENTIAL.test(credentialName(item)))
+    .map(item => {
+      const date = credentialDate(item);
+      return `${credentialName(item)}${date ? ` (${date})` : ''}`;
+    });
+}
+
+// Reuse the "healthcare expertise includes ..." sentence from base-info.json's
+// professionalSummary so the MA summary restates no fact of its own.
+function healthcareExpertiseSentence(summary) {
+  const match = /([^.]*healthcare expertise includes[^.]*\.)/i.exec(String(summary || ''));
+  if (!match) return '';
+  return match[1].trim().replace(/^my\s+/i, '').replace(/^./, c => c.toUpperCase());
+}
+
+// Clinical skills for the MA focus, sourced from base-info.json's
+// skills.healthcareAdministration list (veterinary-only entries omitted).
+function clinicalSkills(sourceSkills) {
+  const list = (sourceSkills && sourceSkills.healthcareAdministration) || [];
+  return list.filter(skill => !/\(veterinary\)|pet insurance|animal patients/i.test(skill));
+}
+
+// Build the MA summary from the profile data: credential, total healthcare
+// experience, the expertise sentence, and the clinical externship.
+function buildMASummary(profile, years) {
+  const { personalInfo, certifications, experience } = profile;
+  const ccma = (certifications || []).find(c =>
+    /certified clinical medical assistant/i.test(credentialName(c)));
+  const credit = ccma
+    ? [ccma.issuer, credentialDate(ccma)].filter(Boolean).join(', ')
+    : '';
+  const externship = (experience || []).find(e => /externship/i.test(e.position || ''));
+  const externshipDuty = externship && (externship.responsibilities || [])[0];
+
+  const parts = [
+    `**Certified Clinical Medical Assistant (CCMA)**${credit ? ` — ${credit} — ` : ' '}with **${years}+ years of healthcare operations and patient-access experience**.`
+  ];
+  const expertise = healthcareExpertiseSentence(personalInfo && personalInfo.summary);
+  if (expertise) parts.push(expertise);
+  if (externship && externshipDuty) {
+    parts.push(`Clinical externship at ${externship.employer}: ${String(externshipDuty).replace(/^./, c => c.toLowerCase()).replace(/\.$/, '')}.`);
+  }
+  return parts.join(' ');
+}
+
 // Generate CV content based on focus area
 function generateCVContent(profile, template, focus, jobPosting = null) {
-  const { personalInfo, certifications, skills, experience, education } = profile;
+  const { personalInfo, certifications, skills, experience, education, sourceSkills } = profile;
   
   // Focus-specific optimizations
   const focusOptimizations = {
@@ -216,7 +306,15 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
       title: 'Certified EKG Technician | Healthcare Professional',
       summary: `**Newly Certified EKG Technician** with **${calculateTotalExperience(experience)}+ years healthcare administration experience**. Recently earned **National Healthcareer Association (NHA) Certified EKG Technician (CET) credential**. Combines fresh cardiac monitoring expertise with extensive patient care background.`,
       keySkills: ['EKG Testing', 'Cardiac Rhythm Analysis', '12-Lead EKG Interpretation', 'Patient Care', 'Medical Terminology', 'Healthcare Compliance'],
+      certificationsTitle: 'EKG EXPERTISE & CERTIFICATIONS',
       focusAreas: ['EKG EXPERTISE & CERTIFICATIONS', 'HEALTHCARE EXPERIENCE', 'CORE COMPETENCIES']
+    },
+    ma: {
+      title: 'Certified Clinical Medical Assistant (CCMA) | CNA \u00b7 CPT \u00b7 CET \u00b7 BLS',
+      summary: buildMASummary(profile, calculateTotalExperience(experience)),
+      keySkills: clinicalSkills(sourceSkills).slice(0, 6),
+      certificationsTitle: 'CERTIFICATIONS & LICENSES',
+      focusAreas: ['CERTIFICATIONS & LICENSES', 'CLINICAL & HEALTHCARE EXPERIENCE', 'CORE COMPETENCIES']
     },
     medical: {
       title: 'Healthcare Professional | Medical Support Specialist',
@@ -258,12 +356,22 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
   if (focus === 'ekg') {
     cvContent += `Seeking opportunities in hospital cardiac units, cardiology practices, and healthcare facilities.\n\n`;
   }
+  if (focus === 'ma') {
+    cvContent += `Seeking Medical Assistant opportunities in primary care, internal medicine, specialty practices, and urgent care.\n\n`;
+  }
   cvContent += `---\n\n`;
 
-  // Experience Section
+  // Experience Section. Under the MA focus the clinical externship leads:
+  // it is the most relevant Medical Assistant experience.
+  const orderedExperience = focus === 'ma'
+    ? [
+        ...experience.filter(exp => /externship/i.test(exp.position || '')),
+        ...experience.filter(exp => !/externship/i.test(exp.position || ''))
+      ]
+    : experience;
   if (experience && experience.length > 0) {
     cvContent += `## ${optimization.focusAreas[1] || 'EXPERIENCE'}\n\n`;
-    experience.forEach(exp => {
+    orderedExperience.forEach(exp => {
       cvContent += `**${exp.position}** — ${exp.employer}\n`;
       const range = exp.endDate == null && !/present/i.test(exp.startDate)
         ? fmtDate(exp.startDate)
@@ -277,12 +385,14 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
     cvContent += `---\n\n`;
   }
 
-  // Certifications Section (emphasized for EKG focus)
+  // Certifications Section (emphasized for the EKG and MA focuses)
   if (certifications && certifications.length > 0) {
-    const sectionTitle = focus === 'ekg' ? 'EKG EXPERTISE & CERTIFICATIONS' : 'CERTIFICATIONS';
+    const sectionTitle = optimization.certificationsTitle || 'CERTIFICATIONS';
+    const certList = focus === 'ma' ? orderCredentialsForMA(certifications) : certifications;
     cvContent += `## ${sectionTitle}\n\n`;
-    certifications.forEach(cert => {
-      const detail = [cert.issuer, cert.date].filter(Boolean).join(', ');
+    certList.forEach(cert => {
+      const date = focus === 'ma' ? credentialDate(cert) : cert.date;
+      const detail = [cert.issuer, date].filter(Boolean).join(', ');
       cvContent += bullet(`**${cert.name}**${detail ? ` — ${detail}` : ''}`);
     });
     cvContent += `\n`;
@@ -292,6 +402,19 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
        'Holter Monitor Setup and Analysis', 'Stress Test Monitoring',
        'Patient Cardiac Assessment'].forEach(s => { cvContent += bullet(s); });
       cvContent += `\n`;
+    }
+    if (focus === 'ma') {
+      const licenses = otherLicenses(certifications);
+      if (licenses.length > 0) {
+        cvContent += bullet(`**Other Licenses:** ${licenses.join('; ')}`);
+        cvContent += `\n`;
+      }
+      const clinical = clinicalSkills(sourceSkills);
+      if (clinical.length > 0) {
+        cvContent += `**Clinical Skills**\n\n`;
+        clinical.forEach(s => { cvContent += bullet(s); });
+        cvContent += `\n`;
+      }
     }
     cvContent += `---\n\n`;
   }
@@ -313,9 +436,11 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
 
   // Education Section
   if (education && education.length > 0) {
+    const educationList = focus === 'ma' ? orderCredentialsForMA(education) : education;
     cvContent += `## EDUCATION\n\n`;
-    education.forEach(edu => {
-      const detail = [edu.institution, edu.year].filter(Boolean).join(', ');
+    educationList.forEach(edu => {
+      const year = focus === 'ma' ? credentialDate(edu) : edu.year;
+      const detail = [edu.institution, year].filter(Boolean).join(', ');
       cvContent += bullet(`**${edu.degree}**${detail ? ` — ${detail}` : ''}`);
     });
     cvContent += `\n`;

@@ -88,6 +88,7 @@ You'll see:
 
 ```bash
 # Generate CV with your real data
+pnpm run generate:ma-cv   # Medical Assistant (CCMA) focus
 pnpm run generate:ekg-cv
 
 # Generate PDF
