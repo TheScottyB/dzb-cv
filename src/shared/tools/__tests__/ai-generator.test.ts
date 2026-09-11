@@ -1,15 +1,30 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 import { generateAICV } from '../ai-generator';
 import LLMServiceAgent from '../../../ats/agents/LLMServiceAgent';
 
-const mockOptions = {
-  name: 'John Doe',
-  email: 'john.doe@example.com',
-  output: 'john-doe-cv.pdf',
-  style: 'professional'
-};
+// Each test writes its PDF into a throwaway temp directory instead of cwd,
+// so runs never leave generated files in the repo root.
+let tmpDir: string;
+let mockOptions: { name: string; email: string; output: string; style: string };
 
 describe('AI Generate CV', () => {
+  beforeEach(() => {
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dzb-cv-ai-generator-test-'));
+    mockOptions = {
+      name: 'John Doe',
+      email: 'john.doe@example.com',
+      output: path.join(tmpDir, 'john-doe-cv.pdf'),
+      style: 'professional',
+    };
+  });
+
+  afterEach(() => {
+    fs.rmSync(tmpDir, { recursive: true, force: true });
+  });
+
   it('should successfully generate an AI-optimized CV and save as PDF', async () => {
     const result = await generateAICV(mockOptions);
     expect(result.success).toBe(true);

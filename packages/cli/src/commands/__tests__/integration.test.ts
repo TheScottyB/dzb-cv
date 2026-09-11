@@ -1,5 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Command } from 'commander';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
 import type { CVData, PDFGenerationOptions } from '@dzb-cv/types';
 
 // Mock the PDF generator with enhanced functionality to test single-page features
@@ -62,11 +65,19 @@ import { createCVCommand } from '../create.js';
 
 type SpyInstance = ReturnType<typeof vi.spyOn>;
 
+// packages/cli/src/commands/__tests__ -> repo root
+const BASE_INFO_FIXTURE = path.resolve(
+  path.dirname(new URL(import.meta.url).pathname),
+  '../../../../../data/base-info.json'
+);
+
 describe('CV CLI Integration Tests', () => {
   let program: Command;
   let mockConsoleLog: SpyInstance;
   let mockConsoleError: SpyInstance;
   let originalProcessExit: typeof process.exit;
+  let originalCwd: string;
+  let tmpDir: string;
 
   // Sample CV data for testing different formats
   const sampleCVData: CVData = {
@@ -127,6 +138,18 @@ describe('CV CLI Integration Tests', () => {
   };
 
   beforeEach(() => {
+    // The create command resolves output paths against process.cwd() (and
+    // safePath rejects anything outside it), so run each test inside a
+    // throwaway temp directory rather than polluting the repo root.
+    originalCwd = process.cwd();
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'dzb-cv-cli-test-'));
+    // The command also reads data/base-info.json from cwd; mirror the repo's
+    // copy so the test exercises the same code path it did before.
+    if (fs.existsSync(BASE_INFO_FIXTURE)) {
+      fs.mkdirSync(path.join(tmpDir, 'data'));
+      fs.copyFileSync(BASE_INFO_FIXTURE, path.join(tmpDir, 'data', 'base-info.json'));
+    }
+    process.chdir(tmpDir);
     program = new Command();
     mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
     mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -140,6 +163,8 @@ describe('CV CLI Integration Tests', () => {
     mockConsoleError.mockRestore();
     process.exit = originalProcessExit;
     vi.clearAllMocks();
+    process.chdir(originalCwd);
+    fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
   describe('Single-Page PDF Generation', () => {
