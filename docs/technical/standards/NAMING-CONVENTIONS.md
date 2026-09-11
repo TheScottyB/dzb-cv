@@ -1,5 +1,5 @@
 ---
-path: docs/technical/NAMING-CONVENTIONS.md
+path: docs/technical/standards/NAMING-CONVENTIONS.md
 type: technical
 category: conventions
 maintainer: system

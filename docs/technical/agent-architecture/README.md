@@ -1,21 +1,18 @@
 ---
-path: docs/technical/agents/README.md
+path: docs/technical/agent-architecture/README.md
 type: index
 category: agents
 maintainer: system
 last_updated: 2025-05-10
-related_files:
-  - docs/technical/agents/agent-blueprint.md
 ---
 
-# Agent System Documentation Index
+# Agent Architecture
 
-This folder contains documentation for the agent-based architecture and meta-agent patterns in DZB-CV.
+The agent-based architecture described here was removed from the codebase. The
+agent implementation tree no longer exists.
 
-## Table of Contents
-- [Agent Blueprint](agent-blueprint.md)
+The historical design document is kept for reference at
+`docs/archive/docs-2025/agent-blueprint.md`.
 
-## Agent Blueprint
-- [Agent Blueprint](agent-blueprint.md): The living constitution for all agents, roles, and meta-agent architecture.
-
-**Audience:** System architects, advanced developers, and contributors working on agent orchestration or extension. 
+The message-bus pattern it described survives in the codebase as
+`src/AgentMessageBus.ts`.

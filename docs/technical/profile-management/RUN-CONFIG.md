@@ -1,5 +1,5 @@
 ---
-path: docs/technical/RUN-CONFIG.md
+path: docs/technical/profile-management/RUN-CONFIG.md
 type: technical
 category: configuration
 maintainer: system

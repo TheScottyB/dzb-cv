@@ -1,5 +1,5 @@
 ---
-path: docs/technical/JOB-ANALYSIS.md
+path: docs/technical/job-analysis/JOB-ANALYSIS.md
 type: technical
 category: job-analysis
 maintainer: system

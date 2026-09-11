@@ -32,23 +32,10 @@ The AI Content Curation System has been successfully integrated into the DZB-CV 
 
 #### CLI Integration
 
-The AI curation system has been integrated with existing CLI commands:
-
-**AI Generate Command** (`src/cli/commands/ai-generate.ts`):
-```bash
-cv ai-generate -n "John Doe" -e "john@example.com" \
-  --job-description "Senior Developer position..." \
-  --target-sector tech \
-  --style professional
-```
-
-**Generate CV Command** (`src/cli/commands/generate-cv.ts`):
-```bash
-cv generate federal --ai-optimize \
-  --job-url "https://usajobs.gov/job/123" \
-  --style executive \
-  --disable-curation
-```
+Not currently wired up. `packages/cli` registers only the `create` command
+(`packages/cli/src/commands/create.ts`); the AI generate command is commented out in
+`packages/cli/src/index.ts` pending an import fix. Curation is consumed
+programmatically from `packages/ai-curation` in the meantime.
 
 #### AI Generator Integration
 
@@ -136,23 +123,13 @@ packages/ai-curation/
 
 ## Testing and Validation
 
-### Demo Script
-
-A comprehensive demo script (`scripts/ai-curation-demo.mjs`) demonstrates:
-- Content analysis workflow
-- Job alignment scoring 
-- Intelligent curation process
-- Integration benefits and capabilities
-
-Run with: `node scripts/ai-curation-demo.mjs`
-
 ### Integration Testing
 
 The system integrates seamlessly with:
-- ✅ Existing CV data structures
-- ✅ PDF generation pipeline
-- ✅ CLI command architecture
-- ✅ AI generator workflow
+- Existing CV data structures
+- PDF generation pipeline
+- CLI command architecture
+- AI generator workflow
 
 ## Configuration
 

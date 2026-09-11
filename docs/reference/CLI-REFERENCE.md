@@ -1,416 +1,131 @@
 # CLI Reference
 
-Complete reference documentation for the DZB-CV command-line interface.
+Two command surfaces exist in this repo: the `cv` binary from `packages/cli`, and the
+Node scripts in `scripts/` that the root `package.json` wraps as pnpm scripts.
 
-## Overview
+## The `cv` binary
 
-The DZB-CV CLI provides a command-line interface for creating and managing professional CVs. The CLI is built using the Commander.js framework and supports various commands for CV operations.
+Source: `packages/cli/src/index.ts`. Built to `packages/cli/dist/index.js` and exposed
+as the `cv` bin by `packages/cli/package.json`.
 
-## Installation and Setup
+Build it first:
 
-### Prerequisites
+```bash
+pnpm install
+pnpm build
+```
 
-- Node.js >= 20.10.0
-- pnpm >= 10.9.0
+Then run it one of three ways:
 
-### Using the CLI
-
-There are two ways to use the CLI:
-
-1. **Direct execution** (after building):
-   ```bash
-   node packages/cli/dist/index.js [command] [options]
-   ```
-
-2. **Global linking** (for development):
-   ```bash
-   cd packages/cli && npm link
-   cv [command] [options]
-   ```
-
-## Global Options
-
-These options are available for all commands:
-
-| Option | Alias | Description |
-|--------|--------|-------------|
-| `--version` | `-V` | Output the version number |
-| `--help` | `-h` | Display help information |
-
-## Commands
+```bash
+pnpm run cv -- --help                  # via the root "cv" script
+node packages/cli/dist/index.js --help # direct
+pnpm run link-cli && cv --help         # after npm link; undo with pnpm run unlink-cli
+```
 
 ### `cv create`
 
-Creates a new CV with basic personal information and generates a PDF output.
+The only command currently registered (`packages/cli/src/commands/create.ts`).
+It reads `data/base-info.json` from the current working directory, transforms it into
+CV data, and writes a PDF.
 
-#### Syntax
+```
+cv create --name <name> --email <email> [options]
+```
+
+Required:
+
+| Option | Alias | Description |
+| --- | --- | --- |
+| `--name <name>` | `-n` | Full name |
+| `--email <email>` | `-e` | Email address |
+
+Optional:
+
+| Option | Alias | Default | Description |
+| --- | --- | --- | --- |
+| `--output <file>` | `-o` | `<name>-cv.pdf` | Output PDF path |
+| `--single-page` | | off | Force the PDF onto one page |
+| `--template <template>` | | `default` | `default`, `minimal`, `federal`, `academic` |
+| `--format <format>` | | `Letter` | `A4` or `Letter` |
+
+Examples:
 
 ```bash
-cv create [options]
+pnpm run cv -- create --name "Dawn Zurick-Beilfuss" --email dawn@example.com
+pnpm run cv -- create -n "Dawn Zurick-Beilfuss" -e dawn@example.com --single-page -o output/dawn-cv.pdf
+pnpm run cv -- create -n "Dawn Zurick-Beilfuss" -e dawn@example.com --template federal --format A4
 ```
 
-#### Required Options
+Notes:
 
-| Option | Alias | Type | Description |
-|--------|--------|------|-------------|
-| `--name` | `-n` | `<string>` | Full name for the CV |
-| `--email` | `-e` | `<string>` | Email address |
+- If `data/base-info.json` cannot be read, the command warns and falls back to a
+  minimal CV built only from the name and email.
+- The output path is validated to stay inside the current working directory
+  (see `docs/decisions/0003-validate-cli-output-paths.md`); missing directories are
+  created.
+- Exit code 0 on success, 1 on failure.
 
-#### Optional Options
+## Generation scripts
 
-| Option | Alias | Type | Description | Default |
-|--------|--------|------|-------------|---------|
-| `--output` | `-o` | `<string>` | Output PDF filename | Auto-generated |
-| `--single-page` | | `boolean` | Force PDF to fit on a single page | `false` |
+Defined in the root `package.json`.
 
-#### Examples
+| Command | Runs |
+| --- | --- |
+| `pnpm run generate:ma-cv` | `scripts/generate-cv.js --profile dawn --template healthcare --focus ma` |
+| `pnpm run generate:ekg-cv` | `scripts/generate-cv.js --profile dawn --template healthcare --focus ekg` |
+| `pnpm run generate:cv` | `scripts/generate-cv.js --profile dawn` |
+| `pnpm run generate:latest` | same as `generate:ma-cv` |
+| `pnpm run generate:pdf` | `scripts/generate-pdf-simple.js output/dawn-*-cv-*.md` |
+| `pnpm run update:profile` | prints which profile file to edit |
+
+`scripts/generate-cv.js` options: `--profile <name>`, `--template <type>`,
+`--focus <area>`, `--output <path>`, `--job <file>`, `--help`. It reads
+`base-info.json` at the repo root and writes
+`output/<profile>-<focus>-cv-<date>.md` unless `--output` is given.
+
+`scripts/generate-pdf-simple.js` takes an input Markdown path and an optional output
+PDF path:
 
 ```bash
-# Basic usage with required options
-cv create --name "John Doe" --email "john@example.com"
-
-# With custom output filename
-cv create --name "Jane Smith" --email "jane@company.com" --output "jane-cv.pdf"
-
-# Using short aliases
-cv create -n "Alex Johnson" -e "alex@example.com" -o "alex-cv.pdf"
-
-# Professional example
-cv create \
-  --name "Dr. Sarah Chen" \
-  --email "s.chen@university.edu" \
-  --output "sarah-chen-academic-cv.pdf"
+node scripts/generate-pdf-simple.js output/dawn-ekg-cv-2026-09-11.md
 ```
 
-#### Behavior
-
-1. **Name Parsing**: The `--name` option is automatically parsed:
-   - First word becomes the first name
-   - Remaining words become the last name
-   - Full name is stored as provided
-
-2. **Email Validation**: Basic email format validation is performed
-
-3. **PDF Generation**: A PDF is automatically generated using the configured template
-
-4. **Output**: 
-   - Console feedback shows the CV creation process
-   - PDF byte size is displayed upon successful generation
-   - Errors are logged to stderr with exit code 1
-
-#### Return Codes
-
-| Code | Meaning |
-|------|---------|
-| `0` | Success - CV created and PDF generated |
-| `1` | Error - Failed to create CV or generate PDF |
-```
-
-## Error Handling
-
-The CLI provides comprehensive error handling:
-
-### Common Errors
-
-| Error Type | Description | Solution |
-|------------|-------------|----------|
-| Missing required option | Required `--name` or `--email` not provided | Provide all required options |
-| Invalid email format | Email doesn't match expected format | Use valid email format |
-| PDF generation failure | Error in PDF creation process | Check logs, ensure dependencies are installed |
-| File system errors | Cannot write output file | Check permissions and disk space |
-
-### Error Output Format
-
-Errors are output to stderr with the following format:
-
-```
-Error creating CV: [specific error message]
-```
-
-The process exits with code 1 on any error.
-
-## Development Usage
-
-### Direct Node Execution
-
-When developing or when the CLI isn't globally linked:
-
-```bash
-# From project root
-node packages/cli/dist/index.js create --name "Test User" --email "test@example.com"
-
-# With full path
-/path/to/dzb-cv/packages/cli/dist/index.js create -n "Test User" -e "test@example.com"
-```
-
-### Environment Variables
-
-The CLI respects the following environment variables:
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DEBUG` | Enable debug output | `false` |
-| `NODE_ENV` | Environment mode | `production` |
-
-Example:
-```bash
-DEBUG=dzb-cv:* cv create --name "Debug Test" --email "debug@example.com"
-```
-
-## Integration Examples
-
-### Shell Scripts
-
-```bash
-#!/bin/bash
-# generate-team-cvs.sh
-
-TEAM_MEMBERS=(
-  "Alice Johnson:alice@company.com"
-  "Bob Smith:bob@company.com"
-  "Carol Davis:carol@company.com"
-)
-
-for member in "${TEAM_MEMBERS[@]}"; do
-  name="${member%:*}"
-  email="${member#*:}"
-  filename="${name// /-}-cv.pdf"
-  
-  echo "Generating CV for $name..."
-  cv create --name "$name" --email "$email" --output "$filename"
-done
-```
-
-### CI/CD Integration
-
-```yaml
-# GitHub Actions example
-name: Generate CV
-on: [push]
-
-jobs:
-  generate-cv:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '20.10.0'
-      - run: npm install -g pnpm
-      - run: pnpm install
-      - run: pnpm run build
-      - run: |
-          node packages/cli/dist/index.js create \
-            --name "${{ github.actor }}" \
-            --email "${{ github.actor }}@users.noreply.github.com" \
-            --output "generated-cv.pdf"
-      - uses: actions/upload-artifact@v3
-        with:
-          name: cv-pdf
-          path: generated-cv.pdf
-```
-
-### npm Scripts Integration
-
-```json
-{
-  "scripts": {
-    "cv:create": "node packages/cli/dist/index.js create",
-    "cv:generate": "npm run cv:create -- --name \"$npm_config_name\" --email \"$npm_config_email\""
-  }
-}
-```
-
-Usage:
-```bash
-npm run cv:generate --name="John Doe" --email="john@example.com"
-```
-
-## Programmatic Usage
-
-While primarily a CLI tool, the underlying functionality can be used programmatically:
-
-```typescript
-import { createCVCommand } from '@dzb-cv/cli';
-import { Command } from 'commander';
-
-const program = new Command();
-createCVCommand(program);
-
-// Parse arguments programmatically
-program.parse(['node', 'cli.js', 'create', '--name', 'John Doe', '--email', 'john@example.com']);
-```
-
-## Troubleshooting
-
-### Common Issues
-
-1. **"Command not found: cv"**
-   - Solution: Either use full path or link CLI globally
-   - Command: `cd packages/cli && npm link`
-
-2. **"Module not found" errors**
-   - Solution: Rebuild all packages
-   - Command: `pnpm run clean && pnpm install && pnpm run build`
-
-3. **Permission denied**
-   - Solution: Check file permissions or use sudo for global linking
-   - Command: `sudo npm link` (if necessary)
-
-4. **PDF generation fails**
-   - Solution: Verify dependencies and check logs
-   - Command: `cd packages/pdf && pnpm run build && pnpm test`
-
-### Debug Mode
-
-Enable verbose logging:
-
-```bash
-DEBUG=dzb-cv:* cv create --name "Debug Test" --email "debug@example.com"
-```
-
-### Version Information
-
-Check CLI and dependencies:
-
-```bash
-# CLI version
-cv --version
-
-# Node.js version
-node --version
-
-# pnpm version
-pnpm --version
-
-# Package versions
-pnpm list --depth=0
-```
-
-## AI-Powered CV Generation
-
-While the CLI provides basic CV creation functionality, the DZB-CV system includes powerful AI-powered CV generation capabilities for advanced use cases. These complement the CLI and provide sector-specific templates and job-tailored CV generation.
-
-### AI Generator Scripts
-
-The AI generator provides advanced CV creation workflows that go beyond the basic CLI functionality:
-
-#### Sector-Specific Generation
-
-```bash
-# Generate federal CV using AI templates
-node scripts/ai-generator.js --sector federal --name "John Doe" --email "john@example.com"
-
-# Generate private sector CV optimized for specific industry
-node scripts/ai-generator.js --sector private --industry tech --name "Jane Smith" --email "jane@company.com"
-
-# Generate state government CV
-node scripts/ai-generator.js --sector state --name "Alex Johnson" --email "alex@state.gov"
-```
-
-#### Job-Tailored CV Generation
-
-```bash
-# Generate CV tailored to specific job posting
-node scripts/ai-generator.js --job-url "https://example.com/job-posting" --name "Sarah Chen" --email "sarah@example.com"
-
-# Generate CV from local job description file
-node scripts/ai-generator.js --job-file "./job-description.txt" --name "Michael Brown" --email "michael@example.com"
-```
-
-### Simple Generation Scripts
-
-For quick CV generation with predefined templates:
-
-```bash
-# Healthcare sector CV
-node scripts/simple-cv-generator.js healthcare "Dawn Zurick" "dawn@example.com"
-
-# Technology sector CV
-node scripts/simple-cv-generator.js tech "John Developer" "john@techcompany.com"
-
-# Federal application CV
-node scripts/simple-cv-generator.js federal "Jane Government" "jane@agency.gov"
-```
-
-### Integration with CLI
-
-The AI generator and CLI can be used together for comprehensive CV management:
-
-1. **Generate base CV with AI**: Use AI generator for sector-specific content
-2. **Refine with CLI**: Use `cv create --single-page` for final PDF optimization
-3. **Batch processing**: Combine both tools in automated workflows
-
-#### Example Workflow
-
-```bash
-#!/bin/bash
-# Complete CV generation workflow
-
-# Step 1: Generate sector-specific CV content with AI
-node scripts/ai-generator.js --sector private --name "$NAME" --email "$EMAIL" --output temp-cv.md
-
-# Step 2: Convert to optimized PDF with CLI
-cv create --name "$NAME" --email "$EMAIL" --single-page --output "$NAME-optimized-cv.pdf"
-
-# Step 3: Clean up temporary files
-rm temp-cv.md
-```
-
-### AI Generator Features
-
-- **Sector-specific templates**: Federal, state, private, healthcare, technology
-- **Job posting analysis**: Automatic keyword extraction and CV optimization
-- **ATS optimization**: Built-in applicant tracking system compatibility
-- **Multiple output formats**: Markdown, PDF, and structured data
-- **Cover letter generation**: Complementary cover letter creation
-- **Batch processing**: Generate multiple CVs for different applications
-
-### When to Use AI Generator vs CLI
-
-| Use Case | Recommended Tool | Reason |
-|----------|------------------|--------|
-| Quick CV with basic info | CLI (`cv create`) | Simple, fast, direct PDF output |
-| Sector-specific CV | AI Generator | Advanced templates and formatting |
-| Job-tailored application | AI Generator | Keyword optimization and customization |
-| Single-page optimization | CLI with `--single-page` | Optimized PDF scaling |
-| Batch processing | Both (scripted workflow) | Leverage strengths of each tool |
-| Cover letter needed | AI Generator | Integrated cover letter generation |
-
-## Future Commands
-
-The following commands are planned for future releases:
-
-- `cv list` - List all created CVs
-- `cv update` - Update existing CV data
-- `cv export` - Export CVs in different formats
-- `cv template` - Manage CV templates
-- `cv config` - Configure CLI settings
-- `cv analyze` - Integrate AI analysis into CLI
-- `cv optimize` - Direct CV optimization commands
-
-## API Compatibility
-
-The CLI is built on top of the core DZB-CV packages:
-
-- `@dzb-cv/core` - Core CV management functionality
-- `@dzb-cv/pdf` - PDF generation capabilities
-- `@dzb-cv/types` - Type definitions
-- `@dzb-cv/templates` - Template system
-
-Changes to these packages may affect CLI behavior. Always rebuild after updating dependencies:
-
-```bash
-pnpm run build
-```
-
-## Contributing
-
-To contribute to the CLI:
-
-1. Add new commands in `packages/cli/src/commands/`
-2. Update this documentation
-3. Add tests in `packages/cli/src/commands/__tests__/`
-4. Update the main CLI entry point in `packages/cli/src/index.ts`
-
-For detailed contributing guidelines, see [CONTRIBUTING.md](../../CONTRIBUTING.md).
+## Quality and AI scripts
+
+| Command | Runs |
+| --- | --- |
+| `pnpm run ai:quality-check` | `scripts/evaluate-cv-quality.js cv-versions/dawn-ekg-technician-cv.md` with healthcare keywords, exporting `quality-check.json` |
+| `pnpm run ai:evaluate` | `scripts/evaluate-cv-quality.js` (pass your own file) |
+| `pnpm run check:quality` | `scripts/evaluate-cv-quality.js output/dawn-*-cv-*.md` |
+| `pnpm run ai:test` | `scripts/test-ai-distillation.js` |
+| `pnpm run ai:ab-test` | `scripts/simple-ab-test.js` |
+| `pnpm run ai:benchmark` | `scripts/simple-ab-test.js` on the EKG CV, exporting `benchmark-results.json` |
+| `pnpm run ai:full-test` | `ai:quality-check` then `scripts/test-ai-distillation.js` |
+
+`scripts/evaluate-cv-quality.js` accepts `--keywords '<comma,separated>'` and
+`--export <file.json>`.
+
+## Repo scripts
+
+| Command | Runs |
+| --- | --- |
+| `pnpm run setup` | `scripts/setup-dzb-cv.sh` |
+| `pnpm run setup:quick` | `pnpm install && pnpm run build` |
+| `pnpm run link-cli` / `unlink-cli` | npm link/unlink for `packages/cli` |
+| `pnpm run install:chrome` | `install-chrome-codespaces.sh` |
+| `pnpm run dawn:setup` | `scripts/customize-fork.js` |
+| `pnpm build` / `pnpm lint` / `pnpm typecheck` | Turbo tasks across packages |
+| `pnpm test` / `pnpm run test:e2e` | Vitest and Playwright |
+
+## Local API bridge
+
+`scripts/serve-api.js` serves `base-info.json` and generation over HTTP on port 4100
+for `packages/mobile`. It has no pnpm script; run `node scripts/serve-api.js`.
+Endpoints: `GET /profile`, `PUT /profile`, `POST /generate`, `GET /history`.
+
+## See also
+
+- `USAGE.md` - the everyday workflow
+- `docs/user-guide/advanced-usage.md` - templates and job-targeted CVs
+- `docs/reference/Reference.md` - API and configuration reference

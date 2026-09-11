@@ -1,11 +1,11 @@
 ---
-path: docs/technical/pdf/README.md
+path: docs/technical/pdf-generation/README.md
 type: index
 category: pdf
 maintainer: system
 last_updated: 2025-05-10
 related_files:
-  - docs/technical/pdf/PDF-GENERATION.md
+  - docs/technical/pdf-generation/PDF-GENERATION.md
 ---
 
 # PDF Documentation Index

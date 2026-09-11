@@ -326,13 +326,13 @@ const atsEngine = createATSEngine({
 
 // Quick requirement check
 if (atsEngine.meetsRequirements(cvData, jobPosting)) {
-  console.log('✅ CV meets minimum requirements for this position');
+  console.log('CV meets minimum requirements for this position');
   
   // Get full analysis for qualified candidates
   const analysis = await atsEngine.analyze(cvData, jobPosting);
   console.log(`Final score: ${analysis.score}`);
 } else {
-  console.log('❌ CV does not meet minimum requirements');
+  console.log('CV does not meet minimum requirements');
   
   // Still analyze to provide improvement suggestions
   const analysis = await atsEngine.analyze(cvData, jobPosting);
@@ -675,8 +675,7 @@ healthcareAnalysis.missingSkills.forEach(({ skill, alternatives }) => {
 
 For detailed API documentation, see:
 - [API Reference](./API-REFERENCE.md)
-- [Configuration Guide](./CONFIGURATION.md)
-- [Migration Guide](./MIGRATION.md)
+- [Architecture](./ARCHITECTURE.md)
 
 ## Performance Considerations
 
@@ -704,6 +703,5 @@ The ATS system includes comprehensive test coverage:
 
 **Related Documentation:**
 - [API Reference](./API-REFERENCE.md)
-- [Configuration Guide](./CONFIGURATION.md)
-- [Migration Guide](./MIGRATION.md)
+- [Architecture](./ARCHITECTURE.md)
 - [User Guide](../../user-guide/advanced-usage.md)

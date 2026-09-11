@@ -104,5 +104,6 @@ _This section will document all configuration options, files, and environment va
 
 ## Further Reading
 - [User Guide](../user-guide/)
-- [System Architecture](../technical/System-Architecture.md)
-- [Developer Experience & Maintenance](../technical/Developer-Experience.md) 
+- [Technical Documentation](../technical/README.md)
+- [Components](../technical/COMPONENTS.md)
+- [Developer Experience & Maintenance](../technical/developer-experience/Developer-Experience.md)

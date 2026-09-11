@@ -1,5 +1,5 @@
 ---
-path: docs/technical/Developer-Experience.md
+path: docs/technical/developer-experience/Developer-Experience.md
 type: technical
 category: dx
 maintainer: system
@@ -108,7 +108,7 @@ This document outlines the best practices, audit findings, and maintenance check
 
 ---
 
-## 🚀 Onboarding & Setup Checklist
+## Onboarding & Setup Checklist
 - [ ] Use Volta to manage tool versions (`node`, `pnpm`) as specified in `package.json`
 - [ ] Install dependencies: `pnpm install`
 - [ ] Run setup and prepare scripts:  
@@ -121,7 +121,7 @@ This document outlines the best practices, audit findings, and maintenance check
 
 ---
 
-## 🔄 Maintenance Checklist
+## Maintenance Checklist
 - [ ] Problems are surfaced early via editor and PR (CI problem matchers active)
 - [ ] CI must pass on PR before merge (typecheck, lint, test, build)
 - [ ] All packages use shared `test-utils.ts` and ESM-compatible mocking for robust, DRY, and reliable tests

@@ -1,5 +1,5 @@
 ---
-path: docs/technical/DATA-VERIFICATION.md
+path: docs/technical/profile-management/DATA-VERIFICATION.md
 type: technical
 category: verification
 maintainer: system

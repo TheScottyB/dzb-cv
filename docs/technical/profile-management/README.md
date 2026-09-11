@@ -1,13 +1,13 @@
 ---
-path: docs/technical/profiles/README.md
+path: docs/technical/profile-management/README.md
 type: index
 category: profiles
 maintainer: system
 last_updated: 2025-05-10
 related_files:
-  - docs/technical/profiles/profile-management.md
-  - docs/technical/profiles/DATA-VERIFICATION.md
-  - docs/technical/profiles/RUN-CONFIG.md
+  - docs/technical/profile-management/profile-management.md
+  - docs/technical/profile-management/DATA-VERIFICATION.md
+  - docs/technical/profile-management/RUN-CONFIG.md
 ---
 
 # Profile Management Documentation Index

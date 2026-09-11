@@ -583,5 +583,4 @@ const analyzer = new CVAnalyzer({
 
 **Related Documentation:**
 - [ATS Overview](./README.md)
-- [Configuration Guide](./CONFIGURATION.md)
-- [Migration Guide](./MIGRATION.md)
+- [Technical Index](../README.md)

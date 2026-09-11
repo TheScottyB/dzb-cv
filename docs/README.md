@@ -3,7 +3,7 @@ path: docs/README.md
 type: index
 category: documentation
 maintainer: system
-last_updated: 2025-05-10
+last_updated: 2026-09-11
 related_files:
   - docs/technical/README.md
   - docs/reference/Reference.md
@@ -11,39 +11,88 @@ related_files:
 
 # DZB-CV Documentation
 
-## Overview
-This directory contains comprehensive documentation for the DZB-CV system, organized into several sections for different audiences and purposes.
+Index of everything under `docs/`. Start with `USAGE.md` at the repo root for the
+day-to-day workflow and `CONTRIBUTING.md` for development.
 
-> **Note:** Technical documentation is now organized into subfolders by topic. See the [Technical Documentation Index](technical/README.md) for all technical docs.
+## Guides
 
-## Directory Structure
+- [EKG Technician CV Generation](EKG_TECHNICIAN_CV_GENERATION.md) - the EKG and
+  Medical Assistant generation flow, end to end
+- [Application & Cover Letter Customization Process](Application-Customization-Process.md) -
+  reverse engineering and tailoring application materials
+- [AI Content Curation Integration](ai-curation-integration.md) - how
+  `packages/ai-curation` fits into one-page CV generation
+- [CI/CD](ci-cd-integration.md) - what the GitHub Actions workflows actually do
 
-### Technical Documentation
-- [Technical Documentation Index](technical/README.md) — Entry point for all technical documentation, organized by topic
+## User guide
 
-### User Guide
-Located in `/docs/user-guide/`:
-- [User Guide Index](user-guide/README.md) - Entry point for all user-facing guides
+`user-guide/`
 
-### Reference
-Located in `/docs/reference/`:
-- [Reference](reference/Reference.md) - CLI, API, and configuration reference for the DZB-CV system
-- [CLI Reference](reference/CLI-REFERENCE.md) - Complete command-line interface documentation
+- [Index](user-guide/README.md)
+- [Getting Started](user-guide/getting-started.md)
+- [Advanced Usage](user-guide/advanced-usage.md)
+- [Troubleshooting](user-guide/troubleshooting.md)
 
-### Examples
-Located in `/docs/examples/`:
-- Sample CV templates
-- Usage examples
-- Integration examples
+## Reference
 
-### Project History & Roadmap
-- [Project History, Roadmap, and Audit](Project-History-Roadmap.md): Modernization summary, roadmap, and audit highlights for the DZB-CV monorepo.
+`reference/`
 
-### Application & Cover Letter Customization
-- [Application & Cover Letter Customization Process](Application-Customization-Process.md): How to reverse engineer, customize, and generate job application materials.
+- [Reference](reference/Reference.md) - consolidated CLI, API and configuration
+  reference
+- [CLI Reference](reference/CLI-REFERENCE.md) - the `cv` binary and the pnpm scripts
 
-## Contributing
-Please read our [Contributing Guidelines](../CONTRIBUTING.md) before submitting changes to the documentation.
+## Examples
+
+- [Examples](examples/README.md) - worked generation examples; the rendered artefacts
+  live in `examples/` at the repo root
+
+## Technical
+
+`technical/` - see the [Technical Documentation Index](technical/README.md)
+
+- [Components](technical/COMPONENTS.md)
+- [ATS](technical/ats/README.md) - plus
+  [Architecture](technical/ats/ARCHITECTURE.md) and
+  [API Reference](technical/ats/API-REFERENCE.md)
+- [PDF Generation](technical/pdf-generation/README.md)
+- [Profile Management](technical/profile-management/README.md)
+- [Job Analysis](technical/job-analysis/README.md)
+- [Developer Experience](technical/developer-experience/README.md)
+- [Standards](technical/standards/README.md) - naming conventions and documentation
+  metadata
+- [Agent Architecture](technical/agent-architecture/README.md) - removed from the
+  codebase; kept as a pointer to the archived design
+
+## Testing
+
+- [Testing](testing/README.md). Core-package testing notes are in `TESTING.md` at the
+  repo root (a symlink to `packages/core/TESTING.md`).
+
+## Decisions
+
+`decisions/` - architecture decision records, ADR-0001 through ADR-0006, plus
+[template.md](decisions/template.md).
+
+## Audits and session reports
+
+- `audit/` - point-in-time repository audits
+- `session-reports/` - working notes from individual sessions
+
+## Archive
+
+`archive/` - superseded material kept for reference, not maintained:
+
+- `archive/docs-2025/` - retired documentation (project history and roadmap, the
+  agent blueprint, AI distillation improvement notes)
+- `archive/applications-2025/` - past job applications
+- `archive/sample-healthcare-application-2025/` - the former sample application
+
+## Other
+
+- `index.html` - the published documentation landing page
 
 ## Maintenance
-Documentation should be kept up-to-date with code changes. Each major feature or change should be accompanied by corresponding documentation updates. 
+
+Keep documented commands and paths in sync with `package.json`, `scripts/` and
+`packages/`. `docs/technical/standards/documentation-metadata.md` describes the YAML
+front-matter convention used by files under `docs/technical/`.

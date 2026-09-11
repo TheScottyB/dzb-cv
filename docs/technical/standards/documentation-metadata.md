@@ -1,5 +1,5 @@
 ---
-path: docs/technical/documentation-metadata.md
+path: docs/technical/standards/documentation-metadata.md
 type: technical
 category: documentation
 maintainer: system
@@ -75,13 +75,13 @@ related_files:  # Optional
 ## Example
 ```yaml
 ---
-path: docs/technical/system-architecture.md
+path: docs/technical/pdf-generation/PDF-GENERATION.md
 type: technical
 category: architecture
 maintainer: system
-last_updated: 2024-03-27
+last_updated: 2025-05-10
 related_files:
-  - docs/technical/profile-management.md
-  - docs/reference/cli-commands.md
+  - docs/technical/profile-management/profile-management.md
+  - docs/reference/CLI-REFERENCE.md
 ---
 ``` 

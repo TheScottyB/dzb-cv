@@ -539,5 +539,4 @@ class ExtendedATSEngine extends ATSEngine {
 **Related Documentation:**
 - [ATS Overview](./README.md)
 - [API Reference](./API-REFERENCE.md)
-- [Configuration Guide](./CONFIGURATION.md)
-- [Migration Guide](./MIGRATION.md)
+- [Technical Index](../README.md)

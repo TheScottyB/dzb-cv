@@ -1,12 +1,12 @@
 ---
-path: docs/technical/conventions/README.md
+path: docs/technical/standards/README.md
 type: index
 category: conventions
 maintainer: system
 last_updated: 2025-05-10
 related_files:
-  - docs/technical/conventions/NAMING-CONVENTIONS.md
-  - docs/technical/conventions/documentation-metadata.md
+  - docs/technical/standards/NAMING-CONVENTIONS.md
+  - docs/technical/standards/documentation-metadata.md
 ---
 
 # Conventions Documentation Index

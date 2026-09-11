@@ -1,12 +1,12 @@
 ---
-path: docs/technical/PDF-GENERATION.md
+path: docs/technical/pdf-generation/PDF-GENERATION.md
 type: technical
 category: pdf
 maintainer: system
 last_updated: 2025-05-10
 related_files:
-  - docs/technical/NAMING-CONVENTIONS.md
-  - docs/technical/DATA-VERIFICATION.md
+  - docs/technical/standards/NAMING-CONVENTIONS.md
+  - docs/technical/profile-management/DATA-VERIFICATION.md
 ---
 
 # PDF Generation Technical Documentation
@@ -311,5 +311,5 @@ const cliDefaults = {
    - Caching strategies
 
 ## Related Documentation
-- [NAMING-CONVENTIONS.md](./NAMING-CONVENTIONS.md) - File naming standards
-- [DATA-VERIFICATION.md](./DATA-VERIFICATION.md) - Content verification
+- [NAMING-CONVENTIONS.md](../standards/NAMING-CONVENTIONS.md) - File naming standards
+- [DATA-VERIFICATION.md](../profile-management/DATA-VERIFICATION.md) - Content verification

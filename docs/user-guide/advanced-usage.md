@@ -1,227 +1,127 @@
----
-path: docs/user-guide/advanced-usage.md
-type: user
-category: guide
-maintainer: system
-last_updated: 2024-03-27
-related_files:
-  - docs/user-guide/getting-started.md
-  - docs/reference/cli-commands.md
----
+# Advanced Usage
 
-# Advanced Usage Guide
+Beyond the basic workflow in `USAGE.md`. Everything here is backed by a script or
+command that exists in this repo.
 
-## Customizing Your CV
+## Profile data
 
-### Updating Personal Information
+`base-info.json` at the repo root is the canonical profile. `scripts/generate-cv.js`
+reads it and adapts it through `scripts/profile-adapter.js`.
 
-Edit `src/data/base-info.json` to update:
-- Personal details (name, contact info)
-- Work experience
-- Education history
-- Skills and qualifications
+`data/base-info.json` is a synced copy read by the `cv create` command in
+`packages/cli`. Keep the two in step; `scripts/serve-api.js` writes both on
+`PUT /profile`.
 
-### Customizing Templates
+## Focused generation
 
-Each sector has its own template file in `src/shared/templates/{sector}/{sector}-template.md`
-
-Templates use Handlebars syntax:
-- Variable substitution: `{{variable}}`
-- Loops: `{{#each items}}...{{/each}}`
-- Conditionals: `{{#if condition}}...{{/if}}`
-
-## Advanced Features
-
-### Current CLI Capabilities
-
-The DZB-CV CLI currently supports basic CV creation with the `cv create` command. For advanced features like job analysis, ATS optimization, and sector-specific generation, use the AI generator scripts described below.
-
-#### Single-Page Optimization
+`scripts/generate-cv.js` takes a focus area and composes the CV in code from the
+profile data:
 
 ```bash
-# Create optimized single-page CV
-cv create --name "John Doe" --email "john@example.com" --single-page --output "optimized-cv.pdf"
-
-# Standard multi-page CV
-cv create --name "Jane Smith" --email "jane@company.com" --output "standard-cv.pdf"
+node scripts/generate-cv.js --profile dawn --template healthcare --focus ma
+node scripts/generate-cv.js --profile dawn --template healthcare --focus ekg
+node scripts/generate-cv.js --profile dawn --output output/dawn-cv-latest.md
+node scripts/generate-cv.js --help
 ```
 
-#### Batch CV Generation
+| Option | Purpose |
+| --- | --- |
+| `--profile <name>` | Profile to load (default `dawn`) |
+| `--template <type>` | Template family, e.g. `healthcare` |
+| `--focus <area>` | `ma`, `ekg`, `medical`, `general` |
+| `--output <path>` | Output path (default `output/<profile>-<focus>-cv-<date>.md`) |
+| `--job <file>` | Job posting file to target the CV at |
+
+The MA focus reorders credentials so the CCMA leads and moves real-estate licences to
+a separate line; the EKG focus keeps the cardiac-monitoring emphasis. Both behaviours
+live in `scripts/generate-cv.js`.
+
+## Job-targeted CVs
+
+```bash
+node scripts/generate-cv.js --profile dawn --job path/to/job-posting.txt
+```
+
+Supporting tools:
+
+- `scripts/job-analyzer.js` - analyse a saved posting
+- `scripts/analyzer.js` and `scripts/optimizer.js` - scoring and optimisation helpers
+- `packages/job-analyzer` - the underlying posting-analysis package
+
+## PDF options
+
+The simple path is `scripts/generate-pdf-simple.js`, which uses the built
+`@dzb-cv/pdf` package:
+
+```bash
+node scripts/generate-pdf-simple.js output/dawn-ma-cv-2026-09-11.md
+node scripts/generate-pdf-simple.js output/dawn-ma-cv-2026-09-11.md output/dawn-ma.pdf
+```
+
+`scripts/pdf-generator.js` exposes the lower-level generator. For single-page output
+through the CLI:
+
+```bash
+pnpm run cv -- create --name "Dawn Zurick-Beilfuss" --email dawn@example.com \
+  --single-page --template federal --format A4 --output output/dawn-federal-cv.pdf
+```
+
+Templates accepted by `cv create`: `default`, `minimal`, `federal`, `academic`
+(see `docs/reference/CLI-REFERENCE.md`).
+
+## Batch generation
 
 ```bash
 #!/bin/bash
-# Generate multiple CVs with different options
-NAMES=("Alice Johnson" "Bob Smith" "Carol Davis")
-EMAILS=("alice@company.com" "bob@startup.io" "carol@nonprofit.org")
+for focus in ma ekg; do
+  node scripts/generate-cv.js --profile dawn --template healthcare --focus "$focus"
+done
 
-for i in "${!NAMES[@]}"; do
-  name="${NAMES[$i]}"
-  email="${EMAILS[$i]}"
-  filename="${name// /-}-cv.pdf"
-  
-  echo "Generating CV for $name..."
-  cv create --name "$name" --email "$email" --single-page --output "$filename"
+for md in output/dawn-*-cv-*.md; do
+  node scripts/generate-pdf-simple.js "$md"
 done
 ```
 
-### AI Generator Integration
+`pnpm run generate:pdf` does the second loop for you.
 
-For advanced CV generation features beyond the basic CLI, use the AI generator scripts:
-
-#### Sector-Specific CV Generation
+## Quality evaluation
 
 ```bash
-# Generate federal CV with comprehensive formatting
-node scripts/ai-generator.js --sector federal --name "John Doe" --email "john@example.com" --output "federal-cv"
-
-# Generate private sector CV optimized for tech industry
-node scripts/ai-generator.js --sector private --industry tech --name "Jane Smith" --email "jane@company.com"
-
-# Generate state government CV
-node scripts/ai-generator.js --sector state --name "Alex Johnson" --email "alex@state.gov"
-
-# Healthcare sector CV with specialized templates
-node scripts/simple-cv-generator.js healthcare "Dawn Zurick" "dawn@example.com"
+node scripts/evaluate-cv-quality.js output/dawn-ma-cv-2026-09-11.md \
+  --keywords 'healthcare,EKG,technician,patient care' \
+  --export quality-check.json
 ```
 
-#### Job-Tailored CV Generation
+Scored on relevance, information density, readability, length compliance and orphaned
+headers. `pnpm run ai:quality-check` runs this against the baseline CV in
+`cv-versions/`, and `pnpm run ai:ab-test` / `pnpm run ai:benchmark` compare
+distillation settings via `scripts/simple-ab-test.js`.
+
+## React templates
+
+`packages/templates` holds the React-rendered templates (`basic` and `modern`) used by
+the PDF pipeline. Add a new one alongside `packages/templates/src/basic/` and export
+it from `packages/templates/src/index.ts`.
+
+The Handlebars-style Markdown templates under `data/templates/` and
+`src/shared/templates/` are reference layouts; the generation scripts build their
+output in code rather than rendering those files.
+
+## Local API bridge
+
+`scripts/serve-api.js` runs a dependency-free JSON API on port 4100 for
+`packages/mobile`:
 
 ```bash
-# Generate CV tailored to specific job posting URL
-node scripts/ai-generator.js --job-url "https://example.com/job-posting" --name "Sarah Chen" --email "sarah@example.com"
-
-# Generate CV from local job description file
-node scripts/ai-generator.js --job-file "./job-descriptions/senior-developer.txt" --name "Michael Brown" --email "michael@example.com"
-
-# Batch process multiple job applications
-node scripts/ai-generator.js --job-batch "./job-descriptions/" --name "Lisa Wang" --email "lisa@example.com"
+node scripts/serve-api.js
 ```
 
-#### Advanced Workflow Integration
+`GET /profile`, `PUT /profile` (validates and writes both profile files),
+`POST /generate`, `GET /history`.
 
-```bash
-#!/bin/bash
-# Complete AI-powered CV generation workflow
+## See also
 
-NAME="John Professional"
-EMAIL="john@example.com"
-SECTOR="private"
-JOB_FILE="./target-job.txt"
-
-# Step 1: Generate job-tailored CV content with AI
-echo "Generating AI-optimized CV content..."
-node scripts/ai-generator.js \
-  --sector "$SECTOR" \
-  --job-file "$JOB_FILE" \
-  --name "$NAME" \
-  --email "$EMAIL" \
-  --output "temp-ai-cv"
-
-# Step 2: Generate optimized single-page PDF with CLI
-echo "Creating optimized PDF..."
-cv create \
-  --name "$NAME" \
-  --email "$EMAIL" \
-  --single-page \
-  --output "$NAME-optimized-cv.pdf"
-
-# Step 3: Generate cover letter
-echo "Generating cover letter..."
-node scripts/ai-generator.js \
-  --cover-letter \
-  --job-file "$JOB_FILE" \
-  --name "$NAME" \
-  --email "$EMAIL" \
-  --output "cover-letter"
-
-echo "Complete application package generated!"
-```
-
-#### Specialized Templates and Customization
-
-```bash
-# Generate CV with custom template modifications
-node scripts/ai-generator.js \
-  --sector federal \
-  --template-override "./custom-templates/usajobs-enhanced.md" \
-  --name "Government Candidate" \
-  --email "candidate@example.com"
-
-# Generate multiple format outputs
-node scripts/ai-generator.js \
-  --sector private \
-  --name "Multi Format" \
-  --email "multi@example.com" \
-  --formats "pdf,markdown,docx"
-
-# Generate with ATS optimization focus
-node scripts/ai-generator.js \
-  --sector private \
-  --ats-optimize \
-  --keywords-file "./target-keywords.txt" \
-  --name "ATS Optimized" \
-  --email "ats@example.com"
-```
-
-## CV Format Details
-
-### Federal CV Format
-- Detailed work history with specific dates and hours
-- Salary information and supervisor contacts
-- Citizenship and security clearance information
-- USAJOBS compliance features
-
-### State CV Format
-- State-specific formatting requirements
-- Detailed experience relevant to state positions
-- Required certifications and education details
-- State-specific compliance features
-
-### Private Sector CV Format
-- Concise, achievement-focused format
-- Emphasis on relevant skills and qualifications
-- Optimized for applicant tracking systems
-- Industry-specific customizations
-
-## Profile Management
-
-Profile management is currently handled through direct file editing and the AI generator workflows. Future CLI releases will include dedicated profile management commands.
-
-### Current Approach
-- Edit base data files directly in `src/data/`
-- Use AI generator for sector-specific profiles
-- Version control with Git for profile history
-- Manual validation through test generation
-
-## Template Customization
-
-### Creating Custom Templates
-1. Copy an existing template from `src/shared/templates`
-2. Modify the template using Handlebars syntax
-3. Add custom sections and styling
-4. Test with sample data
-
-### Template Variables
-Common variables available in templates:
-- `{{personalInfo}}` - Contact and basic information
-- `{{experience}}` - Work history
-- `{{education}}` - Educational background
-- `{{skills}}` - Skills and competencies
-- `{{certifications}}` - Professional certifications
-
-## Best Practices
-
-1. **Data Organization**
-   - Keep base info up to date
-   - Use consistent formatting
-   - Maintain separate profiles for different sectors
-
-2. **Template Management**
-   - Document custom templates
-   - Test with various data sets
-   - Keep backups of working templates
-
-3. **Version Control**
-   - Track changes to templates
-   - Maintain profile versions
-   - Document major updates 
+- `docs/user-guide/getting-started.md`
+- `docs/user-guide/troubleshooting.md`
+- `docs/reference/CLI-REFERENCE.md`
+- `docs/technical/README.md`

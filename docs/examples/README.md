@@ -1,101 +1,98 @@
----
-path: docs/examples/README.md
-type: index
-category: examples
-maintainer: system
-last_updated: 2025-05-10
-related_files:
-  - docs/examples/ats-optimized-cv.md
-  - docs/examples/federal-cv.md
-  - docs/examples/profile-management.md
----
+# Examples
 
-# DZB-CV Examples
+Worked examples of generating CVs with this repo. The rendered artefacts live in
+`examples/` at the repo root; this page explains how to reproduce and adapt them.
 
-This directory contains practical examples demonstrating various features and use cases of the DZB-CV system. Use these as references for best practices, template structure, and CLI usage.
+## Reference output
 
-## Table of Contents
-- [ATS Optimized CV Example](ats-optimized-cv.md)
-- [Federal CV Example](federal-cv.md)
-- [Profile Management Example](profile-management.md)
+`examples/ekg-cv-showcase/` holds a complete generated set:
 
-## Example Categories
+| File | What it is |
+| --- | --- |
+| `Dawn_Zurick_Beilfuss_EKG_CV_2025.md` / `.html` / `.pdf` | Full EKG technician CV |
+| `Dawn_Zurick_Beilfuss_Single_Page_CV.md` / `.html` / `.pdf` | Single-page variant |
+| `Dawn_Zurick_Beilfuss_Single_Page_CV_Optimized.pdf` | Single-page after PDF optimisation |
+| `Dawn_Zurick_Beilfuss_AI_Distilled_CV.md` / `.html` / `.pdf` | AI-distilled variant |
+| `quality-report.json`, `single-page-quality-report.json`, `ai-distilled-quality-report.json` | Scores from `scripts/evaluate-cv-quality.js` |
 
-### ATS Optimization
-- [ATS Optimized CV Example](ats-optimized-cv.md): Example of an ATS-friendly CV with best practices and code snippets.
+The single-page Markdown file is also the fixture that `.github/workflows/ci.yml`
+scores in its `test` and `quality` jobs.
 
-### Federal CV
-- [Federal CV Example](federal-cv.md): Example of a federal-style CV with required fields and formatting.
-
-### Profile Management
-- [Profile Management Example](profile-management.md): Example of profile import/export, validation, and version management.
-
-## How to Use Examples
-- Choose the relevant example for your use case (ATS, federal, management)
-- Copy code snippets or templates as a starting point
-- Adapt to your data and requirements
-- Use current CLI commands (`cv create`) or AI generator scripts as shown
-- For advanced features, refer to AI generator workflows
-
-## Current System Examples
-
-### CLI Usage Examples
+## Healthcare CV, end to end
 
 ```bash
-# Basic CV creation
-cv create --name "John Doe" --email "john@example.com"
+pnpm install
+pnpm build
 
-# Single-page optimized CV
-cv create --name "Jane Smith" --email "jane@company.com" --single-page --output "jane-optimized.pdf"
-
-# Batch generation
-for name in "Alice Johnson" "Bob Wilson"; do
-  cv create --name "$name" --email "${name// /}@company.com" --single-page
-done
+pnpm run generate:ekg-cv
+node scripts/generate-pdf-simple.js output/dawn-ekg-cv-<date>.md
+pnpm run ai:quality-check
 ```
 
-### AI Generator Examples
+Swap `generate:ekg-cv` for `generate:ma-cv` to produce the Medical Assistant (CCMA)
+version. Details in `docs/EKG_TECHNICIAN_CV_GENERATION.md`.
+
+## Single-page CV from the CLI
+
+`cv create` reads `data/base-info.json` and writes a PDF directly:
 
 ```bash
-# Sector-specific generation
-node scripts/ai-generator.js --sector federal --name "Government Worker" --email "worker@agency.gov"
-
-# Job-tailored CV
-node scripts/ai-generator.js --job-file "job-description.txt" --name "Applicant Name" --email "applicant@example.com"
-
-# Healthcare CV with simple generator
-node scripts/simple-cv-generator.js healthcare "Dawn Zurick" "dawn@hospital.com"
+pnpm run cv -- create \
+  --name "Dawn Zurick-Beilfuss" \
+  --email dawn@example.com \
+  --single-page \
+  --output output/dawn-single-page-cv.pdf
 ```
 
-### Integration Workflow Example
+`--template` accepts `default`, `minimal`, `federal` or `academic`, and `--format`
+accepts `A4` or `Letter`. See `docs/reference/CLI-REFERENCE.md`.
+
+## Federal CV
 
 ```bash
-#!/bin/bash
-# Complete application generation workflow
-NAME="Professional Candidate"
-EMAIL="candidate@example.com"
-
-# Generate AI-optimized content
-node scripts/ai-generator.js --sector private --name "$NAME" --email "$EMAIL" --output "ai-cv"
-
-# Create optimized PDF
-cv create --name "$NAME" --email "$EMAIL" --single-page --output "final-cv.pdf"
-
-# Generate cover letter
-node scripts/ai-generator.js --cover-letter --job-file "target-job.txt" --name "$NAME" --email "$EMAIL"
+pnpm run cv -- create \
+  --name "Dawn Zurick-Beilfuss" \
+  --email dawn@example.com \
+  --template federal \
+  --format Letter \
+  --output output/dawn-federal-cv.pdf
 ```
 
-## Testing Examples
-- All example tests should use the shared `test-utils.ts` for DRY sample data and helpers
-- ESM-compatible mocking (`vi.mock` with `importActual`) should be used for robust, future-proof tests
-- See the main repo `README.md` and `TESTING.md` for code examples and best practices
+`data/templates/federal/federal-template.md` is a Handlebars reference layout showing
+the fields a USAJOBS-style CV is expected to carry: citizenship, hours per week,
+grade equivalent, salary and supervisor per position. It is a reference document, not
+a file the generators render.
 
-## Contributing Examples
-To add new examples:
-1. Place your example file in this folder
-2. Include complete metadata header
-3. Provide clear, tested code samples
-4. Add comprehensive documentation
-5. Update this README with a summary and link to your example
+## ATS scoring
 
-See [Contributing Guidelines](../../CONTRIBUTING.md) for detailed contribution instructions. 
+`packages/ats` provides the analyzers and scoring used to check how a CV reads to an
+applicant tracking system (`createAnalyzer`, `CVAnalyzer`, plus the scoring and
+taxonomy modules exported from `packages/ats/src/index.ts`).
+
+From the command line, `scripts/evaluate-cv-quality.js` reports relevance,
+information density, readability, length compliance and orphaned headers:
+
+```bash
+node scripts/evaluate-cv-quality.js examples/ekg-cv-showcase/Dawn_Zurick_Beilfuss_Single_Page_CV.md \
+  --keywords 'healthcare,EKG,technician,patient care' \
+  --export quality-check.json
+```
+
+ATS-friendly formatting that the scorer rewards: plain `#`/`##` section headers with
+conventional names, `-` bullets rather than decorative glyphs, `2020 - Present` date
+ranges, and contact details as plain text on their own line.
+
+## Profile data
+
+`base-info.json` at the repo root is the canonical profile; `data/base-info.json` is
+the synced copy that `cv create` reads. Edit the root file, regenerate, and keep the
+copy in step (`scripts/serve-api.js` writes both on `PUT /profile`).
+
+Version history is handled by Git, not by an in-repo profile store.
+
+## See also
+
+- `USAGE.md`
+- `docs/user-guide/advanced-usage.md`
+- `docs/reference/CLI-REFERENCE.md`
+- `CONTRIBUTING.md`

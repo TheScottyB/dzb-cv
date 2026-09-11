@@ -1,5 +1,5 @@
 ---
-path: docs/technical/profile-management.md
+path: docs/technical/profile-management/profile-management.md
 type: technical
 category: profiles
 maintainer: system
