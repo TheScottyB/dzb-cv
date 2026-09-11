@@ -1,5 +1,13 @@
 # @dzb-cv/pdf
 
+## 1.3.0
+
+### Minor Changes
+
+- [`0a58c9b`](https://github.com/TheScottyB/dzb-cv/commit/0a58c9b975097a6c7a7f20fa12cbd8b91d9cdd9e) Thanks [@claude](https://github.com/claude)! - fix: markdown input now renders as styled HTML in PDFs (was printed as
+  raw markdown plain text); suppress Chrome print header/footer via
+  --no-pdf-header-footer
+
 ## 1.2.2
 
 ### Patch Changes
