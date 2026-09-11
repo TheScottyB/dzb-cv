@@ -8,11 +8,8 @@
 *       @TheScottyB
 
 # Core application components
-/src/cli/                     @TheScottyB
 /src/core/                    @TheScottyB
-/src/types/                   @TheScottyB
 /src/shared/                  @TheScottyB
-/src/tools/                   @TheScottyB
 
 # Feature-specific owners
 /src/ats/                     @TheScottyB        # ATS analysis and optimization
@@ -22,10 +19,7 @@
 /src/core/services/profile/   @TheScottyB        # Profile management
 
 # Agent system
-/src/agents/                  @TheScottyB        # Agent system
 /src/AgentMessageBus.ts       @TheScottyB        # Agent messaging
-/src/spawnAgent.ts            @TheScottyB        # Agent initialization
-/src/bootstrap.ts             @TheScottyB        # System bootstrap
 
 # Tests
 /src/**/__tests__/            @TheScottyB        # All test files

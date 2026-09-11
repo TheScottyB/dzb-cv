@@ -123,91 +123,15 @@ function loadProfile(profileName) {
         console.log(`✅ Loaded and adapted Dawn's real profile data`);
         return profileData;
       } catch (error) {
-        console.warn(`⚠️  Error loading real profile, falling back to default: ${error.message}`);
+        console.warn(`⚠️  Error loading base-info.json: ${error.message}`);
       }
     }
   }
   
-  const profilePath = path.join(rootDir, 'src/data', `${profileName}-base-info.json`);
-  
-  if (!fs.existsSync(profilePath)) {
-    console.log(`⚠️  Profile file not found: ${profilePath}`);
-    console.log(`📝 Creating default profile structure...`);
-    
-    // Create default Dawn profile
-    const defaultProfile = {
-      personalInfo: {
-        name: {
-          first: 'Dawn',
-          last: 'Zurick-Beilfuss',
-          full: 'Dawn Zurick-Beilfuss'
-        },
-        contact: {
-          email: 'dawn@example.com',
-          phone: '(555) 123-4567',
-          location: 'Your City, State'
-        },
-        professionalTitle: 'Certified EKG Technician',
-        summary: 'Certified EKG Technician with strong analytical skills and attention to detail. Successfully transitioned from real estate to healthcare, bringing customer service excellence and professional communication skills to medical environments.'
-      },
-      certifications: [
-        {
-          name: 'EKG Technician Certification',
-          issuer: 'National Healthcareer Association (NHA)',
-          date: '2025',
-          status: 'Active'
-        }
-      ],
-      skills: [
-        { name: 'EKG Testing', level: 'Expert', category: 'Medical' },
-        { name: 'Patient Care', level: 'Advanced', category: 'Healthcare' },
-        { name: 'Medical Terminology', level: 'Proficient', category: 'Healthcare' },
-        { name: 'Healthcare Compliance', level: 'Proficient', category: 'Healthcare' },
-        { name: 'Customer Service', level: 'Expert', category: 'Soft Skills' },
-        { name: 'Communication', level: 'Expert', category: 'Soft Skills' }
-      ],
-      experience: [
-        {
-          position: 'Veterinary Assistant',
-          employer: 'Fox Lake Animal Hospital',
-          startDate: '2023-01',
-          endDate: '2024-02',
-          responsibilities: [
-            'Managed 60-80 patients daily',
-            'Medical triage and emergency response',
-            'Documentation and payment processing'
-          ]
-        }
-      ],
-      education: [
-        {
-          degree: 'Medical Terminology Certificate',
-          institution: 'McHenry Community College',
-          year: '2025',
-          field: 'Healthcare'
-        }
-      ]
-    };
-    
-    // Ensure directory exists
-    const dataDir = path.dirname(profilePath);
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
-    }
-    
-    fs.writeFileSync(profilePath, JSON.stringify(defaultProfile, null, 2));
-    console.log(`✅ Created default profile: ${profilePath}`);
-    return defaultProfile;
-  }
-  
-  try {
-    const profileData = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
-    console.log(`📋 Loaded profile: ${profileName}`);
-    return profileData;
-  } catch (error) {
-    console.error(`❌ Error loading profile: ${error.message}`);
-    process.exit(1);
-  }
+  // No placeholder fallback: generating a CV from fabricated data
+  // (example.com email, 555 phone) is worse than failing.
+  console.error(`❌ Could not load profile "${profileName}". Expected ${path.join(rootDir, 'base-info.json')} (canonical). See DAWN-PROFILE-INFO.md.`);
+  process.exit(1);
 }
 
 // Credential name fragments in the order a Medical Assistant CV should present

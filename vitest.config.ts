@@ -82,7 +82,6 @@ export default defineConfig({
       '**/*.spec.tsx',
       '**/*.spec.jsx',
       // Exclude root-level scripts and files
-      'build-packages.sh',
       '*.sh',
       '*.js',
       '*.ts',
@@ -96,7 +95,6 @@ export default defineConfig({
       // Exclude config directory
       'config/**',
       // Exclude unimplemented folders
-      'agents/**',
       'e2e/**',
       'packages/ats/src/agents/tools/**',
     ],
@@ -121,7 +119,6 @@ export default defineConfig({
         '**/*.log',
         '**/*.yaml',
         '**/*.yml',
-        'build-packages.sh',
         'scripts/**',
         'config/**',
         // Exclude root-level JS/TS/JSON files except src/
@@ -130,7 +127,6 @@ export default defineConfig({
         '*.ts',
         '*.json',
         // Exclude unimplemented folders
-        'agents/**',
         'e2e/**',
         'packages/ats/src/agents/tools/**',
       ],

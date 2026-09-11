@@ -15,10 +15,10 @@ This is your **REAL** profile data that contains:
 
 ```
 dzb-cv/
-├── base-info.json                    ← **EDIT THIS ONE** (Your real data)
-├── src/data/dawn-base-info.json      ← Default/placeholder data
-├── data/base-info.json               ← Legacy file
-└── src/shared/data/base-info.json    ← Legacy file
+├── base-info.json        ← EDIT THIS ONE (canonical profile data)
+└── data/base-info.json   ← synced copy read by packages/cli and scripts/cli.js;
+                            kept identical by scripts/serve-api.js PUT /profile
+                            or `cp base-info.json data/base-info.json`
 ```
 
 ## ✅ **Current Status**
