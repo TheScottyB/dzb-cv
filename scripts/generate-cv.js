@@ -268,9 +268,21 @@ function healthcareExpertiseSentence(summary) {
 
 // Clinical skills for the MA focus, sourced from base-info.json's
 // skills.healthcareAdministration list (veterinary-only entries omitted).
+// Hands-on clinical skills first (skills.clinicalSkills, mirrored from Dawn's
+// Indeed resume), then healthcare-administration skills, de-duplicated and
+// with veterinary-only items removed.
 function clinicalSkills(sourceSkills) {
-  const list = (sourceSkills && sourceSkills.healthcareAdministration) || [];
-  return list.filter(skill => !/\(veterinary\)|pet insurance|animal patients/i.test(skill));
+  const clinical = (sourceSkills && sourceSkills.clinicalSkills) || [];
+  const admin = (sourceSkills && sourceSkills.healthcareAdministration) || [];
+  const seen = new Set();
+  return [...clinical, ...admin]
+    .filter(skill => !/\(veterinary\)|pet insurance|animal patients/i.test(skill))
+    .filter(skill => {
+      const key = skill.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
 }
 
 // Build the MA summary from the profile data: credential, total healthcare

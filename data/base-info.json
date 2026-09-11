@@ -105,6 +105,21 @@
       "Marketing",
       "Property Rehabbing & Investment"
     ],
+    "clinicalSkills": [
+      "Vital signs",
+      "Phlebotomy / venipuncture",
+      "Specimen collection",
+      "Blood glucose testing",
+      "12-lead EKG",
+      "Cardiac monitoring",
+      "Arrhythmia recognition",
+      "Wound care",
+      "Admissions / patient intake",
+      "EHR order entry",
+      "Patient transport",
+      "CPR / BLS",
+      "HIPAA compliance"
+    ],
     "healthcareAdministration": [
       "EKG/ECG Testing and Monitoring",
       "Cardiac Rhythm Analysis",
