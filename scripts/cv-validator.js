@@ -471,7 +471,7 @@ Example:
 
       // Suggest next steps
       console.log(`\nNext steps:`);
-      console.log(`1. Generate PDF version: ${chalk.yellow('node utils/generate-pdf.js')}`);
+      console.log(`1. Generate PDF version: ${chalk.yellow('node scripts/generate-pdf-simple.js')}`);
       console.log(
         `2. Copy to appropriate sector directory: ${chalk.yellow(`cp cv-versions/${fileName} generated/cvs/personal/[sector]/`)}`
       );

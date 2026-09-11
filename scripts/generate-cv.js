@@ -588,7 +588,7 @@ async function main() {
     console.log(`\n📋 Next Steps:`);
     console.log(`1. Review the generated CV: ${result.outputPath}`);
     console.log(`2. Make any personal adjustments needed`);
-    console.log(`3. Generate PDF: node scripts/generate-pdf.js "${result.outputPath}"`);
+    console.log(`3. Generate PDF: node scripts/generate-pdf-simple.js "${result.outputPath}"`);
     console.log(`4. Run ATS analysis if you have a job posting`);
     
   } catch (error) {
