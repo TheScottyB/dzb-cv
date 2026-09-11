@@ -36,7 +36,7 @@
     "generate:ekg-cv": "node scripts/generate-cv.js --profile dawn --template healthcare --focus ekg",
     "generate:cv": "node scripts/generate-cv.js --profile dawn",
     "generate:latest": "node scripts/generate-cv.js --profile dawn --template healthcare --focus ma",
-    "update:profile": "echo '📝 Edit src/data/dawn-base-info.json to update your profile information'",
+    "update:profile": "echo '📝 Edit base-info.json (canonical). data/base-info.json is synced automatically by scripts/serve-api.js PUT /profile or by copying.'",
     "check:quality": "node scripts/evaluate-cv-quality.js output/dawn-*-cv-*.md",
     "generate:pdf": "node scripts/generate-pdf-simple.js output/dawn-*-cv-*.md",
     "install:chrome": "./install-chrome-codespaces.sh",

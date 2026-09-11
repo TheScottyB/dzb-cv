@@ -128,3 +128,13 @@ models/
 # But allow specific files that are safe
 !packages/ats/src/scoring/index.ts
 !packages/ats/src/analyzer/analyzer-utils.ts
+# Regenerable outputs of package.json scripts ai:quality-check / ai:ab-test
+quality-check.json
+test-results.json
+ab-test-results/
+ab-test-results.json
+
+# docs/archive/ is the intentional, tracked archive (moved from generated/ and root snapshots);
+# re-include it despite the generic archive/ and *.html/*.pdf/*.png patterns above
+!docs/archive/
+!docs/archive/**
