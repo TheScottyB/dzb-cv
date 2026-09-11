@@ -195,18 +195,37 @@ function healthcareExpertiseSentence(summary) {
 // Hands-on clinical skills first (skills.clinicalSkills, mirrored from Dawn's
 // Indeed resume), then healthcare-administration skills, de-duplicated and
 // with veterinary-only items removed.
-function clinicalSkills(sourceSkills) {
+const EKG_SKILLS = ['EKG/ECG Testing', 'Cardiac Rhythm Analysis', '12-Lead EKG Interpretation',
+  'Holter Monitor Setup and Analysis', 'Stress Test Monitoring', 'Patient Cardiac Assessment'];
+
+function skillKey(skill) {
+  return String(skill).toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+// De-duplicate a skill list: drop exact repeats and any item whose key starts
+// with an already-kept key (e.g. "HIPAA compliance and patient confidentiality"
+// after "HIPAA compliance"). Optionally exclude a second list.
+function dedupeSkills(list, exclude = []) {
+  const overlaps = (a, b) => a === b || a.startsWith(b + ' ') || b.startsWith(a + ' ');
+  const excludeKeys = exclude.map(skillKey);
+  const keptKeys = [];
+  const kept = [];
+  for (const skill of list) {
+    const key = skillKey(skill);
+    if (excludeKeys.some(k => overlaps(key, k))) continue;
+    if (keptKeys.some(k => overlaps(key, k))) continue;
+    keptKeys.push(key);
+    kept.push(skill);
+  }
+  return kept;
+}
+
+function clinicalSkills(sourceSkills, exclude = []) {
   const clinical = (sourceSkills && sourceSkills.clinicalSkills) || [];
   const admin = (sourceSkills && sourceSkills.healthcareAdministration) || [];
-  const seen = new Set();
-  return [...clinical, ...admin]
-    .filter(skill => !/\(veterinary\)|pet insurance|animal patients/i.test(skill))
-    .filter(skill => {
-      const key = skill.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
-      if (seen.has(key)) return false;
-      seen.add(key);
-      return true;
-    });
+  const merged = [...clinical, ...admin]
+    .filter(skill => !/\(veterinary\)|pet insurance|animal patients/i.test(skill));
+  return dedupeSkills(merged, exclude);
 }
 
 // Build the MA summary from the profile data: credential, total healthcare
@@ -334,10 +353,17 @@ function generateCVContent(profile, template, focus, jobPosting = null) {
     cvContent += `\n`;
     if (focus === 'ekg') {
       cvContent += `**EKG Skills**\n\n`;
-      ['EKG/ECG Testing', 'Cardiac Rhythm Analysis', '12-Lead EKG Interpretation',
-       'Holter Monitor Setup and Analysis', 'Stress Test Monitoring',
-       'Patient Cardiac Assessment'].forEach(s => { cvContent += bullet(s); });
+      EKG_SKILLS.forEach(s => { cvContent += bullet(s); });
       cvContent += `\n`;
+      // Non-cardiac clinical skills; the EKG Skills block above already covers
+      // EKG / cardiac monitoring / rhythm items.
+      const clinical = clinicalSkills(sourceSkills, EKG_SKILLS)
+        .filter(s => !/\b(ekg|ecg|cardiac|arrhythmia|rhythm|holter|stress test)\b/i.test(s));
+      if (clinical.length > 0) {
+        cvContent += `**Clinical Skills**\n\n`;
+        clinical.forEach(s => { cvContent += bullet(s); });
+        cvContent += `\n`;
+      }
     }
     if (focus === 'ma') {
       const licenses = otherLicenses(certifications);
