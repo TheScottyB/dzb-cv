@@ -79,7 +79,7 @@ You'll see:
 - ✅ **Medical Terminology**: McHenry County College, Summer 2025
 - ✅ **CNA**: Certified Nursing Assistant, McHenry County College, Fall 2025 (Completed)
 - ✅ **Phlebotomy**: Certified Phlebotomy Technician (CPT), NHA — training started March 2, 2026; certification exam May 2026
-- ✅ **Medical Assistant Capstone**: McHenry County College, June 3 – Aug 6, 2026 — In Progress (NHA CCMA candidate; 60-hour clinical)
+- ✅ **Medical Assistant / CCMA**: Medical Assistant Capstone, McHenry County College, June 3 – Aug 6, 2026 — Completed (60-hour clinical at Mercyhealth Woodstock); NHA Certified Clinical Medical Assistant (CCMA) exam passed August 2026, valid through August 2028
 - ✅ **Complete Professional Summary**: 40+ years healthcare experience
 - ✅ **Real Estate Background**: Current since 2006
 - ✅ **Pharmacy Tech Experience**: Osco Pharmacy, 1996

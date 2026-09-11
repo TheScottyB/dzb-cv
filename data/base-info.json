@@ -14,7 +14,7 @@
   "profiles": {
     "linkedIn": "placeholder-linkedin-url"
   },
-  "professionalSummary": "Healthcare professional with over 40 years of combined experience in customer service and healthcare operations. Recently completed Medical Terminology and EKG Training at McHenry County College, earning Certified EKG Technician (CET) certification from the National Healthcareer Association (NHA) in July 2025. Has since earned Certified Nursing Assistant (CNA) and Certified Phlebotomy Technician (CPT) credentials, and is completing a Medical Assistant Capstone program (NHA CCMA candidate) at McHenry County College in 2026. My healthcare expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, patient records management, and cardiac monitoring. With 20 years of real estate experience providing strong negotiation and problem-solving skills, I am committed to continuous improvement and delivering exceptional patient care in healthcare environments.",
+  "professionalSummary": "Healthcare professional with over 40 years of combined experience in customer service and healthcare operations. Recently completed Medical Terminology and EKG Training at McHenry County College, earning Certified EKG Technician (CET) certification from the National Healthcareer Association (NHA) in July 2025. Has since earned Certified Nursing Assistant (CNA) and Certified Phlebotomy Technician (CPT) credentials, and in August 2026 completed the Medical Assistant Capstone program at McHenry County College and earned Certified Clinical Medical Assistant (CCMA) certification from the NHA. My healthcare expertise includes implementing procedures in medical settings, managing intake processes, ensuring HIPAA compliance, handling insurance matters, patient records management, and cardiac monitoring. With 20 years of real estate experience providing strong negotiation and problem-solving skills, I am committed to continuous improvement and delivering exceptional patient care in healthcare environments.",
   "education": [
     {
       "certification": "Certified EKG Technician (CET)",
@@ -55,12 +55,12 @@
       "notes": "Completed Phlebotomy Technician Training at McHenry County College (started March 2, 2026); passed NHA CPT certification exam May 2026"
     },
     {
-      "certification": "Medical Assistant Capstone (NHA CCMA candidate)",
-      "institution": "McHenry County College",
+      "certification": "Certified Clinical Medical Assistant (CCMA)",
+      "institution": "National Healthcareer Association (NHA)",
       "year": "2026",
-      "semester": "Summer",
-      "status": "In Progress",
-      "notes": "Medical Assistant Capstone program, June 3–August 6, 2026; includes 60-hour supervised clinical experience; prepares for NHA Certified Clinical Medical Assistant (CCMA) exam. Coursework: anatomy & physiology, medical terminology, medical law & ethics, patient communication, medical office procedures, clinical testing and treatment skills."
+      "month": "August",
+      "status": "Current",
+      "notes": "Completed Medical Assistant Capstone program at McHenry County College, June 3–August 6, 2026, including 60-hour supervised clinical experience (externship at Mercyhealth Woodstock Clinic — Internal Medicine and Urgent Care); passed NHA Certified Clinical Medical Assistant (CCMA) exam August 2026, certification valid through August 2028. Coursework: anatomy & physiology, medical terminology, medical law & ethics, patient communication, medical office procedures, clinical testing and treatment skills."
     },
     {
       "certification": "Certified Pharmacy Technician",
@@ -148,7 +148,7 @@
       "Medical Terminology Certificate (McHenry County College, Summer 2025)",
       "Certified Nursing Assistant (CNA) (McHenry County College, Fall 2025)",
       "Certified Phlebotomy Technician (CPT) (National Healthcareer Association, May 2026 - Current)",
-      "Medical Assistant Capstone - NHA CCMA candidate (McHenry County College, Summer 2026 - In Progress)",
+      "Certified Clinical Medical Assistant (CCMA) (National Healthcareer Association, August 2026 - Current; Medical Assistant Capstone, McHenry County College, Summer 2026)",
       "Certified Pharmacy Technician (CPhT, Illinois State License, 1996)",
       "Licensed Managing Broker, Illinois (IDFPR, Issued: 10/2017 - Current)",
       "Licensed Managing Broker, Wisconsin (DSPS, Issued: 2018 - Current)",
@@ -215,24 +215,45 @@
   "workExperience": {
     "healthcare": [
       {
+        "employer": "Healthcare Plus Senior Care",
+        "position": "Home Health Care Provider",
+        "titleOnTimesheet": "Homecare Aide (HCA)",
+        "period": "June 2025 - Present",
+        "hours": "Part-time / flexible",
+        "duties": [
+          "Provide dedicated, flexible in-home health support and care to senior clients, balancing patient needs with a demanding clinical and academic schedule",
+          "Coordinate independent scheduling and travel to deliver consistent, reliable care between school and clinical commitments"
+        ]
+      },
+      {
+        "employer": "Mercyhealth Woodstock Clinic",
+        "address": "Woodstock, IL",
+        "position": "Clinical Externship (Medical Assistant)",
+        "period": "June 2026 - August 2026",
+        "url": "https://www.mercyhealthsystem.org",
+        "duties": [
+          "Gained 60+ hours of clinical experience in Internal Medicine and Urgent Care settings",
+          "Capstone clinical placement for the McHenry County College Medical Assistant program"
+        ]
+      },
+      {
         "employer": "Fox Lake Animal Hospital",
         "address": "110 S US Hwy 12, Fox Lake, IL 60020",
-        "position": "Front Desk / Veterinary Assistant",
-        "period": "January 2023 - February 2024",
-        "hours": "40 hrs/wk",
+        "position": "Veterinary Assistant / Support Staff",
+        "period": "January 2023 - Present",
+        "hours": "Part-time / as-needed (high-volume Saturday shifts)",
         "duties": [
+          "Provide part-time/as-needed staffing support during high-volume Saturday shifts, assisting veterinary teams in a fast-paced, short-staffed environment",
           "Managed patient flow (60-80/day)",
           "Triage patients",
-          "Process new patient paperwork",
-          "Charting",
-          "Filing",
-          "Answering phones",
           "Assisting in medical emergencies",
-          "Handling payments and check-outs",
+          "Deliver attentive animal care, support patient handling, and manage facility needs for a safe, efficient environment",
+          "Process new patient paperwork, charting, filing, and check-outs",
           "Supported sole pharmacist (orders, chart/med prep, approvals)"
         ],
         "supervisor": "Joanne Malanowski",
-        "mayContact": true
+        "mayContact": true,
+        "note": "Continuous since January 2023 (never left); shifted to part-time/as-needed while completing the Medical Assistant program"
       },
       {
         "employer": "The Center for Corrective Eye Surgery",
@@ -682,7 +703,7 @@
         "Certified EKG Technician (CET) - National Healthcareer Association, July 2025",
         "Medical Terminology Certificate - McHenry County College, 2025",
         "Certified Nursing Assistant (CNA) and Certified Phlebotomy Technician (CPT)",
-        "Medical Assistant Capstone in progress - NHA CCMA candidate (2026)",
+        "Certified Clinical Medical Assistant (CCMA) - National Healthcareer Association, August 2026",
         "Extensive healthcare administration experience",
         "Patient intake, triage, and cardiac assessment skills",
         "HIPAA compliance and medical records management"
@@ -706,12 +727,10 @@
     }
   },
   "meta": {
-    "lastUpdated": "2026-07-20",
+    "lastUpdated": "2026-09-11",
     "source": "canonical - data/base-info.json is a synced copy",
     "reviewNeeded": [
       "workExperience.realEstate: Vylla Team Leader marked Present since Nov 2022 - confirm still current",
-      "education/training: BNA program listed In Progress Fall 2025 - confirm completion status",
-      "no entries newer than Jul 2025 - add any 2025-2026 roles/certs",
       "CONFLICT: CPhT issuer - Osco/IL license vs PTCB (doc-dzb-misc-20250425)",
       "CONFLICT: Vylla sales volume $25M vs $10M+",
       "CONFLICT: Phone.com rollout 160 NY agents/70% vs ~1000 agents/90%",
