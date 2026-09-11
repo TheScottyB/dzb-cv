@@ -1,19 +1,25 @@
 # Dawn Zurick Beilfuss
-**Certified EKG Technician (CET) | Healthcare Professional**
+**Certified EKG Technician (CET) | Certified Clinical Medical Assistant (CCMA) | Healthcare Professional**
 
-📧 DZ4100@gmail.com | 📱 847.287.1148 | 📍 Harvard, IL 60033
-
----
-
-## 🫀 PROFESSIONAL SUMMARY
-
-**Newly Certified EKG Technician** with **40+ years healthcare administration experience**. Recently earned **National Healthcareer Association (NHA) Certified EKG Technician (CET) credential** (July 2025). Combines fresh cardiac monitoring expertise with extensive patient care background. Seeking opportunities in hospital cardiac units, cardiology practices, and healthcare facilities.
+DZ4100@gmail.com | 847.287.1148 | Harvard, IL 60033
 
 ---
 
-## 🏥 HEALTHCARE EXPERIENCE
+## PROFESSIONAL SUMMARY
 
-**Fox Lake Animal Hospital** | Veterinary Assistant *(Jan 2023 - Feb 2024)*
+**Certified EKG Technician and Certified Clinical Medical Assistant** with **40+ years healthcare administration experience**. Earned **National Healthcareer Association (NHA) Certified EKG Technician (CET) credential** (July 2025), followed by CNA, CPT, and CCMA credentials. Combines cardiac monitoring expertise and hands-on clinical training with extensive patient care background. Seeking opportunities in hospital cardiac units, cardiology practices, and healthcare facilities.
+
+---
+
+## HEALTHCARE EXPERIENCE
+
+**Healthcare Plus Senior Care** | Home Health Care Provider *(June 2025 - Present)*
+• Flexible in-home health support for senior clients • Independent scheduling and reliable care delivery
+
+**Mercyhealth Woodstock Clinic** | Clinical Externship (Medical Assistant) *(June 2026 - August 2026)*
+• 60-hour supervised clinical experience in Internal Medicine and Urgent Care • Medical Assistant Capstone placement
+
+**Fox Lake Animal Hospital** | Veterinary Assistant / Support Staff *(January 2023 - Present, part-time / as-needed)*
 • Managed 60-80 patients daily • Medical triage and emergency response • Documentation and payment processing
 
 **Midwest Sports Medicine** | Supervisor *(1999-2002)*
@@ -27,18 +33,21 @@
 
 ---
 
-## 🫀 EKG EXPERTISE & CERTIFICATIONS
+## EKG EXPERTISE & CERTIFICATIONS
 
 **Current Certifications:**
-• ✅ **Certified EKG Technician (CET)** - NHA, July 2025
-• ✅ **Medical Terminology Certificate** - McHenry Community College, Summer 2025
-• 📚 **Basic Nursing Assistant Program** - In Progress, Fall 2025
+• **Certified EKG Technician (CET)** - NHA, July 2025
+• **Certified Clinical Medical Assistant (CCMA)** - NHA, August 2026 (valid through August 2028)
+• **Certified Phlebotomy Technician (CPT)** - NHA, May 2026
+• **Certified Nursing Assistant (CNA)** - McHenry County College, Fall 2025
+• **BLS Provider (CPR/AED)** - American Heart Association, October 2025 - October 2027
+• **Medical Terminology Certificate** - McHenry County College, Summer 2025
 
 **EKG Skills:** EKG/ECG Testing • Cardiac Rhythm Analysis • 12-Lead EKG Interpretation • Holter Monitor Setup • Stress Test Monitoring • Patient Cardiac Assessment
 
 ---
 
-## 💪 CORE COMPETENCIES
+## CORE COMPETENCIES
 
 **Patient Care:** 40+ years patient interaction • HIPAA compliance • Emergency response • Patient education
 **Medical Admin:** Medical charting • Insurance verification • EHR systems • Appointment scheduling  
@@ -47,11 +56,11 @@
 
 ---
 
-## 🎯 SEEKING EKG OPPORTUNITIES
+## SEEKING EKG OPPORTUNITIES
 
 **Target Settings:** Hospital Cardiac Units • Cardiology Practices • Outpatient Clinics • Urgent Care Centers • Primary Care Practices
 
-**Key Strengths:** ✅ Immediate availability • ✅ Fresh certification with current practices • ✅ Extensive healthcare background • ✅ Flexible scheduling • ✅ Strong work ethic
+**Key Strengths:** Immediate availability • Current certifications with current practices • Extensive healthcare background • Flexible scheduling • Strong work ethic
 
 ---
 

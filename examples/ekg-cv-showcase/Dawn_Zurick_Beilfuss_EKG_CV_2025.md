@@ -1,18 +1,21 @@
 # Dawn Zurick Beilfuss
-**Certified EKG Technician (CET) | Healthcare Professional**
+**Certified EKG Technician (CET) | Certified Clinical Medical Assistant (CCMA) | Healthcare Professional**
 
-📧 DZ4100@gmail.com | 📱 847.287.1148 | 📍 Harvard, IL 60033
+DZ4100@gmail.com | 847.287.1148 | Harvard, IL 60033
 
 ---
 
-## 🫀 CARDIAC MONITORING EXPERTISE
+## CARDIAC MONITORING EXPERTISE
 
-**Newly Certified EKG Technician** with **40+ years healthcare administration experience** and fresh **cardiac monitoring expertise**. Recently earned **National Healthcareer Association (NHA) Certified EKG Technician (CET) credential** (July 2025).
+**Certified EKG Technician and Certified Clinical Medical Assistant** with **40+ years healthcare administration experience** and **cardiac monitoring expertise**. Earned **National Healthcareer Association (NHA) Certified EKG Technician (CET) credential** (July 2025), followed by CNA, CPT, and CCMA credentials.
 
 **Current Certifications:**
-- ✅ **Certified EKG Technician (CET)** - NHA, July 2025
-- ✅ **Medical Terminology Certificate** - McHenry Community College, Summer 2025
-- 📚 **Basic Nursing Assistant Program** - In Progress, Fall 2025
+- **Certified EKG Technician (CET)** - NHA, July 2025
+- **Certified Clinical Medical Assistant (CCMA)** - NHA, August 2026 (valid through August 2028)
+- **Certified Phlebotomy Technician (CPT)** - NHA, May 2026
+- **Certified Nursing Assistant (CNA)** - McHenry County College, Fall 2025
+- **BLS Provider (CPR/AED)** - American Heart Association, October 2025 - October 2027
+- **Medical Terminology Certificate** - McHenry County College, Summer 2025
 
 **EKG Skills:**
 • EKG/ECG Testing and Monitoring
@@ -24,9 +27,17 @@
 
 ---
 
-## 🏥 HEALTHCARE EXPERIENCE
+## HEALTHCARE EXPERIENCE
 
-**Fox Lake Animal Hospital** | Veterinary Assistant *(Jan 2023 - Feb 2024)*
+**Healthcare Plus Senior Care** | Home Health Care Provider *(June 2025 - Present)*
+• Flexible in-home health support and care for senior clients
+• Independent scheduling and travel to deliver consistent, reliable care
+
+**Mercyhealth Woodstock Clinic** | Clinical Externship (Medical Assistant) *(June 2026 - August 2026)*
+• 60-hour supervised clinical experience in Internal Medicine and Urgent Care
+• Capstone placement for the McHenry County College Medical Assistant program
+
+**Fox Lake Animal Hospital** | Veterinary Assistant / Support Staff *(January 2023 - Present, part-time / as-needed)*
 • Managed 60-80 patients daily with triage and assessment
 • Assisted in medical emergencies and patient care
 • Medical charting, documentation, and payment processing
@@ -45,7 +56,7 @@
 
 ---
 
-## 💪 CORE COMPETENCIES
+## CORE COMPETENCIES
 
 **Patient Care Excellence:**
 • 40+ years patient interaction experience
@@ -73,7 +84,7 @@
 
 ---
 
-## 🎯 SEEKING EKG OPPORTUNITIES
+## SEEKING EKG OPPORTUNITIES
 
 **Target Settings:**
 • Hospital Cardiac Units (Telemetry, ICU, Emergency)
@@ -83,11 +94,11 @@
 • Primary Care Practices (Routine EKG services)
 
 **Key Strengths:**
-• ✅ Immediate availability for employment
-• ✅ Fresh certification with current best practices
-• ✅ Extensive patient care background
-• ✅ Mature professional with strong work ethic
-• ✅ Flexible scheduling for various shifts
+• Immediate availability for employment
+• Current certifications with current best practices
+• Extensive patient care background
+• Mature professional with strong work ethic
+• Flexible scheduling for various shifts
 
 ---
 
