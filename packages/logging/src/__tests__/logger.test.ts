@@ -1,24 +1,25 @@
 // Logging Service Tests
 // @version 1.0
 
+import { vi, type Mock } from 'vitest';
 import { Logger, LogLevel, LoggerFactory, createLogger } from '../index.js';
 
 describe('Logger', () => {
   let originalConsole: Console;
   let mockConsole: {
-    error: jest.fn;
-    warn: jest.fn;
-    info: jest.fn;
-    debug: jest.fn;
+    error: Mock;
+    warn: Mock;
+    info: Mock;
+    debug: Mock;
   };
 
   beforeEach(() => {
     originalConsole = global.console;
     mockConsole = {
-      error: jest.fn(),
-      warn: jest.fn(),
-      info: jest.fn(),
-      debug: jest.fn(),
+      error: vi.fn(),
+      warn: vi.fn(),
+      info: vi.fn(),
+      debug: vi.fn(),
     };
     global.console = mockConsole as any;
   });
@@ -53,7 +54,9 @@ describe('Logger', () => {
 
   describe('Logging functionality', () => {
     test('should log error messages', () => {
-      const logger = new Logger({ component: 'Test' });
+      // Colorize wraps the level name inside the brackets, so assert on the
+      // plain-text format.
+      const logger = new Logger({ component: 'Test', colorize: false });
       logger.error('Test error message');
       
       expect(mockConsole.error).toHaveBeenCalled();

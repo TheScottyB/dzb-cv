@@ -1,6 +1,7 @@
 // Rate Limiter Tests
 // @version 1.0
 
+import { vi } from 'vitest';
 import { RateLimiter } from '../rate-limiter.js';
 
 describe('RateLimiter', () => {
@@ -43,7 +44,7 @@ describe('RateLimiter', () => {
 
   describe('Retry logic', () => {
     test('should succeed on first attempt if operation succeeds', async () => {
-      const successFn = jest.fn().mockResolvedValue('success');
+      const successFn = vi.fn().mockResolvedValue('success');
       
       const result = await rateLimiter.withRetry(successFn, 'test operation');
       
@@ -52,7 +53,7 @@ describe('RateLimiter', () => {
     });
 
     test('should retry on failure and eventually succeed', async () => {
-      const retryFn = jest.fn()
+      const retryFn = vi.fn()
         .mockRejectedValueOnce(new Error('First failure'))
         .mockResolvedValueOnce('success');
       
@@ -63,7 +64,7 @@ describe('RateLimiter', () => {
     });
 
     test('should fail after max retries', async () => {
-      const failFn = jest.fn().mockRejectedValue(new Error('Always fails'));
+      const failFn = vi.fn().mockRejectedValue(new Error('Always fails'));
       
       await expect(rateLimiter.withRetry(failFn, 'test operation')).rejects.toThrow();
       expect(failFn).toHaveBeenCalledTimes(2); // maxRetries = 2
@@ -71,15 +72,17 @@ describe('RateLimiter', () => {
 
     test('should apply exponential backoff between retries', async () => {
       const startTime = Date.now();
-      const failFn = jest.fn().mockRejectedValue(new Error('Always fails'));
-      
-      try {
-        await rateLimiter.withRetry(failFn, 'test operation');
-      } catch (error) {
-        // Should have waited for rate limits and retry delays
-        const totalTime = Date.now() - startTime;
-        expect(totalTime).toBeGreaterThan(200); // At least 2 rate limits + 1 retry delay
-      }
+      const failFn = vi.fn().mockRejectedValue(new Error('Always fails'));
+
+      await expect(rateLimiter.withRetry(failFn, 'test operation')).rejects.toThrow();
+
+      // Attempt 1 runs immediately (no prior request). It fails, so we back off
+      // retryDelay * 2^0 = 50ms. Attempt 2 then hits the 100ms rate limit and
+      // waits the remaining ~50ms, so the two attempts are ~100ms apart. It is
+      // the last attempt, so no further backoff. Allow a little timer slop.
+      const totalTime = Date.now() - startTime;
+      expect(totalTime).toBeGreaterThanOrEqual(95);
+      expect(failFn).toHaveBeenCalledTimes(2);
     });
   });
 

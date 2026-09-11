@@ -1,6 +1,7 @@
 // Error Handling Tests
 // @version 1.0
 
+import { vi } from 'vitest';
 import {
   BaseError,
   ConfigurationError,
@@ -83,10 +84,10 @@ describe('Error Creation Helpers', () => {
 });
 
 describe('ErrorHandler', () => {
-  let consoleSpy: jest.SpyInstance;
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
